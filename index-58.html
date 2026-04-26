@@ -1547,6 +1547,7 @@ function wpHatGonder(kod,tip){
     }
   }
   mesaj+=`━━━━━━━━━━━━━━━━\n`;
+  mesaj+=`🔗 ${location.href.split('?')[0]}\n`;
   mesaj+=`_Bayrampaşa Yönetim Sistemi_`;
   const url=`https://wa.me/${p.wp}?text=${encodeURIComponent(mesaj)}`;
   window.open(url,'_blank');
