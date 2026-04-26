@@ -151,6 +151,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
       <div style="font-size:13px;color:var(--text2)" id="dHero">Yükleniyor...</div>
     </div>
     <div class="dstats" id="dStats"></div>
+    <div id="dEgitim" style="margin:0 16px 8px;padding:12px 14px;background:linear-gradient(135deg,rgba(90,26,144,0.08),rgba(123,45,139,0.05));border:1.5px solid rgba(90,26,144,0.25);border-radius:14px"></div>
     <div id="dBugun" style="padding:0 16px 4px"></div>
     <div id="dKarar" style="padding:0 16px 4px"></div>
     <div class="dmenu">
@@ -178,13 +179,6 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
     <button onclick="chW(-1)" style="width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">‹</button>
     <span id="planWL" style="font-size:12px;font-weight:700;color:var(--blue2);font-family:'JetBrains Mono',monospace"></span>
     <button onclick="chW(1)" style="width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">›</button>
-  </div>
-  <!-- HAFTA TİPİ SEÇİCİ - sadece Mevlüt Yönetici erişiminde görünür -->
-  <div id="haftaTipiBar" style="display:none;flex-direction:row;align-items:center;gap:6px;padding:8px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:rgba(0,0,0,0.03)">
-    <span style="font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap">Hafta tipi:</span>
-    <button onclick="setHaftaTipi('Y')" id="htY" style="flex:1;padding:6px 4px;border-radius:8px;border:2px solid transparent;font-size:12px;font-weight:800;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s">🔥 Yoğun</button>
-    <button onclick="setHaftaTipi('S')" id="htS" style="flex:1;padding:6px 4px;border-radius:8px;border:2px solid transparent;font-size:12px;font-weight:800;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s">☀️ Serbest</button>
-    <button onclick="setHaftaTipi('T')" id="htT" style="flex:1;padding:6px 4px;border-radius:8px;border:2px solid transparent;font-size:12px;font-weight:800;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s">🏖️ Tatil</button>
   </div>
   <div class="wtabs" id="gunTabs"></div>
   <div class="pb" id="planB"></div>
@@ -242,7 +236,6 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 <div class="page" id="perPage">
   <div class="ph">
     <div style="flex:1"><div class="ph-title" id="perPT">—</div><div class="ph-sub" id="perPS">—</div></div>
-
     <button id="yoneticiBtn" onclick="perYoneticiGiris()" style="display:none;padding:5px 11px;border-radius:8px;border:1px solid rgba(255,215,0,0.5);background:rgba(255,215,0,0.15);color:#ffd700;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;font-weight:700;margin-right:6px">🛡️ Yönetici</button>
     <button onclick="logout()" style="padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif;border-color:rgba(255,255,255,0.2)">Çıkış</button>
   </div>
@@ -255,6 +248,8 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
     <button class="wtab" onclick="selPerTab('gundem')">📌 Gündem</button>
     <button class="wtab" id="denetimTab" style="display:none" onclick="selPerTab('denetim')">🔍 Denetim</button>
   </div>
+  <!-- Madde 7: Eğitim Mesulü banner -->
+  <div id="egitimBanner" style="display:none;align-items:center;gap:10px;margin:8px 14px;padding:10px 14px;background:linear-gradient(135deg,rgba(90,26,144,0.12),rgba(123,45,139,0.08));border:1.5px solid rgba(90,26,144,0.35);border-radius:12px;flex-shrink:0"></div>
   <div class="pb" id="perB"></div>
 </div>
 
@@ -375,7 +370,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
         <div onclick="selBolum('KURUMSAL',this)" data-b="KURUMSAL" style="padding:9px 8px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s">KURUMSAL</div>
         <div onclick="selBolum('YAPILACAK',this)" data-b="YAPILACAK" style="padding:9px 8px;border-radius:9px;border:2px solid #0f5a6388;background:rgba(15,90,99,0.15);text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:#0f5a63;transition:all .15s">YAPILACAK</div>
         <div onclick="selBolum('T.T.S',this)" data-b="T.T.S" style="padding:9px 8px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s">T.T.S</div>
-        <div onclick="selBolum('EĞİTİM MESULÜ',this)" data-b="EĞİTİM MESULÜ" style="padding:9px 8px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s">EĞİTİM MESULÜ</div>
+        <div onclick="selBolum('EĞİTİM',this)" data-b="EĞİTİM" style="padding:9px 8px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s">EĞİTİM</div>
         <div onclick="selBolum('VELİ BİLGİLENDİRME',this)" data-b="VELİ BİLGİLENDİRME" style="grid-column:1/-1;padding:9px 8px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s">VELİ BİLGİLENDİRME</div>
       </div>
       <input type="hidden" id="yeniB" value="YAPILACAK">
@@ -386,15 +381,6 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
       <div onclick="selOnem('K',this)" data-o="K" style="flex:1;padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2)">🔵 Keyfiyet</div>
     </div></div>
     <div style="margin-bottom:14px"><label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Personel (opsiyonel)</label><div id="yeniPC" style="display:flex;flex-wrap:wrap;gap:6px"></div></div>
-    <div id="yeniTaslakDiv" style="margin-bottom:14px">
-      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Hangi haftalarda görünsün?</label>
-      <div style="display:flex;gap:7px">
-        <div onclick="togYeniTaslak('Y',this)" data-t="Y" style="flex:1;padding:9px 4px;border-radius:9px;border:2px solid #cc220088;background:rgba(204,34,0,0.12);text-align:center;cursor:pointer;font-size:12px;font-weight:800;color:#cc2200;transition:all .15s">🔥 Yoğun</div>
-        <div onclick="togYeniTaslak('S',this)" data-t="S" style="flex:1;padding:9px 4px;border-radius:9px;border:2px solid #b3770088;background:rgba(179,119,0,0.12);text-align:center;cursor:pointer;font-size:12px;font-weight:800;color:#b37700;transition:all .15s">☀️ Serbest</div>
-        <div onclick="togYeniTaslak('T',this)" data-t="T" style="flex:1;padding:9px 4px;border-radius:9px;border:2px solid #0a6a3a88;background:rgba(10,106,58,0.12);text-align:center;cursor:pointer;font-size:12px;font-weight:800;color:#0a6a3a;transition:all .15s">🏖️ Tatil</div>
-      </div>
-      <input type="hidden" id="yeniTaslak" value="Y,S,T">
-    </div>
     <div class="ma"><button class="bc" onclick="document.getElementById('yeniMo').classList.remove('open')">İptal</button><button class="bs" onclick="kaydetYeni()">✅ Ekle</button></div>
   </div>
 </div>
@@ -416,17 +402,17 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 const RENKLER=["#1B3A6B","#2E75B6","#1F6B75","#C55A11","#7030A0","#375623","#8B2252","#B5451B","#0F6B3A","#6B0F4A","#1A6B6B","#6B3A0F"];
 let PERSONEL=[{isim:"Hasan",kod:"H",renk:"#1B3A6B",sifre:"",wp:""},{isim:"Mevlüt",kod:"ME",renk:"#2E75B6",sifre:"",wp:""},{isim:"Ahmet",kod:"A",renk:"#1F6B75",sifre:"",wp:""},{isim:"Mahmut",kod:"MA",renk:"#C55A11",sifre:"",wp:""},{isim:"Ekrem",kod:"E",renk:"#7030A0",sifre:"",wp:""},{isim:"Ömer",kod:"ÖB",renk:"#375623",sifre:"",wp:""},{isim:"Ömer Faruk",kod:"ÖF",renk:"#8B2252",sifre:"",wp:""}];
 const GUNLER=["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
-const BOL_VARSAYILAN={KURUMSAL:{r:"#1040d0",b:"#d8e4ff"},YAPILACAK:{r:"#0a7a50",b:"#c0f0dc"},"T.T.S":{r:"#e06000",b:"#ffe0b2"},"EĞİTİM MESULÜ":{r:"#7b1fa2",b:"#f3e5f5"},"VELİ BİLGİLENDİRME":{r:"#1b6b00",b:"#d0f0c0"}};
+const BOL_VARSAYILAN={KURUMSAL:{r:"#1040d0",b:"#d8e4ff"},YAPILACAK:{r:"#0a7a50",b:"#c0f0dc"},"T.T.S":{r:"#e06000",b:"#ffe0b2"},"EĞİTİM":{r:"#7b1fa2",b:"#f3e5f5"},"VELİ BİLGİLENDİRME":{r:"#1b6b00",b:"#d0f0c0"}};
 let BOL=Object.assign({},BOL_VARSAYILAN);
 
 // Önem derecesi yardımcı — her zaman güncel ismi döner
 const ONEM_RENK={Z:{r:'#ff4d6a',bg:'rgba(255,77,106,0.15)',dark:'#cc2200'},O:{r:'#f5a623',bg:'rgba(245,166,35,0.15)',dark:'#996600'},K:{r:'#00c6d7',bg:'rgba(0,198,215,0.15)',dark:'#006688'}};
 function onemIsim(k){return(S&&S.onemIsimleri&&S.onemIsimleri[k])||({Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'}[k]||k);}
 function onemEmoji(k){return{Z:'🔴',O:'🟡',K:'🔵'}[k]||'⚪';}
-const GS=[{id:"g1",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Pano Şahsiyet eğitimi asılacak",atanan:["H","ME"]},{id:"g2",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Rozetlerin verilmesi",atanan:["A"]},{id:"g3",onem:"Z",bolum:"KURUMSAL",gun:"Perşembe",metin:"Haf. Talebeleri Müdüriyet",atanan:["ÖB"]},{id:"g4",onem:"Z",bolum:"KURUMSAL",gun:"Cuma",metin:"Haf. talebesinin Açıklanması",atanan:["ÖF"]},{id:"g5",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"Dahili D. hadisi Şerif ezberi",atanan:["H"]},{id:"g6",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"5. sınıf Atölye",atanan:["ME","A"]},{id:"g7",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Evvabin Namazı kılınması",atanan:["MA"]},{id:"g8",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["E"]},{id:"g9",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Dahili ders şahsiyet eğitimi",atanan:["ÖB"]},{id:"g10",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Büyüğümüzün sohbeti anlatılması",atanan:["ÖF","H"]},{id:"g11",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Hadisi Şeriflerin ikindide Tekrar",atanan:["ME"]},{id:"g12",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Kasidei Bürde",atanan:["A"]},{id:"g13",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Haftanın incisi ezberlenimesi",atanan:["MA"]},{id:"g14",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Tuvaletlerle alakalı ikaz",atanan:["E"]},{id:"g15",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"10 İngilizce kelime ezberi",atanan:["ÖB"]},{id:"g16",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Okulda Cuma namazı",atanan:["H","ME","A","MA","E","ÖB","ÖF"]},{id:"g17",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Cuma yoklaması",atanan:["ÖF"]},{id:"g18",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Atölye çalışmaları",atanan:["H"]},{id:"g19",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Dua namazı",atanan:["ME"]},{id:"g20",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Evradı Şerife",atanan:["A"]},{id:"g21",onem:"Z",bolum:"T.T.S",gun:"Pazartesi",metin:"Kılık Kıyafet Kontrolü",atanan:["H","ME"]},{id:"g22",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["MA"]},{id:"g23",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Kılık Kıyafet Kontrolü",atanan:["E"]},{id:"g24",onem:"Z",bolum:"T.T.S",gun:"Çarşamba",metin:"Kılık Kıyafet Kontrolü",atanan:["ÖB"]},{id:"g25",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Vestiyer dolap Kontrolü",atanan:["ÖF"]},{id:"g26",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Kılık Kıyafet Kontrolü",atanan:["H"]},{id:"g27",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Pazartesi",metin:"Haftanın talebeleri Pano",atanan:["ME"]},{id:"g28",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Pazartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["A"]},{id:"g29",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Pazartesi",metin:"Zilin kontrol edilmesi",atanan:["MA"]},{id:"g30",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Pazartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["E"]},{id:"g31",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Salı",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖB"]},{id:"g32",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Salı",metin:"Zilin kontrol edilmesi",atanan:["ÖF"]},{id:"g33",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Salı",metin:"Hasta ve İzinlilerin gruba",atanan:["H"]},{id:"g34",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Çarşamba",metin:"Yemekçi ve müezzin yazılması",atanan:["ME"]},{id:"g35",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Çarşamba",metin:"Zilin kontrol edilmesi",atanan:["A"]},{id:"g36",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Çarşamba",metin:"Hasta ve İzinlilerin gruba",atanan:["MA"]},{id:"g37",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Perşembe",metin:"Sınıf Tahtalarının temizliği",atanan:["E"]},{id:"g38",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Perşembe",metin:"Kalemlerin Doldurulması",atanan:["ÖB"]},{id:"g39",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Perşembe",metin:"Rozetlerin toplanması",atanan:["ÖF"]},{id:"g40",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Perşembe",metin:"Yemekçi ve müezzin yazılması",atanan:["H"]},{id:"g41",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Perşembe",metin:"Zilin kontrol edilmesi",atanan:["ME"]},{id:"g42",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Perşembe",metin:"Hasta ve İzinlilerin gruba",atanan:["A"]},{id:"g43",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cuma",metin:"Öğretmen Puan Kağıdı",atanan:["MA"]},{id:"g44",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cuma",metin:"Öğretmenlere Terlik",atanan:["E"]},{id:"g45",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cuma",metin:"Öğretmen İkramı",atanan:["ÖB"]},{id:"g46",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cuma",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖF"]},{id:"g47",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cuma",metin:"Zilin kontrol edilmesi",atanan:["H"]},{id:"g48",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cuma",metin:"Hasta ve İzinlilerin gruba",atanan:["ME"]},{id:"g49",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cumartesi",metin:"Öğretmenlere Terlik",atanan:["A"]},{id:"g50",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cumartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["MA"]},{id:"g51",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cumartesi",metin:"Zilin kontrol edilmesi",atanan:["E"]},{id:"g52",onem:"Z",bolum:"EĞİTİM MESULÜ",gun:"Cumartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["ÖB"]},{id:"g53",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Pazartesi",metin:"Veli grubuna Haftanın Etüt programı",atanan:["ÖF"]},{id:"g54",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın talebeleri Fotoğraf",atanan:["H"]},{id:"g55",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın Hadisi Şerifi",atanan:["ME"]},{id:"g56",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Çarşamba",metin:"Sohbet fotoğrafının paylaşılması",atanan:["A"]},{id:"g57",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Dahili Ders İşlenen konular",atanan:["MA"]},{id:"g58",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Haf. T. Müdüriyet Fotoğrafı",atanan:["E"]},{id:"g59",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Cumartesi",metin:"Öğretmen Puanları",atanan:["ÖB"]}];
+const GS=[{id:"g1",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Pano Şahsiyet eğitimi asılacak",atanan:["H","ME"]},{id:"g2",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Rozetlerin verilmesi",atanan:["A"]},{id:"g3",onem:"Z",bolum:"KURUMSAL",gun:"Perşembe",metin:"Haf. Talebeleri Müdüriyet",atanan:["ÖB"]},{id:"g4",onem:"Z",bolum:"KURUMSAL",gun:"Cuma",metin:"Haf. talebesinin Açıklanması",atanan:["ÖF"]},{id:"g5",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"Dahili D. hadisi Şerif ezberi",atanan:["H"]},{id:"g6",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"5. sınıf Atölye",atanan:["ME","A"]},{id:"g7",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Evvabin Namazı kılınması",atanan:["MA"]},{id:"g8",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["E"]},{id:"g9",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Dahili ders şahsiyet eğitimi",atanan:["ÖB"]},{id:"g10",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Büyüğümüzün sohbeti anlatılması",atanan:["ÖF","H"]},{id:"g11",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Hadisi Şeriflerin ikindide Tekrar",atanan:["ME"]},{id:"g12",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Kasidei Bürde",atanan:["A"]},{id:"g13",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Haftanın incisi ezberlenimesi",atanan:["MA"]},{id:"g14",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Tuvaletlerle alakalı ikaz",atanan:["E"]},{id:"g15",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"10 İngilizce kelime ezberi",atanan:["ÖB"]},{id:"g16",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Okulda Cuma namazı",atanan:["H","ME","A","MA","E","ÖB","ÖF"]},{id:"g17",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Cuma yoklaması",atanan:["ÖF"]},{id:"g18",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Atölye çalışmaları",atanan:["H"]},{id:"g19",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Dua namazı",atanan:["ME"]},{id:"g20",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Evradı Şerife",atanan:["A"]},{id:"g21",onem:"Z",bolum:"T.T.S",gun:"Pazartesi",metin:"Kılık Kıyafet Kontrolü",atanan:["H","ME"]},{id:"g22",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["MA"]},{id:"g23",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Kılık Kıyafet Kontrolü",atanan:["E"]},{id:"g24",onem:"Z",bolum:"T.T.S",gun:"Çarşamba",metin:"Kılık Kıyafet Kontrolü",atanan:["ÖB"]},{id:"g25",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Vestiyer dolap Kontrolü",atanan:["ÖF"]},{id:"g26",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Kılık Kıyafet Kontrolü",atanan:["H"]},{id:"g27",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Haftanın talebeleri Pano",atanan:["ME"]},{id:"g28",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["A"]},{id:"g29",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Zilin kontrol edilmesi",atanan:["MA"]},{id:"g30",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["E"]},{id:"g31",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖB"]},{id:"g32",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Zilin kontrol edilmesi",atanan:["ÖF"]},{id:"g33",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Hasta ve İzinlilerin gruba",atanan:["H"]},{id:"g34",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Yemekçi ve müezzin yazılması",atanan:["ME"]},{id:"g35",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Zilin kontrol edilmesi",atanan:["A"]},{id:"g36",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Hasta ve İzinlilerin gruba",atanan:["MA"]},{id:"g37",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Sınıf Tahtalarının temizliği",atanan:["E"]},{id:"g38",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Kalemlerin Doldurulması",atanan:["ÖB"]},{id:"g39",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Rozetlerin toplanması",atanan:["ÖF"]},{id:"g40",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Yemekçi ve müezzin yazılması",atanan:["H"]},{id:"g41",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Zilin kontrol edilmesi",atanan:["ME"]},{id:"g42",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Hasta ve İzinlilerin gruba",atanan:["A"]},{id:"g43",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmen Puan Kağıdı",atanan:["MA"]},{id:"g44",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmenlere Terlik",atanan:["E"]},{id:"g45",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmen İkramı",atanan:["ÖB"]},{id:"g46",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖF"]},{id:"g47",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Zilin kontrol edilmesi",atanan:["H"]},{id:"g48",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Hasta ve İzinlilerin gruba",atanan:["ME"]},{id:"g49",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Öğretmenlere Terlik",atanan:["A"]},{id:"g50",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["MA"]},{id:"g51",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Zilin kontrol edilmesi",atanan:["E"]},{id:"g52",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["ÖB"]},{id:"g53",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Pazartesi",metin:"Veli grubuna Haftanın Etüt programı",atanan:["ÖF"]},{id:"g54",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın talebeleri Fotoğraf",atanan:["H"]},{id:"g55",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın Hadisi Şerifi",atanan:["ME"]},{id:"g56",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Çarşamba",metin:"Sohbet fotoğrafının paylaşılması",atanan:["A"]},{id:"g57",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Dahili Ders İşlenen konular",atanan:["MA"]},{id:"g58",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Haf. T. Müdüriyet Fotoğrafı",atanan:["E"]},{id:"g59",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Cumartesi",metin:"Öğretmen Puanları",atanan:["ÖB"]}];
 
 const HAZIR_GOREVLER_VARSAYILAN=['Pano Şahsiyet eğitimi asılacak','Rozetlerin verilmesi','Haftanın talebeleri','Pano Hadisin Gruba Atılması','Kursun gezilip eksiklerin belirlenmesi','5. sınıf Atölye','Takviye Ödev Hatırlatma','8. Sınıf Soru sayısı alınması','Etüt verimlilik puanı','Dahili D. hadisi şerif ezberi','Kılık Kıyafet Kontrolü','Yatak Kontrol','Temizlik Kontrol','Namaz','Sur Çevrilmesi','Günlük Mahal Temizliği','Okul dönüşü yoklama ve arama','Veli grubuna Haftanın Etüt programı','Yemekçi ve müezzin yazılması','Zilin kontrol edilmesi','Hasta ve İzinlilerin gruba yazılması','Programın Gruba Atılması','Haf. İyileri Müdüriyet','Evvabin Namazı kılınması','Hadisi Şeriflerin ikindide Tekrar','Dahili ders şahsiyet eğitimi','Vestiyer dolap Kontrolü','Haftanın talebeleri Fotograf','Haftanın Hadisi Şerifi Foto','Şahsiyet İşlenecek konu','Haf. Kötüleri Müdüriyet','Haftanın incisi hazırlanması','Bekar odası Kontrol','Atölye Videosunun hazırlanması','Sohbet fotoğrafının paylaşılması','Rozetlerin toplanması','B. Sohbetinden bir kesit','Cuma etkinlik planlaması','Kasidei Bürde','Haftanın incisi ezberlenmesi','Tuvaletlerle alakalı ikaz','10 İngilizce kelime ezberi','Takviye Ödev Kontrol','Büyüğümüzün sohbeti anlatılması','Haf. T. Müdüriyet Fotografı','Deneme Bilgi kartı paylaşılması','Sınıf Tahtalarının temizliği Kalemlerin Doldurulması','Öğretmen Puan Kağıdı','Öğretmenlere Terlik','Öğretmen İkramı','Tahta Kalemi','Evradı Şerif İçin Aramak','Okulda Cuma namazı','Cuma yoklaması','Atölye çalışmaları','Ders programlarının panoya asılması','Dahili Ders İşlenen konular','Soru Sayısı Paylaşımı','Dua namazı','Evradı Şerife','Öğretmen Puanları','QUİZ Sonuçları','T.T.T Sonuçları'];
-let S={user:null,wo:0,gun:"Pazartesi",gorevler:JSON.parse(JSON.stringify(GS)),durumlar:{},arsiv:[],gecmisHafta:null,adminIsim:"Yönetici",adminSifre:"1234",toplantıKararlari:[],bolumler:null,onemIsimleri:{Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'},tehirler:{},tehirTalepleri:[],hazirGorevler:[...HAZIR_GOREVLER_VARSAYILAN],haftaTipleri:{},_mevlutAdmin:false};
+let S={user:null,wo:0,gun:"Pazartesi",gorevler:JSON.parse(JSON.stringify(GS)),durumlar:{},arsiv:[],gecmisHafta:null,adminIsim:"Yönetici",adminSifre:"1234",toplantıKararlari:[],bolumler:null,onemIsimleri:{Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'},tehirler:{},tehirTalepleri:[],hazirGorevler:[...HAZIR_GOREVLER_VARSAYILAN]};
 
 // ===== SUPABASE ENTEGRASYONU =====
 const SB_URL = 'https://zowvygqlbrtotkygszsg.supabase.co';
@@ -498,7 +484,7 @@ function veriObjesi(){
     tehirler: S.tehirler||{},
     tehirTalepleri: S.tehirTalepleri||[],
     hazirGorevler: S.hazirGorevler||[...HAZIR_GOREVLER_VARSAYILAN],
-    haftaTipleri: S.haftaTipleri||{}
+    haftaAtla: S.haftaAtla||{}
   };
 }
 
@@ -516,7 +502,7 @@ function veriYukle(d){
   if(d.tehirler) S.tehirler=d.tehirler;
   if(d.tehirTalepleri) S.tehirTalepleri=d.tehirTalepleri;
   if(d.hazirGorevler) S.hazirGorevler=d.hazirGorevler; else if(!S.hazirGorevler||!S.hazirGorevler.length) S.hazirGorevler=[...HAZIR_GOREVLER_VARSAYILAN];
-  if(d.haftaTipleri) S.haftaTipleri=d.haftaTipleri; else if(!S.haftaTipleri) S.haftaTipleri={};
+  if(d.haftaAtla) S.haftaAtla=d.haftaAtla; else if(!S.haftaAtla) S.haftaAtla={};
 }
 
 function save(){
@@ -598,13 +584,8 @@ function wN(d){const dt=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate
 function wL(o=0){const d=new Date();d.setDate(d.getDate()+o*7);const m=new Date(d);m.setDate(d.getDate()-d.getDay()+1);const s=new Date(m);s.setDate(m.getDate()+5);const f=x=>x.toLocaleDateString('tr-TR',{day:'numeric',month:'short'});return `${f(m)} – ${f(s)}`}
 function dur(h,k){return S.durumlar[`${h}_${k}`]||'pending'}
 function setD(h,k,v){S.durumlar[`${h}_${k}`]=v;save()}
-function _taslakFiltre(h){
-  if(!S.haftaTipleri) return ()=>true;
-  const tip=S.haftaTipleri[h]||'Y';
-  return g=>!g.taslak||g.taslak.includes(tip);
-}
-function hes(h){let t=0,d=0;const tf=_taslakFiltre(h);S.gorevler.filter(tf).forEach(g=>{if(!g||!g.atanan)return;((g&&g.atanan)||[]).forEach(k=>{t++;if(dur(h,`${g.id}_${k}`)=='done')d++})});return{t,d,p:t?Math.round(d/t*100):0}}
-function pH(h,k){const tf=_taslakFiltre(h);const gg=S.gorevler.filter(g=>tf(g)&&g&&g.atanan&&((g&&g.atanan)||[]).includes(k));let d=0;gg.forEach(g=>{if(dur(h,`${g.id}_${k}`)=='done')d++});return{t:gg.length,d,p:gg.length?Math.round(d/gg.length*100):0}}
+function hes(h){let t=0,d=0;S.gorevler.forEach(g=>{if(!g||!g.atanan||isHaftaAtlandi(h,g.id))return;((g&&g.atanan)||[]).forEach(k=>{t++;if(dur(h,`${g.id}_${k}`)=='done')d++})});return{t,d,p:t?Math.round(d/t*100):0}}
+function pH(h,k){const gg=S.gorevler.filter(g=>g&&g.atanan&&!isHaftaAtlandi(h,g.id)&&((g&&g.atanan)||[]).includes(k));let d=0;gg.forEach(g=>{if(dur(h,`${g.id}_${k}`)=='done')d++});return{t:gg.length,d,p:gg.length?Math.round(d/gg.length*100):0}}
 
 function goPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');refresh(id)}
 function refresh(id, force){
@@ -743,7 +724,7 @@ function loginAdmin(){
   if(girilen!==dogru){showN('❌','Hatalı şifre','');return}
   S.user='admin';goPage('dashPage')
 }
-function logout(){S.user=null;S._mevlutAdmin=false;goPage('loginPage')}
+function logout(){S.user=null;goPage('loginPage')}
 
 function rDash(){
   const h=wK(S.wo);const{t,d,p}=hes(h);
@@ -806,6 +787,25 @@ function rDash(){
       <div id="bugunOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
     </div>
     <div id="bugunDetay" style="display:none;margin-top:8px">${icerik}</div>`;
+
+  // EĞİTİM DURUMU KARTI
+  const egitimGorevler=S.gorevler.filter(g=>g.bolum==='EĞİTİM'&&g.gun===bugunAdi&&!isHaftaAtlandi(h,g.id));
+  const egitimToplam=egitimGorevler.reduce((acc,g)=>acc+((g&&g.atanan)||[]).length,0);
+  const egitimTamamlanan=egitimGorevler.reduce((acc,g)=>acc+((g&&g.atanan)||[]).filter(k=>dur(h,`${g.id}_${k}`)=='done').length,0);
+  const egitimPct=egitimToplam?Math.round(egitimTamamlanan/egitimToplam*100):0;
+  const egEl=document.getElementById('dEgitim');
+  if(egEl){
+    const barRenk=egitimPct===100?'var(--green)':egitimPct>=50?'var(--gold)':'#7b2d8b';
+    egEl.innerHTML=`<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#7b2d8b,#5a1a90);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎓</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px">EĞİTİM</div>
+        <div style="font-size:11px;color:var(--text2)">${egitimTamamlanan}/${egitimToplam} görev tamamlandı · %${egitimPct}</div>
+        <div style="height:5px;background:rgba(0,0,0,0.08);border-radius:3px;margin-top:6px;overflow:hidden"><div style="height:100%;width:${egitimPct}%;background:${barRenk};border-radius:3px;transition:width .4s"></div></div>
+      </div>
+      <div style="font-size:20px;font-weight:900;color:${barRenk}">${egitimPct===100?'✅':'⭐'}</div>
+    </div>`;
+  }
 
   // HAFTAlik VAZİFELER
   rDashKarar();
@@ -1020,76 +1020,34 @@ function rPlan(){
   document.getElementById('planWL').textContent=wL(S.wo);
   document.getElementById('planSub').textContent=wK(S.wo);
   document.getElementById('gunTabs').innerHTML=GUNLER.map(g=>`<button class="wtab ${g===S.gun?'active':''}" onclick="selGun('${g}')">${g}</button>`).join('');
-  // Hafta tipi bar: SADECE Mevlüt → Yönetici butonuyla girince görünür
-  const bar = document.getElementById('haftaTipiBar');
-  if(bar) bar.style.display=S._mevlutAdmin?'flex':'none';
-  // Hafta tipi butonlarını güncelle
-  const h=wK(S.wo);
-  if(!S.haftaTipleri) S.haftaTipleri={};
-  const tip=S.haftaTipleri[h]||'Y';
-  const tipRenkler={Y:['#cc2200','rgba(204,34,0,0.12)'],S:['#b37700','rgba(179,119,0,0.12)'],T:['#0a6a3a','rgba(10,106,58,0.12)']};
-  ['Y','S','T'].forEach(t=>{
-    const el=document.getElementById('ht'+t);
-    if(!el) return;
-    const [renk,bg]=tipRenkler[t];
-    if(t===tip){
-      el.style.borderColor=renk;
-      el.style.background=bg;
-      el.style.color=renk;
-    } else {
-      el.style.borderColor='rgba(0,0,0,0.12)';
-      el.style.background='var(--card)';
-      el.style.color='var(--text2)';
-    }
-  });
   rGunGorev();
 }
-
-function setHaftaTipi(tip){
-  if(!S.haftaTipleri) S.haftaTipleri={};
-  const h=wK(S.wo);
-  const mevcutTip=S.haftaTipleri[h]||'Y';
-  if(mevcutTip===tip) return;
-  const isimler={Y:'🔥 Yoğun',S:'☀️ Serbest',T:'🏖️ Tatil'};
-  if(!confirm(`Bu haftayı "${isimler[tip]}" olarak değiştirmek istediğinizden emin misiniz?\n\nPersonel görev listeleri buna göre güncellenecek.`)){return;}
-  S.haftaTipleri[h]=tip;
-  save();
-  showN('📅',isimler[tip]+' haftası seçildi','Görevler filtrelendi');
-  rPlan();
-}
-function selGun(g){S.gun=g;document.querySelectorAll('#gunTabs .wtab').forEach(t=>t.classList.toggle('active',t.textContent.trim()===g));rGunGorev()}
+function selGun(g){S.gun=g;document.querySelectorAll('.wtab').forEach(t=>t.classList.toggle('active',t.textContent===g));rGunGorev()}
 function chW(d){S.wo+=d;rPlan()}
 
 function rGunGorev(){
-  const h=wK(S.wo);const gun=S.gun;
-  if(!S.haftaTipleri) S.haftaTipleri={};
-  const aktifTip=S.haftaTipleri[h]||'Y';
-  const tumGorevler=S.gorevler.filter(g=>g.gun===gun);
-  // Taslak filtresi: gorev.taslak dizisi yoksa hepsinde göster (geriye dönük uyumluluk)
-  const gorevler=tumGorevler.filter(g=>!g.taslak||g.taslak.includes(aktifTip));
-  const gizlenenSayi=tumGorevler.length-gorevler.length;
+  const h=wK(S.wo);const gun=S.gun;const gorevler=S.gorevler.filter(g=>g.gun===gun);
   let html='';
-  // Gizlenen görev bildirimi
-  if(gizlenenSayi>0){
-    html+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(0,0,0,0.05);border-radius:10px;margin-bottom:10px;font-size:11px;color:var(--text2)">
-      <span>👁️</span><span>${gizlenenSayi} görev bu hafta tipi için gizlendi</span>
-    </div>`;
-  }
-  Object.keys(BOL).forEach(bol=>{
+  // Madde 6: EĞİTİM her zaman en üstte
+  const bolSira=Object.keys(BOL).sort((a,b)=>a==='EĞİTİM'?-1:b==='EĞİTİM'?1:0);
+  bolSira.forEach(bol=>{
     const bg=gorevler.filter(g=>g.bolum===bol);if(!bg.length)return;
     const b=BOL[bol];
-    html+=`<div class="bh" style="background:${b.b};color:${b.r}">${bol}</div>`;
+    const isEgitim=bol==='EĞİTİM';
+    // Madde 1: Eğitim başlığı büyük ve parlak
+    if(isEgitim){
+      html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;margin-top:4px">
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,${b.r}80,transparent)"></div>
+        <div style="background:linear-gradient(135deg,${b.r},${b.r}cc);color:#fff;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 2px 8px ${b.r}50">🎓 ${bol} ⭐</div>
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,${b.r}80)"></div>
+      </div>`;
+    } else {
+      html+=`<div class="bh" style="background:${b.b};color:${b.r}">${bol}</div>`;
+    }
     bg.forEach(g=>{
       const ad=((g&&g.atanan)||[]).every(k=>dur(h,`${g.id}_${k}`)=='done');
       const onemCfg={Z:{r:'#ff4d6a',bg:'rgba(255,77,106,0.15)',lbl:onemIsim('Z')},O:{r:'#f5a623',bg:'rgba(245,166,35,0.15)',lbl:onemIsim('O')},K:{r:'#00c6d7',bg:'rgba(0,198,215,0.15)',lbl:onemIsim('K')}};
       const oc=onemCfg[g.onem||'Z'];
-      const gt=g.taslak||['Y','S','T'];
-      const ystHtml=['Y','S','T'].map(t=>{
-        const sec=gt.includes(t);
-        const cfg={Y:{on:'#cc2200',label:'Yoğun'},S:{on:'#b37700',label:'Serbest'},T:{on:'#0a6a3a',label:'Tatil'}};
-        const c=cfg[t];
-        return `<button onclick="toggleTaslak('${g.id}','${t}')" title="${c.label} haftasında göster" style="padding:2px 7px;border-radius:5px;border:1px solid ${sec?c.on+'88':'rgba(0,0,0,0.15)'};background:${sec?c.on+'18':'transparent'};color:${sec?c.on:'var(--text2)'};cursor:pointer;font-size:10px;font-weight:800;font-family:'Outfit',sans-serif;transition:all .15s">${t}</button>`;
-      }).join('');
       html+=`<div class="gc" style="border-color:${b.r}30;${ad?'opacity:.55':''}">
         <button class="gsil" onclick="silG('${g.id}')">−</button>
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:7px">
@@ -1101,10 +1059,6 @@ function rGunGorev(){
           ${((g&&g.atanan)||[]).map(k=>{const per=pK(k);const d=dur(h,`${g.id}_${k}`);return `<span class="pb2 ${d=='done'?'done':''}" style="background:${per.renk}" onclick="togD('${h}','${g.id}','${k}')">${k}</span>`}).join('')}
           <span class="ata" onclick="openAtam('${g.id}')">+ Ata</span>
         </div>
-        ${S._mevlutAdmin?`<div style="display:flex;gap:4px;margin-top:8px;padding-top:7px;border-top:1px dashed rgba(0,0,0,0.1);align-items:center">
-          <span style="font-size:9px;color:var(--text2);font-weight:700;margin-right:2px">Taslak:</span>
-          ${ystHtml}
-        </div>`:''}
       </div>`;
     });
   });
@@ -1123,18 +1077,6 @@ function cycleOnem(gid){
   showN(lbls[g.onem],'Önem derecesi güncellendi','');
 }
 function silG(gid){if(!confirm('Bu görevi silmek istiyor musunuz?'))return;S.gorevler=S.gorevler.filter(g=>g.id!==gid);save();showN('🗑️','Görev silindi','');rGunGorev();rDash()}
-
-function toggleTaslak(gid,tip){
-  const g=S.gorevler.find(x=>x.id===gid);if(!g)return;
-  if(!g.taslak) g.taslak=['Y','S','T'];
-  if(g.taslak.includes(tip)){
-    if(g.taslak.length===1){showN('⚠️','En az bir taslak seçili olmalı','');return;}
-    g.taslak=g.taslak.filter(t=>t!==tip);
-  } else {
-    g.taslak.push(tip);
-  }
-  save();rGunGorev();
-}
 function arsivle(){const h=wK(S.wo);const{t,d,p}=hes(h);const idx=S.arsiv.findIndex(a=>a.hafta===h);const k={hafta:h,tarih:wL(S.wo),t,d,p,skorlar:PERSONEL.map(per=>({...per,...pH(h,per.kod)}))};if(idx>=0)S.arsiv[idx]=k;else S.arsiv.push(k);save();showN('📦','Arşivlendi!',`%${p} tamamlandı`)}
 
 let cGID=null,cSec=[];
@@ -1205,7 +1147,7 @@ function vakitIptal(){
 
 function selBolum(b,el){
   document.getElementById('yeniB').value=b;
-  const bolRenkler={KURUMSAL:{r:'#1a5fa0',bg:'rgba(26,95,160,0.15)'},YAPILACAK:{r:'#0f5a63',bg:'rgba(15,90,99,0.15)'},'T.T.S':{r:'#b04a00',bg:'rgba(176,74,0,0.15)'},'EĞİTİM MESULÜ':{r:'#5a1a90',bg:'rgba(90,26,144,0.15)'},'VELİ BİLGİLENDİRME':{r:'#1e4d10',bg:'rgba(30,77,16,0.15)'}};
+  const bolRenkler={KURUMSAL:{r:'#1a5fa0',bg:'rgba(26,95,160,0.15)'},YAPILACAK:{r:'#0f5a63',bg:'rgba(15,90,99,0.15)'},'T.T.S':{r:'#b04a00',bg:'rgba(176,74,0,0.15)'},'EĞİTİM':{r:'#5a1a90',bg:'rgba(90,26,144,0.15)'},'VELİ BİLGİLENDİRME':{r:'#1e4d10',bg:'rgba(30,77,16,0.15)'}};
   document.querySelectorAll('#yeniBolumSec [data-b]').forEach(d=>{
     d.style.borderColor='var(--border)';d.style.background='var(--card)';d.style.color='var(--text2)';
   });
@@ -1235,18 +1177,6 @@ function openYeni(gun){
   document.querySelector('#yeniMo [data-o="Z"]').textContent=`🔴 ${onemIsim('Z')}`;
   document.querySelector('#yeniMo [data-o="O"]').textContent=`🟡 ${onemIsim('O')}`;
   document.querySelector('#yeniMo [data-o="K"]').textContent=`🔵 ${onemIsim('K')}`;
-  // Taslak bölümünü göster/gizle - sadece Mevlüt admin modunda
-  const taslakDiv = document.getElementById('yeniTaslakDiv');
-  if(taslakDiv) taslakDiv.style.display = S._mevlutAdmin ? 'block' : 'none';
-  // Taslak seçimini sıfırla — hepsi seçili
-  document.getElementById('yeniTaslak').value='Y,S,T';
-  const taslakCfg={Y:{renk:'#cc2200',bg:'rgba(204,34,0,0.12)',border:'#cc220088'},S:{renk:'#b37700',bg:'rgba(179,119,0,0.12)',border:'#b3770088'},T:{renk:'#0a6a3a',bg:'rgba(10,106,58,0.12)',border:'#0a6a3a88'}};
-  ['Y','S','T'].forEach(t=>{
-    const el=document.querySelector(`#yeniMo [data-t="${t}"]`);
-    if(!el) return;
-    const c=taslakCfg[t];
-    el.style.borderColor=c.border;el.style.background=c.bg;el.style.color=c.renk;el.style.opacity='1';
-  });
   document.getElementById('yeniMo').classList.add('open');
 }
 function selOnem(v,el){
@@ -1258,29 +1188,7 @@ function selOnem(v,el){
   document.getElementById('yeniO').value=v;
 }
 function togYC(k,r,el){el.classList.toggle('sel');if(el.classList.contains('sel')){el.style.borderColor=r;el.style.background=r+'22'}else{el.style.borderColor='';el.style.background=''}}
-function togYeniTaslak(t,el){
-  const inp=document.getElementById('yeniTaslak');
-  let sec=inp.value?inp.value.split(',').filter(Boolean):[];
-  const cfg={Y:{renk:'#cc2200',bg:'rgba(204,34,0,0.12)',border:'#cc220088'},S:{renk:'#b37700',bg:'rgba(179,119,0,0.12)',border:'#b3770088'},T:{renk:'#0a6a3a',bg:'rgba(10,106,58,0.12)',border:'#0a6a3a88'}};
-  if(sec.includes(t)){
-    if(sec.length===1){showN('⚠️','En az bir taslak seçili olmalı','');return;}
-    sec=sec.filter(x=>x!==t);
-    el.style.borderColor='rgba(0,0,0,0.15)';
-    el.style.background='var(--card)';
-    el.style.color='var(--text2)';
-    el.style.opacity='0.45';
-  } else {
-    sec.push(t);
-    const c=cfg[t];
-    el.style.borderColor=c.border;
-    el.style.background=c.bg;
-    el.style.color=c.renk;
-    el.style.opacity='1';
-  }
-  inp.value=sec.join(',');
-}
-
-function kaydetYeni(){const gun=document.getElementById('yeniG').value;const m=document.getElementById('yeniM').value.trim();const b=document.getElementById('yeniB').value;const at=[...document.querySelectorAll('#yeniPC .mc.sel')].map(c=>c.dataset.k);if(!m){alert('Görev adı boş olamaz!');return}const on=document.getElementById('yeniO').value||'Z';const taslakVal=document.getElementById('yeniTaslak').value;const taslak=taslakVal?taslakVal.split(',').filter(Boolean):['Y','S','T'];S.gorevler.push({id:'g'+Date.now(),bolum:b,gun,metin:m,atanan:at,onem:on,taslak});save();document.getElementById('yeniMo').classList.remove('open');showN('✅','Görev eklendi!',m);rGunGorev();rDash()}
+function kaydetYeni(){const gun=document.getElementById('yeniG').value;const m=document.getElementById('yeniM').value.trim();const b=document.getElementById('yeniB').value;const at=[...document.querySelectorAll('#yeniPC .mc.sel')].map(c=>c.dataset.k);if(!m){alert('Görev adı boş olamaz!');return}const on=document.getElementById('yeniO').value||'Z';S.gorevler.push({id:'g'+Date.now(),bolum:b,gun,metin:m,atanan:at,onem:on});save();document.getElementById('yeniMo').classList.remove('open');showN('✅','Görev eklendi!',m);rGunGorev();rDash()}
 
 function rPerYonet(){
   // Personel sayısını dashboard'da güncelle
@@ -1510,12 +1418,11 @@ function aksamOzetiOlustur(adminIsim){
   const tarih=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'});
   const isim=adminIsim||(S.adminIsim||'Yönetici');
 
-  // Bugüne ait görevler - sadece Zorunlu (Z) ve Olması Lazım (O), Keyfiyet (K) hariç — aktif hafta tipine göre filtrele
-  const tf=_taslakFiltre(h);
+  // Bugüne ait görevler - sadece Zorunlu (Z) ve Olması Lazım (O), Keyfiyet (K) hariç
   let eksikVar=false;
   let satirlar=[];
   PERSONEL.forEach(p=>{
-    const bugunGor=S.gorevler.filter(g=>tf(g)&&g.gun===bugunAdi&&((g&&g.atanan)||[]).includes(p.kod)&&(g.onem==='Z'||g.onem==='O'));
+    const bugunGor=S.gorevler.filter(g=>g.gun===bugunAdi&&!isHaftaAtlandi(h,g.id)&&((g&&g.atanan)||[]).includes(p.kod)&&(g.onem==='Z'||g.onem==='O'));
     const eksik=bugunGor.filter(g=>dur(h,`${g.id}_${p.kod}`)!='done');
     const tamam=bugunGor.filter(g=>dur(h,`${g.id}_${p.kod}`)=='done');
     if(bugunGor.length>0){
@@ -1680,13 +1587,13 @@ function rGrafik(){
   html+=secCard('📅 Gün Bazlı Tamamlanma',gunH);
 
   // 2. BÖLÜM BAZLI
-  const bolRenkler={KURUMSAL:'#2E75B6',YAPILACAK:'#1F6B75','T.T.S':'#C55A11','EĞİTİM MESULÜ':'#7030A0','VELİ BİLGİLENDİRME':'#375623'};
+  const bolRenkler={KURUMSAL:'#2E75B6',YAPILACAK:'#1F6B75','T.T.S':'#C55A11','EĞİTİM':'#7030A0','VELİ BİLGİLENDİRME':'#375623'};
   let bolH='';
   Object.keys(bolRenkler).forEach(bol=>{
     const gg=S.gorevler.filter(g=>g.bolum===bol);
     let t=0,d=0;gg.forEach(g=>((g&&g.atanan)||[]).forEach(k=>{t++;if(dur(h,`${g.id}_${k}`)=='done')d++}));
     const p=t?Math.round(d/t*100):0;
-    const kisaAd=bol==='EĞİTİM MESULÜ'?'EĞİTİM':bol==='VELİ BİLGİLENDİRME'?'VELİ':bol;
+    const kisaAd=bol==='EĞİTİM'?'EĞİTİM':bol==='VELİ BİLGİLENDİRME'?'VELİ':bol;
     bolH+=barRow(kisaAd,p,bolRenkler[bol]);
   });
   html+=secCard('📂 Bölüm Bazlı Tamamlanma',bolH);
@@ -1780,14 +1687,14 @@ function selPerTab(tab){
 const DENETIM_KOD='ME'; // Denetim yetkisi olan personel
 
 function perYoneticiGiris(){
-  S._mevlutAdmin = true;
+  S._mevlutAdmin=true;
   goPage('dashPage');
   rDash();
 }
 
 function dashCikis(){
-  if(S.user && S.user !== 'admin'){
-    S._mevlutAdmin = false;
+  if(S.user && S.user!=='admin'){
+    S._mevlutAdmin=false;
     goPage('perPage');
     rPerPage();
   } else {
@@ -1801,16 +1708,29 @@ function rPerPage(){
   // Denetim sekmesini göster/gizle
   const dTab=document.getElementById('denetimTab');
   if(dTab) dTab.style.display=p.kod===DENETIM_KOD?'':'none';
-
-  // Yönetici butonunu göster/gizle (sadece Mevlüt için)
+  // Yönetici butonunu göster/gizle
   const yBtn=document.getElementById('yoneticiBtn');
   if(yBtn) yBtn.style.display=p.kod===DENETIM_KOD?'':'none';
   const h=wK(0);const{t,d}=pH(h,p.kod);const pct=t?Math.round(d/t*100):0;
   document.getElementById('perPT').textContent=`👤 ${p.isim}`;
   document.getElementById('perPS').textContent=`${d}/${t} tamamlandı · %${pct}`;
 
+  // Madde 7: Eğitim Mesulü tamamlanmamış görev banner
+  const bugunAdi=(()=>{const g=new Date().getDay();return{0:'Pazar',1:'Pazartesi',2:'Salı',3:'Çarşamba',4:'Perşembe',5:'Cuma',6:'Cumartesi'}[g];})();
+  const egitimEksik=S.gorevler.filter(g=>g.bolum==='EĞİTİM'&&g.gun===bugunAdi&&!isHaftaAtlandi(h,g.id)&&((g&&g.atanan)||[]).includes(p.kod)&&dur(h,`${g.id}_${p.kod}`)!=='done');
+  const bannerEl=document.getElementById('egitimBanner');
+  if(bannerEl){
+    if(egitimEksik.length>0){
+      bannerEl.style.display='flex';
+      bannerEl.innerHTML=`<span style="font-size:16px">🎓</span><div style="flex:1"><div style="font-size:12px;font-weight:800;color:#5a1a90">Eğitim Mesulü Görevi!</div><div style="font-size:11px;color:#7b2d8b;margin-top:1px">${egitimEksik.length} görev bugün tamamlanmadı</div></div><span style="font-size:18px">⭐</span>`;
+    } else {
+      bannerEl.style.display='none';
+    }
+  }
+
   if(perAktifTab==='gorev'){
     // GÖREVLERİM sekmesi
+    // Hangi haftayı gösteriyoruz
     const aktifHafta = S.gecmisHafta || h;
     const bugunModu = S.gecmisHafta === 'bugun';
     const gecmisMi = S.gecmisHafta && S.gecmisHafta !== h && !bugunModu;
@@ -1818,15 +1738,10 @@ function rPerPage(){
       ? (S.arsiv.find(a=>a.hafta===S.gecmisHafta)||{skorlar:[]})
       : null;
 
-    // Hafta tipi filtresi — bu haftanın tipini al
-    if(!S.haftaTipleri) S.haftaTipleri={};
-    const aktifTip = S.haftaTipleri[h] || 'Y';
-    const taslakFiltre = g => !g.taslak || g.taslak.includes(aktifTip);
-
     let html='';
 
     // ONAY BEKLİYEN GÖREV UYARISI (sadece Zorunlu görevler, Mevlüt'te gösterilmez)
-    const onayBekleyenler=p.kod===DENETIM_KOD?[]:S.gorevler.filter(g=>taslakFiltre(g)&&((g&&g.atanan)||[]).includes(p.kod)&&g.onem==='Z'&&dur(h,`${g.id}_${p.kod}`)==='onay_bekliyor');
+    const onayBekleyenler=p.kod===DENETIM_KOD?[]:S.gorevler.filter(g=>((g&&g.atanan)||[]).includes(p.kod)&&g.onem==='Z'&&dur(h,`${g.id}_${p.kod}`)==='onay_bekliyor');
     if(onayBekleyenler.length>0){
       html+=`<div style="background:linear-gradient(135deg,rgba(245,166,35,0.18),rgba(245,166,35,0.08));border:1.5px solid #f5a623;border-radius:12px;padding:12px 15px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
         <div style="font-size:24px;flex-shrink:0">⏳</div>
@@ -1941,7 +1856,7 @@ function rPerPage(){
     } else if(bugunModu){
       // BUGÜN MODU - sadece bugünün görevleri
       const bugunGunAdi=(()=>{const g=new Date().getDay();const m={0:'Pazar',1:'Pazartesi',2:'Salı',3:'Çarşamba',4:'Perşembe',5:'Cuma',6:'Cumartesi'};return m[g];})();
-      const bugunGorevler=S.gorevler.filter(g=>g.gun===bugunGunAdi&&taslakFiltre(g)&&((g&&g.atanan)||[]).includes(p.kod));
+      const bugunGorevler=S.gorevler.filter(g=>g.gun===bugunGunAdi&&!isHaftaAtlandi(h,g.id)&&((g&&g.atanan)||[]).includes(p.kod));
       const bYapilan=bugunGorevler.filter(g=>dur(h,`${g.id}_${p.kod}`)==='done');
       // Mevlüt kendi görevlerinde onay beklemez
       const bOnayBekliyor=p.kod===DENETIM_KOD?[]:bugunGorevler.filter(g=>g.onem==='Z'&&dur(h,`${g.id}_${p.kod}`)==='onay_bekliyor');
@@ -2080,7 +1995,7 @@ function rPerPage(){
       };
       const oc={Z:{r:'#cc2200',lbl:'Z'},O:{r:'#996600',lbl:'O'},K:{r:'#006688',lbl:'K'}};
       GUNLER.forEach(gun=>{
-        const gg=S.gorevler.filter(g=>g.gun===gun&&taslakFiltre(g)&&((g&&g.atanan)||[]).includes(p.kod));
+        const gg=S.gorevler.filter(g=>g.gun===gun&&!isHaftaAtlandi(h,g.id)&&((g&&g.atanan)||[]).includes(p.kod));
         if(!gg.length) return;
         const tamam=gg.filter(g=>dur(h,`${g.id}_${p.kod}`)=='done').length;
         const hepsiTamam=tamam===gg.length;
@@ -2279,25 +2194,43 @@ function rPerPage(){
     html+=`</div>`;
 
     const secilenGun=S._perPlanGun||bugunAdiPlan;
-    if(!S.haftaTipleri) S.haftaTipleri={};
-    const aktifTipPlan=S.haftaTipleri[hPlan]||'Y';
-    const tipEtiket={Y:'🔥 Yoğun',S:'☀️ Serbest',T:'🏖️ Tatil'};
-    html+=`<div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;background:rgba(0,0,0,0.06);font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px">${tipEtiket[aktifTipPlan]} haftası</div>`;
-    const gunGorevler=S.gorevler.filter(g=>g.gun===secilenGun&&(!g.taslak||g.taslak.includes(aktifTipPlan)));
+    const hPlanAtla=wK(0);
+    const gunGorevler=S.gorevler.filter(g=>g.gun===secilenGun&&!isHaftaAtlandi(hPlanAtla,g.id));
+    const atlananSayi=S.gorevler.filter(g=>g.gun===secilenGun&&isHaftaAtlandi(hPlanAtla,g.id)).length;
+
+    if(atlananSayi>0&&p.kod===DENETIM_KOD){
+      html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.2);border-radius:9px;margin-bottom:10px">
+        <span style="font-size:11px;color:#7b2d8b;font-weight:600">⏭️ ${atlananSayi} görev bu hafta atlandı</span>
+        <button onclick="atlananGorevleriGoster('${secilenGun}')" style="font-size:10px;color:#7b2d8b;background:none;border:none;cursor:pointer;font-weight:700;text-decoration:underline">Göster</button>
+      </div>`;
+    }
 
     if(gunGorevler.length===0){
       html+=`<div style="text-align:center;padding:40px;color:var(--text2);font-size:13px">${secilenGun} günü için plan yok</div>`;
     } else {
-      Object.keys(BOL).forEach(bol=>{
+      // Madde 6: EĞİTİM en üstte
+      const bolSiraPer=Object.keys(BOL).sort((a,b)=>a==='EĞİTİM'?-1:b==='EĞİTİM'?1:0);
+      bolSiraPer.forEach(bol=>{
         const bg=gunGorevler.filter(g=>g.bolum===bol);
         if(!bg.length) return;
         const b=BOL[bol];
-        html+=`<div style="display:inline-flex;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:${b.b};color:${b.r};margin-bottom:7px">${bol}</div>`;
+        const isEgitim=bol==='EĞİTİM';
+        // Madde 1: Eğitim başlığı büyük ve parlak
+        if(isEgitim){
+          html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;margin-top:4px">
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,${b.r}80,transparent)"></div>
+            <div style="background:linear-gradient(135deg,${b.r},${b.r}cc);color:#fff;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 2px 8px ${b.r}50">🎓 ${bol} ⭐</div>
+            <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,${b.r}80)"></div>
+          </div>`;
+        } else {
+          html+=`<div style="display:inline-flex;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:${b.b};color:${b.r};margin-bottom:7px">${bol}</div>`;
+        }
         bg.forEach(g=>{
           const onemCfg={Z:{r:'#ff4d6a',lbl:onemIsim('Z')},O:{r:'#f5a623',lbl:onemIsim('O')},K:{r:'#00c6d7',lbl:onemIsim('K')}};
           const oc=onemCfg[g.onem||'Z'];
           const atananPer=((g&&g.atanan)||[]).map(k=>{const per=PERSONEL.find(x=>x.kod===k);return per?`<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;background:${per.renk}22;color:${per.renk}">${per.isim}</span>`:k;}).join('');
           const hepsiDone=((g&&g.atanan)||[]).every(k=>dur(hPlan,`${g.id}_${k}`)=='done');
+          const isMevlut=p.kod===DENETIM_KOD;
           html+=`<div style="background:${hepsiDone?'#f0faf4':b.b};border:1px solid ${hepsiDone?'rgba(26,138,74,0.3)':b.r+'30'};border-radius:11px;padding:11px 13px;margin-bottom:7px;${hepsiDone?'opacity:.7':''}">
             <div style="display:flex;align-items:flex-start;gap:8px">
               <div style="width:18px;height:18px;border-radius:5px;background:${hepsiDone?'var(--green)':'transparent'};border:2px solid ${hepsiDone?'var(--green)':oc.r};display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;flex-shrink:0;margin-top:1px">${hepsiDone?'✓':''}</div>
@@ -2308,6 +2241,7 @@ function rPerPage(){
                   ${atananPer}
                 </div>
               </div>
+              ${isMevlut?`<button onclick="gorevAtla('${g.id}')" style="padding:3px 9px;border-radius:7px;border:1px solid rgba(155,89,182,0.4);background:rgba(155,89,182,0.08);color:#7b2d8b;cursor:pointer;font-size:10px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0">⏭️ Atla</button>`:''}
             </div>
           </div>`;
         });
@@ -2475,6 +2409,43 @@ function rPerPage(){
 function tehirKey(h,gid,perKod){return `${h}_${gid}_${perKod}`;}
 function isTehirli(h,gid,perKod){return !!(S.tehirler&&S.tehirler[tehirKey(h,gid,perKod)]);}
 
+// ===== HAFTA ATLA SİSTEMİ (Mevlüt) =====
+// Anahtar: hafta_gid → tüm personeli etkiler
+function isHaftaAtlandi(h,gid){return !!(S.haftaAtla&&S.haftaAtla[`${h}_${gid}`]);}
+
+function atlananGorevleriGoster(gun){
+  const h=wK(0);
+  const atlananlar=S.gorevler.filter(g=>g.gun===gun&&isHaftaAtlandi(h,g.id));
+  if(!atlananlar.length){showN('ℹ️','Atlanan görev yok','');return;}
+  const liste=atlananlar.map(g=>`• ${g.metin}`).join('\n');
+  if(confirm(`Bu hafta atlanan görevler:\n\n${liste}\n\nHepsini geri almak ister misiniz?`)){
+    atlananlar.forEach(g=>{delete S.haftaAtla[`${h}_${g.id}`];});
+    save();showN('↩️','Geri alındı','Görevler tekrar görünüyor');rPerPage();
+  }
+}
+
+function gorevAtla(gid){
+  const h=wK(0);
+  const g=S.gorevler.find(x=>x.id===gid);
+  if(!g) return;
+  if(!confirm(`"${g.metin}" görevi bu hafta tüm personel için gizlenecek.\n\nEmin misiniz?`)) return;
+  if(!S.haftaAtla) S.haftaAtla={};
+  S.haftaAtla[`${h}_${gid}`]=true;
+  save();
+  showN('⏭️','Bu hafta atlandı',g.metin);
+  rPerPage();
+}
+
+function gorevAtlaIptal(gid){
+  const h=wK(0);
+  const g=S.gorevler.find(x=>x.id===gid);
+  if(!g) return;
+  if(!S.haftaAtla) return;
+  delete S.haftaAtla[`${h}_${gid}`];
+  save();
+  showN('↩️','Geri alındı',g.metin);
+  rPerPage();
+}
 // ===== UZUN BAS (LONG PRESS) SİSTEMİ =====
 let _lpTimer=null;
 let _lpProgress=null;
@@ -3091,8 +3062,9 @@ document.getElementById('aksamMo').addEventListener('click',function(e){if(!e.ta
   sel.innerHTML='';
   PERSONEL.forEach(p=>{const o=document.createElement('option');o.value=p.kod;o.textContent=`${p.isim} (${p.kod})`;sel.appendChild(o)});
   perDropGuncelle();
-  // İlk personeli seç
-  if(PERSONEL.length>0) perDropSec(PERSONEL[0].kod);
+  // İlk personel olarak her zaman Mevlüt (ME) seç
+  const ilkPer = PERSONEL.find(p=>p.kod==='ME') || PERSONEL[0];
+  if(ilkPer) perDropSec(ilkPer.kod);
   sync();
 })();
 </script>
