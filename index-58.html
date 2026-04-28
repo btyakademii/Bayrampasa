@@ -107,16 +107,10 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
       <button class="ltab" id="ltabAdmin" onclick="switchTab('admin')">Yönetici</button>
     </div>
     <div id="perF">
-      <!-- Özel personel seçici -->
+      <!-- Personel ızgara seçici -->
       <div style="margin-bottom:14px">
-        <label style="display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500">Personel</label>
-        <div id="perDropBtn" onclick="perDropAc()" style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:rgba(255,255,255,0.7);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none">
-          <div id="perDropRenk" style="width:28px;height:28px;border-radius:7px;background:#ccc;flex-shrink:0"></div>
-          <div id="perDropIsim" style="flex:1;font-size:15px;font-weight:600;color:var(--text)">Seçiniz...</div>
-          <div style="font-size:16px;color:var(--text2)">▾</div>
-        </div>
-        <!-- Açılan liste -->
-        <div id="perDropListe" style="display:none;position:fixed;left:20px;right:20px;background:#fff;border:1px solid var(--border);border-radius:13px;box-shadow:0 8px 24px rgba(0,0,0,0.15);z-index:9999;overflow:hidden;max-height:55vh;overflow-y:auto"></div>
+        <label style="display:block;font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">Personel seçin</label>
+        <div id="perGridListe" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
       </div>
       <select id="perSel" onchange="perSelChange()" style="display:none"></select>
       <div class="fg" id="perSifreGrup" style="display:none">
@@ -328,29 +322,6 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 </div>
 
 <!-- AKŞAM ÖZETİ MODAL -->
-<div class="mo" id="aksamMo">
-  <div class="md" style="max-height:90vh">
-    <div class="mh"></div>
-    <div class="mt">🌙 Akşam Özeti Gönder</div>
-    <div class="fg" style="margin-bottom:10px">
-      <label>Yönetici Adı (mesajda görünecek)</label>
-      <input type="text" id="aksamAdminIsim" placeholder="Yönetici">
-    </div>
-    <div class="fg" style="margin-bottom:10px">
-      <label>Hedef WhatsApp Numarası</label>
-      <input type="tel" id="aksamHedefNo" placeholder="905551234567 (grup veya kişi)">
-      <div style="font-size:10px;color:var(--text2);margin-top:4px">Grup için: gruptan davet linki alarak mesaj atın. Kişi için numara girin.</div>
-    </div>
-    <div style="background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:14px">
-      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px">📋 Özet Önizleme</div>
-      <div id="aksamOnizleme" style="font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.6;max-height:200px;overflow-y:auto"></div>
-    </div>
-    <div class="ma">
-      <button class="bc" onclick="document.getElementById('aksamMo').classList.remove('open')">İptal</button>
-      <button class="bs" onclick="aksamGonder()" style="background:linear-gradient(135deg,#1a8a3a,#1e6b2a)">📲 WhatsApp'ta Aç</button>
-    </div>
-  </div>
-</div>
 
 <!-- YENİ GÖREV MODAL -->
 <div class="mo" id="yeniMo">
@@ -412,7 +383,9 @@ function onemEmoji(k){return{Z:'🔴',O:'🟡',K:'🔵'}[k]||'⚪';}
 const GS=[{id:"g1",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Pano Şahsiyet eğitimi asılacak",atanan:["H","ME"]},{id:"g2",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Rozetlerin verilmesi",atanan:["A"]},{id:"g3",onem:"Z",bolum:"KURUMSAL",gun:"Perşembe",metin:"Haf. Talebeleri Müdüriyet",atanan:["ÖB"]},{id:"g4",onem:"Z",bolum:"KURUMSAL",gun:"Cuma",metin:"Haf. talebesinin Açıklanması",atanan:["ÖF"]},{id:"g5",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"Dahili D. hadisi Şerif ezberi",atanan:["H"]},{id:"g6",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"5. sınıf Atölye",atanan:["ME","A"]},{id:"g7",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Evvabin Namazı kılınması",atanan:["MA"]},{id:"g8",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["E"]},{id:"g9",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Dahili ders şahsiyet eğitimi",atanan:["ÖB"]},{id:"g10",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Büyüğümüzün sohbeti anlatılması",atanan:["ÖF","H"]},{id:"g11",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Hadisi Şeriflerin ikindide Tekrar",atanan:["ME"]},{id:"g12",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Kasidei Bürde",atanan:["A"]},{id:"g13",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Haftanın incisi ezberlenimesi",atanan:["MA"]},{id:"g14",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Tuvaletlerle alakalı ikaz",atanan:["E"]},{id:"g15",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"10 İngilizce kelime ezberi",atanan:["ÖB"]},{id:"g16",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Okulda Cuma namazı",atanan:["H","ME","A","MA","E","ÖB","ÖF"]},{id:"g17",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Cuma yoklaması",atanan:["ÖF"]},{id:"g18",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Atölye çalışmaları",atanan:["H"]},{id:"g19",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Dua namazı",atanan:["ME"]},{id:"g20",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Evradı Şerife",atanan:["A"]},{id:"g21",onem:"Z",bolum:"T.T.S",gun:"Pazartesi",metin:"Kılık Kıyafet Kontrolü",atanan:["H","ME"]},{id:"g22",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["MA"]},{id:"g23",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Kılık Kıyafet Kontrolü",atanan:["E"]},{id:"g24",onem:"Z",bolum:"T.T.S",gun:"Çarşamba",metin:"Kılık Kıyafet Kontrolü",atanan:["ÖB"]},{id:"g25",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Vestiyer dolap Kontrolü",atanan:["ÖF"]},{id:"g26",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Kılık Kıyafet Kontrolü",atanan:["H"]},{id:"g27",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Haftanın talebeleri Pano",atanan:["ME"]},{id:"g28",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["A"]},{id:"g29",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Zilin kontrol edilmesi",atanan:["MA"]},{id:"g30",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["E"]},{id:"g31",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖB"]},{id:"g32",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Zilin kontrol edilmesi",atanan:["ÖF"]},{id:"g33",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Hasta ve İzinlilerin gruba",atanan:["H"]},{id:"g34",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Yemekçi ve müezzin yazılması",atanan:["ME"]},{id:"g35",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Zilin kontrol edilmesi",atanan:["A"]},{id:"g36",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Hasta ve İzinlilerin gruba",atanan:["MA"]},{id:"g37",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Sınıf Tahtalarının temizliği",atanan:["E"]},{id:"g38",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Kalemlerin Doldurulması",atanan:["ÖB"]},{id:"g39",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Rozetlerin toplanması",atanan:["ÖF"]},{id:"g40",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Yemekçi ve müezzin yazılması",atanan:["H"]},{id:"g41",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Zilin kontrol edilmesi",atanan:["ME"]},{id:"g42",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Hasta ve İzinlilerin gruba",atanan:["A"]},{id:"g43",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmen Puan Kağıdı",atanan:["MA"]},{id:"g44",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmenlere Terlik",atanan:["E"]},{id:"g45",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmen İkramı",atanan:["ÖB"]},{id:"g46",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖF"]},{id:"g47",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Zilin kontrol edilmesi",atanan:["H"]},{id:"g48",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Hasta ve İzinlilerin gruba",atanan:["ME"]},{id:"g49",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Öğretmenlere Terlik",atanan:["A"]},{id:"g50",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["MA"]},{id:"g51",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Zilin kontrol edilmesi",atanan:["E"]},{id:"g52",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["ÖB"]},{id:"g53",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Pazartesi",metin:"Veli grubuna Haftanın Etüt programı",atanan:["ÖF"]},{id:"g54",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın talebeleri Fotoğraf",atanan:["H"]},{id:"g55",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın Hadisi Şerifi",atanan:["ME"]},{id:"g56",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Çarşamba",metin:"Sohbet fotoğrafının paylaşılması",atanan:["A"]},{id:"g57",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Dahili Ders İşlenen konular",atanan:["MA"]},{id:"g58",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Haf. T. Müdüriyet Fotoğrafı",atanan:["E"]},{id:"g59",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Cumartesi",metin:"Öğretmen Puanları",atanan:["ÖB"]}];
 
 const HAZIR_GOREVLER_VARSAYILAN=['Pano Şahsiyet eğitimi asılacak','Rozetlerin verilmesi','Haftanın talebeleri','Pano Hadisin Gruba Atılması','Kursun gezilip eksiklerin belirlenmesi','5. sınıf Atölye','Takviye Ödev Hatırlatma','8. Sınıf Soru sayısı alınması','Etüt verimlilik puanı','Dahili D. hadisi şerif ezberi','Kılık Kıyafet Kontrolü','Yatak Kontrol','Temizlik Kontrol','Namaz','Sur Çevrilmesi','Günlük Mahal Temizliği','Okul dönüşü yoklama ve arama','Veli grubuna Haftanın Etüt programı','Yemekçi ve müezzin yazılması','Zilin kontrol edilmesi','Hasta ve İzinlilerin gruba yazılması','Programın Gruba Atılması','Haf. İyileri Müdüriyet','Evvabin Namazı kılınması','Hadisi Şeriflerin ikindide Tekrar','Dahili ders şahsiyet eğitimi','Vestiyer dolap Kontrolü','Haftanın talebeleri Fotograf','Haftanın Hadisi Şerifi Foto','Şahsiyet İşlenecek konu','Haf. Kötüleri Müdüriyet','Haftanın incisi hazırlanması','Bekar odası Kontrol','Atölye Videosunun hazırlanması','Sohbet fotoğrafının paylaşılması','Rozetlerin toplanması','B. Sohbetinden bir kesit','Cuma etkinlik planlaması','Kasidei Bürde','Haftanın incisi ezberlenmesi','Tuvaletlerle alakalı ikaz','10 İngilizce kelime ezberi','Takviye Ödev Kontrol','Büyüğümüzün sohbeti anlatılması','Haf. T. Müdüriyet Fotografı','Deneme Bilgi kartı paylaşılması','Sınıf Tahtalarının temizliği Kalemlerin Doldurulması','Öğretmen Puan Kağıdı','Öğretmenlere Terlik','Öğretmen İkramı','Tahta Kalemi','Evradı Şerif İçin Aramak','Okulda Cuma namazı','Cuma yoklaması','Atölye çalışmaları','Ders programlarının panoya asılması','Dahili Ders İşlenen konular','Soru Sayısı Paylaşımı','Dua namazı','Evradı Şerife','Öğretmen Puanları','QUİZ Sonuçları','T.T.T Sonuçları'];
-let S={user:null,wo:0,gun:"Pazartesi",gorevler:JSON.parse(JSON.stringify(GS)),durumlar:{},arsiv:[],gecmisHafta:null,adminIsim:"Yönetici",adminSifre:"1234",toplantıKararlari:[],bolumler:null,onemIsimleri:{Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'},tehirler:{},tehirTalepleri:[],hazirGorevler:[...HAZIR_GOREVLER_VARSAYILAN]};
+let S={user:null,wo:0,gun:"Pazartesi",gorevler:JSON.parse(JSON.stringify(GS)),durumlar:{},arsiv:[],gecmisHafta:null,adminIsim:"Yönetici",adminSifre:"1234",toplantıKararlari:[],bolumler:null,onemIsimleri:{Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'},tehirler:{},tehirTalepleri:[],hazirGorevler:[...HAZIR_GOREVLER_VARSAYILAN],haftaAtla:{},_mevlutAdmin:false};
+let bugunDetayAcik = false;
+let kararDetayAcik = false;
 
 // ===== SUPABASE ENTEGRASYONU =====
 const SB_URL = 'https://zowvygqlbrtotkygszsg.supabase.co';
@@ -630,53 +603,35 @@ function switchTab(t){
 }
 
 function perDropGuncelle(){
-  // Listeyi personel ile doldur
-  const liste=document.getElementById('perDropListe');
-  if(!liste) return;
-  liste.innerHTML=PERSONEL.map(p=>`
-    <div onclick="perDropSec('${p.kod}')" style="display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid rgba(0,0,0,0.06);cursor:pointer;transition:background .1s" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''">
-      <div style="width:34px;height:34px;border-radius:9px;background:${p.renk};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">${p.kod}</div>
-      <div style="font-size:15px;font-weight:600;color:#111;flex:1">${p.isim}</div>
-      ${p.sifre?'<span style="font-size:12px">🔒</span>':''}
-    </div>`).join('');
+  const grid=document.getElementById('perGridListe');
+  if(!grid) return;
+  // Seçili personeli bul
+  const seciliKod=document.getElementById('perSel').value;
+  grid.innerHTML=PERSONEL.map(p=>{
+    const secili=p.kod===seciliKod;
+    return `<div onclick="perGridSec('${p.kod}')" style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:${secili?p.renk+'22':'rgba(255,255,255,0.7)'};border:2px solid ${secili?p.renk:'rgba(0,0,0,0.1)'};border-radius:12px;cursor:pointer;transition:all .15s;user-select:none">
+      <div style="width:36px;height:36px;border-radius:9px;background:${p.renk};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">${p.kod}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.isim}</div>
+        ${p.sifre?'<div style="font-size:10px;color:#888">🔒 Şifreli</div>':''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function perDropAc(){
-  const liste=document.getElementById('perDropListe');
-  const btn=document.getElementById('perDropBtn');
-  const acik=liste.style.display==='block';
-  if(!acik){
-    // Butonun pozisyonuna göre fixed konumlandır
-    const rect=btn.getBoundingClientRect();
-    liste.style.top=(rect.bottom+4)+'px';
-    liste.style.left='20px';
-    liste.style.right='20px';
-  }
-  liste.style.display=acik?'none':'block';
-}
-
-function perDropSec(kod){
+function perGridSec(kod){
   const per=pK(kod);
   if(!per) return;
-  // Gizli select'i güncelle
   document.getElementById('perSel').value=kod;
-  // Buton görünümünü güncelle
-  document.getElementById('perDropRenk').style.background=per.renk;
-  document.getElementById('perDropIsim').textContent=per.isim;
-  // Listeyi kapat
-  document.getElementById('perDropListe').style.display='none';
-  // Şifre alanını göster/gizle
-  perSelChange();
+  perDropGuncelle(); // ızgarayı güncelle (seçili vurgusu)
+  perSelChange();    // şifre alanını göster/gizle
 }
 
-// Dışarı tıklanınca listeyi kapat
-document.addEventListener('click',function(e){
-  const btn=document.getElementById('perDropBtn');
-  const liste=document.getElementById('perDropListe');
-  if(btn&&liste&&!btn.contains(e.target)&&!liste.contains(e.target)){
-    liste.style.display='none';
-  }
-});
+function perDropAc(){} // artık kullanılmıyor, uyumluluk için bırakıldı
+function perDropSec(kod){ perGridSec(kod); }
+
+// Dışarı tıklanınca listeyi kapat (artık gerekmez ama bırakıldı)
+document.addEventListener('click',function(e){});
 
 function perSelChange(){
   const per=pK(document.getElementById('perSel').value);
@@ -711,10 +666,8 @@ function doLoginPer(per){
     const toplamOnayBekleyen=PERSONEL.filter(x=>x.kod!==DENETIM_KOD).reduce((acc,px)=>{
       return acc+S.gorevler.filter(g=>((g&&g.atanan)||[]).includes(px.kod)&&g.onem==='Z'&&dur(h,`${g.id}_${px.kod}`)==='onay_bekliyor').length;
     },0);
-    const toplamTehirTalep=((S.tehirTalepleri||[]).filter(t=>t.h===h)).length;
-    const toplamBekleyen=toplamOnayBekleyen+toplamTehirTalep;
-    if(toplamBekleyen>0){
-      setTimeout(()=>showN('⏳','Onay bekleyen var',`${toplamOnayBekleyen>0?toplamOnayBekleyen+' görev onayı':''} ${toplamTehirTalep>0?(toplamOnayBekleyen>0?'· ':'')+toplamTehirTalep+' tehir talebi':''}`),400);
+    if(toplamOnayBekleyen>0){
+      setTimeout(()=>showN('⏳','Onay bekleyen var',`${toplamOnayBekleyen} görev onayı`),400);
     }
   }
 }
@@ -724,7 +677,7 @@ function loginAdmin(){
   if(girilen!==dogru){showN('❌','Hatalı şifre','');return}
   S.user='admin';goPage('dashPage')
 }
-function logout(){S.user=null;goPage('loginPage')}
+function logout(){S.user=null;S._mevlutAdmin=false;goPage('loginPage')}
 
 function rDash(){
   const h=wK(S.wo);const{t,d,p}=hes(h);
@@ -781,12 +734,18 @@ function rDash(){
     });
   }
 
+  // Bugünkü görevler bölümünün açık/kapalı durumunu koru (global değişken ile)
+
   document.getElementById('dBugun').innerHTML=`
     <div onclick="togBD()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:11px;cursor:pointer;user-select:none">
       <div style="font-size:12px;font-weight:700;color:var(--text);letter-spacing:.05em;text-transform:uppercase">☀️ Bugünkü Görevler — ${bugunAdi}</div>
       <div id="bugunOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
     </div>
-    <div id="bugunDetay" style="display:none;margin-top:8px">${icerik}</div>`;
+    <div id="bugunDetay" style="display:${bugunDetayAcik?'block':'none'};margin-top:8px">${icerik}</div>`;
+  if(bugunDetayAcik){
+    const ok=document.getElementById('bugunOk');
+    if(ok) ok.style.transform='rotate(90deg)';
+  }
 
   // EĞİTİM DURUMU KARTI
   const egitimGorevler=S.gorevler.filter(g=>g.bolum==='EĞİTİM'&&g.gun===bugunAdi&&!isHaftaAtlandi(h,g.id));
@@ -814,17 +773,17 @@ function rDash(){
 function togBD(){
   const el=document.getElementById('bugunDetay');
   const ok=document.getElementById('bugunOk');
-  const acik=el.style.display==='block';
-  el.style.display=acik?'none':'block';
-  if(ok) ok.style.transform=acik?'rotate(0deg)':'rotate(90deg)';
+  bugunDetayAcik=!bugunDetayAcik;
+  el.style.display=bugunDetayAcik?'block':'none';
+  if(ok) ok.style.transform=bugunDetayAcik?'rotate(90deg)':'rotate(0deg)';
 }
 
 function togKD(){
   const el=document.getElementById('kararDetay');
   const ok=document.getElementById('kararOk');
-  const acik=el.style.display==='block';
-  el.style.display=acik?'none':'block';
-  if(ok) ok.style.transform=acik?'rotate(0deg)':'rotate(90deg)';
+  kararDetayAcik=!kararDetayAcik;
+  el.style.display=kararDetayAcik?'block':'none';
+  if(ok) ok.style.transform=kararDetayAcik?'rotate(90deg)':'rotate(0deg)';
 }
 
 function rDashKarar(){
@@ -872,7 +831,11 @@ function rDashKarar(){
       <div style="font-size:12px;font-weight:700;color:var(--purple);letter-spacing:.05em;text-transform:uppercase">📌 Vazifeler ${toplam>0?`<span style="font-size:11px;font-weight:600;margin-left:4px;opacity:.7">${biten}/${toplam}</span>`:''}</div>
       <div id="kararOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
     </div>
-    <div id="kararDetay" style="display:none;margin-top:8px">${icerik}</div>`;
+    <div id="kararDetay" style="display:${kararDetayAcik?'block':'none'};margin-top:8px">${icerik}</div>`;
+  if(kararDetayAcik){
+    const ok=document.getElementById('kararOk');
+    if(ok) ok.style.transform='rotate(90deg)';
+  }
 }
 
 function kararTog(id){
@@ -1457,32 +1420,6 @@ function aksamOzetiOlustur(adminIsim){
   return mesaj;
 }
 
-function aksamOzetiModal(){
-  document.getElementById('aksamAdminIsim').value=S.adminIsim||'Yönetici';
-  document.getElementById('aksamHedefNo').value='';
-  const onizleme=aksamOzetiOlustur();
-  document.getElementById('aksamOnizleme').textContent=onizleme;
-  document.getElementById('aksamMo').classList.add('open');
-}
-
-function aksamGonder(){
-  const isim=document.getElementById('aksamAdminIsim').value.trim()||'Yönetici';
-  const no=document.getElementById('aksamHedefNo').value.trim().replace(/\s/g,'');
-  // Yönetici adını güncelle
-  S.adminIsim=isim; save();
-  const mesaj=aksamOzetiOlustur(isim);
-  const url=no?`https://wa.me/${no}?text=${encodeURIComponent(mesaj)}`:`https://wa.me/?text=${encodeURIComponent(mesaj)}`;
-  window.open(url,'_blank');
-  document.getElementById('aksamMo').classList.remove('open');
-}
-
-// adminIsim değişince önizlemeyi güncelle
-document.addEventListener('DOMContentLoaded',()=>{
-  const inp=document.getElementById('aksamAdminIsim');
-  if(inp) inp.addEventListener('input',()=>{
-    document.getElementById('aksamOnizleme').textContent=aksamOzetiOlustur(inp.value||'Yönetici');
-  });
-});
 
 function wpHatirlatici(kod){
   const p=PERSONEL.find(x=>x.kod===kod);if(!p||!p.wp)return;
@@ -1547,7 +1484,6 @@ function wpHatGonder(kod,tip){
     }
   }
   mesaj+=`━━━━━━━━━━━━━━━━\n`;
-  mesaj+=`🔗 ${location.href.split('?')[0]}\n`;
   mesaj+=`_Bayrampaşa Yönetim Sistemi_`;
   const url=`https://wa.me/${p.wp}?text=${encodeURIComponent(mesaj)}`;
   window.open(url,'_blank');
@@ -1871,38 +1807,14 @@ function rPerPage(){
         const o=oc[g.onem||'Z'];
         const isZorunlu=g.onem==='Z';
         if(p.kod===DENETIM_KOD && durum==='onay_bekliyor') durum='pending';
-        // Tehir kontrolü
-        const tehirli=isTehirli(h,g.id,p.kod);
-        const mevcutTehirTalep=(S.tehirTalepleri||[]).find(t=>t.h===h&&t.gid===g.id&&t.perKod===p.kod);
-        if(tehirli){
-          return `<div class="pgc2" style="background:#f0f0f0;border:1.5px solid #aaa;opacity:.65;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()">
-            <div class="chk" style="border-color:#aaa;color:#888">⏸</div>
-            <div style="flex:1">
-              <div style="font-size:14px;font-weight:600;color:#666;text-decoration:line-through">${g.metin}</div>
-              <div style="font-size:9px;color:#888;margin-top:2px">Tehir edildi · İptal için 2sn uzun bas</div>
-            </div>
-            <span style="font-size:9px;color:#888;font-weight:700;background:#ddd;padding:2px 7px;border-radius:5px">Tehir</span>
-          </div>`;
-        }
-        if(mevcutTehirTalep){
-          return `<div class="pgc2" style="background:#fdf0ff;border:1.5px solid #9b59b6;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()">
-            <div class="chk" style="border-color:#9b59b6;background:#9b59b622">⏸</div>
-            <div style="flex:1">
-              <div style="font-size:14px;font-weight:600;color:#7b2d8b">${g.metin}</div>
-              <div style="font-size:9px;color:#9b59b6;margin-top:2px">İptal için 2sn uzun bas</div>
-            </div>
-            <span style="font-size:9px;color:#9b59b6;font-weight:700;background:#9b59b622;padding:2px 7px;border-radius:5px">Onay Bekliyor</span>
-          </div>`;
-        }
-        const tehirBtn=`<button onmousedown="tehirLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()" style="padding:3px 8px;border-radius:6px;border:1px solid #9b59b666;background:#9b59b611;color:#7b2d8b;cursor:pointer;font-size:9px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;margin-left:4px;position:relative;overflow:hidden;user-select:none">⏸ Tehir</button>`;
         if(durum==='done'){
-          return `<div class="pgc2" style="background:#d4f5e0;border:1.5px solid #1a8a4a" ${!isZorunlu||p.kod===DENETIM_KOD?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}>
+          return `<div class="pgc2" style="background:#d4f5e0;border:1.5px solid #1a8a4a" ${!isZorunlu||p.kod===DENETIM_KOD?`onmousedown="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" ontouchend="_lpClear()"`:''}>
             <div class="chk done">✓</div>
             <div style="flex:1"><div style="font-size:14px;font-weight:600;text-decoration:line-through;color:#1a8a4a;opacity:.7">${g.metin}</div><div style="font-size:9px;color:#1a8a4a;margin-top:2px">${g.bolum}</div></div>
             <span style="font-size:13px;color:#1a8a4a;font-weight:800">✓</span>
           </div>`;
         } else if(durum==='onay_bekliyor'&&isZorunlu){
-          return `<div class="pgc2" style="background:#fff8e6;border:1.5px solid #f5a623" onclick="perST('${h}','${g.id}','${p.kod}')">
+          return `<div class="pgc2" style="background:#fff8e6;border:1.5px solid #f5a623" onmousedown="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" ontouchend="_lpClear()">
             <div class="chk" style="border-color:#f5a623;background:#f5a62322">⏳</div>
             <div style="flex:1">
               <div style="font-size:14px;font-weight:600;text-decoration:line-through;color:#996600;opacity:.8">${g.metin}</div>
@@ -1911,19 +1823,17 @@ function rPerPage(){
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
               <span style="font-size:10px;color:#f5a623;font-weight:700;background:#f5a62322;padding:2px 7px;border-radius:5px">Onay Bekliyor</span>
               <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:2px 7px;border-radius:5px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:8px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;position:relative;overflow:hidden;user-select:none">↩ İptal (2sn)</button>
-              ${tehirBtn}
             </div>
           </div>`;
         } else {
-          return `<div class="pgc2" style="background:${b.b};border:1.5px solid ${b.r}55" onclick="perST('${h}','${g.id}','${p.kod}')">
+          return `<div class="pgc2" style="background:${b.b};border:1.5px solid ${b.r}55;position:relative;overflow:hidden;user-select:none" onmousedown="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" ontouchend="_lpClear()">
             <div class="chk"></div>
             <div style="flex:1"><div style="font-size:14px;font-weight:600">${g.metin}</div>
             <div style="display:flex;align-items:center;gap:5px;margin-top:3px;flex-wrap:wrap">
               <span style="font-size:9px;color:var(--text2)">${g.bolum}</span>
               <span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}22;padding:1px 6px;border-radius:4px">${o.lbl}</span>
-              ${!isZorunlu?`<span style="font-size:9px;color:var(--green);opacity:.7">✓ Tıklayarak işaretle</span>`:`<span style="font-size:9px;color:#996600;opacity:.7">⏳ Onay gerekli</span>`}
+              ${!isZorunlu?`<span style="font-size:9px;color:var(--green);opacity:.7">✓ 1sn basılı tut</span>`:`<span style="font-size:9px;color:#996600;opacity:.7">⏳ Onay gerekli · 1sn basılı tut</span>`}
             </div></div>
-            ${tehirBtn}
           </div>`;
         }
       }
@@ -1957,18 +1867,21 @@ function rPerPage(){
             bVakitsizGorevler.push(g);
           }
         });
-        // Vakitsiz görevleri en üste
+        // Vakitsiz görevleri en üste (sadece yapılmayanlar)
         if(bVakitsizGorevler.length>0){
-          html+=`<div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;padding:4px 10px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--text2)">📋 Belirsiz</div>`;
-          bVakitsizGorevler.forEach(g=>{
-            const dr=dur(h,`${g.id}_${p.kod}`);
-            html+=gorevKartB(g,dr==='onay_bekliyor'&&p.kod===DENETIM_KOD?'pending':dr);
-          });
+          const yapilmayanVakitsiz=bVakitsizGorevler.filter(g=>!['done'].includes(dur(h,`${g.id}_${p.kod}`)));
+          if(yapilmayanVakitsiz.length>0){
+            html+=`<div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;padding:4px 10px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--text2)">📋 Belirsiz</div>`;
+            yapilmayanVakitsiz.forEach(g=>{
+              const dr=dur(h,`${g.id}_${p.kod}`);
+              html+=gorevKartB(g,dr==='onay_bekliyor'&&p.kod===DENETIM_KOD?'pending':dr);
+            });
+          }
         }
-        // Vakit grupları sırasıyla
+        // Vakit grupları sırasıyla (sadece yapılmayanlar)
         bVakitSira.forEach(v=>{
-          const gList=bVakitliGorevler[v];
-          if(!gList||!gList.length) return;
+          const gList=(bVakitliGorevler[v]||[]).filter(g=>!['done'].includes(dur(h,`${g.id}_${p.kod}`)));
+          if(!gList.length) return;
           const vc=bVakitCfg[v];
           html+=`<div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin:10px 0 8px;padding:4px 10px;border-radius:7px;background:${vc.bg};border:1px solid ${vc.border};color:${vc.renk}">${vc.ikon} ${vc.isim}</div>`;
           gList.forEach(g=>{
@@ -1979,6 +1892,33 @@ function rPerPage(){
         // Hepsi bittiyse kutlama
         if(bYapilacak.length===0&&bOnayBekliyor.length===0){
           html+=`<div style="text-align:center;padding:16px;background:#d4f5e0;border-radius:12px;color:#1a8a4a;font-weight:700;margin-top:12px">🎉 Bugünkü tüm görevler tamam!</div>`;
+        }
+        // YAPILAN GÖREVLER — katlanabilir bölüm
+        if(bYapilan.length>0){
+          const yapilanId='yg_'+p.kod;
+          html+=`<div style="margin-top:16px;border-radius:12px;border:1px solid rgba(26,138,74,0.25);overflow:hidden">
+            <div onclick="(function(){var el=document.getElementById('${yapilanId}');var ok=document.getElementById('${yapilanId}_ok');el.style.display=el.style.display==='none'?'block':'none';ok.style.transform=el.style.display==='none'?'rotate(0deg)':'rotate(90deg)'})()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(26,138,74,0.08);cursor:pointer;user-select:none">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:16px">✅</span>
+                <span style="font-size:13px;font-weight:700;color:#1a6a3a">Yapılan Görevler</span>
+                <span style="font-size:11px;font-weight:800;color:#fff;background:#1a8a4a;padding:1px 8px;border-radius:10px">${bYapilan.length}</span>
+              </div>
+              <span id="${yapilanId}_ok" style="font-size:18px;color:#1a8a4a;transition:transform .2s">›</span>
+            </div>
+            <div id="${yapilanId}" style="display:none;padding:10px 12px;background:rgba(26,138,74,0.03)">
+              ${bYapilan.map(g=>{
+                const isZorunlu=g.onem==='Z';
+                const iptalEvent=(!isZorunlu||p.kod===DENETIM_KOD)?`onmousedown="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" ontouchend="_lpClear()"`:'' ;
+                return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#d4f5e0;border:1px solid rgba(26,138,74,0.2);border-radius:10px;margin-bottom:6px;position:relative;overflow:hidden;user-select:none" ${iptalEvent}>
+                <div style="width:20px;height:20px;border-radius:6px;background:#1a8a4a;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;flex-shrink:0">✓</div>
+                <div style="flex:1">
+                  <div style="font-size:13px;font-weight:600;text-decoration:line-through;color:#1a6a3a;opacity:.8">${g.metin}</div>
+                  <div style="font-size:10px;color:#1a8a4a;margin-top:1px">${g.bolum}${!isZorunlu||p.kod===DENETIM_KOD?' · 1sn basılı tut → geri al':''}</div>
+                </div>
+              </div>`;
+              }).join('')}
+            </div>
+          </div>`;
         }
       }
       document.getElementById('perB').innerHTML=html;
@@ -2029,14 +1969,9 @@ function rPerPage(){
             const b=BOL[g.bolum]||{r:'#888',b:'#f0f0f0'};
             const o=oc[g.onem||'Z'];
             const isZorunlu=g.onem==='Z';
-            const wTehirli=isTehirli(h,g.id,p.kod);
-            const wTehirTalep=(S.tehirTalepleri||[]).find(t=>t.h===h&&t.gid===g.id&&t.perKod===p.kod);
-            if(wTehirli){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f0f0;border-left:3px solid #aaa;border-radius:6px;margin-bottom:5px;opacity:.65;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #aaa;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#888">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#666;text-decoration:line-through">${g.metin}</div><div style="font-size:8px;color:#999;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#888;font-weight:700;background:#ddd;padding:1px 6px;border-radius:3px">Tehir</span></div>`;return;}
-            if(wTehirTalep){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fdf0ff;border-left:3px solid #9b59b6;border-radius:6px;margin-bottom:5px;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #9b59b6;background:#9b59b622;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#9b59b6">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#7b2d8b">${g.metin}</div><div style="font-size:8px;color:#9b59b6;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#9b59b6;font-weight:700;background:#9b59b622;padding:1px 6px;border-radius:3px">Onay Bek.</span></div>`;return;}
             const canClick=!isZorunlu||(isZorunlu&&dr!=='done');
             const onayBekliyor=isZorunlu&&dr==='onay_bekliyor';
-            const wBtn=`<button onmousedown="tehirLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()" style="padding:2px 6px;border-radius:5px;border:1px solid #9b59b666;background:#9b59b611;color:#7b2d8b;cursor:pointer;font-size:8px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;position:relative;overflow:hidden;user-select:none">⏸</button>`;
-            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div>${dr!=='done'?wBtn:''}</div>`;
+            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div></div>`;
           });
           html+=`</div>`;
         }
@@ -2053,14 +1988,9 @@ function rPerPage(){
             const b=BOL[g.bolum]||{r:'#888',b:'#f0f0f0'};
             const o=oc[g.onem||'Z'];
             const isZorunlu=g.onem==='Z';
-            const wTehirli=isTehirli(h,g.id,p.kod);
-            const wTehirTalep=(S.tehirTalepleri||[]).find(t=>t.h===h&&t.gid===g.id&&t.perKod===p.kod);
-            if(wTehirli){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f0f0;border-left:3px solid #aaa;border-radius:6px;margin-bottom:5px;opacity:.65;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #aaa;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#888">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#666;text-decoration:line-through">${g.metin}</div><div style="font-size:8px;color:#999;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#888;font-weight:700;background:#ddd;padding:1px 6px;border-radius:3px">Tehir</span></div>`;return;}
-            if(wTehirTalep){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fdf0ff;border-left:3px solid #9b59b6;border-radius:6px;margin-bottom:5px;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #9b59b6;background:#9b59b622;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#9b59b6">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#7b2d8b">${g.metin}</div><div style="font-size:8px;color:#9b59b6;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#9b59b6;font-weight:700;background:#9b59b622;padding:1px 6px;border-radius:3px">Onay Bek.</span></div>`;return;}
             const canClick=!isZorunlu||(isZorunlu&&dr!=='done');
             const onayBekliyor=isZorunlu&&dr==='onay_bekliyor';
-            const wBtn=`<button onmousedown="tehirLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()" style="padding:2px 6px;border-radius:5px;border:1px solid #9b59b666;background:#9b59b611;color:#7b2d8b;cursor:pointer;font-size:8px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;position:relative;overflow:hidden;user-select:none">⏸</button>`;
-            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div>${dr!=='done'?wBtn:''}</div>`;
+            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div></div>`;
           });
         });
 
@@ -2305,43 +2235,25 @@ function rPerPage(){
       <div><div style="font-size:14px;font-weight:800">Denetim Paneli</div><div style="font-size:11px;color:var(--text2);margin-top:2px">${bugunGunAdi} — 🔴 Zorunlu görevler (onay gerektiren)</div></div>
     </div>`;
 
-    // Tehir Talepleri bölümü
-    const aktifTehirTalepleri=(S.tehirTalepleri||[]).filter(t=>t.h===h);
-    if(aktifTehirTalepleri.length>0){
-      html+=`<div style="background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.3);border-radius:13px;margin-bottom:14px;overflow:hidden">
-        <div style="padding:10px 14px;background:rgba(155,89,182,0.12);border-bottom:1px solid rgba(155,89,182,0.2);display:flex;align-items:center;gap:8px">
-          <span style="font-size:18px">⏸️</span>
-          <div><div style="font-size:13px;font-weight:800;color:#7b2d8b">Tehir Talepleri</div><div style="font-size:10px;color:#9b59b6">${aktifTehirTalepleri.length} talep onay bekliyor</div></div>
-        </div>`;
-      aktifTehirTalepleri.forEach(t=>{
-        const gorev=S.gorevler.find(g=>g.id===t.gid);
-        const per=PERSONEL.find(x=>x.kod===t.perKod);
-        if(!gorev||!per) return;
-        html+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(155,89,182,0.1)">
-          <div style="width:28px;height:28px;border-radius:8px;background:${per.renk};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">${per.kod}</div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:600">${gorev.metin}</div><div style="font-size:10px;color:var(--text2);margin-top:1px">${per.isim} · ${gorev.bolum}</div></div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <button onclick="tehirOnay('${t.h}','${t.gid}','${t.perKod}')" style="padding:4px 10px;border-radius:7px;border:none;background:linear-gradient(135deg,#7b2d8b,#5e2270);color:#fff;cursor:pointer;font-size:10px;font-weight:700;font-family:'Outfit',sans-serif">✓ Onayla</button>
-            <button onclick="tehirReddet('${t.h}','${t.gid}','${t.perKod}')" style="padding:4px 10px;border-radius:7px;border:1px solid #ff4d6a44;background:#ff4d6a11;color:#ff4d6a;cursor:pointer;font-size:10px;font-weight:700;font-family:'Outfit',sans-serif">✗ Reddet</button>
-          </div>
-        </div>`;
-      });
-      html+=`</div>`;
-    }
-
-    // Diğer personellerin bugünkü SADECE ZORUNlU (Z) görevleri (onay mekanizması)
+    // Tüm haftanın onay bekleyen ZORUNlu görevleri (sadece bugün değil)
     const digerPer=PERSONEL.filter(x=>x.kod!==DENETIM_KOD);
     let hepsiBitti=true;
+    let toplamOnayBekliyor=0;
 
     digerPer.forEach(per=>{
-      const bugunZorunlu=S.gorevler.filter(g=>g.gun===bugunGunAdi&&((g&&g.atanan)||[]).includes(per.kod)&&g.onem==='Z');
-      if(!bugunZorunlu.length) return;
+      // Tüm günlerden zorunlu görevler — onay bekleyen veya yapılmayan
+      const tumZorunlu=S.gorevler.filter(g=>((g&&g.atanan)||[]).includes(per.kod)&&g.onem==='Z'&&!isHaftaAtlandi(h,g.id));
+      if(!tumZorunlu.length) return;
 
-      const yapilan=bugunZorunlu.filter(g=>dur(h,`${g.id}_${per.kod}`)=='done');
-      const onayBekliyor=bugunZorunlu.filter(g=>dur(h,`${g.id}_${per.kod}`)=='onay_bekliyor');
+      const yapilan=tumZorunlu.filter(g=>dur(h,`${g.id}_${per.kod}`)=='done');
+      const onayBekliyor=tumZorunlu.filter(g=>dur(h,`${g.id}_${per.kod}`)=='onay_bekliyor');
+      // Bugünkü yapılmayanlar (diğer günler henüz gelmemiş sayılır)
+      const bugunZorunlu=tumZorunlu.filter(g=>g.gun===bugunGunAdi);
       const yapilmayan=bugunZorunlu.filter(g=>!['done','onay_bekliyor'].includes(dur(h,`${g.id}_${per.kod}`)));
-      const pct=Math.round(yapilan.length/bugunZorunlu.length*100);
+      toplamOnayBekliyor+=onayBekliyor.length;
+      const pct=tumZorunlu.length?Math.round(yapilan.length/tumZorunlu.length*100):0;
       if(onayBekliyor.length>0||yapilmayan.length>0) hepsiBitti=false;
+      if(!onayBekliyor.length&&!yapilmayan.length) return; // Temizse gösterme
 
       html+=`<div style="background:var(--card2);border:1px solid var(--border);border-radius:13px;margin-bottom:12px;overflow:hidden">
         <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:${per.renk}18;border-bottom:1px solid ${per.renk}22">
@@ -2357,7 +2269,7 @@ function rPerPage(){
         onayBekliyor.forEach(g=>{
           html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fff8e6;border-left:3px solid #f5a623;border-radius:0 8px 8px 0;margin-bottom:5px">
             <div style="width:20px;height:20px;border-radius:6px;background:#f5a62322;border:2px solid #f5a623;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">⏳</div>
-            <div style="flex:1;font-size:13px;font-weight:600;text-decoration:line-through;color:#996600;opacity:.85">${g.metin}</div>
+            <div style="flex:1;font-size:13px;font-weight:600;text-decoration:line-through;color:#996600;opacity:.85">${g.metin} <span style="font-size:10px;opacity:.7">(${g.gun})</span></div>
             <div style="display:flex;gap:6px;flex-shrink:0">
               <button onmousedown="_lpStart(this,2000,()=>denetimOnay('${h}','${g.id}','${per.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,2000,()=>denetimOnay('${h}','${g.id}','${per.kod}'))" ontouchend="_lpClear()" style="padding:5px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,#1a8a3a,#1e6b2a);color:#fff;cursor:pointer;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;position:relative;overflow:hidden;user-select:none">✓ Onayla (2sn)</button>
               <button onmousedown="_lpStart(this,2000,()=>denetimReddet('${h}','${g.id}','${per.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,2000,()=>denetimReddet('${h}','${g.id}','${per.kod}'))" ontouchend="_lpClear()" style="padding:5px 11px;border-radius:8px;border:1px solid #ff4d6a44;background:#ff4d6a11;color:#ff4d6a;cursor:pointer;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;position:relative;overflow:hidden;user-select:none">✗ Reddet (2sn)</button>
@@ -2451,11 +2363,25 @@ function gorevAtlaIptal(gid){
 let _lpTimer=null;
 let _lpProgress=null;
 let _lpEl=null;
+let _lpStartX=0;
+let _lpStartY=0;
 
 function _lpStart(el,ms,onDone){
-  try{event.preventDefault();event.stopPropagation();}catch(e){}
   _lpClear();
   _lpEl=el;
+  // Başlangıç koordinatlarını kaydet
+  try{
+    const ev=window.event||arguments[3];
+    if(ev&&ev.touches){_lpStartX=ev.touches[0].clientX;_lpStartY=ev.touches[0].clientY;}
+    else if(ev){_lpStartX=ev.clientX;_lpStartY=ev.clientY;}
+  }catch(e){}
+  // touchmove ile scroll algılama
+  function onTouchMove(e){
+    const dx=e.touches[0].clientX-_lpStartX;
+    const dy=e.touches[0].clientY-_lpStartY;
+    if(Math.abs(dx)>8||Math.abs(dy)>8){_lpClear();document.removeEventListener('touchmove',onTouchMove);}
+  }
+  document.addEventListener('touchmove',onTouchMove,{passive:true});
   // Progress bar oluştur
   const bar=document.createElement('div');
   bar.style.cssText='position:absolute;bottom:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#9b59b6,#7b2d8b);border-radius:0 0 6px 6px;transition:width '+ms+'ms linear;pointer-events:none';
@@ -2465,6 +2391,7 @@ function _lpStart(el,ms,onDone){
   _lpProgress=bar;
   requestAnimationFrame(()=>{bar.style.width='100%';});
   _lpTimer=setTimeout(()=>{
+    document.removeEventListener('touchmove',onTouchMove);
     _lpClear();
     onDone();
   },ms);
@@ -2646,10 +2573,6 @@ function rWpYonet(){
       <label>Yönetici Adı</label>
       <input type="text" id="wpAksamAdminIsim" value="${S.adminIsim||'Yönetici'}" placeholder="Yönetici adınız...">
     </div>
-    <div class="fg" style="margin-bottom:14px">
-      <label>Hedef Numara (opsiyonel)</label>
-      <input type="tel" id="wpAksamHedefNo" placeholder="905551234567">
-    </div>
     <button onclick="wpAksamGonder()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a4a2a,#1e6b3a);border:none;border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">🌙 Akşam Özetini Gönder</button>
   </div>`;
 
@@ -2663,10 +2586,10 @@ function wpNoEkle(kod){
 
 function wpAksamGonder(){
   const isim=document.getElementById('wpAksamAdminIsim').value.trim()||'Yönetici';
-  const no=document.getElementById('wpAksamHedefNo').value.trim().replace(/\s/g,'');
+  const no='905466916676';
   S.adminIsim=isim; save();
   const mesaj=aksamOzetiOlustur(isim);
-  const url=no?`https://wa.me/${no}?text=${encodeURIComponent(mesaj)}`:`https://wa.me/?text=${encodeURIComponent(mesaj)}`;
+  const url=`https://wa.me/${no}?text=${encodeURIComponent(mesaj)}`;
   window.open(url,'_blank');
 }
 
@@ -3055,7 +2978,7 @@ document.getElementById('sifreMo').addEventListener('click',function(e){if(!e.ta
 document.getElementById('yeniMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
 document.getElementById('hazirGorevMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
 document.getElementById('wpMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
-document.getElementById('aksamMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
+
 
 (async()=>{
   await load();
@@ -3063,9 +2986,8 @@ document.getElementById('aksamMo').addEventListener('click',function(e){if(!e.ta
   sel.innerHTML='';
   PERSONEL.forEach(p=>{const o=document.createElement('option');o.value=p.kod;o.textContent=`${p.isim} (${p.kod})`;sel.appendChild(o)});
   perDropGuncelle();
-  // İlk personel olarak her zaman Mevlüt (ME) seç
-  const ilkPer = PERSONEL.find(p=>p.kod==='ME') || PERSONEL[0];
-  if(ilkPer) perDropSec(ilkPer.kod);
+  // İlk personeli seç
+  if(PERSONEL.length>0) perDropSec(PERSONEL[0].kod);
   sync();
 })();
 </script>
