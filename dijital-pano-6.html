@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1.0">
+<title>Dijital Pano</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --tq:         #0ABFBC;
+    --tq-light:   #5DE0DD;
+    --tq-dim:     #077A78;
+    --tq-glow:    rgba(10,191,188,.28);
+    --navy:       #062A40;
+    --navy-mid:   #0A3D5C;
+    --navy-dark:  #041C2C;
+    --coral:      #FF7A5A;
+    --coral-dim:  #C95A3E;
+    --sand:       #EAF6F6;
+    --sand-dim:   #A8DADA;
+    --shadow:     rgba(0,0,0,0.55);
+    --text-main:  #E8F8F8;
+    --text-sub:   #0ABFBC;
+
+    /* alias old names so nothing breaks */
+    --gold:       var(--tq);
+    --gold-light: var(--tq-light);
+    --gold-dim:   var(--tq-dim);
+    --emerald:    var(--navy-mid);
+    --emerald-mid:var(--navy-mid);
+    --emerald-dark:var(--navy-dark);
+    --cream:      var(--sand);
+    --cream-dim:  var(--sand-dim);
+    --ivory:      #F0FAFA;
+  }
+
+  html, body {
+    width: 1920px; height: 1080px;
+    overflow: hidden;
+    background: var(--navy-dark);
+    font-family: 'Tajawal', sans-serif;
+    color: var(--text-main);
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 130% 70% at 50% -10%, rgba(10,191,188,.22) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 0% 110%,  rgba(10,191,188,.12) 0%, transparent 55%),
+      radial-gradient(ellipse 55% 45% at 100% 110%,rgba(10,191,188,.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 80% 30%,  rgba(255,122,90,.07) 0%, transparent 55%),
+      linear-gradient(170deg, #041C2C 0%, #0A3D5C 48%, #041C2C 100%);
+    z-index: 0;
+  }
+
+  /* fine grid overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg,  rgba(10,191,188,.05) 0px, rgba(10,191,188,.05) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(-45deg, rgba(10,191,188,.05) 0px, rgba(10,191,188,.05) 1px, transparent 1px, transparent 28px);
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ── */
+  #app {
+    position: relative; z-index: 1;
+    width: 1920px; height: 1080px;
+    display: grid;
+    grid-template-columns: 420px 1fr 320px;
+    grid-template-rows: 64px 1fr 340px;
+    gap: 0;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    background: linear-gradient(90deg, var(--navy-dark) 0%, var(--navy-mid) 50%, var(--navy-dark) 100%);
+    border: 1px solid rgba(10,191,188,.4);
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.4);
+  }
+  #topbar .logo-text {
+    font-family: 'Amiri', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--tq-light);
+    letter-spacing: 1px;
+  }
+  #topbar .date-time {
+    font-size: 18px; color: var(--sand-dim);
+    letter-spacing: 2px;
+  }
+  #topbar .bismillah {
+    font-family: 'Scheherazade New', serif;
+    font-size: 26px; color: var(--tq-light);
+    direction: rtl;
+  }
+
+  /* ── CARD BASE ── */
+  .card {
+    background: linear-gradient(145deg, rgba(10,61,92,.88) 0%, rgba(4,28,44,.94) 100%);
+    border: 1px solid rgba(10,191,188,.32);
+    border-radius: 14px;
+    box-shadow: 0 4px 28px rgba(0,0,0,.45), inset 0 1px 0 rgba(201,168,76,.15);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    backdrop-filter: blur(4px);
+  }
+
+  .card-header {
+    background: linear-gradient(90deg, var(--tq-dim) 0%, var(--tq) 50%, var(--tq-dim) 100%);
+    padding: 8px 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header .icon { font-size: 18px; }
+  .card-header h2 {
+    font-family: 'Amiri', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--navy-dark);
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .card-body { flex: 1; padding: 14px 16px; overflow: hidden; }
+
+  /* ── HADIS ── sol üst */
+  #hadis {
+    grid-column: 1; grid-row: 2;
+  }
+  #hadis .hadis-text {
+    font-family: 'Amiri', serif;
+    font-size: 16px; line-height: 1.9;
+    color: var(--cream);
+    font-style: italic;
+  }
+  #hadis .hadis-kaynak {
+    margin-top: 12px;
+    font-size: 13px; color: var(--tq);
+    font-weight: 700;
+    border-top: 1px solid rgba(10,191,188,.3);
+    padding-top: 8px;
+  }
+  #hadis .arabic-quote {
+    font-family: 'Scheherazade New', serif;
+    font-size: 20px; direction: rtl;
+    color: var(--tq-light);
+    line-height: 2;
+    text-align: right;
+    margin-bottom: 10px;
+  }
+
+  /* ── YEMEKÇILER ── orta üst */
+  #yemek {
+    grid-column: 2; grid-row: 2;
+  }
+  #yemek .card-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    align-content: start;
+  }
+  .yemekci-item {
+    background: rgba(10,191,188,.10);
+    border: 1px solid rgba(10,191,188,.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    transition: background .3s;
+  }
+  .yemekci-no {
+    width: 30px; height: 30px;
+    background: var(--tq);
+    color: var(--navy-dark);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .yemekci-ad {
+    font-size: 15px; font-weight: 500;
+    color: var(--sand);
+  }
+  .yemekci-gun {
+    font-size: 11px; color: var(--tq); margin-top: 2px;
+  }
+
+  /* ── MÜEZZİN ── sağ üst */
+  #muezzin {
+    grid-column: 3; grid-row: 2;
+  }
+  .muezzin-card {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 14px;
+    height: 100%;
+    text-align: center;
+  }
+  .muezzin-avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--tq);
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 0 24px rgba(10,191,188,.4);
+  }
+  .muezzin-name {
+    font-family: 'Amiri', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--tq-light);
+  }
+  .muezzin-label {
+    font-size: 13px; color: var(--sand-dim);
+    letter-spacing: 1px;
+  }
+  .muezzin-badge {
+    background: linear-gradient(90deg, var(--tq-dim), var(--tq));
+    color: var(--navy-dark);
+    font-size: 12px; font-weight: 700;
+    padding: 4px 14px; border-radius: 20px;
+  }
+  .vakit-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; width: 100%;
+  }
+  .vakit-item {
+    background: rgba(10,191,188,.1);
+    border: 1px solid rgba(10,191,188,.22);
+    border-radius: 6px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .vakit-name { font-size: 11px; color: var(--sand-dim); }
+  .vakit-time { font-size: 15px; font-weight: 700; color: var(--tq); }
+
+  /* ── TALEBLER ALT 3 KOLON ── */
+  #talebe-sol   { grid-column: 1; grid-row: 3; }
+  #talebe-orta  { grid-column: 2; grid-row: 3; }
+  #talebe-sag   { grid-column: 3; grid-row: 3; }
+
+  .talebe-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .talebe-item {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(10,191,188,.07);
+    border: 1px solid rgba(10,191,188,.18);
+    border-radius: 7px;
+    padding: 7px 12px;
+    transition: background .2s;
+  }
+  .talebe-rank {
+    min-width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rank-gold  { background: var(--tq);            color: var(--navy-dark); }
+  .rank-silver{ background: #7FD4D2;               color: var(--navy-dark); }
+  .rank-bronze{ background: var(--coral);          color: #fff; }
+  .rank-other { background: rgba(10,191,188,.18);  color: var(--tq); }
+
+  .talebe-ad {
+    flex: 1; font-size: 14px; font-weight: 500; color: var(--sand);
+  }
+  .talebe-puan {
+    font-size: 14px; font-weight: 700;
+    color: var(--tq);
+    background: rgba(10,191,188,.12);
+    padding: 2px 10px; border-radius: 12px;
+  }
+
+  /* ── DECORATIVE CORNER ── */
+  .corner-deco {
+    position: absolute;
+    width: 60px; height: 60px;
+    opacity: .25;
+    pointer-events: none;
+  }
+  .corner-deco svg { width: 100%; height: 100%; }
+
+  /* ── SCROLLING TICKER ── */
+  #ticker {
+    display: none; /* gelecekte aktif edilebilir */
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card { animation: fadeInUp .6s ease both; }
+  #hadis    { animation-delay: .1s; }
+  #yemek    { animation-delay: .2s; }
+  #muezzin  { animation-delay: .3s; }
+  #talebe-sol  { animation-delay: .4s; }
+  #talebe-orta { animation-delay: .5s; }
+  #talebe-sag  { animation-delay: .6s; }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 14px rgba(10,191,188,.2); }
+    50%       { box-shadow: 0 0 32px rgba(10,191,188,.55); }
+  }
+  #muezzin { animation: fadeInUp .6s .3s ease both, pulse-glow 4s 1s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <span class="logo-text">🕌 Kuran Kursu Dijital Pano</span>
+    <span class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</span>
+    <span class="date-time" id="clock">—</span>
+  </div>
+
+  <!-- SOL ÜST: Haftanın Hadisi -->
+  <div id="hadis" class="card">
+    <div class="card-header">
+      <span class="icon">📖</span>
+      <h2>Haftanın Hadîs-i Şerîfi</h2>
+    </div>
+    <div class="card-body">
+      <div class="arabic-quote">إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ</div>
+      <p class="hadis-text">
+        "Ameller ancak niyetlere göredir. Herkes için niyet ettiği şey vardır…"
+      </p>
+      <div class="hadis-kaynak">
+        📚 Buhârî, Bedu'l-Vahy 1 | Müslim, İmâre 155
+      </div>
+    </div>
+  </div>
+
+  <!-- ORTA ÜST: Yemekçiler -->
+  <div id="yemek" class="card">
+    <div class="card-header">
+      <span class="icon">🍽️</span>
+      <h2>Haftanın Yemekçileri</h2>
+    </div>
+    <div class="card-body">
+      <!-- Örnek veriler – siz düzenleyeceksiniz -->
+      <div class="yemekci-item">
+        <div class="yemekci-no">1</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Pazartesi</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">2</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Salı</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">3</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Çarşamba</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">4</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Perşembe</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">5</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Cuma</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">6</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Cumartesi</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAĞ ÜST: Günün Müezzini -->
+  <div id="muezzin" class="card">
+    <div class="card-header">
+      <span class="icon">🎙️</span>
+      <h2>Günün Müezzini</h2>
+    </div>
+    <div class="card-body">
+      <div class="muezzin-card">
+        <div class="muezzin-avatar">🕌</div>
+        <div>
+          <div class="muezzin-name">Talebe Adı Soyadı</div>
+          <div class="muezzin-label">Müezzin</div>
+        </div>
+        <div class="muezzin-badge">✨ Bugünkü Görev</div>
+        <div class="vakit-grid">
+          <div class="vakit-item"><div class="vakit-name">Sabah</div><div class="vakit-time">05:32</div></div>
+          <div class="vakit-item"><div class="vakit-name">Öğle</div><div class="vakit-time">13:04</div></div>
+          <div class="vakit-item"><div class="vakit-name">İkindi</div><div class="vakit-time">16:40</div></div>
+          <div class="vakit-item"><div class="vakit-name">Akşam</div><div class="vakit-time">19:28</div></div>
+          <div class="vakit-item" style="grid-column:1/-1"><div class="vakit-name">Yatsı</div><div class="vakit-time">21:02</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALT SOL: İlk 10 Talebe -->
+  <div id="talebe-sol" class="card">
+    <div class="card-header">
+      <span class="icon">🏆</span>
+      <h2>Haftanın Talebeleri — 1-10</h2>
+    </div>
+    <div class="card-body">
+      <ul class="talebe-list" id="list-1-10"></ul>
+    </div>
+  </div>
+
+  <!-- ALT ORTA: 11-20 Talebe -->
+  <div id="talebe-orta" class="card">
+    <div class="card-header">
+      <span class="icon">📊</span>
+      <h2>Haftanın Talebeleri — 11-20</h2>
+    </div>
+    <div class="card-body">
+      <ul class="talebe-list" id="list-11-20"></ul>
+    </div>
+  </div>
+
+  <!-- ALT SAĞ: 21-30 Talebe -->
+  <div id="talebe-sag" class="card">
+    <div class="card-header" style="justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="icon">📋</span>
+        <h2>Haftanın Talebeleri — 21-30</h2>
+      </div>
+      <span id="son-guncelleme" style="font-size:11px;color:var(--navy-dark);opacity:.8;font-family:'Tajawal',sans-serif"></span>
+    </div>
+    <div class="card-body">
+      <ul class="talebe-list" id="list-21-30"></ul>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const dateStr = now.toLocaleDateString('tr-TR', opts);
+  const timeStr = now.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById('clock').textContent = `${dateStr}  |  ${timeStr}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ══════════════════════════════════════════
+   GOOGLE SHEETS CANLI VERİ ÇEKİCİ
+   ══════════════════════════════════════════
+   ▸ Sheets'i "Bağlantıya sahip herkes → Görüntüleyici" yapın
+   ▸ SHEET_NAME = sayfanın tam adı (alttaki sekme)
+   ══════════════════════════════════════════ */
+const SHEET_ID   = '1RY9MO4LRfbWy--zV0B7EvRlkJgvA8In9iZLBYEEtg_k';
+const SHEET_NAME = 'Pano-4';
+
+/* Yüklenirken iskelet göster */
+function showSkeleton() {
+  ['list-1-10','list-11-20','list-21-30'].forEach(id => {
+    const ul = document.getElementById(id);
+    ul.innerHTML = '';
+    for (let i = 0; i < 10; i++) {
+      ul.innerHTML += `
+        <li class="talebe-item skeleton-item" style="opacity:.35">
+          <div class="talebe-rank rank-other" style="background:rgba(10,191,188,.2)">—</div>
+          <div class="talebe-ad" style="background:rgba(255,255,255,.1);border-radius:4px;height:16px;width:60%"></div>
+          <div class="talebe-puan" style="background:rgba(10,191,188,.1);color:transparent">— puan</div>
+        </li>`;
+    }
+  });
+}
+
+function rankClass(i) {
+  if (i === 0) return 'rank-gold';
+  if (i === 1) return 'rank-silver';
+  if (i === 2) return 'rank-bronze';
+  return 'rank-other';
+}
+
+function buildList(ulId, talebler, from, to) {
+  const ul = document.getElementById(ulId);
+  ul.innerHTML = '';
+  const slice = talebler.slice(from, to);
+  slice.forEach((t, idx) => {
+    const rank = from + idx + 1;
+    const li = document.createElement('li');
+    li.className = 'talebe-item';
+    li.style.animation = `fadeInUp .4s ${idx * 0.05}s ease both`;
+    li.innerHTML = `
+      <div class="talebe-rank ${rankClass(from + idx)}">${rank}</div>
+      <div class="talebe-ad">${t.ad}</div>
+      <div class="talebe-puan">${t.puan} puan</div>`;
+    ul.appendChild(li);
+  });
+}
+
+function showHata(mesaj) {
+  ['list-1-10','list-11-20','list-21-30'].forEach(id => {
+    document.getElementById(id).innerHTML =
+      `<li style="color:#FF7A5A;padding:12px;font-size:13px">⚠️ ${mesaj}</li>`;
+  });
+}
+
+async function sheetsVeriCek() {
+  showSkeleton();
+
+  return new Promise((resolve) => {
+    /* Eski script tag varsa temizle */
+    const eskiScript = document.getElementById('sheets-jsonp');
+    if (eskiScript) eskiScript.remove();
+
+    const encoded = encodeURIComponent(SHEET_NAME);
+    const callbackAdi = 'sheetsCallback_' + Date.now();
+
+    /* Global callback tanımla */
+    window[callbackAdi] = function(json) {
+      delete window[callbackAdi];
+      try {
+        if (json.status === 'error') throw new Error(json.errors?.[0]?.message || 'Sheets hatası');
+
+        const cols = json.table.cols;
+        const rows = json.table.rows;
+
+        /* Sütun başlıklarına göre otomatik bul */
+        let AD_COL = -1, PUAN_COL = -1;
+        cols.forEach((c, i) => {
+          const label = (c.label || '').toUpperCase().trim();
+          if (label.includes('AD') || label.includes('TALEBE') || label.includes('İSİM')) AD_COL = i;
+          if (label.includes('TOPLAM') || label.includes('PUAN')) PUAN_COL = i;
+        });
+        if (AD_COL   === -1) AD_COL   = 2;
+        if (PUAN_COL === -1) PUAN_COL = cols.length - 1;
+
+        let talebler = [];
+        rows.forEach(row => {
+          if (!row.c) return;
+          const adCell   = row.c[AD_COL];
+          const puanCell = row.c[PUAN_COL];
+          if (!adCell || !adCell.v) return;
+          const ad = String(adCell.v).trim();
+          if (!ad || ad.toUpperCase().includes('TOPLAM') || ad.toUpperCase().includes('HAFTALIK') || ad.toUpperCase() === 'AD SOYAD') return;
+          const puan = puanCell && puanCell.v != null ? Number(puanCell.v) : 0;
+          talebler.push({ ad, puan });
+        });
+
+        talebler.sort((a, b) => b.puan - a.puan);
+
+        if (talebler.length === 0) {
+          showHata('Pano-4 sayfasında veri bulunamadı.');
+          resolve(); return;
+        }
+
+        buildList('list-1-10',  talebler, 0,  10);
+        buildList('list-11-20', talebler, 10, 20);
+        buildList('list-21-30', talebler, 20, Math.min(30, talebler.length));
+
+        const now = new Date().toLocaleTimeString('tr-TR');
+        document.getElementById('son-guncelleme').textContent = `🔄 ${now}`;
+
+      } catch(e) {
+        console.error(e);
+        yedekVeriGoster();
+      }
+      resolve();
+    };
+
+    /* JSONP script tag ile yükle — CORS yok */
+    const script = document.createElement('script');
+    script.id  = 'sheets-jsonp';
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&callback=${callbackAdi}&sheet=${encoded}`;
+    script.onerror = () => { yedekVeriGoster(); resolve(); };
+    document.head.appendChild(script);
+
+    /* 8 saniye içinde cevap gelmezse yedek */
+    setTimeout(() => { if (window[callbackAdi]) { delete window[callbackAdi]; yedekVeriGoster(); resolve(); } }, 8000);
+  });
+}
+
+function yedekVeriGoster() {
+  const yedekVeri = [
+    {ad:'Ahmet Selim Gülçiçek', puan:10},{ad:'Berke Emir Bayar', puan:10},
+    {ad:'Erdem Tubay', puan:10},{ad:'Eyüp Sıraç Gökhen', puan:10},
+    {ad:'Hamza Nuri Karan', puan:10},{ad:'Hüseyin Demiral', puan:10},
+    {ad:'M. Fatih Arslanyolu', puan:10},{ad:'Mehmet Selim Yılmaz', puan:10},
+    {ad:'Mustafa Gökçegöz', puan:10},{ad:'Şevki Akif Kocabaş', puan:10},
+    {ad:'Tahir Ökmen', puan:10},{ad:'Yunus Emre Tubay', puan:10},
+    {ad:'Yusuf Furkan Ayar', puan:10},{ad:'Yusuf Taha Özcan', puan:10},
+    {ad:'Ahmet Emir Gezer', puan:9},{ad:'Ahmet Kıyakoğlu', puan:9},
+    {ad:'Ahmet Özcan', puan:9},{ad:'Emirhan Özcan', puan:9},
+    {ad:'Faruk A. Aydemir', puan:9},{ad:'Hilmi Kerem Akıner', puan:9},
+    {ad:'Mehmet Eymen Kizek', puan:9},{ad:'Miraç Erdoğan', puan:9},
+    {ad:'Ömer Fetih Aksu', puan:9},{ad:'Tunahan Günaydın', puan:9},
+    {ad:'Yusuf Anıl Özcan', puan:9},{ad:'Bekir Köse', puan:8},
+    {ad:'Eymen Semih Yaman', puan:8},{ad:'Eyüp Ensar Uygur', puan:8},
+    {ad:'İbrahim Halilullah', puan:8},{ad:'Mehmet İpek', puan:8},
+  ];
+  buildList('list-1-10',  yedekVeri, 0,  10);
+  buildList('list-11-20', yedekVeri, 10, 20);
+  buildList('list-21-30', yedekVeri, 20, 30);
+  document.getElementById('son-guncelleme').textContent = '⚠️ Sheets bağlantısı yok — yedek veri';
+}
+
+/* İlk yükleme + her 30 saniyede otomatik yenile */
+sheetsVeriCek();
+setInterval(sheetsVeriCek, 30 * 1000);
+</script>
+</body>
+</html>
