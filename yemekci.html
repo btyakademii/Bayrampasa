@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
+<title>Yemekçi & Müezzin Yönetim Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffef9;--bg2:#fdfaf5;--blue:#1040d0;--blue2:#0a30a8;--green:#145a30;--red:#aa1030;--teal:#0a6070;--purple:#4a1080;--text:#0a0a1a;--text2:#3a3a5a;--border:rgba(0,0,0,0.15);--card:rgba(0,0,0,0.06);--card2:rgba(0,0,0,0.1)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text)}
+.page{display:none;position:fixed;inset:0;flex-direction:column;background:var(--bg);height:100dvh}
+.page.active{display:flex}
+.ph{flex-shrink:0;padding:12px 16px;background:rgba(15,27,45,0.97);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.ph-back{width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;user-select:none}
+.ph-title{font-size:16px;font-weight:700;color:#fff}
+.ph-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px}
+.ph-btn{padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif;user-select:none}
+.pb{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 16px}
+.dhero{padding:18px 16px 14px;background:linear-gradient(135deg,rgba(26,108,246,0.12),rgba(0,198,215,0.06));border-bottom:1px solid var(--border)}
+.dstats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px}
+.dstat{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:12px}
+.dmenu{padding:0 16px 24px}
+.dmi{display:flex;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:13px 15px;cursor:pointer;margin-bottom:8px;user-select:none}
+.dmi:active{transform:scale(.97);background:rgba(26,108,246,0.08)}
+.dmi-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.wtabs{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.1);background:#8a8a9a}
+.wtabs::-webkit-scrollbar{display:none}
+.wtab{padding:6px 13px;border-radius:9px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap;font-family:'Outfit',sans-serif;flex-shrink:0;user-select:none}
+.wtab.active{background:linear-gradient(135deg,var(--blue),#1254cc);color:#fff;border-color:var(--blue)}
+.wtab:active{opacity:.8}
+.week-nav{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.wnb{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;user-select:none}
+.wnb:active{background:var(--card2)}
+.card{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:13px 15px;margin-bottom:8px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:8px}
+.gc{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:11px 13px;margin-bottom:8px}
+.vakit-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:var(--card);margin-bottom:5px;cursor:pointer;user-select:none;min-height:40px}
+.vakit-row:active{background:rgba(26,108,246,0.12)}
+.vakit-badge{font-size:10px;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.vakit-kisi{font-size:12px;font-weight:600;color:var(--blue2);background:rgba(26,108,246,0.12);padding:3px 9px;border-radius:6px}
+.vakit-empty{font-size:12px;color:var(--text2);padding:3px 9px;border-radius:6px;border:1px dashed rgba(26,108,246,0.3);background:rgba(26,108,246,0.06)}
+.grup-card{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:12px;margin-bottom:8px;cursor:pointer;user-select:none}
+.grup-card:active{transform:scale(.98)}
+.grup-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.grup-num{font-size:13px;font-weight:800;color:var(--blue2);font-family:'JetBrains Mono',monospace}
+.ogrenci-pill{display:inline-flex;align-items:center;background:rgba(26,108,246,0.1);border:1px solid rgba(26,108,246,0.2);border-radius:20px;padding:3px 9px;font-size:12px;font-weight:600;margin:2px}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);z-index:500;align-items:flex-end;justify-content:center;height:100dvh}
+.mo.open{display:flex}
+.md{background:var(--bg2);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:20px 18px 34px;width:100%;max-width:520px;animation:sU .22s ease;max-height:88dvh;overflow-y:auto}
+@keyframes sU{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.mh{width:36px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px;margin:0 auto 16px}
+.mt{font-size:16px;font-weight:700;margin-bottom:8px}
+.mch{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.mc{padding:8px 14px;border-radius:9px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;user-select:none;min-height:38px}
+.mc.sel{border-color:var(--blue);background:rgba(26,108,246,0.15);color:var(--blue2)}
+.mc:active{opacity:.8}
+.ma{display:flex;gap:9px;margin-top:12px}
+.bc{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;user-select:none}
+.bs{flex:2;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--blue),#1254cc);color:#fff;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;user-select:none}
+.bc:active,.bs:active{opacity:.85}
+.mini-input{width:100%;padding:9px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none;margin-bottom:8px}
+.mini-input::placeholder{color:var(--text2)}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.fg select{width:100%;padding:9px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;outline:none}
+.nw{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:320px;z-index:700;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.ni{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:9px 13px;display:flex;gap:8px;align-items:center;animation:nI .28s ease;box-shadow:0 6px 18px rgba(0,0,0,0.18)}
+@keyframes nI{from{transform:translateY(-14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.takvim-hafta{margin-bottom:16px}
+.takvim-baslik{font-size:13px;font-weight:800;color:var(--blue2);margin-bottom:8px;font-family:'JetBrains Mono',monospace}
+.takvim-gun{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:5px}
+.takvim-gun-baslik{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:5px}
+.rot-badge{font-size:10px;font-weight:700;background:rgba(20,90,48,0.12);color:var(--green);padding:2px 7px;border-radius:5px;margin-left:4px}
+.mu-rot-badge{font-size:10px;font-weight:700;background:rgba(10,96,112,0.12);color:var(--teal);padding:2px 7px;border-radius:5px;margin-left:4px}
+.manuel-badge{font-size:10px;font-weight:700;background:rgba(16,64,208,0.12);color:var(--blue2);padding:2px 7px;border-radius:5px;margin-left:4px}
+/* Sıra listesi */
+.sira-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--card);border-radius:10px;margin-bottom:5px}
+.sira-no{width:24px;height:24px;border-radius:7px;background:var(--teal);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+
+<!-- DASHBOARD -->
+<div class="page active" id="dashPage">
+  <div class="ph" style="background:#3a3a4a">
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:20px">🕌</span>
+        <span style="color:#fff;font-size:16px;font-weight:700">Yurt Yönetim</span>
+      </div>
+      <div class="ph-sub" id="dHeroSub">Yükleniyor...</div>
+    </div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#14c87a;box-shadow:0 0 6px #14c87a;flex-shrink:0"></div>
+  </div>
+  <div class="pb" style="padding:0">
+    <div class="dhero">
+      <div style="font-size:19px;font-weight:800;margin-bottom:2px">Hoş geldiniz 👋</div>
+      <div style="font-size:12px;color:var(--text2)" id="dHero2"></div>
+    </div>
+    <div class="dstats" id="dStats"></div>
+    <div class="dmenu">
+      <div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;padding:0 2px">Yönetim</div>
+      <div class="dmi" onclick="goPage('muezzinPage')">
+        <div class="dmi-icon" style="background:rgba(10,96,112,0.2)">🔊</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Müezzin Takvimi</div><div style="font-size:11px;color:var(--text2)" id="muezzinDesc">5 vakit — sıralı rotasyon</div></div>
+        <span style="color:var(--text2);font-size:22px;line-height:1">›</span>
+      </div>
+      <div class="dmi" onclick="goPage('yemekciPage')">
+        <div class="dmi-icon" style="background:rgba(20,90,48,0.2)">🍽️</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Yemekçi Grupları</div><div style="font-size:11px;color:var(--text2)" id="grupDesc">otomatik rotasyon</div></div>
+        <span style="color:var(--text2);font-size:22px;line-height:1">›</span>
+      </div>
+      <div class="dmi" onclick="goPage('takvimiPage')">
+        <div class="dmi-icon" style="background:rgba(16,64,208,0.2)">📅</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">2 Haftalık Takvim</div><div style="font-size:11px;color:var(--text2)">Yazdır & önizle</div></div>
+        <span style="color:var(--text2);font-size:22px;line-height:1">›</span>
+      </div>
+      <div class="dmi" onclick="goPage('ogrenciPage')">
+        <div class="dmi-icon" style="background:rgba(74,16,128,0.2)">👥</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Öğrenciler</div><div style="font-size:11px;color:var(--text2)" id="ogrenciDesc">Yönet, gruplara ekle</div></div>
+        <span style="color:var(--text2);font-size:22px;line-height:1">›</span>
+      </div>
+      <div class="dmi" onclick="goPage('ayarlarPage')">
+        <div class="dmi-icon" style="background:rgba(100,100,120,0.2)">⚙️</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:600">Ayarlar</div><div style="font-size:11px;color:var(--text2)">Gruplar, rotasyon, müezzin listesi</div></div>
+        <span style="color:var(--text2);font-size:22px;line-height:1">›</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MÜEZZİN -->
+<div class="page" id="muezzinPage">
+  <div class="ph">
+    <button class="ph-back" onclick="goPage('dashPage')">‹</button>
+    <div style="flex:1"><div class="ph-title">Müezzin Takvimi</div><div class="ph-sub" id="muezzinSub"></div></div>
+    <button class="ph-btn" onclick="goPage('muezzinListePage')" style="background:rgba(10,96,112,0.3);color:#6df;margin-right:4px">Liste</button>
+    <button class="ph-btn" onclick="haftayiPlanla()" style="background:rgba(255,200,0,0.25);color:#ffd700;border:1px solid rgba(255,200,0,0.3)">Planla</button>
+  </div>
+  <div class="week-nav">
+    <button class="wnb" onclick="chMuezzinW(-1)">‹</button>
+    <span id="muezzinWL" style="font-size:12px;font-weight:700;color:var(--blue2);font-family:'JetBrains Mono',monospace;flex:1;text-align:center"></span>
+    <button class="wnb" onclick="chMuezzinW(1)">›</button>
+  </div>
+  <div class="wtabs" id="muezzinGunTabs"></div>
+  <div class="pb" id="muezzinB"></div>
+</div>
+
+<!-- MÜEZZİN LİSTE AYAR SAYFASI -->
+<div class="page" id="muezzinListePage">
+  <div class="ph">
+    <button class="ph-back" onclick="goPage('muezzinPage')">‹</button>
+    <div style="flex:1"><div class="ph-title">🔊 Müezzin Sırası</div><div class="ph-sub">Sırayla çağırılacak çocuklar</div></div>
+  </div>
+  <div class="pb" id="muezzinListeB"></div>
+</div>
+
+<!-- YEMEKÇİ -->
+<div class="page" id="yemekciPage">
+  <div class="ph">
+    <button class="ph-back" onclick="goPage('dashPage')">‹</button>
+    <div style="flex:1"><div class="ph-title">🍽️ Yemekçi Grupları</div><div class="ph-sub" id="yemekciSub"></div></div>
+    <button class="ph-btn" onclick="rotasyonSifirlaModalAc()" style="background:rgba(170,16,48,0.2);color:#f88">↺ Sıfırla</button>
+  </div>
+  <div class="week-nav">
+    <button class="wnb" onclick="chYemekciW(-1)">‹</button>
+    <span id="yemekciWL" style="font-size:12px;font-weight:700;color:var(--green);font-family:'JetBrains Mono',monospace;flex:1;text-align:center"></span>
+    <button class="wnb" onclick="chYemekciW(1)">›</button>
+  </div>
+  <div class="wtabs" id="yemekciGunTabs"></div>
+  <div class="pb" id="yemekciB"></div>
+</div>
+
+<!-- TAKVİM -->
+<div class="page" id="takvimiPage" style="background:#f0ede8">
+  <div class="ph" style="background:#8a8a9a;border-bottom:1px solid rgba(0,0,0,0.2)">
+    <button class="ph-back" onclick="goPage('dashPage')">‹</button>
+    <div style="flex:1"><div class="ph-title">Takvim</div></div>
+    <button class="ph-btn" onclick="window.print()" style="background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.15)">Yazdır</button>
+  </div>
+  <div class="wtabs" id="takvimiTabs" style="background:#8a8a9a;border-bottom:1px solid rgba(0,0,0,0.15)">
+    <button class="wtab active" onclick="selTakvimiTab('bugun',this)">Bugün</button>
+    <button class="wtab" onclick="selTakvimiTab('hepsi',this)">Bu Hafta</button>
+    <button class="wtab" onclick="selTakvimiTab('gelecek',this)">Gelecek Hafta</button>
+  </div>
+  <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0" id="takvimiScroll">
+    <div id="takvimiB" style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;min-height:0"></div>
+  </div>
+</div>
+
+<!-- ÖĞRENCİLER -->
+<div class="page" id="ogrenciPage">
+  <div class="ph">
+    <button class="ph-back" onclick="goPage('dashPage')">‹</button>
+    <div style="flex:1"><div class="ph-title">Öğrenciler</div><div class="ph-sub" id="ogrenciSub"></div></div>
+    <button class="ph-btn" onclick="ogrenciEkleAc()" style="background:rgba(74,16,128,0.25);color:#caa">+ Ekle</button>
+  </div>
+  <div class="pb" id="ogrenciB"></div>
+</div>
+
+<!-- GRUP DETAY SAYFASI -->
+<div class="page" id="grupDetayPage">
+  <div class="ph">
+    <button class="ph-back" onclick="goPage('ogrenciPage')">‹</button>
+    <div style="flex:1"><div class="ph-title" id="grupDetayBaslik">Grup</div><div class="ph-sub" id="grupDetaySub"></div></div>
+  </div>
+  <div class="wtabs" id="grupDetayTabs">
+    <button class="wtab active" onclick="selGrupTab('icinde',this)">Gruptakiler</button>
+    <button class="wtab" onclick="selGrupTab('disinda',this)">Ekle</button>
+  </div>
+  <div class="pb" id="grupDetayB"></div>
+</div>
+
+<!-- AYARLAR -->
+<div class="page" id="ayarlarPage">
+  <div class="ph">
+    <button class="ph-back" onclick="goPage('dashPage')">‹</button>
+    <div class="ph-title">⚙️ Ayarlar</div>
+  </div>
+  <div class="pb" id="ayarlarB"></div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Müezzin Manuel Geçersiz Kılma -->
+<div class="mo" id="muezzinManuelMo">
+  <div class="md">
+    <div class="mh"></div>
+    <div class="mt" id="muezzinManuelBaslik">Müezzin Değiştir</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px" id="muezzinManuelAciklama"></div>
+    <div class="mch" id="muManuelSecim"></div>
+    <div class="ma">
+      <button class="bc" onclick="moKapat('muezzinManuelMo')">İptal</button>
+      <button class="bs" onclick="muezzinManuelSave()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- Yemekçi Manuel -->
+<div class="mo" id="yemekciManuelMo">
+  <div class="md">
+    <div class="mh"></div>
+    <div class="mt" id="yemekciManuelBaslik">Manuel Grup Seç</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">Sadece bu gün için farklı grup seçin.</div>
+    <div class="mch" id="yManuelSecim"></div>
+    <div class="ma">
+      <button class="bc" onclick="moKapat('yemekciManuelMo')">İptal</button>
+      <button class="bs" onclick="yemekciManuelSave()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- Yemekçi Rotasyon Kurulum -->
+<div class="mo" id="rotasyonKurulumMo">
+  <div class="md">
+    <div class="mh"></div>
+    <div class="mt">🔄 Rotasyon Başlangıcı</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px" id="rotKurulumAciklama"></div>
+    <div class="mch" id="rotKurulumSecim"></div>
+    <div class="ma">
+      <button class="bc" onclick="moKapat('rotasyonKurulumMo')">İptal</button>
+      <button class="bs" onclick="rotasyonKurulumSave()">Rotasyonu Başlat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Yemekçi Rotasyon Sıfırla -->
+<div class="mo" id="rotasyonSifirlaModal">
+  <div class="md">
+    <div class="mh"></div>
+    <div class="mt">↺ Yemekçi Rotasyonunu Sıfırla</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Bu Pazartesi hangi gruptan başlasın?</div>
+    <div class="mch" id="rotSifirlaSecim"></div>
+    <div class="ma">
+      <button class="bc" onclick="moKapat('rotasyonSifirlaModal')">İptal</button>
+      <button class="bs" onclick="rotasyonSifralaKaydet()">Güncelle</button>
+    </div>
+  </div>
+</div>
+
+<!-- Öğrenci Modal -->
+<div class="mo" id="ogrenciMo">
+  <div class="md">
+    <div class="mh"></div>
+    <div class="mt" id="ogrenciMoBaslik">Öğrenci Ekle</div>
+    <input class="mini-input" id="yoIsim" placeholder="Ad Soyad">
+    <input class="mini-input" id="yoNo" placeholder="Öğrenci No (opsiyonel)">
+    <div class="fg">
+      <label>Grup</label>
+      <select id="yoGrup"></select>
+    </div>
+    <div class="ma">
+      <button class="bc" onclick="moKapat('ogrenciMo')">İptal</button>
+      <button class="bs" onclick="ogrenciKaydet()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="nw" id="nw"></div>
+
+<script>
+const VAKITLER=['Sabah','Öğle','İkindi','Akşam','Yatsı'];
+const VAKIT_EMOJI={Sabah:'🌅',Öğle:'☀️',İkindi:'🌤️',Akşam:'🌇',Yatsı:'🌙'};
+const VAKIT_RENK={Sabah:{r:'#c55a11',b:'#fff3e0'},Öğle:{r:'#1b6b00',b:'#f1f8e9'},İkindi:{r:'#1f6b75',b:'#e0f7fa'},Akşam:{r:'#6b3a0f',b:'#fbe9e7'},Yatsı:{r:'#4a1080',b:'#f3e5f5'}};
+const GUNLER=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+
+let S={
+  muezzinW:0, yemekciW:0,
+  muezzinGun:'Pazartesi', yemekciGun:'Pazartesi',
+  takvimiTab:'bugun',
+  // Yemekçi
+  yemekciManuel:{},  // {wKey:{gun:grupNo}}
+  rotPazGrup:null,   // Yemekçi rotasyon: bu Pzt hangi grup
+  // Öğrenciler
+  ogrenciler:[],
+  grupSayisi:8, grupBoyutu:5,
+  // Müezzin rotasyon
+  // muezzinSira: [ogId, ogId, ...] — sıralı liste
+  // muezzinRotBaslangic: toplam vakit slot index (0'dan başlar)
+  //   Bu Pazartesi Sabah için hangi index'ten başlanır
+  muezzinSira:[],          // seçili çocukların id listesi
+  muezzinRotSlot:0,        // Bu haftanın Pazartesi Sabahı = kaçıncı slot
+  muezzinManuel:{}         // {wKey:{gun:{vakit:ogId}}} — istisnalar
+};
+
+// ===== KAYDET/YÜKLE =====
+function save(){
+  try{localStorage.setItem('yyms7',JSON.stringify({
+    yemekciManuel:S.yemekciManuel, rotPazGrup:S.rotPazGrup,
+    ogrenciler:S.ogrenciler, grupSayisi:S.grupSayisi, grupBoyutu:S.grupBoyutu,
+    muezzinSira:S.muezzinSira, muezzinRotSlot:S.muezzinRotSlot,
+    muezzinManuel:S.muezzinManuel
+  }));}catch(e){}
+}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('yyms7')||'{}');
+    if(d.yemekciManuel) S.yemekciManuel=d.yemekciManuel;
+    if(d.rotPazGrup!==undefined) S.rotPazGrup=d.rotPazGrup;
+    if(d.ogrenciler&&d.ogrenciler.length) S.ogrenciler=d.ogrenciler;
+    if(d.grupSayisi) S.grupSayisi=d.grupSayisi;
+    if(d.grupBoyutu) S.grupBoyutu=d.grupBoyutu;
+    if(d.muezzinSira) S.muezzinSira=d.muezzinSira;
+    if(d.muezzinRotSlot!==undefined) S.muezzinRotSlot=d.muezzinRotSlot;
+    if(d.muezzinManuel) S.muezzinManuel=d.muezzinManuel;
+  }catch(e){}
+}
+
+// ===== MÜEZZİN ROTASYON HESAP =====
+// wOffset=hafta, gunIndex=0(Pzt)..6(Pzr), vakitIndex=0(Sabah)..4(Yatsı)
+// Döner: {ogId, siraNo} veya null
+function getMuezzinRot(wOffset, gunIndex, vakitIndex){
+  if(!S.muezzinSira.length) return null;
+  // O gün yemekçi olan öğrencileri bul — onları atla
+  const gun = GUNLER[gunIndex];
+  const gg = getGunGrubu(wOffset, gun);
+  const yemekciIdler = new Set();
+  if(gg){
+    const g = getGruplar().find(x=>x.no===gg.no);
+    if(g) g.ogrenciler.forEach(o=>yemekciIdler.add(o.id));
+  }
+  // Yemekçi olmayanlardan sıralı liste oluştur
+  const uygunSira = S.muezzinSira.filter(id=>!yemekciIdler.has(id));
+  if(!uygunSira.length) return null;
+  // Kaçıncı uygun slot olduğunu hesapla
+  const toplamSlot = wOffset*7*5 + gunIndex*5 + vakitIndex;
+  const slot = ((S.muezzinRotSlot + toplamSlot) % uygunSira.length + uygunSira.length) % uygunSira.length;
+  return {ogId: uygunSira[slot], siraNo: slot+1};
+}
+
+// Belirli vakit için müezzini al (manuel > rotasyon)
+function getMuezzin(wOffset, gun, vakit){
+  const wk='w'+wOffset;
+  if(S.muezzinManuel[wk]&&S.muezzinManuel[wk][gun]&&S.muezzinManuel[wk][gun][vakit]!==undefined)
+    return {ogId: S.muezzinManuel[wk][gun][vakit], manuel:true};
+  const gi=GUNLER.indexOf(gun);
+  const vi=VAKITLER.indexOf(vakit);
+  const rot=getMuezzinRot(wOffset,gi,vi);
+  if(rot) return {ogId:rot.ogId, manuel:false, siraNo:rot.siraNo};
+  return null;
+}
+
+// ===== YEMEKÇİ ROTASYON =====
+function getGunGrubu(wOffset,gun){
+  const wk='w'+wOffset;
+  if(S.yemekciManuel[wk]&&S.yemekciManuel[wk][gun]!==undefined)
+    return {no:S.yemekciManuel[wk][gun],manuel:true};
+  if(S.rotPazGrup===null) return null;
+  const gi=GUNLER.indexOf(gun);
+  const tot=wOffset*7+gi;
+  return {no:((S.rotPazGrup-1+tot)%S.grupSayisi+S.grupSayisi)%S.grupSayisi+1, manuel:false};
+}
+
+// ===== HAFTA =====
+function getMon(off){
+  const now=new Date(),day=now.getDay();
+  const m=new Date(now);
+  m.setDate(now.getDate()+(day===0?-6:1-day)+off*7);
+  m.setHours(0,0,0,0); return m;
+}
+function fmtDate(d){return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit'});}
+function haftaLabel(off){
+  const m=getMon(off),s=new Date(m);s.setDate(m.getDate()+6);
+  return fmtDate(m)+' – '+fmtDate(s);
+}
+function wKey(off){return 'w'+off;}
+function gunTarih(off,gi){
+  const m=getMon(off),d=new Date(m);d.setDate(m.getDate()+gi);return fmtDate(d);
+}
+function bugunGun(){const d=new Date().getDay();const i=d===0?5:d-1;return GUNLER[Math.min(i,5)];}
+
+// ===== NAVİGASYON =====
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='dashPage') renderDash();
+  else if(id==='muezzinPage') renderMuezzin();
+  else if(id==='muezzinListePage') renderMuezzinListe();
+  else if(id==='yemekciPage') renderYemekci();
+  else if(id==='takvimiPage') renderTakvimi();
+  else if(id==='ogrenciPage') renderOgrenciler();
+  else if(id==='grupDetayPage') renderGrupDetay();
+  else if(id==='ayarlarPage') renderAyarlar();
+}
+
+// ===== DASHBOARD =====
+function renderDash(){
+  const bugun=bugunGun();
+  document.getElementById('dHeroSub').textContent=haftaLabel(0)+' haftası';
+  document.getElementById('dHero2').textContent='Bugün: '+bugun;
+  const toplam=S.ogrenciler.length;
+  const bugGrup=getGunGrubu(0,bugun);
+  // Bugün sabah müezzini
+  const sabahMu=getMuezzin(0,bugun,'Sabah');
+  const sabahOg=sabahMu?S.ogrenciler.find(o=>o.id===sabahMu.ogId):null;
+  document.getElementById('dStats').innerHTML=`
+    <div class="dstat"><div style="font-size:26px;font-weight:800;color:var(--blue2)">${toplam}</div><div style="font-size:11px;color:var(--text2)">Öğrenci</div></div>
+    <div class="dstat"><div style="font-size:26px;font-weight:800;color:var(--teal)">${S.grupSayisi}</div><div style="font-size:11px;color:var(--text2)">Yemek Grubu</div></div>
+    <div class="dstat" style="grid-column:span 2"><div style="font-size:14px;font-weight:700;color:var(--teal);margin-bottom:4px">🔊 Bugün Müezzinler</div>
+      <div style="font-size:11px">${VAKITLER.map(v=>{
+        const mu=getMuezzin(0,bugun,v);
+        const og=mu?S.ogrenciler.find(o=>o.id===mu.ogId):null;
+        const rv=VAKIT_RENK[v];
+        return `<span style="background:${rv.b};color:${rv.r};border-radius:5px;padding:2px 6px;font-weight:700;font-size:10px;margin-right:3px;display:inline-block;margin-bottom:3px">${VAKIT_EMOJI[v]} ${og?og.isim:'—'}</span>`;
+      }).join('')}</div>
+    </div>
+  `;
+  document.getElementById('ogrenciDesc').textContent=toplam+' öğrenci kayıtlı';
+  document.getElementById('grupDesc').textContent=S.rotPazGrup!==null?'otomatik rotasyon aktif':'rotasyon ayarlanmamış';
+  document.getElementById('muezzinDesc').textContent=S.muezzinSira.length?`${S.muezzinSira.length} kişi sıralı rotasyon`:'sıra listesi boş';
+}
+
+function getGruplar(){
+  const g=[];
+  for(let i=1;i<=S.grupSayisi;i++) g.push({no:i,ogrenciler:S.ogrenciler.filter(o=>o.grup===i)});
+  return g;
+}
+
+
+// ===== HAFTALIK PLANLAMA =====
+// Tüm haftayı hesaplayıp muezzinManuel'e sabitler
+function haftayiPlanla(){
+  if(!S.muezzinSira.length){
+    showN('⚠️','Önce müezzin listesi oluşturun','');
+    return;
+  }
+  const wOff = S.muezzinW;
+  const wk = 'w' + wOff;
+  const zatenVar = S.muezzinManuel[wk] && Object.keys(S.muezzinManuel[wk]).length > 0;
+
+  if(zatenVar){
+    if(!confirm('Bu hafta zaten planlanmış. Üzerine yaz ve yeniden planla?')) return;
+  }
+
+  // Yemekçi rotasyonu da planla (önce yemekçiyi sabitle)
+  if(!S.yemekciManuel[wk]) S.yemekciManuel[wk] = {};
+  GUNLER.forEach((gun, gi) => {
+    if(S.yemekciManuel[wk][gun] === undefined){
+      const gg = getGunGrubu(wOff, gun);
+      if(gg) S.yemekciManuel[wk][gun] = gg.no;
+    }
+  });
+
+  // Müezzin planla — yemekçi sabitlenmiş haliyle hesapla
+  if(!S.muezzinManuel[wk]) S.muezzinManuel[wk] = {};
+
+  GUNLER.forEach((gun, gi) => {
+    if(!S.muezzinManuel[wk][gun]) S.muezzinManuel[wk][gun] = {};
+    // Bu gün yemekçi kimler
+    const gg = getGunGrubu(wOff, gun);
+    const yemekciIdler = new Set();
+    if(gg){
+      const g = getGruplar().find(x => x.no === gg.no);
+      if(g) g.ogrenciler.forEach(o => yemekciIdler.add(o.id));
+    }
+    const uygunSira = S.muezzinSira.filter(id => !yemekciIdler.has(id));
+    if(!uygunSira.length) return;
+
+    VAKITLER.forEach((vakit, vi) => {
+      // Zaten manuel atanmışsa dokunma
+      if(S.muezzinManuel[wk][gun][vakit] !== undefined) return;
+      const toplamSlot = wOff*7*5 + gi*5 + vi;
+      const slot = ((S.muezzinRotSlot + toplamSlot) % uygunSira.length + uygunSira.length) % uygunSira.length;
+      S.muezzinManuel[wk][gun][vakit] = uygunSira[slot];
+    });
+  });
+
+  save();
+  showN('✅', haftaLabel(wOff)+' planlandı', 'Tüm vakitler sabitlendi — yazdırabilirsiniz');
+  renderMuezzin();
+}
+
+// Haftalık planı temizle (serbest bırak)
+function haftayiSerbest(){
+  const wk = 'w' + S.muezzinW;
+  if(S.muezzinManuel[wk]) delete S.muezzinManuel[wk];
+  if(S.yemekciManuel[wk]) delete S.yemekciManuel[wk];
+  save();
+  showN('↺', 'Plan silindi', 'Rotasyona döndü');
+  renderMuezzin();
+}
+
+// ===== MÜEZZİN TAKVİM =====
+function renderMuezzin(){
+  document.getElementById('muezzinSub').textContent=haftaLabel(S.muezzinW);
+  document.getElementById('muezzinWL').textContent=haftaLabel(S.muezzinW);
+  document.getElementById('muezzinGunTabs').innerHTML=GUNLER.map((g,i)=>`
+    <button class="wtab${g===S.muezzinGun?' active':''}" onclick="selMuezzinGun('${g}')">
+      ${g.substring(0,3)}<br><span style="font-size:9px;opacity:.65">${gunTarih(S.muezzinW,i)}</span>
+    </button>`).join('');
+  renderMuezzinGun();
+}
+function selMuezzinGun(g){S.muezzinGun=g;renderMuezzin();}
+function chMuezzinW(d){S.muezzinW+=d;renderMuezzin();}
+
+function renderMuezzinGun(){
+  const gun=S.muezzinGun;
+  const wOff=S.muezzinW;
+
+  // Sıra listesi yoksa uyarı
+  if(!S.muezzinSira.length){
+    document.getElementById('muezzinB').innerHTML=`
+      <div onclick="goPage('muezzinListePage')" style="background:linear-gradient(135deg,rgba(10,96,112,0.08),rgba(0,180,200,0.04));border:2px dashed rgba(10,96,112,0.4);border-radius:14px;padding:20px;text-align:center;cursor:pointer">
+        <div style="font-size:30px;margin-bottom:8px">🔄</div>
+        <div style="font-size:14px;font-weight:700;color:var(--teal)">Müezzin Sırası Belirle</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Hangi çocuklar sırayla müezzin yapacak?<br>Listeye ekle, otomatik dönecek</div>
+      </div>`;
+    return;
+  }
+
+  let html=`<div class="gc">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">${gun} — Müezzin Atamaları</div>`;
+
+  VAKITLER.forEach(v=>{
+    const mu=getMuezzin(wOff,gun,v);
+    const og=mu?S.ogrenciler.find(o=>o.id===mu.ogId):null;
+    const rv=VAKIT_RENK[v];
+    html+=`<div class="vakit-row" onclick="muezzinManuelAc(${wOff},'${gun}','${v}')">
+      <span class="vakit-badge" style="background:${rv.b};color:${rv.r}">${VAKIT_EMOJI[v]} ${v}</span>
+      <div style="flex:1"></div>
+      ${og
+        ? `<span class="vakit-kisi">${og.isim}${!mu.manuel?`<span class="mu-rot-badge" style="margin-left:4px">↻</span>`:''}</span>`
+        : `<span class="vakit-empty">+ Ata</span>`}
+    </div>`;
+  });
+
+  html+=`</div>
+    <div style="font-size:11px;color:var(--text2);text-align:center;padding:8px 0 4px">
+      ${(() => {
+        const wk2='w'+wOff;
+        const planli = S.muezzinManuel[wk2] && Object.keys(S.muezzinManuel[wk2]).length>=6;
+        return planli
+          ? `<span style="color:#14c87a;font-weight:700">✓ Hafta planlandı</span> · <span onclick="haftayiSerbest()" style="color:var(--blue2);cursor:pointer;text-decoration:underline">Serbest bırak</span>`
+          : `<span style="color:var(--text2)">↻ rotasyondan otomatik</span> · <span onclick="haftayiPlanla()" style="color:#ffd700;cursor:pointer;font-weight:700">Haftayı Planla</span>`;
+      })()}
+    </div>`
+  document.getElementById('muezzinB').innerHTML=html;
+}
+
+// Müezzin Manuel
+let _muCtx=null;
+function muezzinManuelAc(wOff,gun,vakit){
+  _muCtx={wOff,gun,vakit,wk:wKey(wOff)};
+  document.getElementById('muezzinManuelBaslik').textContent=`${VAKIT_EMOJI[vakit]} ${vakit} — Müezzin`;
+  document.getElementById('muezzinManuelAciklama').textContent='Sadece bu vakit için değiştir. Rotasyon diğer vakitlerde devam eder.';
+  const mevcut=getMuezzin(wOff,gun,vakit);
+  const mesgul=new Set();
+  VAKITLER.forEach(v2=>{
+    if(v2!==vakit){
+      const m=getMuezzin(wOff,gun,v2);
+      if(m) mesgul.add(m.ogId);
+    }
+  });
+  document.getElementById('muManuelSecim').innerHTML=`
+    <button class="mc${!mevcut||!mevcut.manuel?' sel':''}" data-id="__rot__" onclick="selBtn(this,'muManuelSecim')">↻ Rotasyon</button>
+    ${S.ogrenciler.map(o=>`
+      <button class="mc${mevcut&&mevcut.manuel&&mevcut.ogId===o.id?' sel':''}" data-id="${o.id}"
+        onclick="selBtn(this,'muManuelSecim')" ${mesgul.has(o.id)?'disabled style="opacity:.35"':''}>
+        ${o.isim}${o.grup?` <small style="opacity:.6">G${o.grup}</small>`:''}
+      </button>`).join('')}`;
+  moAc('muezzinManuelMo');
+}
+function muezzinManuelSave(){
+  const sel=document.querySelector('#muManuelSecim .mc.sel');
+  if(!sel)return;
+  const {wOff,gun,vakit,wk}=_muCtx;
+  if(!S.muezzinManuel[wk])S.muezzinManuel[wk]={};
+  if(!S.muezzinManuel[wk][gun])S.muezzinManuel[wk][gun]={};
+  const id=sel.dataset.id;
+  if(id==='__rot__') delete S.muezzinManuel[wk][gun][vakit];
+  else S.muezzinManuel[wk][gun][vakit]=id;
+  save();moKapat('muezzinManuelMo');
+  showN('✅','Güncellendi','');
+  renderMuezzinGun();
+}
+
+// ===== MÜEZZİN LISTE SAYFASI =====
+function renderMuezzinListe(){
+  const el=document.getElementById('muezzinListeB');
+  const siraOgrenciler=S.muezzinSira.map(id=>S.ogrenciler.find(o=>o.id===id)).filter(Boolean);
+
+  let html='';
+
+  // Rotasyon başlangıç ayarı
+  if(S.muezzinSira.length){
+    html+=`<div class="card" style="margin-bottom:10px;border-color:rgba(10,96,112,0.3);background:rgba(10,96,112,0.04)">
+      <div class="card-title" style="color:var(--teal)">🔄 Rotasyon Aktif — ${S.muezzinSira.length} kişi</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Sıra: her vakit bir sonraki kişiye geçer. Liste bitince başa döner.</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="muezzinRotSifirlaAc()" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:12px;font-weight:600;font-family:'Outfit',sans-serif">↺ Başlangıcı Değiştir</button>
+        <button onclick="muezzinListeSifirla()" style="flex:1;padding:9px;border-radius:8px;border:1px solid rgba(170,16,48,0.3);background:rgba(170,16,48,0.06);color:var(--red);cursor:pointer;font-size:12px;font-weight:600;font-family:'Outfit',sans-serif">🗑️ Listeyi Sil</button>
+      </div>
+    </div>`;
+  }
+
+  // Mevcut sıra
+  if(siraOgrenciler.length){
+    html+=`<div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Mevcut Sıra</div>`;
+    siraOgrenciler.forEach((o,i)=>{
+      html+=`<div class="sira-item">
+        <div class="sira-no">${i+1}</div>
+        <div style="flex:1;font-size:13px;font-weight:600">${o.isim}${o.grup?` <span style="font-size:10px;color:var(--text2)">G${o.grup}</span>`:''}</div>
+        <button onclick="muezzinSiradenCikar('${o.id}')" style="width:28px;height:28px;border-radius:7px;border:1px solid rgba(170,16,48,0.2);background:rgba(170,16,48,0.05);color:var(--red);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>`;
+    });
+    html+=`<div style="height:12px"></div>`;
+  }
+
+  // Eklenebilecek öğrenciler
+  const siraIdSet=new Set(S.muezzinSira);
+  const eklenebilir=S.ogrenciler.filter(o=>!siraIdSet.has(o.id));
+
+  if(eklenebilir.length){
+    html+=`<div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Sıraya Ekle</div>`;
+    eklenebilir.forEach(o=>{
+      html+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--card);border-radius:9px;margin-bottom:5px">
+        <div style="flex:1;font-size:13px;font-weight:600">${o.isim}${o.grup?` <span style="font-size:10px;color:var(--text2)">G${o.grup}</span>`:''}</div>
+        <button onclick="muezzinSirayayEkle('${o.id}')" style="padding:5px 12px;border-radius:7px;border:none;background:rgba(10,96,112,0.15);color:var(--teal);cursor:pointer;font-size:12px;font-weight:700;font-family:'Outfit',sans-serif">+ Ekle</button>
+      </div>`;
+    });
+  } else if(!S.ogrenciler.length){
+    html+=`<div style="text-align:center;padding:30px 20px;color:var(--text2)">Önce Öğrenciler sayfasından öğrenci ekleyin.</div>`;
+  } else {
+    html+=`<div style="text-align:center;padding:20px;color:var(--text2);font-size:12px">Tüm öğrenciler sıraya eklendi.</div>`;
+  }
+
+  el.innerHTML=html;
+}
+
+function muezzinSirayayEkle(id){
+  if(!S.muezzinSira.includes(id)){
+    S.muezzinSira.push(id);
+    save();renderMuezzinListe();
+    showN('✅','Sıraya eklendi','');
+  }
+}
+function muezzinSiradenCikar(id){
+  S.muezzinSira=S.muezzinSira.filter(x=>x!==id);
+  save();renderMuezzinListe();
+  showN('🗑️','Sıradan çıkarıldı','');
+}
+function muezzinListeSifirla(){
+  if(!confirm('Müezzin sıra listesi silinecek!'))return;
+  S.muezzinSira=[];S.muezzinRotSlot=0;S.muezzinManuel={};
+  save();renderMuezzinListe();
+  showN('🗑️','Sıra listesi temizlendi','');
+}
+
+// Müezzin rotasyon başlangıcı değiştir
+function muezzinRotSifirlaAc(){
+  // Kullanıcı bugün hangi çocuktan başlasın seçer
+  const bugun=bugunGun();
+  const gi=GUNLER.indexOf(bugun);
+  // Bu Pazartesi Sabahına göre slot hesapla
+  // Mevcut slot göster, değiştirme imkanı ver
+  const sira=S.muezzinSira.map(id=>S.ogrenciler.find(o=>o.id===id)).filter(Boolean);
+  if(!sira.length)return;
+
+  // Bugün sabah hangi kişiden başlasın seç
+  let html=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Bu Pzt Sabah'tan itibaren sıra hangi kişiden başlasın?</div><div class="mch" id="muRotSecim">`;
+  sira.forEach((o,i)=>{
+    const mevcutSlot=((S.muezzinRotSlot%S.muezzinSira.length)+S.muezzinSira.length)%S.muezzinSira.length;
+    html+=`<button class="mc${mevcutSlot===i?' sel':''}" data-slot="${i}" onclick="selBtn(this,'muRotSecim')">${i+1}. ${o.isim}</button>`;
+  });
+  html+=`</div>`;
+
+  document.querySelector('#muezzinRotSifirlaModal .md').innerHTML=`
+    <div class="mh"></div>
+    <div class="mt">↺ Müezzin Rotasyon Başlangıcı</div>
+    ${html}
+    <div class="ma">
+      <button class="bc" onclick="moKapat('muezzinRotSifirlaModal')">İptal</button>
+      <button class="bs" onclick="muezzinRotSifirlaKaydet()">Kaydet</button>
+    </div>`;
+  moAc('muezzinRotSifirlaModal');
+}
+function muezzinRotSifirlaKaydet(){
+  const sel=document.querySelector('#muRotSecim .mc.sel');
+  if(!sel)return;
+  S.muezzinRotSlot=parseInt(sel.dataset.slot);
+  save();moKapat('muezzinRotSifirlaModal');
+  showN('✅','Rotasyon güncellendi','');
+  renderMuezzinListe();
+  renderMuezzinGun();
+}
+
+// ===== YEMEKÇİ =====
+function renderYemekci(){
+  document.getElementById('yemekciSub').textContent=haftaLabel(S.yemekciW);
+  document.getElementById('yemekciWL').textContent=haftaLabel(S.yemekciW);
+  document.getElementById('yemekciGunTabs').innerHTML=GUNLER.map((g,i)=>`
+    <button class="wtab${g===S.yemekciGun?' active':''}" onclick="selYemekciGun('${g}')">
+      ${g.substring(0,3)}<br><span style="font-size:9px;opacity:.65">${gunTarih(S.yemekciW,i)}</span>
+    </button>`).join('');
+  renderYemekciGun();
+}
+function selYemekciGun(g){S.yemekciGun=g;renderYemekci();}
+function chYemekciW(d){S.yemekciW+=d;renderYemekci();}
+
+function renderYemekciGun(){
+  const wk=wKey(S.yemekciW),gun=S.yemekciGun;
+  const gunInfo=getGunGrubu(S.yemekciW,gun);
+  const gruplar=getGruplar();
+  let html='';
+  if(S.rotPazGrup===null){
+    html=`<div onclick="rotasyonKurulumAc(${S.yemekciW},'${gun}')" style="background:linear-gradient(135deg,rgba(20,90,48,0.08),rgba(0,180,100,0.04));border:2px dashed rgba(20,90,48,0.4);border-radius:14px;padding:20px;margin-bottom:12px;text-align:center;cursor:pointer">
+      <div style="font-size:30px;margin-bottom:8px">🔄</div>
+      <div style="font-size:14px;font-weight:700;color:var(--green)">Rotasyon Başlat</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px">Bir kez başlangıç grubunu seçin,<br>sonraki haftalar otomatik döner</div>
+    </div>`;
+  } else {
+    const g=gunInfo?gruplar.find(x=>x.no===gunInfo.no):null;
+    if(gunInfo&&g){
+      html+=`<div style="background:linear-gradient(135deg,rgba(20,90,48,0.12),rgba(0,198,100,0.05));border:2px solid rgba(20,90,48,0.3);border-radius:14px;padding:14px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div><span style="font-size:14px;font-weight:800;color:var(--green)">🍽️ Grup ${g.no}</span>
+          ${gunInfo.manuel?`<span class="manuel-badge">Manuel</span>`:`<span class="rot-badge">Rotasyon</span>`}</div>
+          <button onclick="yemekciManuelAc(${S.yemekciW},'${gun}')" style="padding:5px 10px;border-radius:7px;border:1px solid rgba(20,90,48,0.3);background:rgba(20,90,48,0.1);color:var(--green);cursor:pointer;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif">Değiştir</button>
+        </div>
+        <div>${g.ogrenciler.map(o=>`<span class="ogrenci-pill" style="background:rgba(20,90,48,0.1);border-color:rgba(20,90,48,0.2);color:var(--green)">${o.isim}</span>`).join('')||'<span style="font-size:12px;color:var(--text2)">Grupta öğrenci yok</span>'}</div>
+        ${gunInfo.manuel?`<div style="margin-top:8px"><button onclick="manuelSil('${wk}','${gun}')" style="font-size:11px;color:var(--text2);background:transparent;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;font-family:'Outfit',sans-serif">↺ Rotasyona dön</button></div>`:''}
+      </div>`;
+    }
+  }
+  html+=`<div style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px">Tüm Gruplar</div>`;
+  gruplar.forEach(g=>{
+    const secili=gunInfo&&gunInfo.no===g.no;
+    html+=`<div class="grup-card" onclick="yemekciManuelAcGrup(${S.yemekciW},'${gun}',${g.no})" style="${secili?'border-color:var(--green);background:rgba(20,90,48,0.07)':''}">
+      <div class="grup-header">
+        <span class="grup-num">Grup ${g.no}</span>
+        ${secili?`<span style="font-size:11px;font-weight:700;background:rgba(20,90,48,0.12);color:var(--green);padding:2px 8px;border-radius:5px">Seçili ✓</span>`:`<span style="font-size:11px;color:var(--text2)">${g.ogrenciler.length} kişi</span>`}
+      </div>
+      <div>${g.ogrenciler.length?g.ogrenciler.map(o=>`<span class="ogrenci-pill">${o.isim}</span>`).join(''):`<span style="font-size:12px;color:var(--text2)">Boş</span>`}</div>
+    </div>`;
+  });
+  document.getElementById('yemekciB').innerHTML=html;
+}
+
+let _rotCtx=null;
+function rotasyonKurulumAc(wOff,gun){
+  _rotCtx={wOff,gun};
+  const gi=GUNLER.indexOf(gun);
+  document.getElementById('rotKurulumAciklama').textContent=`${gun} (${gunTarih(wOff,gi)}) için başlangıç grubunu seçin.`;
+  document.getElementById('rotKurulumSecim').innerHTML=getGruplar().map(g=>`<button class="mc" data-no="${g.no}" onclick="selBtn(this,'rotKurulumSecim')">Grup ${g.no}</button>`).join('');
+  moAc('rotasyonKurulumMo');
+}
+function rotasyonKurulumSave(){
+  const sel=document.querySelector('#rotKurulumSecim .mc.sel');
+  if(!sel){showN('⚠️','Grup seçin','');return;}
+  const {wOff,gun}=_rotCtx;
+  const no=parseInt(sel.dataset.no);
+  const gi=GUNLER.indexOf(gun);
+  const tot=wOff*7+gi;
+  S.rotPazGrup=((no-1-tot)%S.grupSayisi+S.grupSayisi)%S.grupSayisi+1;
+  save();moKapat('rotasyonKurulumMo');
+  showN('✅','Rotasyon başlatıldı',`${gun}: Grup ${no}`);
+  renderYemekci();
+}
+let _ymCtx=null;
+function yemekciManuelAc(wOff,gun){
+  _ymCtx={wOff,gun,wk:wKey(wOff)};
+  document.getElementById('yemekciManuelBaslik').textContent=`🍽️ ${gun} — Manuel Değiştir`;
+  const mevcut=getGunGrubu(wOff,gun);
+  document.getElementById('yManuelSecim').innerHTML=`
+    <button class="mc" data-no="-1" onclick="selBtn(this,'yManuelSecim')">↺ Rotasyona Bırak</button>
+    ${getGruplar().map(g=>`<button class="mc${mevcut&&mevcut.no===g.no&&mevcut.manuel?' sel':''}" data-no="${g.no}" onclick="selBtn(this,'yManuelSecim')">Grup ${g.no}</button>`).join('')}`;
+  moAc('yemekciManuelMo');
+}
+function yemekciManuelAcGrup(wOff,gun,no){
+  if(!S.yemekciManuel['w'+wOff])S.yemekciManuel['w'+wOff]={};
+  S.yemekciManuel['w'+wOff][gun]=no;
+  save();renderYemekciGun();
+  showN('✅',`Grup ${no} seçildi`,gun);
+}
+function yemekciManuelSave(){
+  const sel=document.querySelector('#yManuelSecim .mc.sel');
+  if(!sel)return;
+  const {wOff,gun,wk}=_ymCtx;
+  const no=parseInt(sel.dataset.no);
+  if(!S.yemekciManuel[wk])S.yemekciManuel[wk]={};
+  if(no>0)S.yemekciManuel[wk][gun]=no;
+  else delete S.yemekciManuel[wk][gun];
+  save();moKapat('yemekciManuelMo');
+  showN('✅','Güncellendi','');renderYemekciGun();
+}
+function manuelSil(wk,gun){
+  if(S.yemekciManuel[wk])delete S.yemekciManuel[wk][gun];
+  save();renderYemekciGun();showN('↺','Rotasyona döndü','');
+}
+function rotasyonSifirlaModalAc(){
+  document.getElementById('rotSifirlaSecim').innerHTML=getGruplar().map(g=>`<button class="mc${S.rotPazGrup===g.no?' sel':''}" data-no="${g.no}" onclick="selBtn(this,'rotSifirlaSecim')">Grup ${g.no}</button>`).join('');
+  moAc('rotasyonSifirlaModal');
+}
+function rotasyonSifralaKaydet(){
+  const sel=document.querySelector('#rotSifirlaSecim .mc.sel');
+  if(!sel){showN('⚠️','Grup seçin','');return;}
+  S.rotPazGrup=parseInt(sel.dataset.no);
+  save();moKapat('rotasyonSifirlaModal');
+  showN('✅','Rotasyon güncellendi',`Bu Pazartesi: Grup ${S.rotPazGrup}`);
+  renderYemekci();
+}
+
+// ===== TAKVİM =====
+function renderBugun(){
+  const gun = bugunGun();
+  const d = new Date();
+  const gun_str = d.toLocaleDateString('tr-TR',{weekday:'long'});
+  const tarih_str = d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  const gruplar = getGruplar();
+
+  const muRows = VAKITLER.map(v => {
+    const mu = getMuezzin(0, gun, v);
+    const og = mu ? S.ogrenciler.find(o => o.id === mu.ogId) : null;
+    const rv = VAKIT_RENK[v];
+    return `<div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(0,0,0,0.06)">
+      <span style="font-size:10px;font-weight:800;color:${rv.r};background:${rv.b};padding:3px 7px;border-radius:5px;min-width:44px;text-align:center;flex-shrink:0;letter-spacing:.03em">${v}</span>
+      <span style="font-size:14px;font-weight:700;color:#1a1a2e;flex:1">${og ? og.isim : '—'}</span>
+    </div>`;
+  }).join('');
+
+  const gg = getGunGrubu(0, gun);
+  const g = gg ? gruplar.find(x => x.no === gg.no) : null;
+  const yemBaslik = g ? 'Grup ' + g.no : '—';
+  const yemRows = (g && g.ogrenciler.length)
+    ? g.ogrenciler.map((o,i) => `<div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(0,0,0,0.06)">
+        <span style="font-size:10px;font-weight:800;color:#fff;background:#2d6a4f;opacity:.85;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</span>
+        <span style="font-size:14px;font-weight:700;color:#1a1a2e">${o.isim}</span>
+      </div>`).join('')
+    : `<div style="padding:16px;font-size:13px;color:#888">Grup atanmamış</div>`;
+
+  document.getElementById('takvimiB').style.cssText="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden";
+  document.getElementById('takvimiB').innerHTML = `
+    <div style="padding:18px 16px 14px;background:#9a9aaa;border-bottom:1px solid rgba(0,0,0,0.12);flex-shrink:0">
+      <div style="font-size:22px;font-weight:800;color:#fff;text-transform:capitalize;letter-spacing:-.3px">${gun_str}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;font-family:'JetBrains Mono',monospace">${tarih_str}</div>
+    </div>
+
+    <div style="display:flex;gap:12px;padding:14px 12px;flex:1;min-height:0;overflow:hidden">
+
+      <!-- Sol kart: Müezzin -->
+      <div style="flex:1;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.07)">
+        <div style="padding:12px 16px;background:#7a9ea4;border-bottom:1px solid rgba(0,0,0,0.1);flex-shrink:0">
+          <div style="font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:2px">Günün</div>
+          <div style="font-size:15px;font-weight:800;color:#fff">Müezzinler</div>
+        </div>
+        <div style="flex:1;overflow-y:auto">${muRows}</div>
+      </div>
+
+      <!-- Sağ kart: Yemekçi -->
+      <div style="flex:1;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.07)">
+        <div style="padding:12px 16px;background:#7a9e8a;border-bottom:1px solid rgba(0,0,0,0.1);flex-shrink:0">
+          <div style="font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:2px">Günün · ${yemBaslik}</div>
+          <div style="font-size:15px;font-weight:800;color:#fff">Yemekçiler</div>
+        </div>
+        <div style="flex:1;overflow-y:auto">${yemRows}</div>
+      </div>
+
+    </div>`;
+}
+
+function selTakvimiTab(t,btn){
+  S.takvimiTab=t;
+  document.querySelectorAll('#takvimiTabs .wtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderTakvimi();
+}
+function renderTakvimi(){
+  if(S.takvimiTab==='bugun'){ renderBugun(); return; }
+  const w = S.takvimiTab==='gelecek' ? 1 : 0;
+  const basl = getMon(0);
+  const gruplar = getGruplar();
+
+  function buildCol(gun, gi){
+    const d = new Date(basl); d.setDate(basl.getDate() + w*7 + gi);
+    const tarih = fmtDate(d);
+    let muRows = VAKITLER.map(v => {
+      const mu = getMuezzin(w, gun, v);
+      const og = mu ? S.ogrenciler.find(o => o.id === mu.ogId) : null;
+      const rv = VAKIT_RENK[v];
+      return `<div style="display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid rgba(0,0,0,0.04)">
+        <span style="font-size:8px;font-weight:800;color:${rv.r};background:${rv.b};padding:1px 3px;border-radius:3px;white-space:nowrap;flex-shrink:0;min-width:20px;text-align:center">${v.substring(0,3)}</span>
+        <span style="font-size:11px;font-weight:600;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${og ? og.isim : '—'}</span>
+      </div>`;
+    }).join('');
+    const gg = getGunGrubu(w, gun);
+    const g = gg ? gruplar.find(x => x.no === gg.no) : null;
+    let yemRows = (g && g.ogrenciler.length)
+      ? g.ogrenciler.map(o=>`<div style="font-size:11px;font-weight:600;color:#145a30;padding:2px 0;border-bottom:1px solid rgba(20,90,48,0.07);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.isim}</div>`).join('')
+      : `<div style="font-size:11px;color:#999;padding:2px 0">—</div>`;
+    return `<div style="flex:1;border-right:1px solid rgba(0,0,0,0.07);min-width:0;display:flex;flex-direction:column">
+      <div style="padding:7px 7px 5px;background:#9a9aaa;border-bottom:1px solid rgba(0,0,0,0.12)">
+        <div style="font-size:11px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${gun}</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.55);font-family:'JetBrains Mono',monospace">${tarih}</div>
+      </div>
+      <div style="padding:6px 7px;border-bottom:1px solid rgba(10,96,112,0.15);background:rgba(10,96,112,0.03)">
+        <div style="font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#0a6070;margin-bottom:4px">Müezzin</div>
+        ${muRows}
+      </div>
+      <div style="padding:6px 7px;flex:1">
+        <div style="font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#145a30;margin-bottom:4px">${g ? 'Grup '+g.no : 'Yemekçi'}</div>
+        ${yemRows}
+      </div>
+    </div>`;
+  }
+
+  const satir1 = [0,1,2].map(gi => buildCol(GUNLER[gi], gi)).join('');
+  const satir2 = [3,4,5].map(gi => buildCol(GUNLER[gi], gi)).join('');
+  const haftalabel = w===0 ? 'Bu Hafta — '+haftaLabel(0) : 'Gelecek Hafta — '+haftaLabel(1);
+
+  document.getElementById('takvimiB').style.cssText='';
+  document.getElementById('takvimiB').innerHTML = `
+    <div style="padding:14px 14px 10px;background:#9a9aaa;border-bottom:1px solid rgba(0,0,0,0.12)">
+      <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.02em">${haftalabel}</div>
+    </div>
+    <div style="padding:10px;background:#f0ede8;display:flex;flex-direction:column;gap:10px">
+      <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.07)">
+        <div style="display:flex">${satir1}</div>
+      </div>
+      <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.07)">
+        <div style="display:flex">${satir2}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ===== ÖĞRENCİLER =====
+
+// ===== GRUP DETAY =====
+let _aktifGrup = 1;
+let _grupTab = 'icinde';
+
+function grupDetayAc(no){
+  _aktifGrup = no;
+  _grupTab = 'icinde';
+  document.querySelectorAll('#grupDetayTabs .wtab').forEach((b,i)=>b.classList.toggle('active',i===0));
+  goPage('grupDetayPage');
+}
+
+function selGrupTab(t, btn){
+  _grupTab = t;
+  document.querySelectorAll('#grupDetayTabs .wtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrupDetay();
+}
+
+function renderGrupDetay(){
+  const g = getGruplar().find(x=>x.no===_aktifGrup);
+  if(!g) return;
+  document.getElementById('grupDetayBaslik').textContent = 'Grup ' + g.no;
+  document.getElementById('grupDetaySub').textContent = g.ogrenciler.length + ' öğrenci';
+  const el = document.getElementById('grupDetayB');
+
+  if(_grupTab === 'icinde'){
+    // Gruptaki öğrenciler — çıkar butonu
+    if(!g.ogrenciler.length){
+      el.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text2)">
+        <div style="font-size:32px;margin-bottom:8px">👥</div>
+        <div style="font-size:14px;font-weight:600">Bu grupta öğrenci yok</div>
+        <div style="font-size:12px;margin-top:5px">"Ekle" sekmesinden öğrenci ekleyin</div>
+      </div>`;
+      return;
+    }
+    el.innerHTML = g.ogrenciler.map(o=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card2);border:1px solid var(--border);border-radius:11px;margin-bottom:6px">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),#1254cc);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">${o.isim.charAt(0)}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700">${o.isim}</div>
+          ${o.no?`<div style="font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace">No: ${o.no}</div>`:''}
+        </div>
+        <button onclick="gruptenCikar('${o.id}')"
+          style="padding:6px 12px;border-radius:8px;border:1px solid rgba(170,16,48,0.3);background:rgba(170,16,48,0.07);color:var(--red);cursor:pointer;font-size:12px;font-weight:700;font-family:'Outfit',sans-serif;user-select:none">
+          Çıkar
+        </button>
+      </div>`).join('');
+  } else {
+    // Diğer gruptaki veya grupsuz öğrenciler — ekle butonu
+    const disindakiler = S.ogrenciler.filter(o=>o.grup!==_aktifGrup);
+    if(!disindakiler.length){
+      el.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--text2)">
+        <div style="font-size:14px;font-weight:600">Tüm öğrenciler bu grupta</div>
+      </div>`;
+      return;
+    }
+    // Gruplara göre bölümle
+    const gruplara = {};
+    disindakiler.forEach(o=>{
+      const key = o.grup ? 'Grup '+o.grup : 'Gruba Atanmamış';
+      if(!gruplara[key]) gruplara[key]=[];
+      gruplara[key].push(o);
+    });
+    let html = `<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Seçtiğiniz öğrenci <b>Grup ${_aktifGrup}</b>'e taşınır.</div>`;
+    Object.entries(gruplara).sort((a,b)=>a[0].localeCompare(b[0],'tr')).forEach(([baslik, ogList])=>{
+      html += `<div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin:12px 0 6px">${baslik}</div>`;
+      html += ogList.map(o=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card2);border:1px solid var(--border);border-radius:11px;margin-bottom:6px">
+          <div style="width:34px;height:34px;border-radius:9px;background:rgba(100,100,120,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--text2);flex-shrink:0">${o.isim.charAt(0)}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">${o.isim}</div>
+            ${o.grup?`<div style="font-size:10px;color:var(--text2)">Grup ${o.grup}'den</div>`:'<div style="font-size:10px;color:var(--text2)">Grupsuz</div>'}
+          </div>
+          <button onclick="grubaEkle('${o.id}')"
+            style="padding:6px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),#1254cc);color:#fff;cursor:pointer;font-size:12px;font-weight:700;font-family:'Outfit',sans-serif;user-select:none">
+            Ekle
+          </button>
+        </div>`).join('');
+    });
+    el.innerHTML = html;
+  }
+}
+
+function gruptenCikar(id){
+  const o = S.ogrenciler.find(x=>x.id===id);
+  if(!o) return;
+  o.grup = null;
+  save(); renderGrupDetay();
+  document.getElementById('grupDetaySub').textContent = getGruplar().find(x=>x.no===_aktifGrup).ogrenciler.length + ' öğrenci';
+  showN('↩️', o.isim.split(' ')[0]+' gruptan çıkarıldı', '');
+}
+
+function grubaEkle(id){
+  const o = S.ogrenciler.find(x=>x.id===id);
+  if(!o) return;
+  o.grup = _aktifGrup;
+  save(); renderGrupDetay();
+  document.getElementById('grupDetaySub').textContent = getGruplar().find(x=>x.no===_aktifGrup).ogrenciler.length + ' öğrenci';
+  showN('✅', o.isim.split(' ')[0]+' eklendi', 'Grup '+_aktifGrup);
+}
+
+function renderOgrenciler(){
+  document.getElementById('ogrenciSub').textContent=S.ogrenciler.length+' öğrenci';
+  const gruplar=getGruplar();
+  if(!S.ogrenciler.length){
+    document.getElementById('ogrenciB').innerHTML=`<div style="text-align:center;padding:50px 20px;color:var(--text2)"><div style="font-size:40px;margin-bottom:12px">👥</div><div style="font-size:14px;font-weight:600">Henüz öğrenci eklenmemiş</div></div>`;
+    return;
+  }
+  let html='';
+  gruplar.forEach(g=>{
+    if(!g.ogrenciler.length&&g.no>Math.ceil(S.ogrenciler.length/S.grupBoyutu))return;
+    html+=`<div class="card" style="margin-bottom:8px;cursor:pointer;user-select:none" onclick="grupDetayAc(${g.no})">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--blue2)">Grup ${g.no}</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px">${g.ogrenciler.length} öğrenci</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="display:flex;flex-wrap:wrap;gap:3px;max-width:180px;justify-content:flex-end">
+            ${g.ogrenciler.slice(0,4).map(o=>`<span style="font-size:10px;font-weight:600;background:rgba(16,64,208,0.1);color:var(--blue2);padding:2px 6px;border-radius:4px">${o.isim.split(' ')[0]}</span>`).join('')}
+            ${g.ogrenciler.length>4?`<span style="font-size:10px;color:var(--text2)">+${g.ogrenciler.length-4}</span>`:''}
+          </div>
+          <span style="color:var(--text2);font-size:20px;flex-shrink:0">›</span>
+        </div>
+      </div>
+    </div>`;
+  });
+  const grupsuz=S.ogrenciler.filter(o=>!o.grup);
+  if(grupsuz.length){
+    html+=`<div class="card"><div class="card-title" style="color:var(--text2)">⚠️ Gruba Atanmamış</div>
+      ${grupsuz.map(o=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0">
+        <div style="flex:1;font-size:13px;font-weight:600">${o.isim}</div>
+        <button onclick="ogrenciDuzenle('${o.id}')" style="padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--blue2);cursor:pointer;font-size:12px;font-family:'Outfit',sans-serif">Grup Ata</button>
+      </div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('ogrenciB').innerHTML=html;
+}
+function ogrenciEkleAc(){
+  _editId=null;
+  document.getElementById('ogrenciMoBaslik').textContent='Öğrenci Ekle';
+  document.getElementById('yoIsim').value='';document.getElementById('yoNo').value='';
+  const sel=document.getElementById('yoGrup');
+  sel.innerHTML='<option value="">— Grup Yok —</option>'+getGruplar().map(g=>`<option value="${g.no}">Grup ${g.no}</option>`).join('');
+  moAc('ogrenciMo');
+}
+let _editId=null;
+function ogrenciDuzenle(id){
+  _editId=id;const o=S.ogrenciler.find(x=>x.id===id);if(!o)return;
+  document.getElementById('ogrenciMoBaslik').textContent='Öğrenci Düzenle';
+  document.getElementById('yoIsim').value=o.isim;document.getElementById('yoNo').value=o.no||'';
+  const sel=document.getElementById('yoGrup');
+  sel.innerHTML='<option value="">— Grup Yok —</option>'+getGruplar().map(g=>`<option value="${g.no}"${o.grup===g.no?' selected':''}>Grup ${g.no}</option>`).join('');
+  moAc('ogrenciMo');
+}
+function ogrenciKaydet(){
+  const isim=document.getElementById('yoIsim').value.trim();
+  if(!isim){showN('❌','İsim girin','');return;}
+  const no=document.getElementById('yoNo').value.trim();
+  const grup=parseInt(document.getElementById('yoGrup').value)||null;
+  if(_editId){const o=S.ogrenciler.find(x=>x.id===_editId);if(o){o.isim=isim;o.no=no;o.grup=grup;}}
+  else S.ogrenciler.push({id:'og'+Date.now(),isim,no,grup});
+  save();moKapat('ogrenciMo');_editId=null;
+  showN('✅','Kaydedildi','');renderOgrenciler();
+}
+function ogrenciSil(id){
+  if(!confirm('Silmek istediğinizden emin misiniz?'))return;
+  S.ogrenciler=S.ogrenciler.filter(o=>o.id!==id);
+  S.muezzinSira=S.muezzinSira.filter(x=>x!==id);
+  save();renderOgrenciler();showN('🗑️','Silindi','');
+}
+
+// ===== AYARLAR =====
+function renderAyarlar(){
+  document.getElementById('ayarlarB').innerHTML=`
+    <div class="card">
+      <div class="card-title">🔊 Müezzin Sırası</div>
+      <div style="font-size:13px;margin-bottom:10px">${S.muezzinSira.length?`<span style="color:var(--teal);font-weight:700">✅ Aktif</span> — ${S.muezzinSira.length} kişi sırada`:`<span style="color:var(--text2)">⏸ Henüz ayarlanmamış</span>`}</div>
+      <button onclick="goPage('muezzinListePage')" style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">👥 Müezzin Listesini Düzenle</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔄 Yemekçi Rotasyonu</div>
+      <div style="font-size:13px;margin-bottom:10px">${S.rotPazGrup!==null?`<span style="color:var(--green);font-weight:700">✅ Aktif</span> — Bu Pzt Grup ${S.rotPazGrup}`:`<span style="color:var(--text2)">⏸ Henüz ayarlanmamış</span>`}</div>
+      <button onclick="rotasyonSifirlaModalAc()" style="width:100%;padding:11px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">↺ Rotasyonu Değiştir</button>
+    </div>
+    <div class="card">
+      <div class="card-title">🔢 Grup Ayarları</div>
+      <div style="display:flex;gap:12px;margin-bottom:10px">
+        <div style="flex:1"><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px">Grup Sayısı</label><input type="number" class="mini-input" id="aGS" value="${S.grupSayisi}" min="1" max="50"></div>
+        <div style="flex:1"><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px">Grup Boyutu</label><input type="number" class="mini-input" id="aGB" value="${S.grupBoyutu}" min="1" max="30"></div>
+      </div>
+      <button onclick="grupAyarKaydet()" style="width:100%;padding:11px;border-radius:9px;border:none;background:var(--blue);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Kaydet</button>
+    </div>
+    <div class="card">
+      <div class="card-title">⚠️ Veri Yönetimi</div>
+      <button onclick="tumAtamalariSil()" style="width:100%;padding:11px;border-radius:9px;border:1px solid rgba(170,16,48,0.3);background:rgba(170,16,48,0.06);color:var(--red);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px">🗑️ Tüm Atamaları Temizle</button>
+      <button onclick="tumVeriSil()" style="width:100%;padding:11px;border-radius:9px;border:1px solid rgba(170,16,48,0.3);background:rgba(170,16,48,0.06);color:var(--red);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">🗑️ Tüm Veriyi Sıfırla</button>
+    </div>`;
+}
+function grupAyarKaydet(){
+  S.grupSayisi=parseInt(document.getElementById('aGS').value)||8;
+  S.grupBoyutu=parseInt(document.getElementById('aGB').value)||5;
+  save();showN('✅','Kaydedildi','');
+}
+function tumAtamalariSil(){
+  if(!confirm('Tüm atamalar + rotasyonlar sıfırlanacak!'))return;
+  S.yemekciManuel={};S.rotPazGrup=null;S.muezzinManuel={};S.muezzinSira=[];S.muezzinRotSlot=0;save();
+  showN('🗑️','Temizlendi','');
+}
+function tumVeriSil(){
+  if(!confirm('TÜM VERİ silinecek! Emin misiniz?'))return;
+  S.yemekciManuel={};S.rotPazGrup=null;S.muezzinManuel={};S.muezzinSira=[];S.muezzinRotSlot=0;S.ogrenciler=[];save();
+  showN('🗑️','Sıfırlandı','');renderDash();
+}
+
+// ===== YARDIMCI =====
+function selBtn(btn,cid){document.querySelectorAll('#'+cid+' .mc').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function moAc(id){document.getElementById(id).classList.add('open');}
+function moKapat(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',function(e){if(e.target===m)moKapat(m.id);}));
+function showN(emoji,baslik,alt){
+  const nw=document.getElementById('nw'),ni=document.createElement('div');ni.className='ni';
+  ni.innerHTML=`<span style="font-size:16px">${emoji}</span><div><div style="font-size:12px;font-weight:700">${baslik}</div>${alt?`<div style="font-size:11px;color:var(--text2)">${alt}</div>`:''}</div>`;
+  nw.appendChild(ni);
+  setTimeout(()=>{ni.style.opacity='0';ni.style.transition='opacity .3s';setTimeout(()=>ni.remove(),300);},2600);
+}
+
+// Müezzin rotasyon sıfırla modal (dinamik içerik)
+document.body.insertAdjacentHTML('beforeend',`
+<div class="mo" id="muezzinRotSifirlaModal">
+  <div class="md"></div>
+</div>`);
+document.getElementById('muezzinRotSifirlaModal').addEventListener('click',function(e){if(e.target===this)moKapat('muezzinRotSifirlaModal');});
+
+// ===== BAŞLAT =====
+(function(){
+  load();
+  if(!S.ogrenciler.length){
+    S.ogrenciler = [
+    {id:'og1',isim:'FARUK ALPEREN AYDEMİR',no:'001',grup:2},
+    {id:'og2',isim:'İBRAHİM HALİLULLAH',no:'002',grup:null},
+    {id:'og3',isim:'MUSTAFA DAYAN',no:'003',grup:1},
+    {id:'og4',isim:'MUSTAFA DEMİRAL',no:'004',grup:null},
+    {id:'og5',isim:'MUSTAFA EYMEN KİRKİT',no:'005',grup:8},
+    {id:'og6',isim:'ÖMER FETİH AKSU',no:'006',grup:7},
+    {id:'og7',isim:'ÖMER SARIMEHMET',no:'007',grup:3},
+    {id:'og8',isim:'ŞEVKİ AKİF KOCABAŞ',no:'008',grup:8},
+    {id:'og9',isim:'TAHİR ÖKMEN',no:'009',grup:4},
+    {id:'og10',isim:'YAŞAR ALP ERSOY',no:'010',grup:7},
+    {id:'og11',isim:'YUNUS EMRE TUBAY',no:'011',grup:null},
+    {id:'og12',isim:'YUSUF ANIL ÖZCAN',no:'012',grup:6},
+    {id:'og13',isim:'YUSUF FURKAN AYAR',no:'013',grup:8},
+    {id:'og14',isim:'YUSUF TAHA ÖZCAN',no:'014',grup:5},
+    {id:'og15',isim:'ALİ ABU',no:'015',grup:null},
+    {id:'og16',isim:'AHMET ALİ İLERİ',no:'016',grup:null},
+    {id:'og17',isim:'AHMET HİLMİ ÇELİK',no:'017',grup:2},
+    {id:'og18',isim:'ALİ KEREM ÜNLÜ',no:'018',grup:4},
+    {id:'og19',isim:'ERDEM TUBAY',no:'019',grup:5},
+    {id:'og20',isim:'HAMZA NURİ KARAN',no:'020',grup:6},
+    {id:'og21',isim:'HÜSEYİN DEMİRAL',no:'021',grup:5},
+    {id:'og22',isim:'MEHMET EYMEN KİZEK',no:'022',grup:3},
+    {id:'og23',isim:'MEHMET FATİH ARSLANYOLU',no:'023',grup:null},
+    {id:'og24',isim:'MEHMET KEMAL AYDEMİR',no:'024',grup:5},
+    {id:'og25',isim:'MUHAMMED ALİ ERSOY',no:'025',grup:1},
+    {id:'og26',isim:'MUSTAFA GÖKÇEGÖZ',no:'026',grup:8},
+    {id:'og27',isim:'MUSAP BAYRAKTAR',no:'027',grup:null},
+    {id:'og28',isim:'AHMET EMİR GEZER',no:'028',grup:null},
+    {id:'og29',isim:'AHMET KÖSE',no:'029',grup:1},
+    {id:'og30',isim:'AHMET UYGUR',no:'030',grup:2},
+    {id:'og31',isim:'AHMET Y. KIYAKOĞLU',no:'031',grup:3},
+    {id:'og32',isim:'AHMET YAVUZ ÖZCAN',no:'032',grup:null},
+    {id:'og33',isim:'EMİRHAN ÖZCAN',no:'033',grup:8},
+    {id:'og34',isim:'EYMEN SEMİH YAMAN',no:'034',grup:3},
+    {id:'og35',isim:'EYÜP ENSAR UYGUR',no:'035',grup:4},
+    {id:'og36',isim:'FARUK BAHÇECİ',no:'036',grup:7},
+    {id:'og37',isim:'HİLMİ EŞ',no:'037',grup:6},
+    {id:'og38',isim:'HİLMİ KEREM AKINER',no:'038',grup:7},
+    {id:'og39',isim:'KAYRA BERK YURDAKUL',no:'039',grup:1},
+    {id:'og40',isim:'MEHMET SELİM YILMAZ',no:'040',grup:2},
+    {id:'og41',isim:'TUNAHAN GÜNAYDIN',no:'041',grup:4},
+    {id:'og42',isim:'UBEYDULLAH SARAÇOĞLU',no:'042',grup:6},
+    {id:'og43',isim:'AHMET SELİM GÜLÇİÇEK',no:'043',grup:1},
+    {id:'og44',isim:'BERKE EMİR BAYER',no:'044',grup:null},
+    {id:'og45',isim:'BEKİR KÖSE',no:'045',grup:3},
+    {id:'og46',isim:'EYÜP SIRAÇ GÖKHEN',no:'046',grup:2},
+    {id:'og47',isim:'HÜSEYİN ÇELİK',no:'047',grup:4},
+    {id:'og48',isim:'MEHMET BURAK KAHRAMAN',no:'048',grup:5},
+    {id:'og49',isim:'MEHMET İPEK',no:'049',grup:6},
+    {id:'og50',isim:'MİRAÇ ERDOĞAN',no:'050',grup:7}
+  ];
+    save();
+  }
+  renderDash();
+})();
+</script>
+</body>
+</html>
