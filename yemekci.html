@@ -324,27 +324,97 @@ let S={
   muezzinManuel:{}         // {wKey:{gun:{vakit:ogId}}} — istisnalar
 };
 
-// ===== KAYDET/YÜKLE =====
-function save(){
-  try{localStorage.setItem('yyms7',JSON.stringify({
-    yemekciManuel:S.yemekciManuel, rotPazGrup:S.rotPazGrup,
-    ogrenciler:S.ogrenciler, grupSayisi:S.grupSayisi, grupBoyutu:S.grupBoyutu,
-    muezzinSira:S.muezzinSira, muezzinRotSlot:S.muezzinRotSlot,
-    muezzinManuel:S.muezzinManuel
-  }));}catch(e){}
+// ===== SUPABASE BAĞLANTI =====
+const SB_URL = 'https://zowvygqlbrtotkygszsg.supabase.co';
+const SB_KEY = 'sb_publishable_mfSBdw7nP3PEWqJnzb6LlQ_t2aBrQCZ';
+
+async function sbGet(table, query=''){
+  const r = await fetch(`${SB_URL}/rest/v1/${table}${query}`, {
+    headers: {'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json'}
+  });
+  if(!r.ok) return [];
+  return await r.json();
 }
-function load(){
+async function sbUpsert(table, data){
+  await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: {'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'},
+    body: JSON.stringify(data)
+  });
+}
+async function sbDelete(table, query){
+  await fetch(`${SB_URL}/rest/v1/${table}${query}`, {
+    method: 'DELETE',
+    headers: {'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY}
+  });
+}
+
+// ===== KAYDET/YÜKLE =====
+async function save(){
   try{
-    const d=JSON.parse(localStorage.getItem('yyms7')||'{}');
-    if(d.yemekciManuel) S.yemekciManuel=d.yemekciManuel;
-    if(d.rotPazGrup!==undefined) S.rotPazGrup=d.rotPazGrup;
-    if(d.ogrenciler&&d.ogrenciler.length) S.ogrenciler=d.ogrenciler;
-    if(d.grupSayisi) S.grupSayisi=d.grupSayisi;
-    if(d.grupBoyutu) S.grupBoyutu=d.grupBoyutu;
-    if(d.muezzinSira) S.muezzinSira=d.muezzinSira;
-    if(d.muezzinRotSlot!==undefined) S.muezzinRotSlot=d.muezzinRotSlot;
-    if(d.muezzinManuel) S.muezzinManuel=d.muezzinManuel;
-  }catch(e){}
+    // Öğrencileri kaydet
+    if(S.ogrenciler.length){
+      await sbDelete('ogrenciler','?id=neq.ZZZZ');
+      await sbUpsert('ogrenciler', S.ogrenciler.map(o=>({id:o.id,isim:o.isim,no:o.no||'',grup:o.grup||null})));
+    }
+    // Ayarları kaydet
+    const ayarlar = [
+      {anahtar:'rotPazGrup', deger: S.rotPazGrup===null?'null':String(S.rotPazGrup)},
+      {anahtar:'grupSayisi', deger: String(S.grupSayisi)},
+      {anahtar:'grupBoyutu', deger: String(S.grupBoyutu)},
+      {anahtar:'muezzinRotSlot', deger: String(S.muezzinRotSlot)},
+      {anahtar:'muezzinSira', deger: JSON.stringify(S.muezzinSira)},
+    ];
+    await sbUpsert('ayarlar', ayarlar);
+    // Yemekci manuel kaydet
+    await sbDelete('yemekci_manuel','?id=gt.0');
+    const ymRows=[];
+    Object.entries(S.yemekciManuel).forEach(([wk,guns])=>{
+      Object.entries(guns).forEach(([gun,no])=>ymRows.push({wkey:wk,gun,grup_no:no}));
+    });
+    if(ymRows.length) await sbUpsert('yemekci_manuel', ymRows);
+    // Muezzin manuel kaydet
+    await sbDelete('muezzin_manuel','?id=gt.0');
+    const mmRows=[];
+    Object.entries(S.muezzinManuel).forEach(([wk,guns])=>{
+      Object.entries(guns).forEach(([gun,vakitler])=>{
+        Object.entries(vakitler).forEach(([vakit,ogId])=>mmRows.push({wkey:wk,gun,vakit,og_id:ogId}));
+      });
+    });
+    if(mmRows.length) await sbUpsert('muezzin_manuel', mmRows);
+  }catch(e){console.error('Kayıt hatası:',e);}
+}
+
+async function load(){
+  try{
+    // Öğrencileri yükle
+    const ogr = await sbGet('ogrenciler');
+    if(ogr.length) S.ogrenciler = ogr.map(o=>({id:o.id,isim:o.isim,no:o.no,grup:o.grup}));
+    // Ayarları yükle
+    const ayarlar = await sbGet('ayarlar');
+    ayarlar.forEach(a=>{
+      if(a.anahtar==='rotPazGrup') S.rotPazGrup = a.deger==='null'?null:parseInt(a.deger);
+      if(a.anahtar==='grupSayisi') S.grupSayisi = parseInt(a.deger);
+      if(a.anahtar==='grupBoyutu') S.grupBoyutu = parseInt(a.deger);
+      if(a.anahtar==='muezzinRotSlot') S.muezzinRotSlot = parseInt(a.deger);
+      if(a.anahtar==='muezzinSira') S.muezzinSira = JSON.parse(a.deger);
+    });
+    // Yemekci manuel yükle
+    const ym = await sbGet('yemekci_manuel');
+    S.yemekciManuel={};
+    ym.forEach(r=>{
+      if(!S.yemekciManuel[r.wkey]) S.yemekciManuel[r.wkey]={};
+      S.yemekciManuel[r.wkey][r.gun]=r.grup_no;
+    });
+    // Muezzin manuel yükle
+    const mm = await sbGet('muezzin_manuel');
+    S.muezzinManuel={};
+    mm.forEach(r=>{
+      if(!S.muezzinManuel[r.wkey]) S.muezzinManuel[r.wkey]={};
+      if(!S.muezzinManuel[r.wkey][r.gun]) S.muezzinManuel[r.wkey][r.gun]={};
+      S.muezzinManuel[r.wkey][r.gun][r.vakit]=r.og_id;
+    });
+  }catch(e){console.error('Yükleme hatası:',e);}
 }
 
 // ===== MÜEZZİN ROTASYON HESAP =====
@@ -460,7 +530,7 @@ function getGruplar(){
 
 // ===== HAFTALIK PLANLAMA =====
 // Tüm haftayı hesaplayıp muezzinManuel'e sabitler
-function haftayiPlanla(){
+async function haftayiPlanla(){
   if(!S.muezzinSira.length){
     showN('⚠️','Önce müezzin listesi oluşturun','');
     return;
@@ -506,17 +576,17 @@ function haftayiPlanla(){
     });
   });
 
-  save();
+  await save();
   showN('✅', haftaLabel(wOff)+' planlandı', 'Tüm vakitler sabitlendi — yazdırabilirsiniz');
   renderMuezzin();
 }
 
 // Haftalık planı temizle (serbest bırak)
-function haftayiSerbest(){
+async function haftayiSerbest(){
   const wk = 'w' + S.muezzinW;
   if(S.muezzinManuel[wk]) delete S.muezzinManuel[wk];
   if(S.yemekciManuel[wk]) delete S.yemekciManuel[wk];
-  save();
+  await save();
   showN('↺', 'Plan silindi', 'Rotasyona döndü');
   renderMuezzin();
 }
@@ -601,7 +671,7 @@ function muezzinManuelAc(wOff,gun,vakit){
       </button>`).join('')}`;
   moAc('muezzinManuelMo');
 }
-function muezzinManuelSave(){
+async function muezzinManuelSave(){
   const sel=document.querySelector('#muManuelSecim .mc.sel');
   if(!sel)return;
   const {wOff,gun,vakit,wk}=_muCtx;
@@ -610,7 +680,7 @@ function muezzinManuelSave(){
   const id=sel.dataset.id;
   if(id==='__rot__') delete S.muezzinManuel[wk][gun][vakit];
   else S.muezzinManuel[wk][gun][vakit]=id;
-  save();moKapat('muezzinManuelMo');
+  await save();moKapat('muezzinManuelMo');
   showN('✅','Güncellendi','');
   renderMuezzinGun();
 }
@@ -668,22 +738,22 @@ function renderMuezzinListe(){
   el.innerHTML=html;
 }
 
-function muezzinSirayayEkle(id){
+async function muezzinSirayayEkle(id){
   if(!S.muezzinSira.includes(id)){
     S.muezzinSira.push(id);
-    save();renderMuezzinListe();
+    await save();renderMuezzinListe();
     showN('✅','Sıraya eklendi','');
   }
 }
-function muezzinSiradenCikar(id){
+async function muezzinSiradenCikar(id){
   S.muezzinSira=S.muezzinSira.filter(x=>x!==id);
-  save();renderMuezzinListe();
+  await save();renderMuezzinListe();
   showN('🗑️','Sıradan çıkarıldı','');
 }
-function muezzinListeSifirla(){
+async function muezzinListeSifirla(){
   if(!confirm('Müezzin sıra listesi silinecek!'))return;
   S.muezzinSira=[];S.muezzinRotSlot=0;S.muezzinManuel={};
-  save();renderMuezzinListe();
+  await save();renderMuezzinListe();
   showN('🗑️','Sıra listesi temizlendi','');
 }
 
@@ -715,11 +785,11 @@ function muezzinRotSifirlaAc(){
     </div>`;
   moAc('muezzinRotSifirlaModal');
 }
-function muezzinRotSifirlaKaydet(){
+async function muezzinRotSifirlaKaydet(){
   const sel=document.querySelector('#muRotSecim .mc.sel');
   if(!sel)return;
   S.muezzinRotSlot=parseInt(sel.dataset.slot);
-  save();moKapat('muezzinRotSifirlaModal');
+  await save();moKapat('muezzinRotSifirlaModal');
   showN('✅','Rotasyon güncellendi','');
   renderMuezzinListe();
   renderMuezzinGun();
@@ -785,7 +855,7 @@ function rotasyonKurulumAc(wOff,gun){
   document.getElementById('rotKurulumSecim').innerHTML=getGruplar().map(g=>`<button class="mc" data-no="${g.no}" onclick="selBtn(this,'rotKurulumSecim')">Grup ${g.no}</button>`).join('');
   moAc('rotasyonKurulumMo');
 }
-function rotasyonKurulumSave(){
+async function rotasyonKurulumSave(){
   const sel=document.querySelector('#rotKurulumSecim .mc.sel');
   if(!sel){showN('⚠️','Grup seçin','');return;}
   const {wOff,gun}=_rotCtx;
@@ -793,7 +863,7 @@ function rotasyonKurulumSave(){
   const gi=GUNLER.indexOf(gun);
   const tot=wOff*7+gi;
   S.rotPazGrup=((no-1-tot)%S.grupSayisi+S.grupSayisi)%S.grupSayisi+1;
-  save();moKapat('rotasyonKurulumMo');
+  await save();moKapat('rotasyonKurulumMo');
   showN('✅','Rotasyon başlatıldı',`${gun}: Grup ${no}`);
   renderYemekci();
 }
@@ -807,13 +877,13 @@ function yemekciManuelAc(wOff,gun){
     ${getGruplar().map(g=>`<button class="mc${mevcut&&mevcut.no===g.no&&mevcut.manuel?' sel':''}" data-no="${g.no}" onclick="selBtn(this,'yManuelSecim')">Grup ${g.no}</button>`).join('')}`;
   moAc('yemekciManuelMo');
 }
-function yemekciManuelAcGrup(wOff,gun,no){
+async function yemekciManuelAcGrup(wOff,gun,no){
   if(!S.yemekciManuel['w'+wOff])S.yemekciManuel['w'+wOff]={};
   S.yemekciManuel['w'+wOff][gun]=no;
-  save();renderYemekciGun();
+  await save();renderYemekciGun();
   showN('✅',`Grup ${no} seçildi`,gun);
 }
-function yemekciManuelSave(){
+async function yemekciManuelSave(){
   const sel=document.querySelector('#yManuelSecim .mc.sel');
   if(!sel)return;
   const {wOff,gun,wk}=_ymCtx;
@@ -821,22 +891,22 @@ function yemekciManuelSave(){
   if(!S.yemekciManuel[wk])S.yemekciManuel[wk]={};
   if(no>0)S.yemekciManuel[wk][gun]=no;
   else delete S.yemekciManuel[wk][gun];
-  save();moKapat('yemekciManuelMo');
+  await save();moKapat('yemekciManuelMo');
   showN('✅','Güncellendi','');renderYemekciGun();
 }
-function manuelSil(wk,gun){
+async function manuelSil(wk,gun){
   if(S.yemekciManuel[wk])delete S.yemekciManuel[wk][gun];
-  save();renderYemekciGun();showN('↺','Rotasyona döndü','');
+  await save();renderYemekciGun();showN('↺','Rotasyona döndü','');
 }
-function rotasyonSifirlaModalAc(){
+async function rotasyonSifirlaModalAc(){
   document.getElementById('rotSifirlaSecim').innerHTML=getGruplar().map(g=>`<button class="mc${S.rotPazGrup===g.no?' sel':''}" data-no="${g.no}" onclick="selBtn(this,'rotSifirlaSecim')">Grup ${g.no}</button>`).join('');
   moAc('rotasyonSifirlaModal');
 }
-function rotasyonSifralaKaydet(){
+async function rotasyonSifralaKaydet(){
   const sel=document.querySelector('#rotSifirlaSecim .mc.sel');
   if(!sel){showN('⚠️','Grup seçin','');return;}
   S.rotPazGrup=parseInt(sel.dataset.no);
-  save();moKapat('rotasyonSifirlaModal');
+  await save();moKapat('rotasyonSifirlaModal');
   showN('✅','Rotasyon güncellendi',`Bu Pazartesi: Grup ${S.rotPazGrup}`);
   renderYemekci();
 }
@@ -1048,20 +1118,20 @@ function renderGrupDetay(){
   }
 }
 
-function gruptenCikar(id){
+async function gruptenCikar(id){
   const o = S.ogrenciler.find(x=>x.id===id);
   if(!o) return;
   o.grup = null;
-  save(); renderGrupDetay();
+  await save(); renderGrupDetay();
   document.getElementById('grupDetaySub').textContent = getGruplar().find(x=>x.no===_aktifGrup).ogrenciler.length + ' öğrenci';
   showN('↩️', o.isim.split(' ')[0]+' gruptan çıkarıldı', '');
 }
 
-function grubaEkle(id){
+async function grubaEkle(id){
   const o = S.ogrenciler.find(x=>x.id===id);
   if(!o) return;
   o.grup = _aktifGrup;
-  save(); renderGrupDetay();
+  await save(); renderGrupDetay();
   document.getElementById('grupDetaySub').textContent = getGruplar().find(x=>x.no===_aktifGrup).ogrenciler.length + ' öğrenci';
   showN('✅', o.isim.split(' ')[0]+' eklendi', 'Grup '+_aktifGrup);
 }
@@ -1120,21 +1190,21 @@ function ogrenciDuzenle(id){
   sel.innerHTML='<option value="">— Grup Yok —</option>'+getGruplar().map(g=>`<option value="${g.no}"${o.grup===g.no?' selected':''}>Grup ${g.no}</option>`).join('');
   moAc('ogrenciMo');
 }
-function ogrenciKaydet(){
+async function ogrenciKaydet(){
   const isim=document.getElementById('yoIsim').value.trim();
   if(!isim){showN('❌','İsim girin','');return;}
   const no=document.getElementById('yoNo').value.trim();
   const grup=parseInt(document.getElementById('yoGrup').value)||null;
   if(_editId){const o=S.ogrenciler.find(x=>x.id===_editId);if(o){o.isim=isim;o.no=no;o.grup=grup;}}
   else S.ogrenciler.push({id:'og'+Date.now(),isim,no,grup});
-  save();moKapat('ogrenciMo');_editId=null;
+  await save();moKapat('ogrenciMo');_editId=null;
   showN('✅','Kaydedildi','');renderOgrenciler();
 }
-function ogrenciSil(id){
+async function ogrenciSil(id){
   if(!confirm('Silmek istediğinizden emin misiniz?'))return;
   S.ogrenciler=S.ogrenciler.filter(o=>o.id!==id);
   S.muezzinSira=S.muezzinSira.filter(x=>x!==id);
-  save();renderOgrenciler();showN('🗑️','Silindi','');
+  await save();renderOgrenciler();showN('🗑️','Silindi','');
 }
 
 // ===== AYARLAR =====
@@ -1164,19 +1234,19 @@ function renderAyarlar(){
       <button onclick="tumVeriSil()" style="width:100%;padding:11px;border-radius:9px;border:1px solid rgba(170,16,48,0.3);background:rgba(170,16,48,0.06);color:var(--red);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">🗑️ Tüm Veriyi Sıfırla</button>
     </div>`;
 }
-function grupAyarKaydet(){
+async function grupAyarKaydet(){
   S.grupSayisi=parseInt(document.getElementById('aGS').value)||8;
   S.grupBoyutu=parseInt(document.getElementById('aGB').value)||5;
-  save();showN('✅','Kaydedildi','');
+  await save();showN('✅','Kaydedildi','');
 }
-function tumAtamalariSil(){
+async function tumAtamalariSil(){
   if(!confirm('Tüm atamalar + rotasyonlar sıfırlanacak!'))return;
-  S.yemekciManuel={};S.rotPazGrup=null;S.muezzinManuel={};S.muezzinSira=[];S.muezzinRotSlot=0;save();
+  S.yemekciManuel={};S.rotPazGrup=null;S.muezzinManuel={};S.muezzinSira=[];S.muezzinRotSlot=0;await save();
   showN('🗑️','Temizlendi','');
 }
-function tumVeriSil(){
+async function tumVeriSil(){
   if(!confirm('TÜM VERİ silinecek! Emin misiniz?'))return;
-  S.yemekciManuel={};S.rotPazGrup=null;S.muezzinManuel={};S.muezzinSira=[];S.muezzinRotSlot=0;S.ogrenciler=[];save();
+  S.yemekciManuel={};S.rotPazGrup=null;S.muezzinManuel={};S.muezzinSira=[];S.muezzinRotSlot=0;S.ogrenciler=[];await save();
   showN('🗑️','Sıfırlandı','');renderDash();
 }
 
@@ -1200,8 +1270,9 @@ document.body.insertAdjacentHTML('beforeend',`
 document.getElementById('muezzinRotSifirlaModal').addEventListener('click',function(e){if(e.target===this)moKapat('muezzinRotSifirlaModal');});
 
 // ===== BAŞLAT =====
-(function(){
-  load();
+(async function(){
+  showN('⏳','Yükleniyor...','Supabase bağlanıyor');
+  await load();
   if(!S.ogrenciler.length){
     S.ogrenciler = [
     {id:'og1',isim:'FARUK ALPEREN AYDEMİR',no:'001',grup:2},
@@ -1255,7 +1326,7 @@ document.getElementById('muezzinRotSifirlaModal').addEventListener('click',funct
     {id:'og49',isim:'MEHMET İPEK',no:'049',grup:6},
     {id:'og50',isim:'MİRAÇ ERDOĞAN',no:'050',grup:7}
   ];
-    save();
+    await save();
   }
   renderDash();
 })();
