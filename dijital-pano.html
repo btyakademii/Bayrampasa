@@ -474,16 +474,19 @@ async function sheetsVeriCek() {
     /* Başlık satırlarını tara — HAFTALIK ve TOPLAM sütunlarını bul */
     let AD_COL = -1, PUAN_COL = -1, veriBaslangic = 0;
     for (let r = 0; r < Math.min(10, satirlar.length); r++) {
+      let bulundu = false;
       satirlar[r].forEach((h, c) => {
         const u = h.toUpperCase().replace(/\s/g,'').replace(/"/g,'');
-        if (u === 'HAFTALIK') { AD_COL = c; veriBaslangic = r + 1; }
-        if (u === 'TOPLAM')   { PUAN_COL = c; veriBaslangic = r + 1; }
+        if (u === 'HAFTALIK') { AD_COL = c; bulundu = true; }
+        if (u === 'TOPLAM')   { PUAN_COL = c; bulundu = true; }
       });
-      if (AD_COL !== -1 && PUAN_COL !== -1) break;
+      if (AD_COL !== -1 && PUAN_COL !== -1) { veriBaslangic = r + 1; break; }
     }
     /* Bulunamazsa fallback */
     if (AD_COL   === -1) AD_COL   = 2;
     if (PUAN_COL === -1) PUAN_COL = 18;
+    /* veriBaslangic en az 5 olmalı (ilk 4 satır başlık) */
+    if (veriBaslangic < 5) veriBaslangic = 5;
 
     console.log(`AD_COL=${AD_COL}, PUAN_COL=${PUAN_COL}, veriBaslangic=${veriBaslangic}`);
 
