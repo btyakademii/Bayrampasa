@@ -471,17 +471,17 @@ async function sheetsVeriCek() {
 
     const satirlar = text.trim().split('\n').map(parseCSVRow);
 
-    /* TOPLAM sütununu bul (son sütun genelde TOPLAM) */
-    let AD_COL = 2, PUAN_COL = -1;
+    /* Sütun tespiti — C=2 (ad), U=20 (toplam puan) */
+    let AD_COL = 2, PUAN_COL = 20;
+    /* Yine de başlıkta TOPLAM varsa onu bul, güvenlik için */
     for (let r = 0; r < Math.min(8, satirlar.length); r++) {
       satirlar[r].forEach((h, c) => {
         const u = h.toUpperCase().replace(/\s/g,'');
-        if (u === 'TOPLAM' || u === 'PUAN') PUAN_COL = c;
+        if (u === 'TOPLAM') PUAN_COL = c;
         if (u === 'HAFTALIK') AD_COL = c;
       });
-      if (PUAN_COL !== -1) break;
+      if (PUAN_COL !== 20) break;
     }
-    if (PUAN_COL === -1) PUAN_COL = satirlar[0].length - 1;
 
     let talebler = [];
     satirlar.forEach(satir => {
