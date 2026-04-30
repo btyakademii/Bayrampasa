@@ -486,14 +486,14 @@ async function sheetsVeriCek() {
     let talebler = [];
     satirlar.forEach(satir => {
       const ad   = (satir[AD_COL] || '').replace(/"/g,'').trim();
-      const puan = parseFloat((satir[PUAN_COL] || '').replace(/"/g,'')) || 0;
+      const puan = parseInt((satir[PUAN_COL] || '').replace(/"/g,'').replace(/\s/g,''), 10) || 0;
       if (!ad) return;
       const u = ad.toUpperCase();
       if (u.includes('HAFTALIK') || u.includes('TOPLAM') || u.includes('TALEBE') || !isNaN(ad)) return;
       talebler.push({ ad, puan });
     });
 
-    talebler.sort((a, b) => b.puan - a.puan);
+    talebler.sort((a, b) => b.puan - a.puan || a.ad.localeCompare(b.ad, 'tr'));
 
     if (talebler.length === 0) { showHata('Veri bulunamadı — sütun yapısı farklı olabilir'); return; }
 
