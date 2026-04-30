@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920, initial-scale=1.0">
+<title>Dijital Pano</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --tq:         #0ABFBC;
+    --tq-light:   #5DE0DD;
+    --tq-dim:     #077A78;
+    --tq-glow:    rgba(10,191,188,.28);
+    --navy:       #062A40;
+    --navy-mid:   #0A3D5C;
+    --navy-dark:  #041C2C;
+    --coral:      #FF7A5A;
+    --coral-dim:  #C95A3E;
+    --sand:       #EAF6F6;
+    --sand-dim:   #A8DADA;
+    --shadow:     rgba(0,0,0,0.55);
+    --text-main:  #E8F8F8;
+    --text-sub:   #0ABFBC;
+
+    /* alias old names so nothing breaks */
+    --gold:       var(--tq);
+    --gold-light: var(--tq-light);
+    --gold-dim:   var(--tq-dim);
+    --emerald:    var(--navy-mid);
+    --emerald-mid:var(--navy-mid);
+    --emerald-dark:var(--navy-dark);
+    --cream:      var(--sand);
+    --cream-dim:  var(--sand-dim);
+    --ivory:      #F0FAFA;
+  }
+
+  html, body {
+    width: 1920px; height: 1080px;
+    overflow: hidden;
+    background: var(--navy-dark);
+    font-family: 'Tajawal', sans-serif;
+    color: var(--text-main);
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 130% 70% at 50% -10%, rgba(10,191,188,.22) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 0% 110%,  rgba(10,191,188,.12) 0%, transparent 55%),
+      radial-gradient(ellipse 55% 45% at 100% 110%,rgba(10,191,188,.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 80% 30%,  rgba(255,122,90,.07) 0%, transparent 55%),
+      linear-gradient(170deg, #041C2C 0%, #0A3D5C 48%, #041C2C 100%);
+    z-index: 0;
+  }
+
+  /* fine grid overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg,  rgba(10,191,188,.05) 0px, rgba(10,191,188,.05) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(-45deg, rgba(10,191,188,.05) 0px, rgba(10,191,188,.05) 1px, transparent 1px, transparent 28px);
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ── */
+  #app {
+    position: relative; z-index: 1;
+    width: 1920px; height: 1080px;
+    display: grid;
+    grid-template-columns: 420px 1fr 360px;
+    grid-template-rows: 64px 1fr;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  /* ── TOP BAR ── */
+  #topbar {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    background: linear-gradient(90deg, var(--navy-dark) 0%, var(--navy-mid) 50%, var(--navy-dark) 100%);
+    border: 1px solid rgba(10,191,188,.4);
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0,0,0,.4);
+  }
+  #topbar .logo-text {
+    font-family: 'Amiri', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--tq-light);
+    letter-spacing: 1px;
+  }
+  #topbar .date-time {
+    font-size: 18px; color: var(--sand-dim);
+    letter-spacing: 2px;
+  }
+  #topbar .bismillah {
+    font-family: 'Scheherazade New', serif;
+    font-size: 26px; color: var(--tq-light);
+    direction: rtl;
+  }
+
+  /* ── CARD BASE ── */
+  .card {
+    background: linear-gradient(145deg, rgba(10,61,92,.88) 0%, rgba(4,28,44,.94) 100%);
+    border: 1px solid rgba(10,191,188,.32);
+    border-radius: 14px;
+    box-shadow: 0 4px 28px rgba(0,0,0,.45), inset 0 1px 0 rgba(201,168,76,.15);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    backdrop-filter: blur(4px);
+  }
+
+  .card-header {
+    background: linear-gradient(90deg, var(--tq-dim) 0%, var(--tq) 50%, var(--tq-dim) 100%);
+    padding: 8px 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header .icon { font-size: 18px; }
+  .card-header h2 {
+    font-family: 'Amiri', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--navy-dark);
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .card-body { flex: 1; padding: 14px 16px; overflow: hidden; }
+
+  /* ── HADIS ── sol */
+  #hadis {
+    grid-column: 1; grid-row: 2;
+  }
+  #hadis .hadis-text {
+    font-family: 'Amiri', serif;
+    font-size: 16px; line-height: 1.9;
+    color: var(--cream);
+    font-style: italic;
+  }
+  #hadis .hadis-kaynak {
+    margin-top: 12px;
+    font-size: 13px; color: var(--tq);
+    font-weight: 700;
+    border-top: 1px solid rgba(10,191,188,.3);
+    padding-top: 8px;
+  }
+  #hadis .arabic-quote {
+    font-family: 'Scheherazade New', serif;
+    font-size: 20px; direction: rtl;
+    color: var(--tq-light);
+    line-height: 2;
+    text-align: right;
+    margin-bottom: 10px;
+  }
+
+  /* ── YEMEKÇILER ── orta */
+  #yemek {
+    grid-column: 2; grid-row: 2;
+  }
+  #yemek .card-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    align-content: start;
+  }
+  .yemekci-item {
+    background: rgba(10,191,188,.10);
+    border: 1px solid rgba(10,191,188,.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+    transition: background .3s;
+  }
+  .yemekci-no {
+    width: 30px; height: 30px;
+    background: var(--tq);
+    color: var(--navy-dark);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .yemekci-ad {
+    font-size: 15px; font-weight: 500;
+    color: var(--sand);
+  }
+  .yemekci-gun {
+    font-size: 11px; color: var(--tq); margin-top: 2px;
+  }
+
+  /* ── MÜEZZİN — kaldırıldı, talebe sağa taşındı ── */
+
+  /* ── HAFTANIN TALEBESİ ── sağ, kayan liste ── */
+  #talebe-sag {
+    grid-column: 3; grid-row: 2;
+  }
+  #talebe-sag .card-body {
+    overflow: hidden;
+    padding: 10px 14px;
+    position: relative;
+  }
+  /* Kayan şerit wrapper */
+  #talebe-scroll-wrap {
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+  }
+  /* Üst ve alt fade maskesi */
+  #talebe-scroll-wrap::before,
+  #talebe-scroll-wrap::after {
+    content: '';
+    position: absolute; left: 0; right: 0; z-index: 2;
+    height: 40px; pointer-events: none;
+  }
+  #talebe-scroll-wrap::before {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(4,28,44,.95), transparent);
+  }
+  #talebe-scroll-wrap::after {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(4,28,44,.95), transparent);
+  }
+  /* İç liste — JS ile transform:translateY animasyonu */
+  #talebe-inner {
+    position: absolute;
+    width: 100%;
+    will-change: transform;
+  }
+
+  .talebe-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .talebe-item {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(10,191,188,.07);
+    border: 1px solid rgba(10,191,188,.18);
+    border-radius: 7px;
+    padding: 8px 12px;
+  }
+  .talebe-rank {
+    min-width: 30px; height: 30px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rank-gold  { background: var(--tq);            color: var(--navy-dark); }
+  .rank-silver{ background: #7FD4D2;               color: var(--navy-dark); }
+  .rank-bronze{ background: var(--coral);          color: #fff; }
+  .rank-other { background: rgba(10,191,188,.18);  color: var(--tq); }
+
+  .talebe-ad  { flex: 1; font-size: 15px; font-weight: 500; color: var(--sand); }
+  .talebe-puan {
+    font-size: 14px; font-weight: 700; color: var(--tq);
+    background: rgba(10,191,188,.12);
+    padding: 2px 10px; border-radius: 12px;
+  }
+
+  /* ── DECORATIVE CORNER ── */
+  .corner-deco {
+    position: absolute;
+    width: 60px; height: 60px;
+    opacity: .25;
+    pointer-events: none;
+  }
+  .corner-deco svg { width: 100%; height: 100%; }
+
+  /* ── SCROLLING TICKER ── */
+  #ticker {
+    display: none; /* gelecekte aktif edilebilir */
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card { animation: fadeInUp .6s ease both; }
+  #hadis      { animation-delay: .1s; }
+  #yemek      { animation-delay: .2s; }
+  #talebe-sag { animation-delay: .3s; }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 14px rgba(10,191,188,.2); }
+    50%       { box-shadow: 0 0 32px rgba(10,191,188,.55); }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <span class="logo-text">🕌 Kuran Kursu Dijital Pano</span>
+    <span class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</span>
+    <span class="date-time" id="clock">—</span>
+  </div>
+
+  <!-- SOL ÜST: Haftanın Hadisi -->
+  <div id="hadis" class="card">
+    <div class="card-header">
+      <span class="icon">📖</span>
+      <h2>Haftanın Hadîs-i Şerîfi</h2>
+    </div>
+    <div class="card-body">
+      <div class="arabic-quote">إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ</div>
+      <p class="hadis-text">
+        "Ameller ancak niyetlere göredir. Herkes için niyet ettiği şey vardır…"
+      </p>
+      <div class="hadis-kaynak">
+        📚 Buhârî, Bedu'l-Vahy 1 | Müslim, İmâre 155
+      </div>
+    </div>
+  </div>
+
+  <!-- ORTA ÜST: Yemekçiler -->
+  <div id="yemek" class="card">
+    <div class="card-header">
+      <span class="icon">🍽️</span>
+      <h2>Haftanın Yemekçileri</h2>
+    </div>
+    <div class="card-body">
+      <!-- Örnek veriler – siz düzenleyeceksiniz -->
+      <div class="yemekci-item">
+        <div class="yemekci-no">1</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Pazartesi</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">2</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Salı</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">3</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Çarşamba</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">4</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Perşembe</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">5</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Cuma</div></div>
+      </div>
+      <div class="yemekci-item">
+        <div class="yemekci-no">6</div>
+        <div><div class="yemekci-ad">Talebe Adı Soyadı</div><div class="yemekci-gun">Cumartesi</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAĞ: Haftanın Talebeleri — kayan liste -->
+  <div id="talebe-sag" class="card">
+    <div class="card-header" style="justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="icon">🏆</span>
+        <h2>Haftanın Talebeleri</h2>
+      </div>
+      <span id="son-guncelleme" style="font-size:11px;color:var(--navy-dark);opacity:.8;font-family:'Tajawal',sans-serif"></span>
+    </div>
+    <div class="card-body">
+      <div id="talebe-scroll-wrap">
+        <ul class="talebe-list" id="talebe-inner"></ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const dateStr = now.toLocaleDateString('tr-TR', opts);
+  const timeStr = now.toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById('clock').textContent = `${dateStr}  |  ${timeStr}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function showSkeleton() {
+  const ul = document.getElementById('talebe-inner');
+  ul.innerHTML = '';
+  for (let i = 0; i < 12; i++) {
+    ul.innerHTML += `<li class="talebe-item" style="opacity:.3">
+      <div class="talebe-rank rank-other">—</div>
+      <div class="talebe-ad" style="background:rgba(255,255,255,.08);border-radius:4px;height:15px;width:65%"></div>
+      <div class="talebe-puan" style="color:transparent">—</div></li>`;
+  }
+}
+
+function showHata(mesaj) {
+  document.getElementById('talebe-inner').innerHTML =
+    `<li style="color:#FF7A5A;padding:12px;font-size:13px">⚠️ ${mesaj}</li>`;
+}
+
+function rankClass(i) {
+  if (i === 0) return 'rank-gold';
+  if (i === 1) return 'rank-silver';
+  if (i === 2) return 'rank-bronze';
+  return 'rank-other';
+}
+
+function buildList(talebler) {
+  const ul = document.getElementById('talebe-inner');
+  ul.innerHTML = '';
+  talebler.forEach((t, i) => {
+    const li = document.createElement('li');
+    li.className = 'talebe-item';
+    li.innerHTML = `
+      <div class="talebe-rank ${rankClass(i)}">${i + 1}</div>
+      <div class="talebe-ad">${t.ad}</div>
+      <div class="talebe-puan">${t.puan} puan</div>`;
+    ul.appendChild(li);
+  });
+  startScroll();
+}
+
+let scrollRAF = null, scrollY = 0, scrollDir = 1;
+const SCROLL_SPEED = 0.6, PAUSE_MS = 2000;
+
+function startScroll() {
+  if (scrollRAF) cancelAnimationFrame(scrollRAF);
+  scrollY = 0; scrollDir = 1;
+  const inner = document.getElementById('talebe-inner');
+  const wrap  = document.getElementById('talebe-scroll-wrap');
+  inner.style.transform = 'translateY(0px)';
+  function tick() {
+    const maxY = inner.scrollHeight - wrap.clientHeight;
+    if (maxY <= 0) return;
+    scrollY += SCROLL_SPEED * scrollDir;
+    if (scrollY >= maxY) {
+      scrollY = maxY; inner.style.transform = `translateY(-${scrollY}px)`;
+      setTimeout(() => { scrollDir = -1; scrollRAF = requestAnimationFrame(tick); }, PAUSE_MS); return;
+    }
+    if (scrollY <= 0) {
+      scrollY = 0; inner.style.transform = `translateY(0px)`;
+      setTimeout(() => { scrollDir = 1; scrollRAF = requestAnimationFrame(tick); }, PAUSE_MS); return;
+    }
+    inner.style.transform = `translateY(-${scrollY}px)`;
+    scrollRAF = requestAnimationFrame(tick);
+  }
+  setTimeout(() => { scrollRAF = requestAnimationFrame(tick); }, PAUSE_MS);
+}
+
+/* ══════════════════════════════════════════
+   GOOGLE SHEETS — WEB'DE YAYINLANMIŞ CSV
+   ══════════════════════════════════════════ */
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuDEeJztWvze6Xy_StkOBOirnOHjZGMLJeu1-x9srdy1LkUqW5Hlp-XavLYjBsd_I6xf-Ct3So-eBu/pub?gid=1484805004&single=true&output=csv';
+
+async function sheetsVeriCek() {
+  showSkeleton();
+  try {
+    const res  = await fetch(CSV_URL + '&cachebust=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+
+    /* CSV parse — tırnak içindeki virgülleri koru */
+    function parseCSVRow(row) {
+      const result = []; let cur = ''; let inQ = false;
+      for (let i = 0; i < row.length; i++) {
+        const ch = row[i];
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+        else cur += ch;
+      }
+      result.push(cur.trim());
+      return result;
+    }
+
+    const satirlar = text.trim().split('\n').map(parseCSVRow);
+
+    /* Başlık satırlarını tara — HAFTALIK ve TOPLAM sütunlarını bul */
+    let AD_COL = -1, PUAN_COL = -1, veriBaslangic = 0;
+    for (let r = 0; r < Math.min(10, satirlar.length); r++) {
+      satirlar[r].forEach((h, c) => {
+        const u = h.toUpperCase().replace(/\s/g,'').replace(/"/g,'');
+        if (u === 'HAFTALIK') { AD_COL = c; veriBaslangic = r + 1; }
+        if (u === 'TOPLAM')   { PUAN_COL = c; veriBaslangic = r + 1; }
+      });
+      if (AD_COL !== -1 && PUAN_COL !== -1) break;
+    }
+    /* Bulunamazsa fallback */
+    if (AD_COL   === -1) AD_COL   = 2;
+    if (PUAN_COL === -1) PUAN_COL = 18;
+
+    console.log(`AD_COL=${AD_COL}, PUAN_COL=${PUAN_COL}, veriBaslangic=${veriBaslangic}`);
+
+    let talebler = [];
+    for (let r = veriBaslangic; r < satirlar.length; r++) {
+      const satir = satirlar[r];
+      const ad    = (satir[AD_COL] || '').replace(/"/g,'').trim();
+      const puan  = parseInt((satir[PUAN_COL] || '').replace(/"/g,'').replace(/\s/g,''), 10) || 0;
+      if (!ad) continue;
+      const u = ad.toUpperCase();
+      if (u.includes('HAFTALIK') || u.includes('TOPLAM') || u.includes('TALEBE') || !isNaN(Number(ad))) continue;
+      talebler.push({ ad, puan });
+    }
+
+    talebler.sort((a, b) => b.puan - a.puan || a.ad.localeCompare(b.ad, 'tr'));
+
+    if (talebler.length === 0) { showHata('Veri bulunamadı — sütun yapısı farklı olabilir'); return; }
+
+    buildList(talebler);
+    const now = new Date().toLocaleTimeString('tr-TR');
+    document.getElementById('son-guncelleme').textContent = `🔄 ${now}`;
+
+  } catch(e) {
+    console.error('CSV hatası:', e);
+    yedekVeriGoster();
+  }
+}
+
+function yedekVeriGoster() {
+  const yedekVeri = [
+    {ad:'Berke Emir Bayar', puan:10},{ad:'Erdem Tubay', puan:10},
+    {ad:'Eyüp Sıraç Gökhen', puan:10},{ad:'Hamza Nuri Karan', puan:10},
+    {ad:'Hüseyin Demiral', puan:10},{ad:'M. Fatih Arslanyolu', puan:10},
+    {ad:'Mehmet Selim Yılmaz', puan:10},{ad:'Mustafa Gökçegöz', puan:10},
+    {ad:'Şevki Akif Kocabaş', puan:10},{ad:'Tahir Ökmen', puan:10},
+    {ad:'Yunus Emre Tubay', puan:10},{ad:'Yusuf Furkan Ayar', puan:10},
+    {ad:'Yusuf Taha Özcan', puan:10},{ad:'Ahmet Emir Gezer', puan:9},
+    {ad:'Ahmet Kıyakoğlu', puan:9},{ad:'Ahmet Özcan', puan:9},
+    {ad:'Ahmet Selim Gülçiçek', puan:9},{ad:'Emirhan Özcan', puan:9},
+    {ad:'Faruk A. Aydemir', puan:9},{ad:'Hilmi Kerem Akıner', puan:9},
+    {ad:'Mehmet Eymen Kizek', puan:9},{ad:'Miraç Erdoğan', puan:9},
+    {ad:'Ömer Fetih Aksu', puan:9},{ad:'Tunahan Günaydın', puan:9},
+    {ad:'Yusuf Anıl Özcan', puan:9},{ad:'Bekir Köse', puan:8},
+    {ad:'Eymen Semih Yaman', puan:8},{ad:'Eyüp Ensar Uygur', puan:8},
+    {ad:'İbrahim Halilullah', puan:8},{ad:'Mehmet İpek', puan:8},
+  ];
+  buildList(yedekVeri);
+  document.getElementById('son-guncelleme').textContent = '⚠️ Yedek veri gösteriliyor';
+}
+
+/* İlk yükleme + her 30 saniyede otomatik yenile */
+sheetsVeriCek();
+setInterval(sheetsVeriCek, 30 * 1000);
+</script>
+</body>
+</html>
