@@ -471,27 +471,32 @@ async function sheetsVeriCek() {
 
     const satirlar = text.trim().split('\n').map(parseCSVRow);
 
-    /* Sütun tespiti — C=2 (ad), U=20 (toplam puan) */
-    let AD_COL = 2, PUAN_COL = 20;
-    /* Yine de başlıkta TOPLAM varsa onu bul, güvenlik için */
-    for (let r = 0; r < Math.min(8, satirlar.length); r++) {
+    /* Başlık satırlarını tara — HAFTALIK ve TOPLAM sütunlarını bul */
+    let AD_COL = -1, PUAN_COL = -1, veriBaslangic = 0;
+    for (let r = 0; r < Math.min(10, satirlar.length); r++) {
       satirlar[r].forEach((h, c) => {
-        const u = h.toUpperCase().replace(/\s/g,'');
-        if (u === 'TOPLAM') PUAN_COL = c;
-        if (u === 'HAFTALIK') AD_COL = c;
+        const u = h.toUpperCase().replace(/\s/g,'').replace(/"/g,'');
+        if (u === 'HAFTALIK') { AD_COL = c; veriBaslangic = r + 1; }
+        if (u === 'TOPLAM')   { PUAN_COL = c; veriBaslangic = r + 1; }
       });
-      if (PUAN_COL !== 20) break;
+      if (AD_COL !== -1 && PUAN_COL !== -1) break;
     }
+    /* Bulunamazsa fallback */
+    if (AD_COL   === -1) AD_COL   = 2;
+    if (PUAN_COL === -1) PUAN_COL = satirlar[0].length - 1;
+
+    console.log(`AD_COL=${AD_COL}, PUAN_COL=${PUAN_COL}, veriBaslangic=${veriBaslangic}`);
 
     let talebler = [];
-    satirlar.forEach(satir => {
-      const ad   = (satir[AD_COL] || '').replace(/"/g,'').trim();
-      const puan = parseInt((satir[PUAN_COL] || '').replace(/"/g,'').replace(/\s/g,''), 10) || 0;
-      if (!ad) return;
+    for (let r = veriBaslangic; r < satirlar.length; r++) {
+      const satir = satirlar[r];
+      const ad    = (satir[AD_COL] || '').replace(/"/g,'').trim();
+      const puan  = parseInt((satir[PUAN_COL] || '').replace(/"/g,'').replace(/\s/g,''), 10) || 0;
+      if (!ad) continue;
       const u = ad.toUpperCase();
-      if (u.includes('HAFTALIK') || u.includes('TOPLAM') || u.includes('TALEBE') || !isNaN(ad)) return;
+      if (u.includes('HAFTALIK') || u.includes('TOPLAM') || u.includes('TALEBE') || !isNaN(Number(ad))) continue;
       talebler.push({ ad, puan });
-    });
+    }
 
     talebler.sort((a, b) => b.puan - a.puan || a.ad.localeCompare(b.ad, 'tr'));
 
