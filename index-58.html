@@ -23,7 +23,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 .ph-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px}
 .pb{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 16px}
 /* LOGIN */
-#loginPage{align-items:center;justify-content:flex-start;padding:20px;overflow-y:auto;background:radial-gradient(ellipse 80% 60% at 20% 20%,rgba(26,108,246,0.15),transparent),var(--navy)}
+#loginPage{align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;background:radial-gradient(ellipse 80% 60% at 20% 20%,rgba(26,108,246,0.15),transparent),var(--navy)}
 .lbox{width:100%;max-width:380px;background:var(--card2);border:1px solid var(--border);border-radius:22px;padding:36px 28px;box-shadow:0 24px 48px rgba(0,0,0,0.5);margin:auto}
 .logo{width:56px;height:56px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(26,108,246,0.4)}
 .ltabs{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px;margin-bottom:18px}
@@ -122,7 +122,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
       <div id="perSifrePaneli" style="display:none"></div>
     </div>
     <div id="adminF" style="display:none">
-      <div class="fg"><label>Şifre</label><input type="password" id="adminP" placeholder="••••••"></div>
+      <div class="fg"><label>Şifre</label><input type="password" id="adminP" placeholder="••••••" onkeydown="if(event.key==='Enter')loginAdmin()"></div>
       <button class="bpri" onclick="loginAdmin()">Yönetici Girişi →</button>
     </div>
   </div>
@@ -146,8 +146,9 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
     </div>
     <div class="dstats" id="dStats"></div>
     <div id="dEgitim" style="margin:0 16px 8px;padding:12px 14px;background:linear-gradient(135deg,rgba(90,26,144,0.08),rgba(123,45,139,0.05));border:1.5px solid rgba(90,26,144,0.25);border-radius:14px"></div>
-    <div id="dBugun" style="padding:0 16px 4px"></div>
     <div id="dKarar" style="padding:0 16px 4px"></div>
+    <div id="dTadilat" style="padding:0 16px 4px"></div>
+    <div id="dBitmemis" style="padding:0 16px 4px"></div>
     <div class="dmenu">
       <div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Yönetim</div>
       <div class="dmi" onclick="goPage('planPage')"><div class="dmi-icon" style="background:rgba(26,108,246,0.2)">📅</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Haftalık Plan</div><div style="font-size:11px;color:var(--text2)">Görev ata, ekle, sil</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
@@ -156,6 +157,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
       <div class="dmi" onclick="goPage('grafikPage')"><div class="dmi-icon" style="background:rgba(155,93,229,0.2)">📊</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Grafikler</div><div style="font-size:11px;color:var(--text2)">Analiz</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
       <div class="dmi" onclick="goPage('arsivPage')"><div class="dmi-icon" style="background:rgba(0,214,143,0.2)">🗄️</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Arşiv</div><div style="font-size:11px;color:var(--text2)" id="arsivD">Geçmiş haftalar</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
       <div class="dmi" onclick="goPage('kararPage')"><div class="dmi-icon" style="background:rgba(120,60,200,0.2)">📌</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Vazifeler</div><div style="font-size:11px;color:var(--text2)" id="kararDesc">Ekle, takip et</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
+      <div class="dmi" onclick="goPage('tadilatPage')"><div class="dmi-icon" style="background:rgba(230,120,20,0.2)">🔨</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Tadilat</div><div style="font-size:11px;color:var(--text2)" id="tadilatDesc">Ekle, takip et</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
       <div class="dmi" onclick="goPage('wpYonetPage')"><div class="dmi-icon" style="background:rgba(37,211,102,0.2)">📲</div><div style="flex:1"><div style="font-size:14px;font-weight:600">WhatsApp</div><div style="font-size:11px;color:var(--text2)">Hatırlatıcı & Akşam özeti</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
       <div class="dmi" onclick="goPage('ayarlarPage')"><div class="dmi-icon" style="background:rgba(100,100,120,0.2)">⚙️</div><div style="flex:1"><div style="font-size:14px;font-weight:600">Ayarlar</div><div style="font-size:11px;color:var(--text2)">Şifre, bölüm yönetimi</div></div><span style="color:var(--text2);font-size:20px">›</span></div>
     </div>
@@ -206,6 +208,12 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 <div class="page" id="kararPage">
   <div class="ph"><button class="ph-back" onclick="goPage('dashPage')">‹</button><div class="ph-title">📌 Vazifeler</div></div>
   <div class="pb" id="kararB"></div>
+</div>
+
+<!-- TADİLAT -->
+<div class="page" id="tadilatPage">
+  <div class="ph"><button class="ph-back" onclick="goPage('dashPage')">‹</button><div class="ph-title">🔨 Tadilat</div></div>
+  <div class="pb" id="tadilatB"></div>
 </div>
 
 <!-- ARŞİV -->
@@ -322,6 +330,29 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 </div>
 
 <!-- AKŞAM ÖZETİ MODAL -->
+<div class="mo" id="aksamMo">
+  <div class="md" style="max-height:90vh">
+    <div class="mh"></div>
+    <div class="mt">🌙 Akşam Özeti Gönder</div>
+    <div class="fg" style="margin-bottom:10px">
+      <label>Yönetici Adı (mesajda görünecek)</label>
+      <input type="text" id="aksamAdminIsim" placeholder="Yönetici">
+    </div>
+    <div class="fg" style="margin-bottom:10px">
+      <label>Hedef WhatsApp Numarası</label>
+      <input type="tel" id="aksamHedefNo" placeholder="905551234567 (grup veya kişi)">
+      <div style="font-size:10px;color:var(--text2);margin-top:4px">Grup için: gruptan davet linki alarak mesaj atın. Kişi için numara girin.</div>
+    </div>
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px">📋 Özet Önizleme</div>
+      <div id="aksamOnizleme" style="font-size:11px;color:var(--text);white-space:pre-wrap;line-height:1.6;max-height:200px;overflow-y:auto"></div>
+    </div>
+    <div class="ma">
+      <button class="bc" onclick="document.getElementById('aksamMo').classList.remove('open')">İptal</button>
+      <button class="bs" onclick="aksamGonder()" style="background:linear-gradient(135deg,#1a8a3a,#1e6b2a)">📲 WhatsApp'ta Aç</button>
+    </div>
+  </div>
+</div>
 
 <!-- YENİ GÖREV MODAL -->
 <div class="mo" id="yeniMo">
@@ -383,9 +414,7 @@ function onemEmoji(k){return{Z:'🔴',O:'🟡',K:'🔵'}[k]||'⚪';}
 const GS=[{id:"g1",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Pano Şahsiyet eğitimi asılacak",atanan:["H","ME"]},{id:"g2",onem:"Z",bolum:"KURUMSAL",gun:"Pazartesi",metin:"Rozetlerin verilmesi",atanan:["A"]},{id:"g3",onem:"Z",bolum:"KURUMSAL",gun:"Perşembe",metin:"Haf. Talebeleri Müdüriyet",atanan:["ÖB"]},{id:"g4",onem:"Z",bolum:"KURUMSAL",gun:"Cuma",metin:"Haf. talebesinin Açıklanması",atanan:["ÖF"]},{id:"g5",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"Dahili D. hadisi Şerif ezberi",atanan:["H"]},{id:"g6",onem:"Z",bolum:"YAPILACAK",gun:"Pazartesi",metin:"5. sınıf Atölye",atanan:["ME","A"]},{id:"g7",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Evvabin Namazı kılınması",atanan:["MA"]},{id:"g8",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["E"]},{id:"g9",onem:"Z",bolum:"YAPILACAK",gun:"Salı",metin:"Dahili ders şahsiyet eğitimi",atanan:["ÖB"]},{id:"g10",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Büyüğümüzün sohbeti anlatılması",atanan:["ÖF","H"]},{id:"g11",onem:"Z",bolum:"YAPILACAK",gun:"Çarşamba",metin:"Hadisi Şeriflerin ikindide Tekrar",atanan:["ME"]},{id:"g12",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Kasidei Bürde",atanan:["A"]},{id:"g13",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Haftanın incisi ezberlenimesi",atanan:["MA"]},{id:"g14",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"Tuvaletlerle alakalı ikaz",atanan:["E"]},{id:"g15",onem:"Z",bolum:"YAPILACAK",gun:"Perşembe",metin:"10 İngilizce kelime ezberi",atanan:["ÖB"]},{id:"g16",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Okulda Cuma namazı",atanan:["H","ME","A","MA","E","ÖB","ÖF"]},{id:"g17",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Cuma yoklaması",atanan:["ÖF"]},{id:"g18",onem:"Z",bolum:"YAPILACAK",gun:"Cuma",metin:"Atölye çalışmaları",atanan:["H"]},{id:"g19",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Dua namazı",atanan:["ME"]},{id:"g20",onem:"Z",bolum:"YAPILACAK",gun:"Cumartesi",metin:"Evradı Şerife",atanan:["A"]},{id:"g21",onem:"Z",bolum:"T.T.S",gun:"Pazartesi",metin:"Kılık Kıyafet Kontrolü",atanan:["H","ME"]},{id:"g22",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Vestiyer dolap Kontrolü",atanan:["MA"]},{id:"g23",onem:"Z",bolum:"T.T.S",gun:"Salı",metin:"Kılık Kıyafet Kontrolü",atanan:["E"]},{id:"g24",onem:"Z",bolum:"T.T.S",gun:"Çarşamba",metin:"Kılık Kıyafet Kontrolü",atanan:["ÖB"]},{id:"g25",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Vestiyer dolap Kontrolü",atanan:["ÖF"]},{id:"g26",onem:"Z",bolum:"T.T.S",gun:"Perşembe",metin:"Kılık Kıyafet Kontrolü",atanan:["H"]},{id:"g27",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Haftanın talebeleri Pano",atanan:["ME"]},{id:"g28",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["A"]},{id:"g29",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Zilin kontrol edilmesi",atanan:["MA"]},{id:"g30",onem:"Z",bolum:"EĞİTİM",gun:"Pazartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["E"]},{id:"g31",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖB"]},{id:"g32",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Zilin kontrol edilmesi",atanan:["ÖF"]},{id:"g33",onem:"Z",bolum:"EĞİTİM",gun:"Salı",metin:"Hasta ve İzinlilerin gruba",atanan:["H"]},{id:"g34",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Yemekçi ve müezzin yazılması",atanan:["ME"]},{id:"g35",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Zilin kontrol edilmesi",atanan:["A"]},{id:"g36",onem:"Z",bolum:"EĞİTİM",gun:"Çarşamba",metin:"Hasta ve İzinlilerin gruba",atanan:["MA"]},{id:"g37",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Sınıf Tahtalarının temizliği",atanan:["E"]},{id:"g38",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Kalemlerin Doldurulması",atanan:["ÖB"]},{id:"g39",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Rozetlerin toplanması",atanan:["ÖF"]},{id:"g40",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Yemekçi ve müezzin yazılması",atanan:["H"]},{id:"g41",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Zilin kontrol edilmesi",atanan:["ME"]},{id:"g42",onem:"Z",bolum:"EĞİTİM",gun:"Perşembe",metin:"Hasta ve İzinlilerin gruba",atanan:["A"]},{id:"g43",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmen Puan Kağıdı",atanan:["MA"]},{id:"g44",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmenlere Terlik",atanan:["E"]},{id:"g45",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Öğretmen İkramı",atanan:["ÖB"]},{id:"g46",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Yemekçi ve müezzin yazılması",atanan:["ÖF"]},{id:"g47",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Zilin kontrol edilmesi",atanan:["H"]},{id:"g48",onem:"Z",bolum:"EĞİTİM",gun:"Cuma",metin:"Hasta ve İzinlilerin gruba",atanan:["ME"]},{id:"g49",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Öğretmenlere Terlik",atanan:["A"]},{id:"g50",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Yemekçi ve müezzin yazılması",atanan:["MA"]},{id:"g51",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Zilin kontrol edilmesi",atanan:["E"]},{id:"g52",onem:"Z",bolum:"EĞİTİM",gun:"Cumartesi",metin:"Hasta ve İzinlilerin gruba",atanan:["ÖB"]},{id:"g53",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Pazartesi",metin:"Veli grubuna Haftanın Etüt programı",atanan:["ÖF"]},{id:"g54",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın talebeleri Fotoğraf",atanan:["H"]},{id:"g55",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Salı",metin:"Haftanın Hadisi Şerifi",atanan:["ME"]},{id:"g56",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Çarşamba",metin:"Sohbet fotoğrafının paylaşılması",atanan:["A"]},{id:"g57",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Dahili Ders İşlenen konular",atanan:["MA"]},{id:"g58",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Perşembe",metin:"Haf. T. Müdüriyet Fotoğrafı",atanan:["E"]},{id:"g59",onem:"Z",bolum:"VELİ BİLGİLENDİRME",gun:"Cumartesi",metin:"Öğretmen Puanları",atanan:["ÖB"]}];
 
 const HAZIR_GOREVLER_VARSAYILAN=['Pano Şahsiyet eğitimi asılacak','Rozetlerin verilmesi','Haftanın talebeleri','Pano Hadisin Gruba Atılması','Kursun gezilip eksiklerin belirlenmesi','5. sınıf Atölye','Takviye Ödev Hatırlatma','8. Sınıf Soru sayısı alınması','Etüt verimlilik puanı','Dahili D. hadisi şerif ezberi','Kılık Kıyafet Kontrolü','Yatak Kontrol','Temizlik Kontrol','Namaz','Sur Çevrilmesi','Günlük Mahal Temizliği','Okul dönüşü yoklama ve arama','Veli grubuna Haftanın Etüt programı','Yemekçi ve müezzin yazılması','Zilin kontrol edilmesi','Hasta ve İzinlilerin gruba yazılması','Programın Gruba Atılması','Haf. İyileri Müdüriyet','Evvabin Namazı kılınması','Hadisi Şeriflerin ikindide Tekrar','Dahili ders şahsiyet eğitimi','Vestiyer dolap Kontrolü','Haftanın talebeleri Fotograf','Haftanın Hadisi Şerifi Foto','Şahsiyet İşlenecek konu','Haf. Kötüleri Müdüriyet','Haftanın incisi hazırlanması','Bekar odası Kontrol','Atölye Videosunun hazırlanması','Sohbet fotoğrafının paylaşılması','Rozetlerin toplanması','B. Sohbetinden bir kesit','Cuma etkinlik planlaması','Kasidei Bürde','Haftanın incisi ezberlenmesi','Tuvaletlerle alakalı ikaz','10 İngilizce kelime ezberi','Takviye Ödev Kontrol','Büyüğümüzün sohbeti anlatılması','Haf. T. Müdüriyet Fotografı','Deneme Bilgi kartı paylaşılması','Sınıf Tahtalarının temizliği Kalemlerin Doldurulması','Öğretmen Puan Kağıdı','Öğretmenlere Terlik','Öğretmen İkramı','Tahta Kalemi','Evradı Şerif İçin Aramak','Okulda Cuma namazı','Cuma yoklaması','Atölye çalışmaları','Ders programlarının panoya asılması','Dahili Ders İşlenen konular','Soru Sayısı Paylaşımı','Dua namazı','Evradı Şerife','Öğretmen Puanları','QUİZ Sonuçları','T.T.T Sonuçları'];
-let S={user:null,wo:0,gun:"Pazartesi",gorevler:JSON.parse(JSON.stringify(GS)),durumlar:{},arsiv:[],gecmisHafta:null,adminIsim:"Yönetici",adminSifre:"1234",toplantıKararlari:[],bolumler:null,onemIsimleri:{Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'},tehirler:{},tehirTalepleri:[],hazirGorevler:[...HAZIR_GOREVLER_VARSAYILAN],haftaAtla:{},_mevlutAdmin:false};
-let bugunDetayAcik = false;
-let kararDetayAcik = false;
+let S={user:null,wo:0,gun:"Pazartesi",gorevler:JSON.parse(JSON.stringify(GS)),durumlar:{},arsiv:[],gecmisHafta:null,adminIsim:"Yönetici",adminSifre:"1234",toplantıKararlari:[],tadilatlar:[],bolumler:null,onemIsimleri:{Z:'Zorunlu',O:'Olması Lazım',K:'Keyfiyet'},tehirler:{},tehirTalepleri:[],hazirGorevler:[...HAZIR_GOREVLER_VARSAYILAN],haftaAtla:{},_mevlutAdmin:false};
 
 // ===== SUPABASE ENTEGRASYONU =====
 const SB_URL = 'https://zowvygqlbrtotkygszsg.supabase.co';
@@ -452,6 +481,7 @@ function veriObjesi(){
     adminIsim: S.adminIsim||'Yonetici',
     adminSifre: S.adminSifre||'1234',
     toplantıKararlari: S.toplantıKararlari||[],
+    tadilatlar: S.tadilatlar||[],
     bolumler: BOL,
     onemIsimleri: S.onemIsimleri||{Z:'Zorunlu',O:'Olmasi Lazim',K:'Keyfiyet'},
     tehirler: S.tehirler||{},
@@ -470,6 +500,7 @@ function veriYukle(d){
   if(d.adminIsim) S.adminIsim = d.adminIsim;
   if(d.adminSifre) S.adminSifre = d.adminSifre;
   if(d.toplantıKararlari) S.toplantıKararlari = d.toplantıKararlari;
+  if(d.tadilatlar) S.tadilatlar = d.tadilatlar;
   if(d.bolumler){BOL=d.bolumler;}else{BOL=Object.assign({},BOL_VARSAYILAN);}
   if(d.onemIsimleri) S.onemIsimleri=d.onemIsimleri;
   if(d.tehirler) S.tehirler=d.tehirler;
@@ -525,6 +556,9 @@ function _modalAcikMi(){
   return !!document.querySelector('.mo.open');
 }
 
+// Accordion açık/kapalı durumları — DOM yeniden çizilse de korunur
+let _acKarar=false, _acTadilat=false, _acBitmemis=false;
+
 function sync(){
   let _syncHata=0;
   setInterval(async function(){
@@ -577,6 +611,9 @@ function refresh(id, force){
     // Modal veya klavye açıkken kararPage'i yenileme
     if(!_klavyeAcikMi()&&!_modalAcikMi()) rKararPage();
   }
+  else if(id==='tadilatPage'){
+    if(!_klavyeAcikMi()&&!_modalAcikMi()) rTadilatPage();
+  }
   else if(id==='wpYonetPage')rWpYonet();
   else if(id==='ayarlarPage'){
     // Ayarlar sayfasında accordion açıksa veya klavye açıksa yenileme yapma
@@ -595,18 +632,28 @@ function _ayarAcordeonAcikMi(){
 }
 
 function switchTab(t){
-  document.getElementById('ltabPer').classList.toggle('active',t==='per');
-  document.getElementById('ltabAdmin').classList.toggle('active',t==='admin');
-  document.getElementById('adminF').style.display=t==='admin'?'block':'none';
-  document.getElementById('perF').style.display=t==='per'?'block':'none';
-  if(t==='per') perDropGuncelle();
+  if(t==='per'){
+    document.getElementById('ltabPer').classList.add('active');
+    document.getElementById('ltabAdmin').classList.remove('active');
+    document.getElementById('adminF').style.display='none';
+    document.getElementById('perF').style.display='block';
+    perDropGuncelle();
+  } else {
+    document.getElementById('ltabAdmin').classList.add('active');
+    document.getElementById('ltabPer').classList.remove('active');
+    document.getElementById('perF').style.display='none';
+    document.getElementById('adminF').style.display='block';
+  }
 }
 
 function perDropGuncelle(){
   const grid=document.getElementById('perGridListe');
   if(!grid) return;
-  // Seçili personeli bul
-  const seciliKod=document.getElementById('perSel').value;
+  if(!PERSONEL || PERSONEL.length===0) return;
+  const sel=document.getElementById('perSel');
+  // Eğer hiç seçim yoksa ilk personeli otomatik seç
+  if(!sel.value && PERSONEL.length>0) sel.value=PERSONEL[0].kod;
+  const seciliKod=sel.value;
   grid.innerHTML=PERSONEL.map(p=>{
     const secili=p.kod===seciliKod;
     return `<div onclick="perGridSec('${p.kod}')" style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:${secili?p.renk+'22':'rgba(255,255,255,0.7)'};border:2px solid ${secili?p.renk:'rgba(0,0,0,0.1)'};border-radius:12px;cursor:pointer;transition:all .15s;user-select:none">
@@ -666,8 +713,10 @@ function doLoginPer(per){
     const toplamOnayBekleyen=PERSONEL.filter(x=>x.kod!==DENETIM_KOD).reduce((acc,px)=>{
       return acc+S.gorevler.filter(g=>((g&&g.atanan)||[]).includes(px.kod)&&g.onem==='Z'&&dur(h,`${g.id}_${px.kod}`)==='onay_bekliyor').length;
     },0);
-    if(toplamOnayBekleyen>0){
-      setTimeout(()=>showN('⏳','Onay bekleyen var',`${toplamOnayBekleyen} görev onayı`),400);
+    const toplamTehirTalep=((S.tehirTalepleri||[]).filter(t=>t.h===h)).length;
+    const toplamBekleyen=toplamOnayBekleyen+toplamTehirTalep;
+    if(toplamBekleyen>0){
+      setTimeout(()=>showN('⏳','Onay bekleyen var',`${toplamOnayBekleyen>0?toplamOnayBekleyen+' görev onayı':''} ${toplamTehirTalep>0?(toplamOnayBekleyen>0?'· ':'')+toplamTehirTalep+' tehir talebi':''}`),400);
     }
   }
 }
@@ -681,71 +730,24 @@ function logout(){S.user=null;S._mevlutAdmin=false;goPage('loginPage')}
 
 function rDash(){
   const h=wK(S.wo);const{t,d,p}=hes(h);
+  const gunAdlari=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const bugunAdi=gunAdlari[new Date().getDay()];
   document.getElementById('dSub').textContent=wL(S.wo);
   document.getElementById('dHero').textContent=`${d}/${t} görev tamamlandı · %${p}`;
   document.getElementById('arsivD').textContent=`${S.arsiv.length} hafta arşivlendi`;
   const aktifVaz=S.toplantıKararlari.filter(v=>{if(v.durum==='silindi')return false;const surGun=v.gun||7;const b=new Date(v.baslangicTs);return new Date()<=new Date(b.getTime()+surGun*24*60*60*1000);});
   const vDesc=document.getElementById('kararDesc');
   if(vDesc) vDesc.textContent=aktifVaz.length>0?`${aktifVaz.filter(x=>x.durum==='done').length}/${aktifVaz.length} tamamlandı`:'Ekle, takip et';
+  const aktifTad=S.tadilatlar.filter(v=>{if(v.durum==='silindi')return false;const surGun=v.gun||7;const b=new Date(v.baslangicTs);return new Date()<=new Date(b.getTime()+surGun*24*60*60*1000);});
+  const tDesc=document.getElementById('tadilatDesc');
+  if(tDesc) tDesc.textContent=aktifTad.length>0?`${aktifTad.filter(x=>x.durum==='done').length}/${aktifTad.length} tamamlandı`:'Ekle, takip et';
   document.getElementById('dStats').innerHTML=`
   <div class="dstat" onclick="goPage('planPage')"><div style="font-size:20px;margin-bottom:8px">📋</div><div style="font-size:24px;font-weight:800;color:var(--blue2)">${t}</div><div style="font-size:12px;color:var(--text2)">Toplam Görev</div><div style="height:4px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:10px;overflow:hidden"><div style="height:100%;width:100%;background:var(--blue);border-radius:2px"></div></div></div>
   <div class="dstat" onclick="goPage('planPage')"><div style="font-size:20px;margin-bottom:8px">✅</div><div style="font-size:24px;font-weight:800;color:var(--green)">${d}</div><div style="font-size:12px;color:var(--text2)">Tamamlanan</div><div style="height:4px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:10px;overflow:hidden"><div style="height:100%;width:${p}%;background:var(--green);border-radius:2px"></div></div></div>
   <div class="dstat" onclick="goPage('planPage')"><div style="font-size:20px;margin-bottom:8px">⏳</div><div style="font-size:24px;font-weight:800;color:var(--gold)">${t-d}</div><div style="font-size:12px;color:var(--text2)">Bekleyen</div><div style="height:4px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:10px;overflow:hidden"><div style="height:100%;width:${t?((t-d)/t*100):0}%;background:var(--gold);border-radius:2px"></div></div></div>
   <div class="dstat" onclick="goPage('puanPage')"><div style="font-size:20px;margin-bottom:8px">📈</div><div style="font-size:24px;font-weight:800;color:var(--cyan)">%${p}</div><div style="font-size:12px;color:var(--text2)">Tamamlanma</div><div style="height:4px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:10px;overflow:hidden"><div style="height:100%;width:${p}%;background:var(--cyan);border-radius:2px"></div></div></div>`;
 
-  // BUGÜNKÜ GÖREVLER — personel bazlı
-  const gunAdlari={0:'Pazar',1:'Pazartesi',2:'Salı',3:'Çarşamba',4:'Perşembe',5:'Cuma',6:'Cumartesi'};
-  const bugunAdi=gunAdlari[new Date().getDay()];
-  const bugunGorevler=S.gorevler.filter(g=>g.gun===bugunAdi);
 
-  // İçerik oluştur
-  let icerik='';
-  if(bugunGorevler.length===0){
-    icerik=`<div style="text-align:center;padding:18px;color:var(--text2);font-size:13px">Bugün görev yok 🎉</div>`;
-  } else {
-    PERSONEL.forEach(per=>{
-      const perGorevler=bugunGorevler.filter(g=>((g&&g.atanan)||[]).includes(per.kod));
-      if(!perGorevler.length) return;
-      const yapilan=perGorevler.filter(g=>dur(h,`${g.id}_${per.kod}`)=='done');
-      const yapilacak=perGorevler.filter(g=>dur(h,`${g.id}_${per.kod}`)!='done');
-      const pct=Math.round(yapilan.length/perGorevler.length*100);
-      icerik+=`<div style="background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.1);border-radius:13px;margin-bottom:10px;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:${per.renk}18;border-bottom:1px solid ${per.renk}33">
-          <div style="width:34px;height:34px;border-radius:9px;background:${per.renk};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">${per.kod}</div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:700">${per.isim}</div><div style="font-size:11px;color:var(--text2)">${yapilan.length}/${perGorevler.length} tamamlandı</div></div>
-          <div style="font-size:16px;font-weight:800;color:${pct===100?'var(--green)':pct>0?'var(--gold)':'var(--red)'}">${pct}%</div>
-        </div>`;
-      if(yapilacak.length>0){
-        icerik+=`<div style="padding:8px 13px 4px"><div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">⏳ Yapılacak (${yapilacak.length})</div>`;
-        yapilacak.forEach(g=>{
-          const oc={Z:{r:'#cc2200'},O:{r:'#996600'},K:{r:'#006688'}};const o=oc[g.onem||'Z'];
-          icerik+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#fff8f8;border-left:3px solid ${o.r};border-radius:0 6px 6px 0;margin-bottom:4px"><div style="flex:1;font-size:12px;font-weight:600">${g.metin}</div><div style="font-size:9px;color:${o.r};font-weight:700;background:${o.r}18;padding:1px 6px;border-radius:4px">${g.onem||'Z'}</div></div>`;
-        });
-        icerik+=`</div>`;
-      }
-      if(yapilan.length>0){
-        icerik+=`<div style="padding:${yapilacak.length?'2px':'8px'} 13px 8px"><div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">✅ Yapıldı (${yapilan.length})</div>`;
-        yapilan.forEach(g=>{
-          icerik+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#f0faf4;border-left:3px solid var(--green);border-radius:0 6px 6px 0;margin-bottom:4px"><div style="flex:1;font-size:12px;font-weight:600;color:#1a8a4a;text-decoration:line-through;opacity:.7">${g.metin}</div><div style="font-size:12px;color:var(--green)">✓</div></div>`;
-        });
-        icerik+=`</div>`;
-      }
-      icerik+=`</div>`;
-    });
-  }
-
-  // Bugünkü görevler bölümünün açık/kapalı durumunu koru (global değişken ile)
-
-  document.getElementById('dBugun').innerHTML=`
-    <div onclick="togBD()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.1);border-radius:11px;cursor:pointer;user-select:none">
-      <div style="font-size:12px;font-weight:700;color:var(--text);letter-spacing:.05em;text-transform:uppercase">☀️ Bugünkü Görevler — ${bugunAdi}</div>
-      <div id="bugunOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
-    </div>
-    <div id="bugunDetay" style="display:${bugunDetayAcik?'block':'none'};margin-top:8px">${icerik}</div>`;
-  if(bugunDetayAcik){
-    const ok=document.getElementById('bugunOk');
-    if(ok) ok.style.transform='rotate(90deg)';
-  }
 
   // EĞİTİM DURUMU KARTI
   const egitimGorevler=S.gorevler.filter(g=>g.bolum==='EĞİTİM'&&g.gun===bugunAdi&&!isHaftaAtlandi(h,g.id));
@@ -768,22 +770,327 @@ function rDash(){
 
   // HAFTAlik VAZİFELER
   rDashKarar();
+  // TADİLAT
+  rDashTadilat();
+  // BİTMEMİŞ GÖREVLER
+  rDashBitmemis();
 }
 
-function togBD(){
-  const el=document.getElementById('bugunDetay');
-  const ok=document.getElementById('bugunOk');
-  bugunDetayAcik=!bugunDetayAcik;
-  el.style.display=bugunDetayAcik?'block':'none';
-  if(ok) ok.style.transform=bugunDetayAcik?'rotate(90deg)':'rotate(0deg)';
+
+function rDashBitmemis(){
+  const el=document.getElementById('dBitmemis');
+  if(!el) return;
+  const h=wK(S.wo);
+  // Sadece Zorunlu (Z) seviyesindeki, tüm hafta boyunca atanmış ve bitirilmemiş görevleri bul
+  // Her personel için tamamlanmamış görevleri topla
+  const gunAdlari=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  const bugunAdi2=gunAdlari[new Date().getDay()];
+  const kontolEdilecekGunler=[bugunAdi2];
+  // Zorunlu (Z) seviyesi ve tamamlanmamış görevleri personele göre grupla
+  const perBitmemis={};
+  PERSONEL.forEach(per=>{
+    perBitmemis[per.kod]=[];
+  });
+  kontolEdilecekGunler.forEach(gun=>{
+    S.gorevler.forEach(g=>{
+      if(g.onem!=='Z') return; // Sadece Zorunlu
+      const atanan=(g&&g.atanan)||[];
+      atanan.forEach(k=>{
+        if(!perBitmemis[k]) return;
+        const durum2=dur(h,`${g.id}_${k}`);
+        if(durum2!=='done'){
+          // Aynı görev aynı gün için bir kere eklensin
+          const zatenVar=perBitmemis[k].some(x=>x.gid===g.id&&x.gun===gun);
+          if(!zatenVar){
+            perBitmemis[k].push({gid:g.id,gun,metin:g.metin,bolum:g.bolum||''});
+          }
+        }
+      });
+    });
+  });
+  // Hiç bitmemiş Z görevi var mı kontrol et
+  const toplamBitmemis=Object.values(perBitmemis).reduce((acc,arr)=>acc+arr.length,0);
+  let icerik='';
+  if(toplamBitmemis===0){
+    icerik=`<div style="text-align:center;padding:18px;color:var(--text2);font-size:13px">Bitmemiş zorunlu görev yok ✅</div>`;
+  } else {
+    PERSONEL.forEach(per=>{
+      const gorevler=perBitmemis[per.kod];
+      if(!gorevler||gorevler.length===0) return;
+      icerik+=`<div style="background:rgba(0,0,0,0.04);border:1px solid rgba(204,34,0,0.2);border-radius:13px;margin-bottom:10px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;background:#cc220010;border-bottom:1px solid rgba(204,34,0,0.15)">
+          <div style="width:34px;height:34px;border-radius:9px;background:${per.renk};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">${per.kod}</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:700">${per.isim}</div><div style="font-size:11px;color:var(--red)">${gorevler.length} bitmemiş zorunlu görev</div></div>
+          <div style="font-size:16px">⚠️</div>
+        </div>
+        <div style="padding:8px 13px 6px">`;
+      gorevler.forEach(g=>{
+        icerik+=`<div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#fff5f5;border-left:3px solid #cc2200;border-radius:0 6px 6px 0;margin-bottom:4px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;color:#333">${g.metin}</div>
+            <div style="font-size:10px;color:#888;margin-top:1px">${g.gun}${g.bolum?` · ${g.bolum}`:''}</div>
+          </div>
+          <div style="font-size:9px;font-weight:700;color:#cc2200;background:#cc220018;padding:2px 6px;border-radius:4px;flex-shrink:0">Z</div>
+        </div>`;
+      });
+      icerik+=`</div></div>`;
+    });
+  }
+  // Açık/kapalı durumu koru
+  el.innerHTML=`
+    <div onclick="togBitmemis()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(204,34,0,0.06);border:1px solid rgba(204,34,0,0.2);border-radius:11px;cursor:pointer;user-select:none">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:#cc2200;letter-spacing:.05em;text-transform:uppercase">⚠️ Bitmemiş Görevler</span>
+        ${toplamBitmemis>0?`<span style="font-size:11px;font-weight:700;background:#cc2200;color:#fff;padding:1px 7px;border-radius:10px">${toplamBitmemis}</span>`:''}
+      </div>
+      <div id="bitmemisOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
+    </div>
+    <div id="bitmemisDetay" style="display:${_acBitmemis?'block':'none'};margin-top:8px">${icerik}</div>`;
+  if(_acBitmemis){
+    const ok=document.getElementById('bitmemisOk');
+    if(ok) ok.style.transform='rotate(90deg)';
+  }
 }
 
 function togKD(){
+  _acKarar=!_acKarar;
   const el=document.getElementById('kararDetay');
   const ok=document.getElementById('kararOk');
-  kararDetayAcik=!kararDetayAcik;
-  el.style.display=kararDetayAcik?'block':'none';
-  if(ok) ok.style.transform=kararDetayAcik?'rotate(90deg)':'rotate(0deg)';
+  if(el) el.style.display=_acKarar?'block':'none';
+  if(ok) ok.style.transform=_acKarar?'rotate(90deg)':'rotate(0deg)';
+}
+
+function togBitmemis(){
+  _acBitmemis=!_acBitmemis;
+  const el=document.getElementById('bitmemisDetay');
+  const ok=document.getElementById('bitmemisOk');
+  if(el) el.style.display=_acBitmemis?'block':'none';
+  if(ok) ok.style.transform=_acBitmemis?'rotate(90deg)':'rotate(0deg)';
+}
+
+
+function togBitmemis(){
+  _acBitmemis=!_acBitmemis;
+  const el=document.getElementById('bitmemisDetay');
+  const ok=document.getElementById('bitmemisOk');
+  if(el) el.style.display=_acBitmemis?'block':'none';
+  if(ok) ok.style.transform=_acBitmemis?'rotate(90deg)':'rotate(0deg)';
+}
+
+// ===== TADİLAT =====
+function rDashTadilat(){
+  const simdi=new Date();
+  const aktif=S.tadilatlar.filter(v=>{
+    if(v.durum==='silindi') return false;
+    const surGun=v.gun||7;
+    const bas=new Date(v.baslangicTs);
+    const bit=new Date(bas.getTime()+surGun*24*60*60*1000);
+    return simdi<=bit;
+  });
+  const biten=aktif.filter(v=>v.durum==='done').length;
+  const toplam=aktif.length;
+  let icerik='';
+  if(aktif.length===0){
+    icerik=`<div style="text-align:center;padding:18px;color:var(--text2);font-size:13px">Aktif tadilat yok 📭</div>`;
+  } else {
+    aktif.forEach(v=>{
+      const done=v.durum==='done';
+      const bas=new Date(v.baslangicTs);
+      const bit=new Date(bas.getTime()+(v.gun||7)*24*60*60*1000);
+      const kalanMs=bit-simdi;
+      const kalanGun=Math.max(0,Math.ceil(kalanMs/(1000*60*60*24)));
+      const kalanRenk=kalanGun<=1?'var(--red)':kalanGun<=3?'var(--gold)':'var(--green)';
+      icerik+=`<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:${done?'#f0faf4':'var(--card)'};border:1px solid ${done?'rgba(26,138,74,0.25)':'rgba(0,0,0,0.1)'};border-radius:10px;margin-bottom:7px">
+        <div onclick="tadilatTog('${v.id}')" style="width:24px;height:24px;border-radius:7px;border:2px solid ${done?'var(--green)':'rgba(230,120,20,0.4)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;cursor:pointer;margin-top:1px">${done?'✓':''}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;${done?'text-decoration:line-through;opacity:.5':''}">${v.metin}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
+            ${_renderAtanan(v.atanan)}
+            ${!done?`<span style="font-size:10px;font-weight:700;color:${kalanRenk}">⏱ ${kalanGun} gün kaldı</span>`:'<span style="font-size:10px;color:var(--green);font-weight:700">✅ Tamamlandı</span>'}
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+  const el=document.getElementById('dTadilat');
+  if(!el) return;
+  el.innerHTML=`
+    <div onclick="togTadilat()" style="display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:rgba(230,120,20,0.07);border:1px solid rgba(230,120,20,0.22);border-radius:11px;cursor:pointer;user-select:none">
+      <div style="font-size:12px;font-weight:700;color:#e67814;letter-spacing:.05em;text-transform:uppercase">🔨 Tadilat ${toplam>0?`<span style="font-size:11px;font-weight:600;margin-left:4px;opacity:.7">${biten}/${toplam}</span>`:''}</div>
+      <div id="tadilatOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
+    </div>
+    <div id="tadilatDetay" style="display:${_acTadilat?'block':'none'};margin-top:8px">${icerik}</div>`;
+  if(_acTadilat){const ok=document.getElementById('tadilatOk');if(ok)ok.style.transform='rotate(90deg)';}
+}
+
+function togTadilat(){
+  _acTadilat=!_acTadilat;
+  const el=document.getElementById('tadilatDetay');
+  const ok=document.getElementById('tadilatOk');
+  if(el) el.style.display=_acTadilat?'block':'none';
+  if(ok) ok.style.transform=_acTadilat?'rotate(90deg)':'rotate(0deg)';
+}
+
+// atanan string veya dizi olabilir — personel etiketlerini render et
+function _renderAtanan(atanan){
+  const liste=Array.isArray(atanan)?atanan:(atanan?[atanan]:[]);
+  if(!liste.length) return '<span style="font-size:10px;color:var(--text2)">Atanan yok</span>';
+  return liste.map(k=>{
+    const p=PERSONEL.find(x=>x.kod===k);
+    return p?`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:${p.renk}22;color:${p.renk}">${p.isim}</span>`:'';
+  }).join('');
+}
+
+function tadilatTog(id){
+  const v=S.tadilatlar.find(x=>x.id===id);
+  if(!v) return;
+  v.durum=v.durum==='done'?'bekleyen':'done';
+  save(); rDashTadilat(); rTadilatPage();
+}
+
+function tadilatSil(id){
+  const v=S.tadilatlar.find(x=>x.id===id);
+  if(!v) return;
+  v.durum='silindi'; save(); rTadilatPage(); rDashTadilat();
+  showN('🗑️','Tadilat silindi','');
+}
+
+function rTadilatPage(){
+  const el=document.getElementById('tadilatB');
+  if(!el) return;
+  const _metinOnce=document.getElementById('yeniTadilatMet')?document.getElementById('yeniTadilatMet').value:'';
+  const _gunOnce=document.getElementById('yeniTadilatGun')?document.getElementById('yeniTadilatGun').value:'7';
+  const simdi=new Date();
+  const aktif=S.tadilatlar.filter(v=>v.durum!=='silindi').sort((a,b)=>new Date(b.baslangicTs)-new Date(a.baslangicTs));
+  let html=`
+  <div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;margin-bottom:12px">➕ Yeni Tadilat Ekle</div>
+    <div class="fg" style="margin-bottom:10px"><label>Tadilat</label><input type="text" id="yeniTadilatMet" placeholder="Tadilat metnini yazın..."></div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Gündemde Kalma Süresi</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px" id="yeniTadilatSure">
+        <div onclick="selTadilatSure(1,this)" data-gun="1" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">1 Gün</div>
+        <div onclick="selTadilatSure(2,this)" data-gun="2" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">2 Gün</div>
+        <div onclick="selTadilatSure(3,this)" data-gun="3" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">3 Gün</div>
+        <div onclick="selTadilatSure(7,this)" data-gun="7" style="padding:9px;border-radius:9px;border:2px solid rgba(230,120,20,0.5);background:rgba(230,120,20,0.15);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#e67814;transition:all .15s">1 Hafta</div>
+        <div onclick="selTadilatSure(14,this)" data-gun="14" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">2 Hafta</div>
+        <div onclick="selTadilatSure(30,this)" data-gun="30" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">1 Ay</div>
+      </div>
+      <input type="hidden" id="yeniTadilatGun" value="7">
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Sorumlu Personel <span style="opacity:.6">(birden fazla seçilebilir)</span></label>
+      <div id="yeniTadilatPer" style="display:flex;flex-wrap:wrap;gap:6px">
+        ${PERSONEL.map(p=>`<div data-k="${p.kod}" onclick="selTadilatPer('${p.kod}',this)" class="mc" style="border-color:${p.renk}55;color:${p.renk}">${p.isim}</div>`).join('')}
+      </div>
+    </div>
+    <button onclick="ekleTadilat()" style="width:100%;padding:11px;background:linear-gradient(135deg,#c8600a,#e67814);border:none;border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">🔨 Tadilat Ekle</button>
+  </div>
+  <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Mevcut Tadilat (${aktif.length})</div>`;
+  if(aktif.length===0){
+    html+=`<div style="text-align:center;padding:30px;color:var(--text2);font-size:13px">Henüz tadilat eklenmedi</div>`;
+  } else {
+    aktif.forEach(v=>{
+      const done=v.durum==='done';
+      const bas=new Date(v.baslangicTs);
+      const surGun=v.gun||7;
+      const bit=new Date(bas.getTime()+surGun*24*60*60*1000);
+      const surEtiketi=surGun===1?'1 Gün':surGun===2?'2 Gün':surGun===3?'3 Gün':surGun===7?'1 Hafta':surGun===14?'2 Hafta':'1 Ay';
+      const kalanMs=bit-simdi;
+      const bitti=kalanMs<0;
+      const kalanGun=bitti?0:Math.ceil(kalanMs/(1000*60*60*24));
+      const kalanRenk=done?'var(--green)':bitti?'var(--text2)':kalanGun<=1?'var(--red)':kalanGun<=3?'var(--gold)':'var(--green)';
+      const durumEtiketi=done?'✅ Tamamlandı':bitti?'⌛ Süresi doldu':`⏱ ${kalanGun} gün kaldı`;
+      html+=`<div style="background:var(--card2);border:1px solid ${done?'rgba(26,138,74,0.3)':bitti?'rgba(0,0,0,0.1)':'var(--border)'};border-radius:13px;padding:13px 15px;margin-bottom:8px;${bitti&&!done?'opacity:.6':''}">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div onclick="tadilatTog('${v.id}')" style="width:26px;height:26px;border-radius:8px;border:2px solid ${done?'var(--green)':'rgba(230,120,20,0.4)'};background:${done?'var(--green)':'transparent'};display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;cursor:pointer;margin-top:1px">${done?'✓':''}</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:600;${done?'text-decoration:line-through;opacity:.5':''}">${v.metin}</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+              ${_renderAtanan(v.atanan)}
+              <span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;background:rgba(230,120,20,0.12);color:#e67814">⏳ ${surEtiketi}</span>
+              <span style="font-size:11px;font-weight:700;color:${kalanRenk}">${durumEtiketi}</span>
+              <span style="font-size:10px;color:var(--text2)">${bas.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})} – ${bit.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})}</span>
+            </div>
+          </div>
+          <button onclick="tadilatSil('${v.id}')" style="width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,77,106,0.15);color:var(--red);cursor:pointer;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">×</button>
+        </div>
+      </div>`;
+    });
+  }
+  el.innerHTML=html;
+  // Form değerlerini geri yükle
+  if(_metinOnce){
+    const inp=document.getElementById('yeniTadilatMet');
+    if(inp) inp.value=_metinOnce;
+  }
+  if(_gunOnce){
+    document.getElementById('yeniTadilatGun').value=_gunOnce;
+    document.querySelectorAll('#yeniTadilatSure div').forEach(d=>{
+      const secili=d.dataset.gun==_gunOnce;
+      d.style.borderColor=secili?'rgba(230,120,20,0.5)':'var(--border)';
+      d.style.background=secili?'rgba(230,120,20,0.15)':'var(--card)';
+      d.style.color=secili?'#e67814':'var(--text2)';
+    });
+  }
+  // Seçili personelleri geri yükle
+  _secilenTadilatPer.forEach(k=>{
+    const el2=document.querySelector(`#yeniTadilatPer .mc[data-k="${k}"]`);
+    if(el2){
+      el2.classList.add('sel');
+      const p=PERSONEL.find(x=>x.kod===k);
+      if(p){el2.style.borderColor=p.renk;el2.style.background=p.renk+'33';el2.style.color=p.renk;}
+    }
+  });
+}
+
+let _secilenTadilatPer=[];
+function selTadilatSure(gun,el){
+  document.getElementById('yeniTadilatGun').value=gun;
+  document.querySelectorAll('#yeniTadilatSure div').forEach(d=>{
+    d.style.borderColor='var(--border)';
+    d.style.background='var(--card)';
+    d.style.color='var(--text2)';
+  });
+  el.style.borderColor='rgba(230,120,20,0.5)';
+  el.style.background='rgba(230,120,20,0.15)';
+  el.style.color='#e67814';
+}
+
+function selTadilatPer(k,el){
+  const idx=_secilenTadilatPer.indexOf(k);
+  if(idx>-1){
+    _secilenTadilatPer.splice(idx,1);
+    el.classList.remove('sel');
+    const p=PERSONEL.find(x=>x.kod===k);
+    el.style.borderColor=p?p.renk+'55':'';
+    el.style.background='';
+    el.style.color=p?p.renk:'';
+  } else {
+    _secilenTadilatPer.push(k);
+    el.classList.add('sel');
+    const p=PERSONEL.find(x=>x.kod===k);
+    if(p){el.style.borderColor=p.renk;el.style.background=p.renk+'33';el.style.color=p.renk;}
+  }
+}
+
+function ekleTadilat(){
+  const met=document.getElementById('yeniTadilatMet').value.trim();
+  if(!met){showN('❌','Tadilat metni boş olamaz','');return}
+  const gun=parseInt(document.getElementById('yeniTadilatGun').value)||7;
+  S.tadilatlar.push({
+    id:'t'+Date.now(),
+    metin:met,
+    atanan:[..._secilenTadilatPer],
+    baslangicTs:new Date().toISOString(),
+    gun:gun,
+    durum:'bekleyen'
+  });
+  save();
+  document.getElementById('yeniTadilatMet').value='';
+  _secilenTadilatPer=[];
+  showN('🔨','Tadilat eklendi!',met);
+  rTadilatPage(); rDashTadilat();
 }
 
 function rDashKarar(){
@@ -804,10 +1111,9 @@ function rDashKarar(){
     icerik=`<div style="text-align:center;padding:18px;color:var(--text2);font-size:13px">Aktif vazife yok 📭</div>`;
   } else {
     aktif.forEach(v=>{
-      const per=v.atanan?PERSONEL.find(p=>p.kod===v.atanan):null;
       const done=v.durum==='done';
       const bas=new Date(v.baslangicTs);
-      const bit=new Date(bas.getTime()+7*24*60*60*1000);
+      const bit=new Date(bas.getTime()+(v.gun||7)*24*60*60*1000);
       const kalanMs=bit-simdi;
       const kalanGun=Math.max(0,Math.ceil(kalanMs/(1000*60*60*24)));
       const kalanRenk=kalanGun<=1?'var(--red)':kalanGun<=3?'var(--gold)':'var(--green)';
@@ -816,7 +1122,7 @@ function rDashKarar(){
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;${done?'text-decoration:line-through;opacity:.5':''}">${v.metin}</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
-            ${per?`<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:${per.renk}22;color:${per.renk}">${per.isim}</span>`:'<span style="font-size:10px;color:var(--text2)">Atanan yok</span>'}
+            ${_renderAtanan(v.atanan)}
             ${!done?`<span style="font-size:10px;font-weight:700;color:${kalanRenk}">⏱ ${kalanGun} gün kaldı</span>`:'<span style="font-size:10px;color:var(--green);font-weight:700">✅ Tamamlandı</span>'}
           </div>
         </div>
@@ -831,11 +1137,8 @@ function rDashKarar(){
       <div style="font-size:12px;font-weight:700;color:var(--purple);letter-spacing:.05em;text-transform:uppercase">📌 Vazifeler ${toplam>0?`<span style="font-size:11px;font-weight:600;margin-left:4px;opacity:.7">${biten}/${toplam}</span>`:''}</div>
       <div id="kararOk" style="font-size:18px;color:var(--text2);transition:transform .25s">›</div>
     </div>
-    <div id="kararDetay" style="display:${kararDetayAcik?'block':'none'};margin-top:8px">${icerik}</div>`;
-  if(kararDetayAcik){
-    const ok=document.getElementById('kararOk');
-    if(ok) ok.style.transform='rotate(90deg)';
-  }
+    <div id="kararDetay" style="display:${_acKarar?'block':'none'};margin-top:8px">${icerik}</div>`;
+  if(_acKarar){const ok=document.getElementById('kararOk');if(ok)ok.style.transform='rotate(90deg)';}
 }
 
 function kararTog(id){
@@ -864,6 +1167,9 @@ function kararSil(id){
 function rKararPage(){
   const el=document.getElementById('kararB');
   if(!el) return;
+  // Mevcut form değerlerini kaydet
+  const _metinOnce=document.getElementById('yeniKararMet')?document.getElementById('yeniKararMet').value:'';
+  const _gunOnce=document.getElementById('yeniKararGun')?document.getElementById('yeniKararGun').value:'7';
   const simdi=new Date();
   const aktif=S.toplantıKararlari.filter(v=>v.durum!=='silindi').sort((a,b)=>new Date(b.baslangicTs)-new Date(a.baslangicTs));
 
@@ -873,7 +1179,9 @@ function rKararPage(){
     <div class="fg" style="margin-bottom:10px"><label>Vazife</label><input type="text" id="yeniKararMet" placeholder="Vazife metnini yazın..."></div>
     <div style="margin-bottom:12px">
       <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Gündemde Kalma Süresi</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="yeniKararSure">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px" id="yeniKararSure">
+        <div onclick="selKararSure(1,this)" data-gun="1" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">1 Gün</div>
+        <div onclick="selKararSure(2,this)" data-gun="2" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">2 Gün</div>
         <div onclick="selKararSure(3,this)" data-gun="3" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">3 Gün</div>
         <div onclick="selKararSure(7,this)" data-gun="7" style="padding:9px;border-radius:9px;border:2px solid rgba(120,60,200,0.5);background:rgba(120,60,200,0.15);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:#7030a0;transition:all .15s">1 Hafta</div>
         <div onclick="selKararSure(14,this)" data-gun="14" style="padding:9px;border-radius:9px;border:2px solid var(--border);background:var(--card);text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:var(--text2);transition:all .15s">2 Hafta</div>
@@ -882,9 +1190,8 @@ function rKararPage(){
       <input type="hidden" id="yeniKararGun" value="7">
     </div>
     <div style="margin-bottom:12px">
-      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Sorumlu Personel (opsiyonel)</label>
+      <label style="font-size:12px;color:var(--text2);display:block;margin-bottom:7px">Sorumlu Personel <span style="opacity:.6">(birden fazla seçilebilir)</span></label>
       <div id="yeniKararPer" style="display:flex;flex-wrap:wrap;gap:6px">
-        <div data-k="" onclick="selKararPer('',this)" class="mc sel" style="border-color:var(--blue);background:rgba(26,108,246,0.2);color:var(--blue2)">Atanmamış</div>
         ${PERSONEL.map(p=>`<div data-k="${p.kod}" onclick="selKararPer('${p.kod}',this)" class="mc" style="border-color:${p.renk}55;color:${p.renk}">${p.isim}</div>`).join('')}
       </div>
     </div>
@@ -896,12 +1203,11 @@ function rKararPage(){
     html+=`<div style="text-align:center;padding:30px;color:var(--text2);font-size:13px">Henüz vazife eklenmedi</div>`;
   } else {
     aktif.forEach(v=>{
-      const per=v.atanan?PERSONEL.find(p=>p.kod===v.atanan):null;
       const done=v.durum==='done';
       const bas=new Date(v.baslangicTs);
       const surGun=v.gun||7;
       const bit=new Date(bas.getTime()+surGun*24*60*60*1000);
-      const surEtiketi=surGun===3?'3 Gün':surGun===7?'1 Hafta':surGun===14?'2 Hafta':'1 Ay';
+      const surEtiketi=surGun===1?'1 Gün':surGun===2?'2 Gün':surGun===3?'3 Gün':surGun===7?'1 Hafta':surGun===14?'2 Hafta':'1 Ay';
       const kalanMs=bit-simdi;
       const bitti=kalanMs<0;
       const kalanGun=bitti?0:Math.ceil(kalanMs/(1000*60*60*24));
@@ -913,7 +1219,7 @@ function rKararPage(){
           <div style="flex:1">
             <div style="font-size:14px;font-weight:600;${done?'text-decoration:line-through;opacity:.5':''}">${v.metin}</div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
-              ${per?`<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;background:${per.renk}22;color:${per.renk}">${per.isim}</span>`:''}
+              ${_renderAtanan(v.atanan)}
               <span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;background:rgba(120,60,200,0.12);color:#7030a0">⏳ ${surEtiketi}</span>
               <span style="font-size:11px;font-weight:700;color:${kalanRenk}">${durumEtiketi}</span>
               <span style="font-size:10px;color:var(--text2)">${bas.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})} – ${bit.toLocaleDateString('tr-TR',{day:'numeric',month:'short'})}</span>
@@ -925,14 +1231,30 @@ function rKararPage(){
     });
   }
   el.innerHTML=html;
-  // ilk kez seçimi uygula
-  setTimeout(()=>{
-    const ilk=document.querySelector('#yeniKararPer .mc[data-k=""]');
-    if(ilk){ilk.style.borderColor='var(--blue)';ilk.style.background='rgba(26,108,246,0.2)';ilk.style.color='var(--blue2)';}
-  },30);
+  // Form değerlerini geri yükle
+  if(_metinOnce){
+    const inp=document.getElementById('yeniKararMet');
+    if(inp) inp.value=_metinOnce;
+  }
+  if(_gunOnce){
+    document.getElementById('yeniKararGun').value=_gunOnce;
+    document.querySelectorAll('#yeniKararSure div').forEach(d=>{
+      const secili=d.dataset.gun==_gunOnce;
+      d.style.borderColor=secili?'rgba(120,60,200,0.5)':'var(--border)';
+      d.style.background=secili?'rgba(120,60,200,0.15)':'var(--card)';
+      d.style.color=secili?'#7030a0':'var(--text2)';
+    });
+  }
+  // Seçili personelleri geri yükle
+  _secilenKararPer.forEach(k=>{
+    const el2=document.querySelector(`#yeniKararPer .mc[data-k="${k}"]`);
+    if(el2){
+      el2.classList.add('sel');
+      const p=PERSONEL.find(x=>x.kod===k);
+      if(p){el2.style.borderColor=p.renk;el2.style.background=p.renk+'33';el2.style.color=p.renk;}
+    }
+  });
 }
-
-let _secilenKararPer='';
 function selKararSure(gun,el){
   document.getElementById('yeniKararGun').value=gun;
   document.querySelectorAll('#yeniKararSure div').forEach(d=>{
@@ -946,18 +1268,20 @@ function selKararSure(gun,el){
 }
 
 function selKararPer(k,el){
-  _secilenKararPer=k;
-  document.querySelectorAll('#yeniKararPer .mc').forEach(c=>{
-    const ck=c.dataset.k;
-    const per=PERSONEL.find(p=>p.kod===ck);
-    c.classList.remove('sel');
-    c.style.borderColor=per?per.renk+'55':'';
-    c.style.background='';
-    c.style.color=per?per.renk:'';
-  });
-  el.classList.add('sel');
-  if(k===''){el.style.borderColor='var(--blue)';el.style.background='rgba(26,108,246,0.2)';el.style.color='var(--blue2)';}
-  else{const p=PERSONEL.find(x=>x.kod===k);if(p){el.style.borderColor=p.renk;el.style.background=p.renk+'33';el.style.color=p.renk;}}
+  const idx=_secilenKararPer.indexOf(k);
+  if(idx>-1){
+    _secilenKararPer.splice(idx,1);
+    el.classList.remove('sel');
+    const p=PERSONEL.find(x=>x.kod===k);
+    el.style.borderColor=p?p.renk+'55':'';
+    el.style.background='';
+    el.style.color=p?p.renk:'';
+  } else {
+    _secilenKararPer.push(k);
+    el.classList.add('sel');
+    const p=PERSONEL.find(x=>x.kod===k);
+    if(p){el.style.borderColor=p.renk;el.style.background=p.renk+'33';el.style.color=p.renk;}
+  }
 }
 
 function ekleKarar(){
@@ -967,14 +1291,14 @@ function ekleKarar(){
   S.toplantıKararlari.push({
     id:'v'+Date.now(),
     metin:met,
-    atanan:_secilenKararPer||'',
+    atanan:[..._secilenKararPer],
     baslangicTs:new Date().toISOString(),
     gun:gun,
     durum:'bekleyen'
   });
   save();
   document.getElementById('yeniKararMet').value='';
-  _secilenKararPer='';
+  _secilenKararPer=[];
   showN('📌','Vazife eklendi!',met);
   rKararPage(); rDashKarar();
 }
@@ -1417,9 +1741,36 @@ function aksamOzetiOlustur(adminIsim){
     mesaj+=`⚠️ Lütfen eksik görevleri tamamlayınız.\n`;
   }
   mesaj+=`\n_${isim}_`;
+  mesaj+=`\n\nhttps://btyakademii.github.io/Bayrampasa/index-58.html`;
   return mesaj;
 }
 
+function aksamOzetiModal(){
+  document.getElementById('aksamAdminIsim').value=S.adminIsim||'Yönetici';
+  document.getElementById('aksamHedefNo').value='';
+  const onizleme=aksamOzetiOlustur();
+  document.getElementById('aksamOnizleme').textContent=onizleme;
+  document.getElementById('aksamMo').classList.add('open');
+}
+
+function aksamGonder(){
+  const isim=document.getElementById('aksamAdminIsim').value.trim()||'Yönetici';
+  const no='905466916676';
+  // Yönetici adını güncelle
+  S.adminIsim=isim; save();
+  const mesaj=aksamOzetiOlustur(isim);
+  const url=no?`https://wa.me/${no}?text=${encodeURIComponent(mesaj)}`:`https://wa.me/?text=${encodeURIComponent(mesaj)}`;
+  window.open(url,'_blank');
+  document.getElementById('aksamMo').classList.remove('open');
+}
+
+// adminIsim değişince önizlemeyi güncelle
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp=document.getElementById('aksamAdminIsim');
+  if(inp) inp.addEventListener('input',()=>{
+    document.getElementById('aksamOnizleme').textContent=aksamOzetiOlustur(inp.value||'Yönetici');
+  });
+});
 
 function wpHatirlatici(kod){
   const p=PERSONEL.find(x=>x.kod===kod);if(!p||!p.wp)return;
@@ -1485,6 +1836,7 @@ function wpHatGonder(kod,tip){
   }
   mesaj+=`━━━━━━━━━━━━━━━━\n`;
   mesaj+=`_Bayrampaşa Yönetim Sistemi_`;
+  mesaj+=`\n\nhttps://btyakademii.github.io/Bayrampasa/index-58.html`;
   const url=`https://wa.me/${p.wp}?text=${encodeURIComponent(mesaj)}`;
   window.open(url,'_blank');
   const moId='wpHatMo_'+kod;
@@ -1807,6 +2159,30 @@ function rPerPage(){
         const o=oc[g.onem||'Z'];
         const isZorunlu=g.onem==='Z';
         if(p.kod===DENETIM_KOD && durum==='onay_bekliyor') durum='pending';
+        // Tehir kontrolü
+        const tehirli=isTehirli(h,g.id,p.kod);
+        const mevcutTehirTalep=(S.tehirTalepleri||[]).find(t=>t.h===h&&t.gid===g.id&&t.perKod===p.kod);
+        if(tehirli){
+          return `<div class="pgc2" style="background:#f0f0f0;border:1.5px solid #aaa;opacity:.65;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()">
+            <div class="chk" style="border-color:#aaa;color:#888">⏸</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600;color:#666;text-decoration:line-through">${g.metin}</div>
+              <div style="font-size:9px;color:#888;margin-top:2px">Tehir edildi · İptal için 2sn uzun bas</div>
+            </div>
+            <span style="font-size:9px;color:#888;font-weight:700;background:#ddd;padding:2px 7px;border-radius:5px">Tehir</span>
+          </div>`;
+        }
+        if(mevcutTehirTalep){
+          return `<div class="pgc2" style="background:#fdf0ff;border:1.5px solid #9b59b6;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()">
+            <div class="chk" style="border-color:#9b59b6;background:#9b59b622">⏸</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600;color:#7b2d8b">${g.metin}</div>
+              <div style="font-size:9px;color:#9b59b6;margin-top:2px">İptal için 2sn uzun bas</div>
+            </div>
+            <span style="font-size:9px;color:#9b59b6;font-weight:700;background:#9b59b622;padding:2px 7px;border-radius:5px">Onay Bekliyor</span>
+          </div>`;
+        }
+        const tehirBtn=`<button onmousedown="tehirLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()" style="padding:3px 8px;border-radius:6px;border:1px solid #9b59b666;background:#9b59b611;color:#7b2d8b;cursor:pointer;font-size:9px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;margin-left:4px;position:relative;overflow:hidden;user-select:none">⏸ Tehir</button>`;
         if(durum==='done'){
           return `<div class="pgc2" style="background:#d4f5e0;border:1.5px solid #1a8a4a" ${!isZorunlu||p.kod===DENETIM_KOD?`onmousedown="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="_lpStart(this,1000,()=>perST('${h}','${g.id}','${p.kod}'))" ontouchend="_lpClear()"`:''}>
             <div class="chk done">✓</div>
@@ -1823,6 +2199,7 @@ function rPerPage(){
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
               <span style="font-size:10px;color:#f5a623;font-weight:700;background:#f5a62322;padding:2px 7px;border-radius:5px">Onay Bekliyor</span>
               <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:2px 7px;border-radius:5px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:8px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;position:relative;overflow:hidden;user-select:none">↩ İptal (2sn)</button>
+              ${tehirBtn}
             </div>
           </div>`;
         } else {
@@ -1834,6 +2211,7 @@ function rPerPage(){
               <span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}22;padding:1px 6px;border-radius:4px">${o.lbl}</span>
               ${!isZorunlu?`<span style="font-size:9px;color:var(--green);opacity:.7">✓ 1sn basılı tut</span>`:`<span style="font-size:9px;color:#996600;opacity:.7">⏳ Onay gerekli · 1sn basılı tut</span>`}
             </div></div>
+            ${tehirBtn}
           </div>`;
         }
       }
@@ -1969,9 +2347,14 @@ function rPerPage(){
             const b=BOL[g.bolum]||{r:'#888',b:'#f0f0f0'};
             const o=oc[g.onem||'Z'];
             const isZorunlu=g.onem==='Z';
+            const wTehirli=isTehirli(h,g.id,p.kod);
+            const wTehirTalep=(S.tehirTalepleri||[]).find(t=>t.h===h&&t.gid===g.id&&t.perKod===p.kod);
+            if(wTehirli){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f0f0;border-left:3px solid #aaa;border-radius:6px;margin-bottom:5px;opacity:.65;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #aaa;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#888">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#666;text-decoration:line-through">${g.metin}</div><div style="font-size:8px;color:#999;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#888;font-weight:700;background:#ddd;padding:1px 6px;border-radius:3px">Tehir</span></div>`;return;}
+            if(wTehirTalep){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fdf0ff;border-left:3px solid #9b59b6;border-radius:6px;margin-bottom:5px;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #9b59b6;background:#9b59b622;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#9b59b6">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#7b2d8b">${g.metin}</div><div style="font-size:8px;color:#9b59b6;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#9b59b6;font-weight:700;background:#9b59b622;padding:1px 6px;border-radius:3px">Onay Bek.</span></div>`;return;}
             const canClick=!isZorunlu||(isZorunlu&&dr!=='done');
             const onayBekliyor=isZorunlu&&dr==='onay_bekliyor';
-            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div></div>`;
+            const wBtn=`<button onmousedown="tehirLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()" style="padding:2px 6px;border-radius:5px;border:1px solid #9b59b666;background:#9b59b611;color:#7b2d8b;cursor:pointer;font-size:8px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;position:relative;overflow:hidden;user-select:none">⏸</button>`;
+            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div>${dr!=='done'?wBtn:''}</div>`;
           });
           html+=`</div>`;
         }
@@ -1988,9 +2371,14 @@ function rPerPage(){
             const b=BOL[g.bolum]||{r:'#888',b:'#f0f0f0'};
             const o=oc[g.onem||'Z'];
             const isZorunlu=g.onem==='Z';
+            const wTehirli=isTehirli(h,g.id,p.kod);
+            const wTehirTalep=(S.tehirTalepleri||[]).find(t=>t.h===h&&t.gid===g.id&&t.perKod===p.kod);
+            if(wTehirli){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#f0f0f0;border-left:3px solid #aaa;border-radius:6px;margin-bottom:5px;opacity:.65;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #aaa;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#888">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#666;text-decoration:line-through">${g.metin}</div><div style="font-size:8px;color:#999;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#888;font-weight:700;background:#ddd;padding:1px 6px;border-radius:3px">Tehir</span></div>`;return;}
+            if(wTehirTalep){html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fdf0ff;border-left:3px solid #9b59b6;border-radius:6px;margin-bottom:5px;cursor:pointer;position:relative;overflow:hidden" onmousedown="tehirIptalLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirIptalLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()"><div style="width:18px;height:18px;border-radius:5px;border:2px solid #9b59b6;background:#9b59b622;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#9b59b6">⏸</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#7b2d8b">${g.metin}</div><div style="font-size:8px;color:#9b59b6;margin-top:1px">İptal için 2sn bas</div></div><span style="font-size:9px;color:#9b59b6;font-weight:700;background:#9b59b622;padding:1px 6px;border-radius:3px">Onay Bek.</span></div>`;return;}
             const canClick=!isZorunlu||(isZorunlu&&dr!=='done');
             const onayBekliyor=isZorunlu&&dr==='onay_bekliyor';
-            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div></div>`;
+            const wBtn=`<button onmousedown="tehirLpStart(this,'${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="tehirLpStart(this,'${g.id}','${p.kod}')" ontouchend="_lpClear()" style="padding:2px 6px;border-radius:5px;border:1px solid #9b59b666;background:#9b59b611;color:#7b2d8b;cursor:pointer;font-size:8px;font-weight:700;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;position:relative;overflow:hidden;user-select:none">⏸</button>`;
+            html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:${dr=='done'?'#edfaf3':onayBekliyor?'#fff8e6':'#f9f9f9'};border-left:3px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':b.r};border-radius:6px;margin-bottom:5px;${canClick?'cursor:pointer':''}" ${canClick?`onclick="perST('${h}','${g.id}','${p.kod}')"`:''}><div style="width:18px;height:18px;border-radius:5px;background:${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a62322':'transparent'};border:2px solid ${dr=='done'?'#1a8a4a':onayBekliyor?'#f5a623':'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:${onayBekliyor?'#f5a623':'#fff'}">${dr=='done'?'✓':onayBekliyor?'⏳':''}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;${dr=='done'?'text-decoration:line-through;color:#1a8a4a;opacity:.6':onayBekliyor?'text-decoration:line-through;color:#996600;opacity:.8':''}">${g.metin}</div><div style="display:flex;gap:5px;margin-top:2px;align-items:center"><span style="font-size:9px;color:#999">${g.bolum}</span><span style="font-size:9px;font-weight:700;color:${o.r};background:${o.r}18;padding:0 5px;border-radius:3px">${o.lbl}</span>${onayBekliyor?`<span style="font-size:9px;color:#f5a623;font-weight:700">Onay Bek. <button onmousedown="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" onmouseup="_lpClear()" onmouseleave="_lpClear()" ontouchstart="onayIptalLpStart(this,'${h}','${g.id}','${p.kod}')" ontouchend="_lpClear()" onclick="event.stopPropagation()" style="padding:1px 5px;border-radius:4px;border:1px solid #f5a62366;background:#f5a62311;color:#996600;cursor:pointer;font-size:7px;font-weight:700;position:relative;overflow:hidden;user-select:none">↩2sn</button></span>`:''}</div></div>${dr!=='done'?wBtn:''}</div>`;
           });
         });
 
@@ -2190,38 +2578,76 @@ function rPerPage(){
       return simdi<=bit;
     });
 
+    // Sadece bu personele atanmış aktif tadilatlar
+    const aktifTadilatlar=S.tadilatlar.filter(v=>{
+      if(v.durum==='silindi'||v.durum==='done') return false;
+      const surGun=v.gun||7;
+      const bit=new Date(new Date(v.baslangicTs).getTime()+surGun*24*60*60*1000);
+      if(simdi>bit) return false;
+      const atanan=Array.isArray(v.atanan)?v.atanan:(v.atanan?[v.atanan]:[]);
+      return atanan.includes(p.kod);
+    });
+
     let html='';
 
-    if(aktifKararlar.length===0){
+    if(aktifKararlar.length===0 && aktifTadilatlar.length===0){
       html=`<div style="text-align:center;padding:50px 20px;color:var(--text2)">
         <div style="font-size:40px;margin-bottom:12px">📭</div>
-        <div style="font-size:14px;font-weight:600">Gündemde karar yok</div>
+        <div style="font-size:14px;font-weight:600">Gündemde kayıt yok</div>
       </div>`;
     } else {
-      html+=`<div style="background:rgba(120,60,200,0.07);border:1px solid rgba(120,60,200,0.2);border-radius:12px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+      // VAZİFELER
+      if(aktifKararlar.length>0){
+        html+=`<div style="background:rgba(120,60,200,0.07);border:1px solid rgba(120,60,200,0.2);border-radius:12px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
         <div style="font-size:20px">📌</div>
         <div><div style="font-size:13px;font-weight:700;color:#7030a0">Verilen Vazifeler</div><div style="font-size:11px;color:var(--text2);margin-top:1px">${aktifKararlar.length} aktif vazife</div></div>
       </div>`;
 
-      aktifKararlar.forEach(v=>{
-        const per=v.atanan?PERSONEL.find(x=>x.kod===v.atanan):null;
-        const bas=new Date(v.baslangicTs);
-        const surGun=v.gun||7;
-        const bit=new Date(bas.getTime()+surGun*24*60*60*1000);
-        const kalanMs=bit-simdi;
-        const kalanGun=Math.max(0,Math.ceil(kalanMs/(1000*60*60*24)));
-        const kalanRenk=kalanGun<=1?'var(--red)':kalanGun<=3?'var(--gold)':'var(--green)';
-        const surEtiketi=surGun===3?'3 Gün':surGun===7?'1 Hafta':surGun===14?'2 Hafta':'1 Ay';
+        aktifKararlar.forEach(v=>{
+          const bas=new Date(v.baslangicTs);
+          const surGun=v.gun||7;
+          const bit=new Date(bas.getTime()+surGun*24*60*60*1000);
+          const kalanMs=bit-simdi;
+          const kalanGun=Math.max(0,Math.ceil(kalanMs/(1000*60*60*24)));
+          const kalanRenk=kalanGun<=1?'var(--red)':kalanGun<=3?'var(--gold)':'var(--green)';
+          const surEtiketi=surGun===1?'1 Gün':surGun===2?'2 Gün':surGun===3?'3 Gün':surGun===7?'1 Hafta':surGun===14?'2 Hafta':'1 Ay';
 
-        html+=`<div style="background:var(--card2);border:1px solid rgba(120,60,200,0.2);border-radius:12px;padding:13px 15px;margin-bottom:8px">
+          html+=`<div style="background:var(--card2);border:1px solid rgba(120,60,200,0.2);border-radius:12px;padding:13px 15px;margin-bottom:8px">
           <div style="font-size:14px;font-weight:600;margin-bottom:7px">${v.metin}</div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            ${per?`<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;background:${per.renk}22;color:${per.renk}">👤 ${per.isim}</span>`:'<span style="font-size:11px;color:var(--text2)">Sorumlu atanmamış</span>'}
+            ${_renderAtanan(v.atanan)}
             <span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;background:rgba(120,60,200,0.12);color:#7030a0">⏳ ${surEtiketi}</span>
             <span style="font-size:11px;font-weight:700;color:${kalanRenk}">${kalanGun} gün kaldı</span>
           </div>
         </div>`;
-      });
+        });
+      }
+
+      // TADİLATLAR
+      if(aktifTadilatlar.length>0){
+        html+=`<div style="background:rgba(230,120,20,0.07);border:1px solid rgba(230,120,20,0.2);border-radius:12px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
+        <div style="font-size:20px">🔨</div>
+        <div><div style="font-size:13px;font-weight:700;color:#e67814">Tadilat Görevleri</div><div style="font-size:11px;color:var(--text2);margin-top:1px">${aktifTadilatlar.length} aktif tadilat</div></div>
+      </div>`;
+
+        aktifTadilatlar.forEach(v=>{
+          const bas=new Date(v.baslangicTs);
+          const surGun=v.gun||7;
+          const bit=new Date(bas.getTime()+surGun*24*60*60*1000);
+          const kalanMs=bit-simdi;
+          const kalanGun=Math.max(0,Math.ceil(kalanMs/(1000*60*60*24)));
+          const kalanRenk=kalanGun<=1?'var(--red)':kalanGun<=3?'var(--gold)':'var(--green)';
+          const surEtiketi=surGun===1?'1 Gün':surGun===2?'2 Gün':surGun===3?'3 Gün':surGun===7?'1 Hafta':surGun===14?'2 Hafta':'1 Ay';
+
+          html+=`<div style="background:var(--card2);border:1px solid rgba(230,120,20,0.2);border-radius:12px;padding:13px 15px;margin-bottom:8px">
+          <div style="font-size:14px;font-weight:600;margin-bottom:7px">${v.metin}</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:5px;background:rgba(230,120,20,0.12);color:#e67814">⏳ ${surEtiketi}</span>
+            <span style="font-size:11px;font-weight:700;color:${kalanRenk}">${kalanGun} gün kaldı</span>
+          </div>
+        </div>`;
+        });
+      }
     }
 
     document.getElementById('perB').innerHTML=html;
@@ -2234,6 +2660,30 @@ function rPerPage(){
       <div style="font-size:22px">🔍</div>
       <div><div style="font-size:14px;font-weight:800">Denetim Paneli</div><div style="font-size:11px;color:var(--text2);margin-top:2px">${bugunGunAdi} — 🔴 Zorunlu görevler (onay gerektiren)</div></div>
     </div>`;
+
+    // Tehir Talepleri bölümü
+    const aktifTehirTalepleri=(S.tehirTalepleri||[]).filter(t=>t.h===h);
+    if(aktifTehirTalepleri.length>0){
+      html+=`<div style="background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.3);border-radius:13px;margin-bottom:14px;overflow:hidden">
+        <div style="padding:10px 14px;background:rgba(155,89,182,0.12);border-bottom:1px solid rgba(155,89,182,0.2);display:flex;align-items:center;gap:8px">
+          <span style="font-size:18px">⏸️</span>
+          <div><div style="font-size:13px;font-weight:800;color:#7b2d8b">Tehir Talepleri</div><div style="font-size:10px;color:#9b59b6">${aktifTehirTalepleri.length} talep onay bekliyor</div></div>
+        </div>`;
+      aktifTehirTalepleri.forEach(t=>{
+        const gorev=S.gorevler.find(g=>g.id===t.gid);
+        const per=PERSONEL.find(x=>x.kod===t.perKod);
+        if(!gorev||!per) return;
+        html+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(155,89,182,0.1)">
+          <div style="width:28px;height:28px;border-radius:8px;background:${per.renk};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0">${per.kod}</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">${gorev.metin}</div><div style="font-size:10px;color:var(--text2);margin-top:1px">${per.isim} · ${gorev.bolum}</div></div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button onclick="tehirOnay('${t.h}','${t.gid}','${t.perKod}')" style="padding:4px 10px;border-radius:7px;border:none;background:linear-gradient(135deg,#7b2d8b,#5e2270);color:#fff;cursor:pointer;font-size:10px;font-weight:700;font-family:'Outfit',sans-serif">✓ Onayla</button>
+            <button onclick="tehirReddet('${t.h}','${t.gid}','${t.perKod}')" style="padding:4px 10px;border-radius:7px;border:1px solid #ff4d6a44;background:#ff4d6a11;color:#ff4d6a;cursor:pointer;font-size:10px;font-weight:700;font-family:'Outfit',sans-serif">✗ Reddet</button>
+          </div>
+        </div>`;
+      });
+      html+=`</div>`;
+    }
 
     // Tüm haftanın onay bekleyen ZORUNlu görevleri (sadece bugün değil)
     const digerPer=PERSONEL.filter(x=>x.kod!==DENETIM_KOD);
@@ -2363,25 +2813,11 @@ function gorevAtlaIptal(gid){
 let _lpTimer=null;
 let _lpProgress=null;
 let _lpEl=null;
-let _lpStartX=0;
-let _lpStartY=0;
 
 function _lpStart(el,ms,onDone){
+  try{event.preventDefault();event.stopPropagation();}catch(e){}
   _lpClear();
   _lpEl=el;
-  // Başlangıç koordinatlarını kaydet
-  try{
-    const ev=window.event||arguments[3];
-    if(ev&&ev.touches){_lpStartX=ev.touches[0].clientX;_lpStartY=ev.touches[0].clientY;}
-    else if(ev){_lpStartX=ev.clientX;_lpStartY=ev.clientY;}
-  }catch(e){}
-  // touchmove ile scroll algılama
-  function onTouchMove(e){
-    const dx=e.touches[0].clientX-_lpStartX;
-    const dy=e.touches[0].clientY-_lpStartY;
-    if(Math.abs(dx)>8||Math.abs(dy)>8){_lpClear();document.removeEventListener('touchmove',onTouchMove);}
-  }
-  document.addEventListener('touchmove',onTouchMove,{passive:true});
   // Progress bar oluştur
   const bar=document.createElement('div');
   bar.style.cssText='position:absolute;bottom:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#9b59b6,#7b2d8b);border-radius:0 0 6px 6px;transition:width '+ms+'ms linear;pointer-events:none';
@@ -2391,7 +2827,6 @@ function _lpStart(el,ms,onDone){
   _lpProgress=bar;
   requestAnimationFrame(()=>{bar.style.width='100%';});
   _lpTimer=setTimeout(()=>{
-    document.removeEventListener('touchmove',onTouchMove);
     _lpClear();
     onDone();
   },ms);
@@ -2573,6 +3008,10 @@ function rWpYonet(){
       <label>Yönetici Adı</label>
       <input type="text" id="wpAksamAdminIsim" value="${S.adminIsim||'Yönetici'}" placeholder="Yönetici adınız...">
     </div>
+    <div class="fg" style="margin-bottom:14px">
+      <label>Hedef Numara (opsiyonel)</label>
+      <input type="tel" id="wpAksamHedefNo" placeholder="905551234567">
+    </div>
     <button onclick="wpAksamGonder()" style="width:100%;padding:12px;background:linear-gradient(135deg,#1a4a2a,#1e6b3a);border:none;border-radius:10px;color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer">🌙 Akşam Özetini Gönder</button>
   </div>`;
 
@@ -2586,10 +3025,10 @@ function wpNoEkle(kod){
 
 function wpAksamGonder(){
   const isim=document.getElementById('wpAksamAdminIsim').value.trim()||'Yönetici';
-  const no='905466916676';
+  const no=document.getElementById('wpAksamHedefNo').value.trim().replace(/\s/g,'');
   S.adminIsim=isim; save();
   const mesaj=aksamOzetiOlustur(isim);
-  const url=`https://wa.me/${no}?text=${encodeURIComponent(mesaj)}`;
+  const url=no?`https://wa.me/${no}?text=${encodeURIComponent(mesaj)}`:`https://wa.me/?text=${encodeURIComponent(mesaj)}`;
   window.open(url,'_blank');
 }
 
@@ -2978,16 +3417,15 @@ document.getElementById('sifreMo').addEventListener('click',function(e){if(!e.ta
 document.getElementById('yeniMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
 document.getElementById('hazirGorevMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
 document.getElementById('wpMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
-
+document.getElementById('aksamMo').addEventListener('click',function(e){if(!e.target.closest('.md'))this.classList.remove('open')});
 
 (async()=>{
   await load();
   const sel=document.getElementById('perSel');
   sel.innerHTML='';
   PERSONEL.forEach(p=>{const o=document.createElement('option');o.value=p.kod;o.textContent=`${p.isim} (${p.kod})`;sel.appendChild(o)});
+  if(PERSONEL.length>0) sel.value=PERSONEL[0].kod;
   perDropGuncelle();
-  // İlk personeli seç
-  if(PERSONEL.length>0) perDropSec(PERSONEL[0].kod);
   sync();
 })();
 </script>
