@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>8. Sınıf Soru Takip</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg: #fffef9;
+  --white: #fdfaf5;
+  --border: rgba(0,0,0,0.13);
+  --shadow: 0 2px 12px rgba(0,0,0,0.10);
+  --primary: #1040d0;
+  --primary-light: rgba(16,64,208,0.10);
+  --primary-dark: #0a30a8;
+  --text: #0a0a1a;
+  --text2: #3a3a5a;
+  --text3: #8888aa;
+  --turkce:   #1040d0; --turkce-bg:   rgba(16,64,208,0.10);
+  --paragraf: #4a1080; --paragraf-bg: rgba(74,16,128,0.10);
+  --mat:      #7a4800; --mat-bg:      rgba(122,72,0,0.10);
+  --fen:      #145a30; --fen-bg:      rgba(20,90,48,0.10);
+  --sos:      #aa1030; --sos-bg:      rgba(170,16,48,0.10);
+  --ing:      #b85000; --ing-bg:      rgba(184,80,0,0.10);
+  --red: #aa1030;
+}
+*{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body{ font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; padding-bottom:40px; }
+
+/* HEADER */
+.header{
+  background:rgba(15,27,45,0.97);
+  padding:22px 16px 56px; text-align:center; position:relative;
+}
+.header::after{
+  content:''; position:absolute; bottom:-1px; left:0; right:0;
+  height:36px; background:#fffef9; border-radius:36px 36px 0 0;
+}
+.header h1{ font-size:1.3rem; font-weight:800; color:#fff; }
+.header p{ font-size:0.72rem; color:rgba(255,255,255,0.75); margin-top:3px; }
+
+/* NAV */
+.nav-wrap{ padding:0 12px; position:relative; z-index:10; margin-top:-18px; }
+.nav-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+.nav-grid-wide{ display:grid; grid-template-columns:1fr; gap:7px; margin-top:7px; }
+.nav-btn{
+  background:rgba(0,0,0,0.05); border:1.5px solid rgba(0,0,0,0.13); border-radius:14px;
+  padding:9px 4px; cursor:pointer; font-family:'Poppins',sans-serif;
+  font-size:0.68rem; font-weight:700; color:#3a3a5a;
+  box-shadow:var(--shadow); display:flex; flex-direction:column;
+  align-items:center; gap:3px; transition:all 0.15s;
+}
+.nav-btn .ni{ font-size:1.15rem; }
+.nav-btn:active{ transform:scale(0.95); }
+.nav-btn.a-ogrenciler{ background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; }
+.nav-btn.a-hafta1    { background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; }
+.nav-btn.a-hafta2    { background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; }
+.nav-btn.a-hafta3    { background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; }
+.nav-btn.a-hafta4    { background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; }
+.nav-btn.a-rapor     { background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; }
+.nav-btn.a-veli      { background:linear-gradient(135deg,#145a30,#1a7a40); border-color:#145a30; color:#fff; }
+
+/* CONTENT */
+.content{ padding:14px 12px 0; }
+.fade{ animation:fadeUp 0.2s ease; }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
+
+/* CARD */
+.card{ background:var(--white); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); padding:15px; margin-bottom:12px; }
+.card-title{ font-size:0.82rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+
+/* STUDENT TAGS */
+.tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+.tag{ background:var(--primary-light); border-radius:20px; padding:4px 11px; font-size:0.72rem; font-weight:600; color:var(--primary); display:flex; align-items:center; gap:5px; }
+.tag .x{ cursor:pointer; color:var(--red); }
+
+.irow{ display:flex; gap:7px; }
+.irow input{ flex:1; padding:9px 13px; border-radius:11px; border:1.5px solid rgba(0,0,0,0.15); background:rgba(255,255,255,0.8); color:#0a0a1a; font-family:'Poppins',sans-serif; font-size:0.82rem; outline:none; }
+.irow input:focus{ border-color:var(--primary); }
+.btn{ padding:9px 14px; border-radius:11px; border:none; font-family:'Poppins',sans-serif; font-weight:700; font-size:0.78rem; cursor:pointer; transition:all 0.12s; }
+.btn:active{ transform:scale(0.96); }
+.btn-p{ background:var(--primary); color:#fff; }
+.btn-a{ background:#145a30; color:#fff; }
+.btn-r{ background:var(--red); color:#fff; }
+
+/* STUDENT CARD (week) */
+.sc{ background:var(--white); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); margin-bottom:11px; overflow:hidden; }
+.sc-head{ padding:12px 14px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border); }
+.sc-avatar{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.95rem; font-weight:800; color:#fff; flex-shrink:0; }
+.sc-name{ font-size:0.88rem; font-weight:800; letter-spacing:0.1px; }
+
+.sub-block{ padding:8px 10px; }
+.sub-row{ display:flex; align-items:center; gap:6px; }
+.sub-left{ width:70px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.sub-label{ font-size:0.68rem; font-weight:700; padding:5px 6px; border-radius:8px; text-align:center; }
+.sub-wtotal{ flex-shrink:0; font-size:0.68rem; font-weight:800; text-align:center; white-space:nowrap; min-width:36px; }
+.day-cols{ flex:1; display:flex; flex-direction:column; gap:2px; }
+.day-headers{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.day-headers span{ font-size:0.5rem; font-weight:700; color:var(--text3); text-transform:uppercase; text-align:center; display:block; }
+.day-inputs{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.dc-input{
+  width:100%; padding:5px 0; text-align:center; border-radius:7px;
+  border:1.5px solid rgba(0,0,0,0.13); background:#fff; color:#0a0a1a;
+  font-family:'Poppins',sans-serif; font-size:0.8rem; font-weight:700; outline:none;
+  -moz-appearance:textfield; transition:all 0.12s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.07); display:block;
+}
+.dc-input::-webkit-outer-spin-button,.dc-input::-webkit-inner-spin-button{ -webkit-appearance:none; }
+.dc-input:focus{ border-color:#1040d0; background:rgba(16,64,208,0.05); }
+
+.sub-sep{ border:none; border-top:1px solid rgba(0,0,0,0.07); margin:0 12px; }
+
+.sc-foot{
+  padding:9px 10px; background:rgba(0,0,0,0.03); border-top:1px solid rgba(0,0,0,0.08);
+  display:flex; align-items:center; gap:6px;
+}
+.dtotals{ flex:1; display:flex; flex-direction:column; gap:2px; }
+.dtotals-headers{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.dtotals-headers span{ font-size:0.48rem; color:var(--text3); font-weight:700; text-transform:uppercase; text-align:center; }
+.dtotals-vals{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.dtc-val{ font-size:0.76rem; font-weight:800; color:#1040d0; text-align:center; }
+.gtbadge{ border-radius:20px; padding:6px 12px; font-size:0.75rem; font-weight:800; color:#fff; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.15); flex-shrink:0; }
+
+
+/* VELİ RAPORU */
+.veli-card{
+  background:var(--white); border:1px solid var(--border);
+  border-radius:16px; box-shadow:var(--shadow);
+  margin-bottom:10px; overflow:hidden;
+}
+.veli-head{
+  padding:12px 14px;
+  background:linear-gradient(135deg,rgba(20,90,48,0.08),rgba(20,90,48,0.04));
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+.veli-avatar{
+  width:36px; height:36px; border-radius:50%;
+  background:linear-gradient(135deg,#1040d0,#4a1080);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; font-weight:800; color:#fff; flex-shrink:0;
+}
+.veli-name{ font-size:0.88rem; font-weight:800; color:#0a0a1a; flex:1; }
+.veli-total-badge{
+  padding:4px 12px; border-radius:20px;
+  background:linear-gradient(135deg,#145a30,#1a7a40);
+  color:#fff; font-size:0.75rem; font-weight:800;
+  white-space:nowrap;
+}
+.veli-body{ padding:10px 14px; }
+.veli-ders-row{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:5px 0; border-bottom:1px solid rgba(0,0,0,0.05);
+  font-size:0.78rem;
+}
+.veli-ders-row:last-child{ border-bottom:none; }
+.veli-ders-name{ font-weight:600; }
+.veli-ders-val{ font-weight:800; font-size:0.82rem; }
+.veli-empty{ text-align:center; color:var(--text3); font-size:0.78rem; padding:8px 0; }
+
+.veli-header-info{
+  background:linear-gradient(135deg,rgba(20,90,48,0.08),rgba(20,90,48,0.03));
+  border:1px solid rgba(20,90,48,0.15);
+  border-radius:14px; padding:14px 16px; margin-bottom:14px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.veli-header-info .vhi-left{ display:flex; flex-direction:column; gap:3px; }
+.veli-header-info .vhi-title{ font-size:0.88rem; font-weight:800; color:#145a30; }
+.veli-header-info .vhi-sub{ font-size:0.72rem; color:var(--text3); font-weight:500; }
+.veli-header-info .vhi-total{ font-size:1.4rem; font-weight:800; color:#145a30; }
+.veli-sinif-top{
+  font-size:0.72rem; font-weight:700; color:var(--text3);
+  margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.veli-no-data{
+  text-align:center; padding:30px 16px; color:var(--text3);
+}
+.veli-no-data .vnd-icon{ font-size:2.5rem; margin-bottom:8px; }
+.veli-no-data p{ font-size:0.82rem; }
+
+/* RAPOR NAV — tam genişlik büyük butonlar */
+.rnav{ display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+.rnav-row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.rnbtn{
+  padding:13px 10px; border-radius:12px; border:1.5px solid var(--border);
+  background:rgba(0,0,0,0.05); color:#3a3a5a; font-family:'Poppins',sans-serif;
+  font-weight:600; font-size:0.8rem; cursor:pointer; text-align:center;
+  transition:all 0.13s; width:100%; box-shadow:var(--shadow);
+}
+.rnbtn:active{ transform:scale(0.97); }
+.rnbtn.active{ background:linear-gradient(135deg,#1040d0,#1254cc); border-color:#1040d0; color:#fff; box-shadow:0 4px 14px rgba(16,64,208,0.30); }
+.rnbtn.full{ grid-column:span 2; }
+
+/* TABLO */
+.tw{ overflow-x:hidden; border-radius:14px; border:1.5px solid rgba(0,0,0,0.13); margin-bottom:16px; background:#fdfaf5; }
+table{ width:100%; border-collapse:collapse; font-size:0.7rem; }
+th{
+  padding:7px 4px; text-align:center; font-weight:700; font-size:0.6rem;
+  text-transform:uppercase; letter-spacing:0px;
+  border-bottom:2px solid rgba(0,0,0,0.13); white-space:nowrap; background:rgba(0,0,0,0.05);
+}
+td{ padding:7px 4px; text-align:center; border-bottom:1px solid var(--border); font-weight:500; }
+tr:last-child td{ border-bottom:none; }
+.th-n,.td-n{ text-align:left !important; padding-left:8px; }
+.td-n{ font-weight:700; font-size:0.68rem; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.td-t{ font-weight:800; color:var(--primary); }
+.td-0{ color:#aaaacc; }
+.tr-s td{ background:rgba(16,64,208,0.08); font-weight:800; color:#1040d0; border-top:2px solid var(--border); }
+.th-turkce{ color:var(--turkce); } .th-paragraf{ color:var(--paragraf); }
+.th-mat{ color:var(--mat); }     .th-fen{ color:var(--fen); }
+.th-sos{ color:var(--sos); }     .th-ing{ color:var(--ing); }
+.th-total{ color:var(--primary); }
+
+/* HAFTA BADGE */
+.hbadge{
+  display:inline-block; padding:5px 14px; border-radius:20px;
+  font-size:0.78rem; font-weight:700; margin-bottom:10px;
+}
+
+/* DERS/ÖĞRENCİ KARTLAR */
+.rgrid{ display:flex; flex-direction:column; gap:10px; }
+.rc{ background:var(--white); border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; }
+.rc-head{ padding:10px 14px; font-size:0.82rem; font-weight:700; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--border); }
+.rrow{ display:flex; justify-content:space-between; align-items:center; padding:8px 14px; border-bottom:1px solid var(--border); font-size:0.76rem; }
+.rrow:last-child{ border-bottom:none; }
+.rn{ color:var(--text2); font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:6px; }
+.rw{ display:flex; gap:5px; align-items:center; }
+.wb{ width:28px; text-align:center; font-size:0.68rem; font-weight:700; padding:3px 0; border-radius:6px; }
+.rt{ font-weight:800; font-size:0.8rem; color:var(--primary); min-width:30px; text-align:right; }
+.rrow.rs{ background:var(--primary-light); }
+.rrow.rs .rn{ color:var(--primary); font-weight:800; }
+
+/* GÜNLÜK SEÇİCİ */
+.gun-picker{ margin-bottom:14px; }
+.gun-picker-label{ font-size:0.74rem; font-weight:700; color:var(--text2); margin-bottom:8px; }
+.gun-hafta-row{ display:flex; gap:7px; margin-bottom:12px; }
+.gun-hbtn{
+  flex:1; padding:9px 4px; border-radius:11px; border:1.5px solid var(--border);
+  background:var(--white); font-family:'Poppins',sans-serif;
+  font-weight:700; font-size:0.75rem; cursor:pointer; transition:all 0.13s;
+  text-align:center; box-shadow:var(--shadow);
+}
+.gun-hbtn.sel{ color:#fff; border-color:transparent; box-shadow:0 2px 10px rgba(0,0,0,0.18); }
+.gun-row{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.gun-dbtn{
+  padding:7px 2px; border-radius:9px; border:1.5px solid var(--border);
+  background:rgba(0,0,0,0.05); color:#3a3a5a; font-family:'Poppins',sans-serif;
+  font-weight:700; font-size:0.6rem; cursor:pointer; transition:all 0.13s;
+  text-align:center; display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.gun-dbtn .gd-name{ font-size:0.58rem; color:var(--text3); font-weight:700; }
+.gun-dbtn .gd-no{ font-size:0.75rem; font-weight:800; color:var(--text); }
+.gun-dbtn.sel{ background:var(--primary); border-color:var(--primary); color:#fff; }
+.gun-dbtn.sel .gd-name{ color:rgba(255,255,255,0.8); }
+.gun-dbtn.sel .gd-no{ color:#fff; }
+
+/* RENK YARDIMCILARI */
+.c-turkce{color:var(--turkce);background:var(--turkce-bg);}
+.c-paragraf{color:var(--paragraf);background:var(--paragraf-bg);}
+.c-mat{color:var(--mat);background:var(--mat-bg);}
+.c-fen{color:var(--fen);background:var(--fen-bg);}
+.c-sos{color:var(--sos);background:var(--sos-bg);}
+.c-ing{color:var(--ing);background:var(--ing-bg);}
+
+/* ═══════════════════════════════
+   ÇIKTI (PRINT) STİLİ
+   A4: 4 öğrenci / sayfa
+═══════════════════════════════ */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Ekran elemanlarını gizle */
+  .header, .nav-wrap, .content > .card,
+  #t-ogrenciler, #t-rapor, #t-veli,
+  #t-hafta2, #t-hafta3, #t-hafta4,
+  .print-btn-wrap { display:none !important; }
+
+  body { background:#fff !important; padding:0 !important; margin:0 !important; }
+
+  #print-area {
+    display:block !important;
+  }
+
+  @page { size:A4 landscape; margin:8mm; }
+
+  .print-page {
+    width:277mm;
+    min-height:190mm;
+    padding:0;
+    page-break-after: always;
+    background:#fff;
+  }
+  .print-page:last-child { page-break-after: auto; }
+
+  .print-page-header {
+    text-align:center;
+    margin-bottom:4mm;
+    border-bottom:1.5px solid #0a0a1a;
+    padding-bottom:2mm;
+  }
+  .print-page-header h2 { font-size:11pt; font-weight:800; color:#0a0a1a; }
+  .print-page-header p  { font-size:7pt; color:#555; margin-top:1mm; }
+
+  /* 2x2 grid */
+  .print-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4mm;
+  }
+
+  .print-student {
+    border:1px solid #ddd;
+    border-radius:2mm;
+    overflow:hidden;
+    break-inside:avoid;
+  }
+
+  .print-st-head {
+    background:#1040d0 !important;
+    color:#fff !important;
+    padding:1.5mm 3mm;
+    display:flex;
+    align-items:center;
+    gap:2mm;
+  }
+  .print-st-head .psh-avatar {
+    width:5mm; height:5mm; border-radius:50%;
+    background:rgba(255,255,255,0.25);
+    display:flex; align-items:center; justify-content:center;
+    font-size:7pt; font-weight:800; color:#fff; flex-shrink:0;
+  }
+  .print-st-head .psh-name { font-size:8pt; font-weight:800; }
+  .print-st-head .psh-total { margin-left:auto; font-size:7.5pt; font-weight:700; }
+
+  .print-table { width:100%; border-collapse:collapse; }
+  .print-table {
+    width:100%; border-collapse:collapse;
+    border:1.5px solid #999;
+  }
+  .print-table th {
+    padding:1.5mm 1.5mm;
+    text-align:center;
+    font-weight:800;
+    font-size:6pt;
+    text-transform:uppercase;
+    border:1px solid #aaa;
+    background:#e0e0e0 !important;
+    white-space:nowrap;
+  }
+  .print-table th.pt-ders { text-align:left; padding-left:2mm; width:14mm; }
+  .print-table td {
+    padding:1.5mm 1.5mm;
+    text-align:center;
+    border:1px solid #bbb;
+    font-size:7pt;
+  }
+  .print-table tr:nth-child(even) td { background:#f9f9f9 !important; }
+  .print-table td.pt-ders-name {
+    text-align:left; padding-left:2mm;
+    font-weight:700; font-size:7pt;
+    border-right:2px solid #999;
+  }
+  .print-table th.pt-ders { border-right:2px solid #999; }
+  .print-table td.pt-total {
+    font-weight:800; color:#1040d0 !important;
+    border-left:2px solid #999;
+  }
+  .print-table th:last-child { border-left:2px solid #999; }
+  .print-table .pt-foot td {
+    background:#d8e4ff !important;
+    font-weight:800;
+    color:#1040d0 !important;
+    border-top:2px solid #1040d0;
+  }
+  .print-table td.pt-zero { color:#ccc; }
+}
+
+/* Ekranda print-area gizli */
+#print-area { display:none; }
+.print-btn-wrap {
+  position:fixed; bottom:20px; right:16px; z-index:999;
+}
+.print-btn {
+  background:linear-gradient(135deg,#145a30,#1a7a40);
+  color:#fff; border:none; border-radius:20px;
+  padding:12px 22px; font-family:'Poppins',sans-serif;
+  font-size:0.85rem; font-weight:800; cursor:pointer;
+  box-shadow:0 4px 16px rgba(20,90,48,0.4);
+  display:flex; align-items:center; gap:8px;
+}
+.print-btn:active { transform:scale(0.96); }
+
+
+/* LOADING */
+.loading-overlay{
+  position:fixed; inset:0; background:rgba(255,254,249,0.92);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:9999; gap:12px;
+}
+.loading-spinner{
+  width:40px; height:40px; border:4px solid rgba(16,64,208,0.15);
+  border-top-color:#1040d0; border-radius:50%; animation:spin 0.8s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.loading-text{ font-size:0.85rem; font-weight:600; color:var(--text2); }
+.sync-badge{
+  position:fixed; top:12px; right:12px; z-index:999;
+  padding:5px 12px; border-radius:20px; font-size:0.7rem; font-weight:700;
+  display:flex; align-items:center; gap:5px; transition:all 0.3s;
+}
+.sync-badge.saving{ background:#fff9e6; color:#c97d08; border:1px solid #f0c060; }
+.sync-badge.saved { background:#ecfdf5; color:#145a30; border:1px solid #a0d8b0; }
+.sync-badge.error { background:#fff0f0; color:#aa1030; border:1px solid #f0a0a0; }
+
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Veriler yükleniyor...</div>
+</div>
+<div id="syncBadge" class="sync-badge saved" style="display:none">✓ Kaydedildi</div>
+
+<div class="header">
+  <h1>📚 8. Sınıf Soru Sayısı</h1>
+  <p>Haftalık ders bazlı soru takip sistemi</p>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav-grid">
+    <button class="nav-btn" id="nb-ogrenciler" onclick="gTab('ogrenciler')"><span class="ni">👥</span>Öğrenciler</button>
+    <button class="nav-btn" id="nb-hafta1"      onclick="gTab('hafta1')"><span class="ni">1️⃣</span>1. Hafta</button>
+    <button class="nav-btn" id="nb-hafta2"      onclick="gTab('hafta2')"><span class="ni">2️⃣</span>2. Hafta</button>
+    <button class="nav-btn" id="nb-hafta3"      onclick="gTab('hafta3')"><span class="ni">3️⃣</span>3. Hafta</button>
+    <button class="nav-btn" id="nb-hafta4"      onclick="gTab('hafta4')"><span class="ni">4️⃣</span>4. Hafta</button>
+    <button class="nav-btn" id="nb-rapor"       onclick="gTab('rapor')"><span class="ni">📊</span>Rapor</button>
+  </div>
+  <div class="nav-grid-wide">
+    <button class="nav-btn" id="nb-veli" onclick="gTab('veli')"><span class="ni">📨</span>Veliye Rapor</button>
+  </div>
+</div>
+
+<div class="content">
+  <div id="t-ogrenciler" class="fade"></div>
+  <div id="t-hafta1" style="display:none"></div>
+  <div id="t-hafta2" style="display:none"></div>
+  <div id="t-hafta3" style="display:none"></div>
+  <div id="t-hafta4" style="display:none"></div>
+  <div id="t-rapor"  style="display:none"></div>
+  <div id="t-veli"   style="display:none"></div>
+</div>
+
+<script>
+const DERSLER=[
+  {key:'turkce',  label:'Türkçe',         cls:'turkce'},
+  {key:'paragraf',label:'Paragraf',        cls:'paragraf'},
+  {key:'mat',     label:'Matematik',       cls:'mat'},
+  {key:'fen',     label:'Fen Bilgisi',     cls:'fen'},
+  {key:'sos',     label:'Sosyal', cls:'sos'},
+  {key:'ing',     label:'İngilizce',       cls:'ing'},
+];
+const GUNLER=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+const DEF_ST=['Ahmet Gülçiçek','Burak Kahraman','Eyüp Sıraç Gökhen','Hüseyin Çelik','Mehmet İpek','M. Emin Ayar','Bekir Köse','Miraç Erdoğan'];
+const HC=['#1040d0','#4a1080','#7a4800','#aa1030'];
+const HB=['rgba(16,64,208,0.13)','rgba(74,16,128,0.13)','rgba(122,72,0,0.13)','rgba(170,16,48,0.13)'];
+
+let students=[...DEF_ST], data={}, activeRep='hafta-hafta';
+
+function initData(){
+  for(let h=1;h<=4;h++){
+    if(!data[h]) data[h]={};
+    students.forEach(s=>{
+      if(!data[h][s]) data[h][s]={};
+      DERSLER.forEach(d=>{ if(!data[h][s][d.key]) data[h][s][d.key]=Array(7).fill(0); });
+    });
+  }
+}
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://zowvygqlbrtotkygszsg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpvd3Z5Z3FsYnJ0b3RreWdzenNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIwOTAsImV4cCI6MjA5MTY3ODA5MH0.jUOcm2ZRL8VlAxLLWMj6unoDl7981lndSyQFji18w0A';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let syncTimer = null;
+function showSync(state, text){
+  const el = document.getElementById('syncBadge');
+  if(!el) return;
+  el.style.display='flex';
+  el.className = 'sync-badge ' + state;
+  el.textContent = text;
+  if(state === 'saved') setTimeout(()=>{ el.style.display='none'; }, 2000);
+}
+
+// localStorage yedek (offline)
+function saveLocal(){
+  try{ localStorage.setItem('sd8',JSON.stringify(data)); localStorage.setItem('ss8',JSON.stringify(students)); }catch(e){}
+}
+function loadLocal(){
+  try{
+    const d=localStorage.getItem('sd8'), s=localStorage.getItem('ss8');
+    if(d) data=JSON.parse(d);
+    if(s) students=JSON.parse(s);
+  }catch(e){}
+}
+
+// Supabase'e tek satır kaydet (debounce ile)
+function save(){
+  saveLocal();
+}
+
+async function saveToSupabase(hafta, ogrenci, dersKey, gunIdx, deger){
+  showSync('saving','⏳ Kaydediliyor...');
+  try{
+    const { error } = await sb.from('haftalik_veri').upsert({
+      ogrenci_isim: ogrenci,
+      hafta: hafta,
+      ders_key: dersKey,
+      gun_index: gunIdx,
+      deger: deger,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'ogrenci_isim,hafta,ders_key,gun_index' });
+    if(error) throw error;
+    showSync('saved','✓ Kaydedildi');
+  } catch(e){
+    console.error('Supabase kayıt hatası:', e);
+    showSync('error','⚠️ Kayıt hatası');
+  }
+}
+
+async function saveStudentsToSupabase(){
+  // Mevcut öğrencileri sil, yenileri ekle
+  try{
+    await sb.from('ogrenciler').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    const rows = students.map(isim => ({ isim }));
+    if(rows.length) await sb.from('ogrenciler').insert(rows);
+  } catch(e){ console.error('Öğrenci kayıt hatası:', e); }
+}
+
+async function load(){
+  loadLocal(); // önce localStorage'dan hızlı yükle
+
+  if(SUPABASE_URL === 'YOUR_SUPABASE_URL'){
+    // Supabase bağlantısı yoksa sadece localStorage
+    document.getElementById('loadingOverlay').style.display = 'none';
+    return;
+  }
+
+  try{
+    // Öğrencileri yükle
+    const { data: stData } = await sb.from('ogrenciler').select('isim').order('created_at');
+    if(stData && stData.length > 0){
+      students = stData.map(r => r.isim);
+    }
+
+    // Haftalık verileri yükle
+    const { data: vData } = await sb.from('haftalik_veri').select('*');
+    if(vData && vData.length > 0){
+      data = {};
+      vData.forEach(r => {
+        if(!data[r.hafta]) data[r.hafta] = {};
+        if(!data[r.hafta][r.ogrenci_isim]) data[r.hafta][r.ogrenci_isim] = {};
+        if(!data[r.hafta][r.ogrenci_isim][r.ders_key])
+          data[r.hafta][r.ogrenci_isim][r.ders_key] = Array(7).fill(0);
+        data[r.hafta][r.ogrenci_isim][r.ders_key][r.gun_index] = r.deger;
+      });
+      saveLocal();
+    }
+  } catch(e){
+    console.error('Supabase yükleme hatası:', e);
+    showSync('error','⚠️ Bağlantı hatası, yerel veri kullanılıyor');
+  }
+
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+function eid(s){ return s.replace(/[^a-zA-Z0-9]/g,'_'); }
+function getDHT(h,s,k){ return (data[h]?.[s]?.[k]||Array(7).fill(0)).reduce((a,b)=>a+Number(b),0); }
+function getHT(h,s){ return DERSLER.reduce((t,d)=>t+getDHT(h,s,d.key),0); }
+
+// ── ÖĞRENCILER ──
+function rStudents(){
+  document.getElementById('t-ogrenciler').innerHTML=`
+  <div class="card">
+    <div class="card-title">👥 Öğrenci Listesi <span style="color:var(--text3);font-weight:500;font-size:0.72rem">${students.length} öğrenci</span></div>
+    <div class="tags" id="stags">${students.map((s,i)=>`<div class="tag">${s}<span class="x" onclick="rmSt(${i})">×</span></div>`).join('')}</div>
+    <div class="irow" style="margin-bottom:8px">
+      <input type="text" id="nsi" placeholder="Yeni öğrenci adı..." onkeydown="if(event.key==='Enter')addSt()">
+      <button class="btn btn-p" onclick="addSt()">+ Ekle</button>
+    </div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-a" style="flex:1" onclick="defReset()">🔄 Varsayılan</button>
+      <button class="btn btn-r" style="flex:1" onclick="clearAll()">🗑 Tümünü Sil</button>
+    </div>
+  </div>`;
+}
+function addSt(){ const i=document.getElementById('nsi'),n=i.value.trim(); if(!n||students.includes(n)) return; students.push(n); i.value=''; initData(); rStudents(); rAllWeeks(); save(); saveStudentsToSupabase(); }
+function rmSt(i){ if(!confirm(`"${students[i]}" silinsin mi?`)) return; students.splice(i,1); initData(); rStudents(); rAllWeeks(); save(); saveStudentsToSupabase(); }
+function defReset(){ if(!confirm('Varsayılan listeye dön?')) return; students=[...DEF_ST]; data={}; initData(); rStudents(); rAllWeeks(); save(); }
+function clearAll(){ if(!confirm('Tüm öğrenciler silinsin mi?')) return; students=[]; data={}; initData(); rStudents(); rAllWeeks(); save(); }
+
+// ── HAFTA ──
+function rWeek(h){
+  const el=document.getElementById(`t-hafta${h}`);
+  let html=`<div><div style="font-size:0.9rem;font-weight:700;color:${HC[h-1]};margin-bottom:11px;padding:6px 12px;background:${HB[h-1]};border-radius:12px;display:inline-block">${h}. Hafta — Günlük Giriş</div>`;
+  students.forEach(s=>{
+    html+=`<div class="sc"><div class="sc-head" style="background:${HB[h-1]}"><div class="sc-avatar" style="background:${HC[h-1]}">${s.charAt(0)}</div><span class="sc-name" style="color:${HC[h-1]}">${s}</span></div>`;
+    DERSLER.forEach((d,di)=>{
+      const vals=data[h]?.[s]?.[d.key]||Array(7).fill(0);
+      const wt=vals.reduce((a,b)=>a+Number(b),0);
+      if(di>0) html+=`<hr class="sub-sep">`;
+      html+=`<div class="sub-block">
+        <div class="sub-row">
+          <div class="sub-left">
+            <span class="sub-label c-${d.cls}">${d.label}</span>
+          </div>
+          <div class="day-cols">
+            <div class="day-headers">${GUNLER.map(g=>`<span>${g}</span>`).join('')}</div>
+            <div class="day-inputs">${GUNLER.map((g,gi)=>`<input class="dc-input" type="number" min="0" inputmode="numeric" value="${vals[gi]||''}" oninput="upd(${h},'${eid(s)}','${d.key}',${gi},this.value)" onfocus="this.select()">`).join('')}</div>
+          </div>
+          <span class="sub-wtotal" id="wt_${h}_${eid(s)}_${d.key}" style="color:${HC[h-1]}">${wt}</span>
+        </div>
+      </div>`;
+    });
+    const dt=Array(7).fill(0);
+    DERSLER.forEach(d=>{ const v=data[h]?.[s]?.[d.key]||Array(7).fill(0); v.forEach((x,i)=>dt[i]+=Number(x)); });
+    const grand=dt.reduce((a,b)=>a+b,0);
+    html+=`<div class="sc-foot">
+      <div class="dtotals">
+        <div class="dtotals-headers">${GUNLER.map(g=>`<span>${g}</span>`).join('')}</div>
+        <div class="dtotals-vals">${GUNLER.map((g,i)=>`<span class="dtc-val" id="dt_${h}_${eid(s)}_${i}">${dt[i]||''}</span>`).join('')}</div>
+      </div>
+      <div class="gtbadge" id="gt_${h}_${eid(s)}" style="background:${HC[h-1]}">${grand} soru</div>
+    </div></div>`;
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function upd(h,sid,dk,gi,val){
+  const s=students.find(x=>eid(x)===sid)||sid;
+  if(!data[h][s]) data[h][s]={};
+  if(!data[h][s][dk]) data[h][s][dk]=Array(7).fill(0);
+  data[h][s][dk][gi]=Number(val)||0;
+  const wt=data[h][s][dk].reduce((a,b)=>a+b,0);
+  const we=document.getElementById(`wt_${h}_${eid(s)}_${dk}`); if(we) we.textContent=wt;
+  const dt=Array(7).fill(0);
+  DERSLER.forEach(d=>{ const v=data[h]?.[s]?.[d.key]||Array(7).fill(0); v.forEach((x,i)=>dt[i]+=Number(x)); });
+  dt.forEach((t,i)=>{ const e=document.getElementById(`dt_${h}_${eid(s)}_${i}`); if(e) e.textContent=t||""; });
+  const ge=document.getElementById(`gt_${h}_${eid(s)}`); if(ge) ge.textContent=dt.reduce((a,b)=>a+b,0)+' soru';
+  save();
+  saveToSupabase(h, s, dk, gi, Number(val)||0);
+}
+function rAllWeeks(){ for(let h=1;h<=4;h++) rWeek(h); }
+
+// ── SEKMELER ──
+const TABS=['ogrenciler','hafta1','hafta2','hafta3','hafta4','rapor','veli'];
+function gTab(tab){
+  TABS.forEach(t=>{
+    document.getElementById(`t-${t}`).style.display='none';
+    const nb=document.getElementById(`nb-${t}`); if(nb) nb.className='nav-btn';
+  });
+  const el=document.getElementById(`t-${tab}`);
+  el.style.display='block'; el.classList.remove('fade'); void el.offsetWidth; el.classList.add('fade');
+  const nb=document.getElementById(`nb-${tab}`); if(nb) nb.className=`nav-btn a-${tab}`;
+  if(tab==='rapor') rRapor(activeRep);
+  if(tab==='veli') rVeliRapor();
+}
+
+// ── RAPOR ──
+function showRep(type){
+  activeRep=type;
+  const types=['hafta-hafta','ders-ders','ogrenci-ogrenci','toplam','gunluk'];
+  document.querySelectorAll('.rnbtn').forEach((b,i)=>b.classList.toggle('active',types[i]===type));
+  rRepBody(type);
+}
+function rRapor(type){
+  document.getElementById('t-rapor').innerHTML=`
+  <div class="card" style="padding-bottom:8px">
+    <div class="card-title">📊 Rapor</div>
+    <div class="rnav">
+      <div class="rnav-row">
+        <button class="rnbtn${type==='hafta-hafta'?' active':''}" onclick="showRep('hafta-hafta')">📅 Hafta Hafta</button>
+        <button class="rnbtn${type==='ders-ders'?' active':''}" onclick="showRep('ders-ders')">📖 Ders Bazlı</button>
+      </div>
+      <div class="rnav-row">
+        <button class="rnbtn${type==='ogrenci-ogrenci'?' active':''}" onclick="showRep('ogrenci-ogrenci')">👤 Öğrenci Bazlı</button>
+        <button class="rnbtn${type==='toplam'?' active':''}" onclick="showRep('toplam')">🏆 Genel Toplam</button>
+      </div>
+      <div class="rnav-row">
+        <button class="rnbtn full${type==='gunluk'?' active':''}" onclick="showRep('gunluk')">📆 Günlük Rapor</button>
+      </div>
+    </div>
+    <div id="rb"></div>
+  </div>`;
+  rRepBody(type);
+}
+function rRepBody(type){
+  const el=document.getElementById('rb'); if(!el) return;
+  const sL=n=>n
+    .replace('Türkçe','Trk')
+    .replace('Paragraf','Par')
+    .replace('Matematik','Mat')
+    .replace('Fen Bilgisi','Fen')
+    .replace('Sosyal Bilgiler','Sos')
+    .replace('İngilizce','İng');
+
+  if(type==='hafta-hafta'){
+    let h='';
+    for(let w=1;w<=4;w++){
+      h+=`<div><div class="hbadge" style="background:${HB[w-1]};color:${HC[w-1]}">${w}. Hafta</div>
+      <div class="tw"><table><thead><tr>
+        <th class="th-n">Öğrenci</th>
+        ${DERSLER.map(d=>`<th class="th-${d.cls}">${sL(d.label)}</th>`).join('')}
+        <th class="th-total">TOP</th>
+      </tr></thead><tbody>`;
+      students.forEach(s=>{
+        const dv=DERSLER.map(d=>getDHT(w,s,d.key)), tot=dv.reduce((a,b)=>a+b,0);
+        h+=`<tr><td class="td-n">${s}</td>${dv.map(v=>`<td class="${v?'':'td-0'}">${v}</td>`).join('')}<td class="td-t">${tot}</td></tr>`;
+      });
+      const ct=DERSLER.map(d=>students.reduce((t,s)=>t+getDHT(w,s,d.key),0)), gt=ct.reduce((a,b)=>a+b,0);
+      h+=`<tr class="tr-s"><td class="td-n">TOPLAM</td>${ct.map(v=>`<td>${v}</td>`).join('')}<td class="td-t">${gt}</td></tr>`;
+      h+=`</tbody></table></div></div>`;
+    }
+    el.innerHTML=h;
+
+  } else if(type==='ders-ders'){
+    let h='<div class="rgrid">';
+    DERSLER.forEach(d=>{
+      h+=`<div class="rc"><div class="rc-head c-${d.cls}">${d.label}</div>
+      <div class="rrow" style="font-size:0.68rem;font-weight:700;background:var(--bg)">
+        <span class="rn">Öğrenci</span>
+        <div class="rw">${[1,2,3,4].map((w,i)=>`<span class="wb" style="color:${HC[i]};background:${HB[i]}">H${w}</span>`).join('')}<span style="min-width:28px;text-align:right;font-size:0.68rem;color:var(--primary)">TOP</span></div>
+      </div>`;
+      students.forEach(s=>{
+        const hv=[1,2,3,4].map(w=>getDHT(w,s,d.key)), tot=hv.reduce((a,b)=>a+b,0);
+        h+=`<div class="rrow"><span class="rn">${s}</span>
+          <div class="rw">${hv.map((v,i)=>`<span class="wb" style="color:${v?HC[i]:'var(--text3)'};background:${v?HB[i]:'transparent'}">${v}</span>`).join('')}<span class="rt">${tot}</span></div>
+        </div>`;
+      });
+      h+=`</div>`;
+    });
+    el.innerHTML=h+'</div>';
+
+  } else if(type==='ogrenci-ogrenci'){
+    let h='<div class="rgrid">';
+    students.forEach(s=>{
+      h+=`<div class="rc"><div class="rc-head" style="background:var(--primary-light);color:var(--primary)">👤 ${s}</div>
+      <div class="rrow" style="font-size:0.68rem;font-weight:700;background:var(--bg)">
+        <span class="rn">Ders</span>
+        <div class="rw">${[1,2,3,4].map((w,i)=>`<span class="wb" style="color:${HC[i]};background:${HB[i]}">H${w}</span>`).join('')}<span style="min-width:28px;text-align:right;font-size:0.68rem;color:var(--primary)">TOP</span></div>
+      </div>`;
+      DERSLER.forEach(d=>{
+        const hv=[1,2,3,4].map(w=>getDHT(w,s,d.key)), tot=hv.reduce((a,b)=>a+b,0);
+        h+=`<div class="rrow"><span class="rn c-${d.cls}" style="background:transparent">${d.label}</span>
+          <div class="rw">${hv.map((v,i)=>`<span class="wb" style="color:${v?HC[i]:'var(--text3)'};background:${v?HB[i]:'transparent'}">${v}</span>`).join('')}<span class="rt">${tot}</span></div>
+        </div>`;
+      });
+      const htv=[1,2,3,4].map(w=>getHT(w,s)), grand=htv.reduce((a,b)=>a+b,0);
+      h+=`<div class="rrow rs"><span class="rn">TOPLAM</span>
+        <div class="rw">${htv.map((v,i)=>`<span class="wb" style="color:${HC[i]};background:${HB[i]}">${v}</span>`).join('')}<span class="rt">${grand}</span></div>
+      </div></div>`;
+    });
+    el.innerHTML=h+'</div>';
+
+  } else if(type==='toplam'){
+    let h=`<div class="tw"><table><thead><tr>
+      <th class="th-n">Öğrenci</th>
+      ${DERSLER.map(d=>`<th class="th-${d.cls}">${sL(d.label)}</th>`).join('')}
+      <th class="th-total">4 Hft</th>
+    </tr></thead><tbody>`;
+    students.forEach(s=>{
+      const dv=DERSLER.map(d=>[1,2,3,4].reduce((t,w)=>t+getDHT(w,s,d.key),0)), tot=dv.reduce((a,b)=>a+b,0);
+      h+=`<tr><td class="td-n">${s}</td>${dv.map(v=>`<td class="${v?'':'td-0'}">${v}</td>`).join('')}<td class="td-t">${tot}</td></tr>`;
+    });
+    const ct=DERSLER.map(d=>students.reduce((t,s)=>[1,2,3,4].reduce((t2,w)=>t2+getDHT(w,s,d.key),t),0)), gt=ct.reduce((a,b)=>a+b,0);
+    h+=`<tr class="tr-s"><td class="td-n">TOPLAM</td>${ct.map(v=>`<td>${v}</td>`).join('')}<td class="td-t">${gt}</td></tr>`;
+    el.innerHTML=h+`</tbody></table></div>`;
+
+  } else if(type==='gunluk'){
+    rGunluk();
+  }
+}
+
+// ── GÜNLÜK RAPOR ──
+let selHafta=1, selGun=0;
+function rGunluk(){
+  const el=document.getElementById('rb'); if(!el) return;
+  const gunAdlari=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+  const gunKisa=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+  const sL=n=>n
+    .replace('Türkçe','Trk')
+    .replace('Paragraf','Par')
+    .replace('Matematik','Mat')
+    .replace('Fen Bilgisi','Fen')
+    .replace('Sosyal Bilgiler','Sos')
+    .replace('İngilizce','İng');
+
+  // Hafta & gün seçici
+  let h=`<div class="gun-picker">
+    <div class="gun-picker-label">📅 Hafta Seç</div>
+    <div class="gun-hafta-row">
+      ${[1,2,3,4].map(w=>`<button class="gun-hbtn${selHafta===w?' sel':''}"
+        style="${selHafta===w?`background:${HC[w-1]};`:''}border-color:${HC[w-1]};color:${selHafta===w?'#fff':HC[w-1]}"
+        onclick="pickHafta(${w})">${w}. Hafta</button>`).join('')}
+    </div>
+    <div class="gun-picker-label">📆 Gün Seç</div>
+    <div class="gun-row">
+      ${gunKisa.map((g,i)=>{
+        const dayTotal=students.reduce((sum,s)=>sum+DERSLER.reduce((s2,d)=>s2+Number((data[selHafta]?.[s]?.[d.key]||[])[i]||0),0),0);
+        return `<button class="gun-dbtn${selGun===i?' sel':''}" onclick="pickGun(${i})">
+          <span class="gd-name">${g}</span>
+          <span class="gd-no">${dayTotal||'—'}</span>
+        </button>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // Seçili gün için tablo (hafta-hafta ile aynı format)
+  const gunBaslik=`${selHafta}. Hafta — ${gunAdlari[selGun]}`;
+  let classTotal=0;
+
+  h+=`<div class="hbadge" style="background:${HB[selHafta-1]};color:${HC[selHafta-1]}">${gunBaslik}</div>`;
+  h+=`<div class="tw"><table><thead><tr>
+    <th class="th-n">ÖĞRENCİ</th>
+    ${DERSLER.map(d=>`<th class="th-${d.cls}">${sL(d.label)}</th>`).join('')}
+    <th class="th-total">TOP</th>
+  </tr></thead><tbody>`;
+
+  students.forEach(s=>{
+    const dv=DERSLER.map(d=>Number((data[selHafta]?.[s]?.[d.key]||[])[selGun]||0));
+    const tot=dv.reduce((a,b)=>a+b,0);
+    classTotal+=tot;
+    h+=`<tr><td class="td-n">${s}</td>${dv.map(v=>`<td class="${v?'':'td-0'}">${v}</td>`).join('')}<td class="td-t">${tot}</td></tr>`;
+  });
+
+  // Toplam satırı
+  const ct=DERSLER.map(d=>students.reduce((sum,s)=>sum+Number((data[selHafta]?.[s]?.[d.key]||[])[selGun]||0),0));
+  h+=`<tr class="tr-s"><td class="td-n">TOPLAM</td>${ct.map(v=>`<td>${v}</td>`).join('')}<td class="td-t">${classTotal}</td></tr>`;
+  h+=`</tbody></table></div>`;
+
+  el.innerHTML=h;
+}
+function pickHafta(w){ selHafta=w; rGunluk(); }
+function pickGun(i){ selGun=i; rGunluk(); }
+
+
+// ── VELİYE RAPOR ──
+function getTodayGunIdx(){
+  const map=[6,0,1,2,3,4,5];
+  return map[new Date().getDay()];
+}
+
+function rVeliRapor(){
+  const el=document.getElementById('t-veli'); if(!el) return;
+  const gunAdlari=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+  const bugunIdx=getTodayGunIdx();
+  const tarih=new Date();
+  const tarihStr=tarih.toLocaleDateString('tr-TR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  let h=`<div class="card">
+    <div class="card-title">📨 Veliye Günlük Rapor</div>
+    <div style="font-size:0.72rem;color:var(--text3);margin-bottom:12px">
+      📅 <b style="color:#145a30">${tarihStr}</b>
+    </div>
+
+    <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:7px">Hangi hafta?</div>
+    <div style="display:flex;gap:6px;margin-bottom:16px">
+      ${[1,2,3,4].map(w=>`<button
+        style="flex:1;padding:8px 2px;border-radius:10px;
+          border:1.5px solid ${selHafta===w?HC[w-1]:'rgba(0,0,0,0.13)'};
+          background:${selHafta===w?HB[w-1]:'rgba(0,0,0,0.03)'};
+          color:${selHafta===w?HC[w-1]:'var(--text2)'};
+          font-family:'Poppins',sans-serif;font-weight:700;font-size:0.7rem;cursor:pointer"
+        onclick="selHafta=${w};rVeliRapor()">${w}. Hafta</button>`).join('')}
+    </div>`;
+
+  // Tüm sınıf toplamı
+  const sinifToplam=students.reduce((sum,s)=>
+    sum+DERSLER.reduce((s2,d)=>s2+Number((data[selHafta]?.[s]?.[d.key]||[])[bugunIdx]||0),0),0);
+
+  if(sinifToplam===0){
+    h+=`<div class="veli-no-data">
+      <div class="vnd-icon">📭</div>
+      <p>${gunAdlari[bugunIdx]} için henüz soru kaydı yok</p>
+    </div></div>`;
+    el.innerHTML=h;
+    return;
+  }
+
+  // Öğrenci adı kısalt: "Ahmet Gülçiçek" → "A. Gülçiçek"
+  const kısaAd=s=>{
+    const parts=s.trim().split(' ');
+    if(parts.length===1) return s;
+    // Son kelime soyisim, ilk kelimenin baş harfi
+    const soyisim=parts[parts.length-1];
+    return parts[0].charAt(0)+'. '+soyisim;
+  };
+
+  // Ders ismi kısalt
+  const kısaDers=d=>{
+    const map={turkce:'Trk',paragraf:'Par',mat:'Mat',fen:'Fen',sos:'Sos',ing:'İng'};
+    return map[d.key]||d.label.substring(0,3);
+  };
+
+  // ── TABLO: satır=öğrenci, sütun=ders, sağda toplam ──
+  const tdS='padding:7px 4px;text-align:center;border-bottom:1px solid rgba(0,0,0,0.06);font-size:0.75rem;';
+  const thS='padding:8px 4px;text-align:center;font-size:0.65rem;font-weight:700;text-transform:uppercase;border-bottom:2px solid rgba(0,0,0,0.10);white-space:nowrap;';
+
+  h+=`<div style="border-radius:14px;border:1.5px solid rgba(0,0,0,0.10);overflow:hidden">
+  <table style="width:100%;border-collapse:collapse;background:#fdfaf5">
+    <thead>
+      <tr style="background:rgba(0,0,0,0.04)">
+        <th style="${thS}text-align:left;padding-left:8px;color:var(--text3)">Ad</th>
+        ${DERSLER.map(d=>`<th style="${thS}color:var(--${d.cls})">${kısaDers(d)}</th>`).join('')}
+        <th style="${thS}color:#1040d0">Top</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  students.forEach((s,si)=>{
+    const dv=DERSLER.map(d=>Number((data[selHafta]?.[s]?.[d.key]||[])[bugunIdx]||0));
+    const tot=dv.reduce((a,b)=>a+b,0);
+    const rowBg=si%2===0?'#fdfaf5':'rgba(0,0,0,0.025)';
+    h+=`<tr style="background:${rowBg}">
+      <td style="${tdS}text-align:left;padding-left:8px;font-weight:700;font-size:0.72rem;white-space:nowrap">${kısaAd(s)}</td>
+      ${dv.map((v,di)=>`<td style="${tdS}font-weight:${v?700:400};color:${v?`var(--${DERSLER[di].cls})`:'transparent'}">${v||''}</td>`).join('')}
+      <td style="${tdS}font-weight:800;color:#1040d0">${tot}</td>
+    </tr>`;
+  });
+
+  const colTotals=DERSLER.map(d=>students.reduce((sum,s)=>sum+Number((data[selHafta]?.[s]?.[d.key]||[])[bugunIdx]||0),0));
+  h+=`<tr style="background:rgba(16,64,208,0.07)">
+    <td style="${tdS}text-align:left;padding-left:8px;font-weight:800;font-size:0.72rem;color:#1040d0">TOP</td>
+    ${colTotals.map((v,di)=>`<td style="${tdS}font-weight:800;color:var(--${DERSLER[di].cls})">${v}</td>`).join('')}
+    <td style="${tdS}font-weight:800;color:#1040d0">${sinifToplam}</td>
+  </tr>`;
+
+  h+=`</tbody></table></div></div>`;
+  el.innerHTML=h;
+}
+
+
+// ── ÇIKTI ──
+const GUNLER_FULL = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+
+function printHafta() {
+  // Hangi hafta aktif?
+  const haftaEl = document.querySelector('.nav-btn[class*="a-hafta"]');
+  let h = selHafta || 1;
+  // aktif sekmeye bak
+  for(let i=1;i<=4;i++){
+    const nb = document.getElementById('nb-hafta'+i);
+    if(nb && nb.className.includes('a-hafta'+i)) { h=i; break; }
+  }
+
+  const area = document.getElementById('print-area');
+  const tarih = new Date().toLocaleDateString('tr-TR',{year:'numeric',month:'long',day:'numeric'});
+
+  // 4 öğrenci / sayfa
+  let pagesHtml = '';
+  const perPage = 4;
+  const totalPages = Math.ceil(students.length / perPage);
+
+  for(let p=0; p<totalPages; p++){
+    const pageStudents = students.slice(p*perPage, (p+1)*perPage);
+    let studentsHtml = '';
+
+    pageStudents.forEach(s => {
+      const rows = DERSLER.map(d => {
+        const vals = data[h]?.[s]?.[d.key] || Array(7).fill(0);
+        const wt = vals.reduce((a,b)=>a+Number(b),0);
+        const cells = vals.map(v =>
+          `<td class="${v?'':'pt-zero'}">${v||''}</td>`
+        ).join('');
+        return `<tr>
+          <td class="pt-ders-name" style="color:var(--${d.cls})">${d.label}</td>
+          ${cells}
+          <td class="pt-total">${wt||''}</td>
+        </tr>`;
+      }).join('');
+
+      // Günlük toplamlar
+      const dayTotals = Array(7).fill(0);
+      DERSLER.forEach(d=>{
+        const v=data[h]?.[s]?.[d.key]||Array(7).fill(0);
+        v.forEach((x,i)=>dayTotals[i]+=Number(x));
+      });
+      const grand = dayTotals.reduce((a,b)=>a+b,0);
+
+      studentsHtml += `
+      <div class="print-student">
+        <div class="print-st-head">
+          <div class="psh-avatar">${s.charAt(0)}</div>
+          <span class="psh-name">${s}</span>
+          <span class="psh-total">${grand} soru</span>
+        </div>
+        <table class="print-table">
+          <thead><tr>
+            <th class="pt-ders">Ders</th>
+            ${GUNLER_FULL.map(g=>`<th>${g}</th>`).join('')}
+            <th>Top</th>
+          </tr></thead>
+          <tbody>
+            ${rows}
+            <tr class="pt-foot">
+              <td class="pt-ders-name">Günlük Top</td>
+              ${dayTotals.map(t=>`<td class="pt-total">${t||''}</td>`).join('')}
+              <td class="pt-total">${grand||''}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>`;
+    });
+
+    pagesHtml += `
+    <div class="print-page">
+      <div class="print-page-header">
+        <h2>📚 8. Sınıf — ${h}. Hafta Soru Takip</h2>
+        <p>${tarih} | Sayfa ${p+1}/${totalPages}</p>
+      </div>
+      <div class="print-grid">${studentsHtml}</div>
+    </div>`;
+  }
+
+  area.innerHTML = pagesHtml;
+  setTimeout(()=>{ window.print(); }, 300);
+}
+
+// ── BAŞLAT ──
+(async () => {
+  await load();
+  initData();
+  rStudents();
+  rAllWeeks();
+  gTab('ogrenciler');
+})();
+</script>
+
+<!-- ÇIKTI BUTONU -->
+<div class="print-btn-wrap" id="printBtnWrap">
+  <button class="print-btn" onclick="printHafta()">🖨️ Çıktı Al</button>
+</div>
+
+<!-- PRINT ALANI -->
+<div id="print-area"></div>
+
+</body>
+</html>
