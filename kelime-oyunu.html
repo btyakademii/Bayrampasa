@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelime Yarışması · Mıntıka</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --ink:#0E1620; --paper:#FBF7F0; --chalk:#E8E2D6; --gold:#C8A44D;
+  --teal:#1F6F6B; --rose:#B2453C; --muted:#7A8794; --green:#4EA87C;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(1200px 700px at 15% -12%,#22384c 0%,var(--ink) 62%);
+  background-attachment:fixed;color:var(--chalk);font-family:'Inter',system-ui,-apple-system,sans-serif}
+.wrap{max-width:1400px;margin:0 auto;padding:26px 18px 80px}
+.hdr{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+h1{font-family:Georgia,'Times New Roman',serif;font-size:30px;margin:0;letter-spacing:-.02em;color:var(--paper);cursor:pointer}
+h1 span{color:var(--gold)}
+h2,h3{font-family:Georgia,serif}
+.sub{font-size:13px;color:var(--muted)}
+.card{background:rgba(251,247,240,.06);border:1px solid rgba(232,226,214,.14);border-radius:14px;padding:20px;margin-bottom:18px}
+.btn{cursor:pointer;border:none;border-radius:10px;padding:12px 20px;font-weight:600;font-size:15px;font-family:inherit;transition:filter .12s,transform .12s}
+.btn:hover{filter:brightness(1.12)} .btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn-primary{background:var(--gold);color:var(--ink)}
+.btn-ghost{background:transparent;color:var(--chalk);border:1px solid rgba(232,226,214,.3)}
+.btn-danger{background:rgba(178,69,60,.18);color:#f0a49d;border:1px solid rgba(178,69,60,.5)}
+.btn-sm{padding:7px 12px;font-size:13px}
+input,select,textarea{width:100%;background:rgba(14,22,32,.55);border:1px solid rgba(232,226,214,.22);color:var(--chalk);border-radius:9px;padding:11px 13px;font-size:15px;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+select option{background:var(--ink);color:var(--chalk)}
+label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid rgba(232,226,214,.15)}
+td{padding:9px 10px;border-bottom:1px solid rgba(232,226,214,.07)}
+tr.top1 td{background:rgba(200,164,77,.12)}
+tr.me td{background:rgba(31,111,107,.18)}
+.tab{cursor:pointer;padding:9px 16px;border-radius:999px;font-size:14px;border:1px solid transparent;background:transparent;color:var(--muted);font-family:inherit}
+.tab.on{background:rgba(200,164,77,.16);color:var(--gold);border-color:rgba(200,164,77,.4)}
+.opt{display:block;width:100%;text-align:left;padding:16px 18px;border-radius:12px;border:1.5px solid rgba(232,226,214,.18);
+  background:rgba(251,247,240,.04);color:var(--chalk);font-size:17px;cursor:pointer;font-family:inherit;margin-bottom:10px;transition:all .12s}
+.opt:hover{border-color:var(--gold);background:rgba(200,164,77,.08)}
+.opt.sel{border-color:var(--gold);background:rgba(200,164,77,.14)}
+.opt.correct{border-color:var(--green);background:rgba(78,168,124,.18)}
+.opt.wrong{border-color:var(--rose);background:rgba(178,69,60,.18)}
+.opt[disabled]{opacity:.4;cursor:not-allowed}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;background:rgba(31,111,107,.25);color:#7fd4cf}
+.yb{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.02em}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.bar{height:5px;background:rgba(232,226,214,.12);border-radius:99px;margin-bottom:26px}
+.bar>div{height:100%;background:var(--gold);border-radius:99px;transition:width .3s}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--ink);
+  padding:12px 22px;border-radius:999px;font-weight:600;font-size:14px;z-index:99}
+.hide{display:none}
+.big{font-family:Georgia,serif;font-size:40px;margin:14px 0 4px;color:var(--paper)}
+.score{font-family:Georgia,serif;font-size:72px;color:var(--gold);line-height:1.1;margin:10px 0}
+.eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stat b{display:block;font-size:24px;color:var(--paper)}
+.stat span{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.timer{font-size:22px;font-variant-numeric:tabular-nums;color:var(--gold);font-weight:700}
+details summary{cursor:pointer;color:var(--gold);font-size:14px;margin-bottom:10px}
+.listrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(232,226,214,.07)}
+.tick{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:7px;font-size:14px;font-weight:700;cursor:default}
+.tick.ok{background:rgba(78,168,124,.22);color:#7fd4a0;border:1px solid rgba(78,168,124,.45)}
+.tick.no{background:rgba(178,69,60,.18);color:#f0a49d;border:1px solid rgba(178,69,60,.45)}
+
+/* --- yurt kartlari --- */
+.dorms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:30px}
+.dorm{position:relative;overflow:hidden;padding:22px 20px;border-radius:16px;cursor:pointer;text-align:left;
+  border:1px solid rgba(232,226,214,.16);background:rgba(251,247,240,.05);color:var(--chalk);font-family:inherit;
+  transition:transform .14s,border-color .14s,background .14s}
+.dorm:hover{transform:translateY(-3px);border-color:var(--gold);background:rgba(200,164,77,.08)}
+.dorm:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.dorm .bar4{position:absolute;left:0;top:0;bottom:0;width:5px}
+.dorm .nm{font-family:Georgia,serif;font-size:24px;color:var(--paper);margin-bottom:5px}
+.dorm .mt{font-size:13px;color:var(--muted)}
+
+/* --- mintika vitrini --- */
+.panels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media(max-width:900px){.panels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.panels{grid-template-columns:1fr}}
+.panel{background:rgba(251,247,240,.05);border:1px solid rgba(232,226,214,.13);border-radius:14px;padding:16px;min-height:300px;min-width:0;overflow:hidden}
+.panel h3{margin:0 0 4px;font-size:19px;color:var(--paper)}
+.clsdots{display:flex;gap:5px;margin:10px 0 12px}
+.dot{cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;padding:4px 10px;border-radius:7px;
+  border:1px solid rgba(232,226,214,.2);background:transparent;color:var(--muted)}
+.dot.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.panel table{font-size:13px;table-layout:fixed;width:100%}
+.panel td{padding:5px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.panel th{padding:5px 4px;font-size:9px;letter-spacing:.05em}
+.rk{width:26px;color:var(--muted);font-variant-numeric:tabular-nums}
+.fade{animation:fi .45s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.live i{width:7px;height:7px;border-radius:99px;background:var(--green);display:inline-block;animation:pl 1.6s infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.25}}
+/* ── Ana yerlesim: paneller + rekor sutunu ── */
+.anaduzen{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:14px;align-items:start}
+@media(max-width:1250px){.anaduzen{grid-template-columns:1fr}}
+
+/* ── Rekorlar sutunu ── */
+.rekor{background:rgba(251,247,240,.05);border:1px solid rgba(232,226,214,.13);
+  border-radius:14px;padding:14px 12px 10px;position:sticky;top:16px}
+.rk-bas{padding:0 4px 10px;border-bottom:1px solid rgba(232,226,214,.12);margin-bottom:8px}
+.rk-bas h3{margin:0;font-size:18px;color:var(--paper)}
+.rk-bas span{font-size:11px;color:var(--muted);letter-spacing:.04em}
+.rk-pencere{height:620px;overflow:hidden;position:relative;
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,#000 7%,#000 93%,transparent)}
+@media(max-width:1250px){.rk-pencere{height:420px}}
+.rk-akis{animation:rkKay 90s linear infinite;will-change:transform}
+.rk-pencere:hover .rk-akis{animation-play-state:paused}
+@keyframes rkKay{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.rk-row{display:flex;align-items:center;gap:8px;padding:7px 5px;
+  border-bottom:1px solid rgba(232,226,214,.06)}
+.rk-row.rk-top{background:rgba(200,164,77,.09);border-radius:7px}
+.rk-no{width:26px;flex-shrink:0;text-align:center;font-size:12px;
+  color:var(--muted);font-variant-numeric:tabular-nums}
+.rk-ad{flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--chalk);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk-alt{display:block;font-size:10px;font-weight:400;color:var(--muted);
+  margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk-alt .yb{padding:1px 5px;font-size:9px;margin-right:4px}
+.rk-puan{flex-shrink:0;font-size:14px;font-weight:700;color:var(--gold);
+  font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){.rk-akis{animation:none}
+  .rk-pencere{overflow-y:auto}}
+
+@keyframes yuk{0%{margin-left:-35%}100%{margin-left:100%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <h1 onclick="goHome()">Kelime <span>Yarışması</span></h1>
+    <span class="sub" id="sub">Mıntıka · 5–8. Sınıf</span>
+    <span style="flex:1"></span>
+    <span id="who"></span>
+  </div>
+  <div id="app"><div class="card" style="text-align:center;padding:48px 24px">
+    <div style="font-size:15px;color:var(--muted)">Yükleniyor…</div>
+    <div style="margin-top:14px;height:4px;background:rgba(232,226,214,.12);border-radius:99px;overflow:hidden">
+      <div style="height:100%;width:35%;background:var(--gold);border-radius:99px;animation:yuk 1.1s ease-in-out infinite"></div>
+    </div></div></div>
+</div>
+<div id="toast" class="toast hide"></div>
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 1 — VERİ KATMANI
+   ------------------------------------------------------------------
+   Buradaki DB nesnesi verinin nereden okunup nereye yazılacağını
+   belirler. Şu anda tarayıcı hafızası (localStorage) kullanıyor.
+
+   ORTAK VERİTABANINA GEÇMEK İÇİN (Firebase / Supabase / kendi API'niz):
+   Sadece aşağıdaki 6 fonksiyonun içini değiştirin. Arayüzün geri
+   kalanına dokunmanıza gerek yok.
+
+     DB.load()               -> {words, students, results} döndürmeli (async)
+     DB.saveWords(w)         -> ortak kelime listesini yazar
+     DB.saveStudents(s)      -> {yurt: {sınıf: [isim,...]}} yazar
+     DB.addResult(r)         -> TEK bir yarışma sonucu ekler (append)
+     DB.replaceResults(list) -> tüm sonuç listesini değiştirir (silme için)
+     DB.watch(fn)            -> veri değişince fn() çağrılır (canlı sıralama)
+
+   Örnek Supabase uyarlaması dosyanın en altında yorum olarak var.
+   ══════════════════════════════════════════════════════════════════ */
+
+const LS = {
+  words: 'ky_words', students: 'ky_students', results: 'ky_results', pass: 'ky_adminpass'
+};
+
+// ─── SUPABASE BAĞLANTISI ───────────────────────────────────────────
+// Kendi proje bilgilerinizi girin (Supabase Dashboard > Settings > API):
+const SUPABASE_URL      = 'https://zowvygqlbrtotkygszsg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpvd3Z5Z3FsYnJ0b3RreWdzenNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIwOTAsImV4cCI6MjA5MTY3ODA5MH0.jUOcm2ZRL8VlAxLLWMj6unoDl7981lndSyQFji18w0A';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const DB = {
+  async load(){
+    const [w, s, r, y] = await Promise.all([
+      sb.from('ayarlar').select('deger').eq('anahtar','words').maybeSingle(),
+      sb.from('ayarlar').select('deger').eq('anahtar','students').maybeSingle(),
+      sb.from('sonuclar').select('*').order('date'),
+      sb.from('ayarlar').select('deger').eq('anahtar','dorms').maybeSingle()
+    ]);
+    return {
+      words:    w.data ? w.data.deger : null,
+      students: s.data ? s.data.deger : null,
+      dorms:    y.data ? y.data.deger : null,
+      results:  (r.data || []).map(row => ({
+        id: row.id, dorm: row.dorm, name: row.name, cls: row.cls, unit: row.unit,
+        correct: row.correct, total: row.total, seconds: row.seconds,
+        score: row.score, wrongs: row.wrongs, date: Number(row.date)
+      }))
+    };
+  },
+  async saveWords(w){
+    const { error } = await sb.from('ayarlar').upsert({ anahtar:'words', deger:w });
+    if (error) console.error(error);
+    return !error;
+  },
+  async saveStudents(s){
+    const { error } = await sb.from('ayarlar').upsert({ anahtar:'students', deger:s });
+    if (error) console.error(error);
+    return !error;
+  },
+  async saveDorms(d){
+    const { error } = await sb.from('ayarlar').upsert({ anahtar:'dorms', deger:d });
+    if (error) console.error(error);
+    return !error;
+  },
+  async deleteDormResults(dormId){
+    const { error } = await sb.from('sonuclar').delete().eq('dorm', dormId);
+    if (error) console.error(error);
+    return !error;
+  },
+  async addResult(r){
+    const { error } = await sb.from('sonuclar').insert(r);
+    if (error) console.error(error);
+    return !error;
+  },
+  async replaceResults(list){
+    const { error: delErr } = await sb.from('sonuclar').delete().neq('id','');
+    if (delErr) console.error(delErr);
+    if (list.length){
+      const { error } = await sb.from('sonuclar').insert(list);
+      if (error) console.error(error);
+    }
+    return true;
+  },
+  watch(fn){
+    sb.channel('ky-canli')
+      .on('postgres_changes', { event:'*', schema:'public', table:'sonuclar' }, fn)
+      .on('postgres_changes', { event:'*', schema:'public', table:'ayarlar' }, fn)
+      .subscribe();
+  }
+};
+
+function ls(k, f){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch(e){ return f; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 2 — SABİTLER
+   ══════════════════════════════════════════════════════════════════ */
+
+const CLASSES = [5,6,7,8];
+const UNITS   = [1,2,3,4];
+const TOTAL_Q = 100;          // her test tam 100 soru
+const TOP_N   = 20;           // vitrinde gösterilecek talebe sayısı
+const ROTATE_MS = 6000;       // vitrin sınıf değiştirme aralığı
+
+// Varsayilan yurtlar. Veritabaninda kayit yoksa bunlar kullanilir ve yazilir.
+// Bayrampasa yonetici panelinden duzenlenebilir.
+const VARSAYILAN_YURTLAR = [
+  { id:'suirici',      name:'Suriçi',        pass:'sts1453',    color:'#C8A44D' },
+  { id:'bayrampasa',   name:'Bayrampaşa',    pass:'1071',       color:'#4EA87C' },
+  { id:'cibali',       name:'Cibali',        pass:'cibali1453', color:'#5B9BD5' },
+  { id:'sehitkamilbey',name:'Seyitkamilbey', pass:'skb1453',    color:'#C77DBB' }
+];
+let DORMS = VARSAYILAN_YURTLAR.map(d => ({...d}));
+const ADMIN_PASS_DEFAULT = '145312345';   // her yurdun yönetici paneli şifresi
+
+// Kelime listelerini SADECE bu yurt düzenleyebilir. Diğerleri görebilir ama değiştiremez.
+// Yetkiyi başka bir yurda vermek için aşağıdaki id'yi değiştirin
+// ('suirici' | 'bayrampasa' | 'cibali' | 'sehitkamilbey').
+const WORD_ADMIN = 'bayrampasa';
+
+const dorm  = id => DORMS.find(d => d.id === id)
+              || { id, name:'(silinmiş yurt)', pass:'', color:'#6B7280' };
+const canEditWords = () => S.dorm === WORD_ADMIN;
+const wkey  = (c,u) => c + '-' + u;
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 3 — YARDIMCILAR
+   ══════════════════════════════════════════════════════════════════ */
+
+const esc = s => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt = s => Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const medal = i => i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+const trSort = (a,b) => a.localeCompare(b,'tr');
+
+function flash(m){
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.remove('hide');
+  clearTimeout(t._t); t._t = setTimeout(()=>t.classList.add('hide'), 2200);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   HAZIR KELİME LİSTELERİ — 16 ünite
+   ------------------------------------------------------------------
+   PDF'lerden aktarılmıştır. Uygulama ilk açıldığında yüklenir.
+   Bayrampaşa yönetici panelinden düzenlenebilir / silinebilir.
+   Elle silinen bir ünite tekrar yüklenmez.
+   ══════════════════════════════════════════════════════════════════ */
+const HAZIR_KELIMELER = {"5-1":[{"en":"Classes","tr":"Dersler"},{"en":"Timetable","tr":"Ders programı"},{"en":"Language class","tr":"Dil dersi"},{"en":"English","tr":"İngilizce (ders)"},{"en":"Turkish","tr":"Türkçe (ders)"},{"en":"Maths","tr":"Matematik"},{"en":"Science","tr":"Fen Bilimleri"},{"en":"Social Studies","tr":"Sosyal Bilgiler"},{"en":"History","tr":"Tarih"},{"en":"Geography","tr":"Coğrafya"},{"en":"Music","tr":"Müzik"},{"en":"Art","tr":"Resim"},{"en":"Physical Education","tr":"Beden Eğitimi"},{"en":"Information Technology","tr":"Bilişim Teknolojileri"},{"en":"Introduce","tr":"Tanıtmak, tanıştırmak"},{"en":"Live","tr":"Yaşamak"},{"en":"Everyone","tr":"Herkes"},{"en":"Friend","tr":"Arkadaş"},{"en":"Family","tr":"Aile"},{"en":"Student","tr":"Öğrenci"},{"en":"School","tr":"Okul"},{"en":"Primary school","tr":"İlkokul"},{"en":"Secondary school","tr":"Ortaokul"},{"en":"High school","tr":"Lise"},{"en":"Partner school","tr":"Ortak okul"},{"en":"School subjects","tr":"Okul konuları"},{"en":"Grade","tr":"Sınıf, kademe"},{"en":"Class","tr":"Sınıf"},{"en":"Classmate","tr":"Sınıf arkadaşı"},{"en":"Study","tr":"Okumak, öğrenim görmek"},{"en":"Speak","tr":"Konuşmak"},{"en":"Like","tr":"Sevmek"},{"en":"Dislike","tr":"Sevmemek"},{"en":"Favourite","tr":"Favori, en sevilen"},{"en":"Guest","tr":"Misafir, konuk"},{"en":"World","tr":"Dünya"},{"en":"Country","tr":"Ülke"},{"en":"Nationality","tr":"Vatandaşlık, uyruk"},{"en":"Flag","tr":"Bayrak"},{"en":"Language","tr":"Dil"},{"en":"Age","tr":"Yaş"},{"en":"ID Card","tr":"Kimlik kartı"},{"en":"Talk about","tr":"Hakkında konuşmak"},{"en":"Do exercise","tr":"Egzersiz yapmak"},{"en":"Double","tr":"Çift, iki tane"},{"en":"Hello","tr":"Merhaba"},{"en":"Hi","tr":"Selam"},{"en":"Welcome","tr":"Hoş geldiniz"},{"en":"Monday","tr":"Pazartesi"},{"en":"Tuesday","tr":"Salı"},{"en":"Wednesday","tr":"Çarşamba"},{"en":"Thursday","tr":"Perşembe"},{"en":"Friday","tr":"Cuma"},{"en":"Saturday","tr":"Cumartesi"},{"en":"Sunday","tr":"Pazar"},{"en":"What is your name?","tr":"Adın ne?"},{"en":"My name is ...","tr":"Benim adım ..."},{"en":"How old are you?","tr":"Yaşın kaç?"},{"en":"I'm ten years old","tr":"On yaşındayım"},{"en":"Nice to meet you","tr":"Tanıştığıma memnun oldum"},{"en":"Glad to meet you","tr":"Tanıştığıma memnun oldum (2)"},{"en":"My pleasure","tr":"Zevkle, o zevk bana ait"},{"en":"Where are you from?","tr":"Nerelisin?"},{"en":"I am from Turkey","tr":"Türkiyeliyim"},{"en":"What nationality are you?","tr":"Vatandaşlığın nedir?"},{"en":"I am Turkish","tr":"Ben Türk'üm"},{"en":"How many languages do you speak?","tr":"Kaç tane dil konuşuyorsun?"},{"en":"Where do you study?","tr":"Nerede okuyorsun?"},{"en":"Turkey","tr":"Türkiye"},{"en":"England","tr":"İngiltere"},{"en":"The USA","tr":"Amerika Birleşik Devletleri"},{"en":"Germany","tr":"Almanya"},{"en":"Italy","tr":"İtalya"},{"en":"France","tr":"Fransa"},{"en":"Spain","tr":"İspanya"},{"en":"Russia","tr":"Rusya"},{"en":"Japan","tr":"Japonya"},{"en":"China","tr":"Çin"},{"en":"Brazil","tr":"Brezilya"},{"en":"Greece","tr":"Yunanistan"},{"en":"India","tr":"Hindistan"},{"en":"Egypt","tr":"Mısır"},{"en":"Turkish (nationality)","tr":"Türk (milliyet)"},{"en":"English (nationality)","tr":"İngiliz (milliyet)"},{"en":"American","tr":"Amerikalı"},{"en":"German (nationality)","tr":"Alman (milliyet)"},{"en":"Italian (nationality)","tr":"İtalyan (milliyet)"},{"en":"French (nationality)","tr":"Fransız (milliyet)"},{"en":"Spanish (nationality)","tr":"İspanyol (milliyet)"},{"en":"Russian (nationality)","tr":"Rus (milliyet)"},{"en":"Japanese (nationality)","tr":"Japon (milliyet)"},{"en":"Chinese (nationality)","tr":"Çinli (milliyet)"},{"en":"Brazilian","tr":"Brezilyalı"},{"en":"Greek (nationality)","tr":"Yunan (milliyet)"},{"en":"Indian","tr":"Hintli"},{"en":"Egyptian","tr":"Mısırlı"},{"en":"Turkish (language)","tr":"Türkçe (dil)"},{"en":"English (language)","tr":"İngilizce (dil)"},{"en":"German (language)","tr":"Almanca (dil)"},{"en":"Italian (language)","tr":"İtalyanca (dil)"},{"en":"French (language)","tr":"Fransızca (dil)"},{"en":"Spanish (language)","tr":"İspanyolca (dil)"},{"en":"Russian (language)","tr":"Rusça (dil)"},{"en":"Japanese (language)","tr":"Japonca (dil)"},{"en":"Chinese (language)","tr":"Çince (dil)"},{"en":"Portuguese","tr":"Portekizce"},{"en":"Greek (language)","tr":"Yunanca (dil)"},{"en":"Hindi","tr":"Hintçe"},{"en":"Arabic","tr":"Arapça"}],"5-2":[{"en":"Where is ...?","tr":"... nerede?"},{"en":"at","tr":"-de, -da (nokta)"},{"en":"behind","tr":"Arkasında"},{"en":"between","tr":"Arasında"},{"en":"in front of","tr":"Önünde"},{"en":"in","tr":"-de, -da (içinde)"},{"en":"near","tr":"Yanında"},{"en":"next to","tr":"Bitişiğinde"},{"en":"on the left","tr":"Solda"},{"en":"on the right","tr":"Sağda"},{"en":"on","tr":"Üstünde"},{"en":"opposite","tr":"Karşısında"},{"en":"under","tr":"Altında"},{"en":"around","tr":"Etrafında"},{"en":"How can I get to the ...?","tr":"... nasıl gidebilirim?"},{"en":"Is there ... near here?","tr":"Buralarda ... var mı?"},{"en":"How can I go to ...?","tr":"... nasıl gidebilirim? (2)"},{"en":"Go straight ahead","tr":"Düz git"},{"en":"It is on the left","tr":"O solda"},{"en":"It is on the right","tr":"O sağda"},{"en":"Take the first right","tr":"İlk sağa dön"},{"en":"Take the second left","tr":"İkinci sola dön"},{"en":"Turn left into ... street","tr":"... sokağına sola dön"},{"en":"Turn left","tr":"Sola dön"},{"en":"Turn right into ... road","tr":"... caddesine sağa dön"},{"en":"Turn right","tr":"Sağa dön"},{"en":"Go past the hospital","tr":"Hastaneyi geç"},{"en":"Where","tr":"Nerede"},{"en":"Are there","tr":"Var mı? (çoğul)"},{"en":"Excuse me","tr":"Affedersiniz"},{"en":"I'm sorry","tr":"Üzgünüm"},{"en":"Is there","tr":"Var mı? (tekil)"},{"en":"Not at all","tr":"Bir şey değil, önemli değil"},{"en":"See you","tr":"Görüşürüz"},{"en":"Thank you","tr":"Teşekkür ederim"},{"en":"There are","tr":"Var (çoğul)"},{"en":"There is","tr":"Var (tekil)"},{"en":"You are welcome","tr":"Rica ederim"},{"en":"Bakery","tr":"Fırın"},{"en":"Bank","tr":"Banka"},{"en":"Barber's","tr":"Berber"},{"en":"Bookshop","tr":"Kitapçı"},{"en":"Bridge","tr":"Köprü"},{"en":"Bus station","tr":"Terminal"},{"en":"Bus stop","tr":"Otobüs durağı"},{"en":"Butcher","tr":"Kasap"},{"en":"Chemist's","tr":"Eczane"},{"en":"Florist","tr":"Çiçekçi"},{"en":"Green grocer","tr":"Manav"},{"en":"Grocery","tr":"Bakkal, market"},{"en":"Hospital","tr":"Hastane"},{"en":"House","tr":"Ev"},{"en":"Library","tr":"Kütüphane"},{"en":"Mosque","tr":"Cami"},{"en":"Museum","tr":"Müze"},{"en":"Neighbourhood","tr":"Mahalle"},{"en":"Pharmacy","tr":"Eczane (2)"},{"en":"Playground","tr":"Oyun alanı, park"},{"en":"Police station","tr":"Karakol"},{"en":"Post office","tr":"Postane"},{"en":"Road","tr":"Cadde"},{"en":"Shop","tr":"Mağaza, dükkân"},{"en":"Stationery","tr":"Kırtasiye"},{"en":"Street","tr":"Cadde, sokak"},{"en":"Swimming pool","tr":"Yüzme havuzu"},{"en":"Theatre","tr":"Tiyatro"},{"en":"Toy shop","tr":"Oyuncak mağazası"}],"5-3":[{"en":"Always","tr":"Her zaman"},{"en":"Backgammon","tr":"Tavla"},{"en":"Blind man's buff","tr":"Körebe"},{"en":"Board games","tr":"Masa oyunları"},{"en":"Boring","tr":"Sıkıcı"},{"en":"Can","tr":"-ebilmek"},{"en":"Cartoon","tr":"Çizgi film"},{"en":"Checkers","tr":"Dama"},{"en":"Chess","tr":"Satranç"},{"en":"Difficult","tr":"Zor"},{"en":"Do puzzle","tr":"Yapboz yapmak"},{"en":"Dodge ball","tr":"Yakan top"},{"en":"Draw a picture","tr":"Resim çizmek"},{"en":"Draw","tr":"Çizmek"},{"en":"Easily","tr":"Kolayca"},{"en":"Eat","tr":"Yemek"},{"en":"Enjoyable","tr":"Eğlenceli"},{"en":"Find","tr":"Bulmak"},{"en":"Free time","tr":"Boş zaman"},{"en":"Fun","tr":"Eğlence"},{"en":"Game","tr":"Oyun"},{"en":"Great idea","tr":"Harika fikir"},{"en":"Great","tr":"Harika"},{"en":"Hangman","tr":"Adam asmaca"},{"en":"Help me","tr":"Bana yardım et"},{"en":"Help","tr":"Yardım etmek"},{"en":"Hide and seek","tr":"Saklambaç"},{"en":"Hopscotch","tr":"Sek sek"},{"en":"How about you?","tr":"Peki ya sen?"},{"en":"Hula hoop","tr":"Hula hop çemberi"},{"en":"In my leisure time","tr":"Boş zamanlarımda"},{"en":"In my spare time","tr":"Boş zamanlarımda (2)"},{"en":"Interesting","tr":"İlginç"},{"en":"Jigsaw puzzle","tr":"Bulmaca"},{"en":"Learn","tr":"Öğrenmek"},{"en":"Leisure time","tr":"Boş zaman (2)"},{"en":"Like","tr":"Sevmek"},{"en":"Listen to music","tr":"Müzik dinlemek"},{"en":"Live","tr":"Yaşamak"},{"en":"Love","tr":"Sevmek (2)"},{"en":"Never","tr":"Hiçbir zaman"},{"en":"Origami","tr":"Kâğıt katlama"},{"en":"Outdoor games","tr":"Dışarı oyunları"},{"en":"Paint","tr":"Boyamak"},{"en":"Play football","tr":"Futbol oynamak"},{"en":"Play marbles","tr":"Misket oynamak"},{"en":"Play tag","tr":"Elim sende oynamak"},{"en":"Play","tr":"Oynamak"},{"en":"Puzzle","tr":"Yapboz"},{"en":"Read book","tr":"Kitap okumak"},{"en":"Run fast","tr":"Hızlı koşmak"},{"en":"Run","tr":"Koşmak"},{"en":"Scrabble","tr":"Kelime oyunu"},{"en":"See saw","tr":"Tahterevalli"},{"en":"Skipping rope","tr":"İp atlamak"},{"en":"Sometimes","tr":"Bazen"},{"en":"Spare time","tr":"Boş zaman (3)"},{"en":"Swing","tr":"Salıncakta sallanmak"},{"en":"Taboo","tr":"Tabu oyunu"},{"en":"Take photos","tr":"Fotoğraf çekmek"},{"en":"That's","tr":"Bu (uzak)"},{"en":"This is","tr":"Bu (yakın)"},{"en":"Usually","tr":"Genellikle"},{"en":"Walk","tr":"Yürümek"},{"en":"Want","tr":"İstemek"},{"en":"Watch","tr":"İzlemek"},{"en":"What about you?","tr":"Peki ya sen? (2)"},{"en":"With","tr":"İle"},{"en":"Wonderful","tr":"Harika (2)"}],"5-4":[{"en":"Daily routine","tr":"Günlük yapılan işler"},{"en":"Get up","tr":"Uyanmak, kalkmak"},{"en":"Wake up","tr":"Uyanmak (2)"},{"en":"Get out of bed","tr":"Yataktan çıkmak"},{"en":"Go to bed","tr":"Yatağa gitmek"},{"en":"Sleep","tr":"Uyumak"},{"en":"Make the bed","tr":"Yatağını düzenlemek"},{"en":"Brush teeth","tr":"Dişleri fırçalamak"},{"en":"Use toothpaste","tr":"Diş macunu kullanmak"},{"en":"Have a shower","tr":"Duş almak"},{"en":"Comb hair","tr":"Saç taramak"},{"en":"Get dressed","tr":"Giyinmek"},{"en":"Wash your hands and face","tr":"Ellerini ve yüzünü yıkamak"},{"en":"Ride the bus","tr":"Otobüse binmek"},{"en":"Get on the bus","tr":"Otobüse binmek (2)"},{"en":"Get off the bus","tr":"Otobüsten inmek"},{"en":"Go to school","tr":"Okula gitmek"},{"en":"Arrive at school","tr":"Okula varmak"},{"en":"Leave school","tr":"Okuldan ayrılmak"},{"en":"Come home","tr":"Eve gelmek"},{"en":"Listen to the teacher","tr":"Öğretmeni dinlemek"},{"en":"Talk about school day","tr":"Okul günü hakkında konuşmak"},{"en":"Talk to parents","tr":"Aile ile konuşmak"},{"en":"Talk to friends","tr":"Arkadaşlarla konuşmak"},{"en":"Play with friends","tr":"Arkadaşlarla oynamak"},{"en":"Call friends","tr":"Arkadaşları aramak"},{"en":"Watch TV","tr":"Televizyon izlemek"},{"en":"Go online","tr":"İnternette çevrimiçi olmak"},{"en":"Read books","tr":"Kitap okumak"},{"en":"Do homework","tr":"Ödev yapmak"},{"en":"Study","tr":"Ders çalışmak"},{"en":"Have breakfast","tr":"Kahvaltı yapmak"},{"en":"Have lunch","tr":"Öğle yemeği yemek"},{"en":"Have dinner","tr":"Akşam yemeği yemek"},{"en":"Time","tr":"Zaman"},{"en":"Clock","tr":"Saat (alet)"},{"en":"What time is it?","tr":"Saat kaç?"},{"en":"Quarter","tr":"Çeyrek"},{"en":"Half","tr":"Buçuk, yarım"},{"en":"Past","tr":"Geçe"},{"en":"To","tr":"Kala"},{"en":"In the morning","tr":"Sabah"},{"en":"In the afternoon","tr":"Öğleden sonra"},{"en":"In the evening","tr":"Akşam"},{"en":"At night","tr":"Gece"},{"en":"Lunchtime","tr":"Öğlen vakti"},{"en":"After school","tr":"Okuldan sonra"},{"en":"Every","tr":"Her"},{"en":"Everyday","tr":"Her gün"},{"en":"Breaktime","tr":"Teneffüs"},{"en":"Early","tr":"Erken"},{"en":"Late","tr":"Geç"},{"en":"Family","tr":"Aile"},{"en":"Parents","tr":"Anne-baba"},{"en":"Father","tr":"Baba"},{"en":"Mother","tr":"Anne"},{"en":"Sister","tr":"Kız kardeş"},{"en":"Brother","tr":"Erkek kardeş"},{"en":"Grandfather","tr":"Büyük baba, dede"},{"en":"Grandmother","tr":"Büyük anne, nine"},{"en":"One","tr":"Bir (1)"},{"en":"Two","tr":"İki (2)"},{"en":"Three","tr":"Üç (3)"},{"en":"Four","tr":"Dört (4)"},{"en":"Five","tr":"Beş (5)"},{"en":"Six","tr":"Altı (6)"},{"en":"Seven","tr":"Yedi (7)"},{"en":"Eight","tr":"Sekiz (8)"},{"en":"Nine","tr":"Dokuz (9)"},{"en":"Ten","tr":"On (10)"},{"en":"Eleven","tr":"On bir (11)"},{"en":"Twelve","tr":"On iki (12)"},{"en":"Thirteen","tr":"On üç (13)"},{"en":"Fourteen","tr":"On dört (14)"},{"en":"Fifteen","tr":"On beş (15)"},{"en":"Sixteen","tr":"On altı (16)"},{"en":"Seventeen","tr":"On yedi (17)"},{"en":"Eighteen","tr":"On sekiz (18)"},{"en":"Nineteen","tr":"On dokuz (19)"},{"en":"Twenty","tr":"Yirmi (20)"},{"en":"Twenty one","tr":"Yirmi bir (21)"},{"en":"Thirty","tr":"Otuz (30)"},{"en":"Forty","tr":"Kırk (40)"},{"en":"Fifty","tr":"Elli (50)"},{"en":"Sixty","tr":"Altmış (60)"},{"en":"Seventy","tr":"Yetmiş (70)"},{"en":"Eighty","tr":"Seksen (80)"},{"en":"Ninety","tr":"Doksan (90)"},{"en":"One hundred","tr":"Yüz (100)"}],"6-1":[{"en":"Life","tr":"Yaşam, hayat"},{"en":"Time","tr":"Zaman"},{"en":"Clock","tr":"Saat (alet)"},{"en":"Half","tr":"Yarım, buçuk"},{"en":"Quarter","tr":"Çeyrek"},{"en":"Past","tr":"Geçe"},{"en":"To","tr":"Kala"},{"en":"Day","tr":"Gün"},{"en":"Month","tr":"Ay"},{"en":"Year","tr":"Yıl"},{"en":"Weekdays","tr":"Hafta içi günler"},{"en":"Weekend","tr":"Hafta sonu"},{"en":"Date","tr":"Tarih"},{"en":"Birthday","tr":"Doğum günü"},{"en":"Children's Day","tr":"Çocuk Bayramı"},{"en":"New Year's Day","tr":"Yılbaşı"},{"en":"The Republic Day","tr":"Cumhuriyet Bayramı"},{"en":"Victory Day","tr":"Zafer Bayramı"},{"en":"Democracy and National Unity Day","tr":"Demokrasi ve Milli Birlik Günü"},{"en":"Wedding Ceremony","tr":"Düğün"},{"en":"Tea Party","tr":"Çay partisi"},{"en":"Get up","tr":"Uyanmak, kalkmak"},{"en":"Wake up","tr":"Uyanmak (2)"},{"en":"Late","tr":"Geç"},{"en":"Sleep","tr":"Uyumak"},{"en":"Go to bed","tr":"Yatağa gitmek"},{"en":"Leave home","tr":"Evden ayrılmak"},{"en":"Go to school","tr":"Okula gitmek"},{"en":"Walk to school","tr":"Okula yürümek"},{"en":"Come back from school","tr":"Okuldan geri gelmek"},{"en":"Have breakfast","tr":"Kahvaltı yapmak"},{"en":"Have lunch","tr":"Öğle yemeği yemek"},{"en":"Have dinner","tr":"Akşam yemeği yemek"},{"en":"Attend a course","tr":"Bir kursa katılmak"},{"en":"Do homework","tr":"Ödev yapmak"},{"en":"Study","tr":"Çalışmak"},{"en":"Visit relatives","tr":"Akrabaları ziyaret etmek"},{"en":"Play games","tr":"Oyunlar oynamak"},{"en":"Play with friends","tr":"Arkadaşlarla oynamak"},{"en":"Meet your friends","tr":"Arkadaşlarınla buluşmak"},{"en":"Ride a bicycle","tr":"Bisiklete binmek"},{"en":"Ride a horse","tr":"Ata binmek"},{"en":"Watch TV","tr":"Televizyon izlemek"},{"en":"Do jogging","tr":"Koşu yapmak"},{"en":"Do sports","tr":"Spor yapmak"},{"en":"Do the ironing","tr":"Ütü yapmak"},{"en":"Do cleaning","tr":"Temizlik yapmak"},{"en":"Wash the clothes","tr":"Çamaşırları yıkamak"},{"en":"Wash the dishes","tr":"Bulaşıkları yıkamak"},{"en":"Run errands","tr":"Ayak işleri yapmak"},{"en":"Rest","tr":"Dinlenmek"},{"en":"Take a nap","tr":"Kestirmek, şekerleme yapmak"},{"en":"Take care of the flowers","tr":"Çiçeklerle ilgilenmek"},{"en":"Take care of the plants","tr":"Bitkilerle ilgilenmek"},{"en":"Take the dog for a walk","tr":"Köpeği yürüyüşe çıkarmak"},{"en":"Start","tr":"Başlamak"},{"en":"Finish","tr":"Bitirmek, bitmek"},{"en":"Join","tr":"Katılmak"},{"en":"Invite","tr":"Davet etmek"},{"en":"Invitation card","tr":"Davetiye, davet kartı"},{"en":"Ticket","tr":"Bilet"},{"en":"Classmate","tr":"Sınıf arkadaşı"},{"en":"Diary","tr":"Günlük (defter)"},{"en":"Folk dance","tr":"Halk oyunu, halk dansı"},{"en":"Traditional Dance","tr":"Geleneksel dans"},{"en":"Weekly plan","tr":"Haftalık plan"},{"en":"In the morning","tr":"Sabah"},{"en":"At noon","tr":"Öğlen"},{"en":"In the afternoon","tr":"Öğleden sonra"},{"en":"In the evening","tr":"Akşam"},{"en":"At night","tr":"Gece"},{"en":"Monday","tr":"Pazartesi"},{"en":"Tuesday","tr":"Salı"},{"en":"Wednesday","tr":"Çarşamba"},{"en":"Thursday","tr":"Perşembe"},{"en":"Friday","tr":"Cuma"},{"en":"Saturday","tr":"Cumartesi"},{"en":"Sunday","tr":"Pazar"},{"en":"January","tr":"Ocak"},{"en":"February","tr":"Şubat"},{"en":"March","tr":"Mart"},{"en":"April","tr":"Nisan"},{"en":"May","tr":"Mayıs"},{"en":"June","tr":"Haziran"},{"en":"July","tr":"Temmuz"},{"en":"August","tr":"Ağustos"},{"en":"September","tr":"Eylül"},{"en":"October","tr":"Ekim"},{"en":"November","tr":"Kasım"},{"en":"December","tr":"Aralık"}],"6-2":[{"en":"Food names","tr":"Yiyecek isimleri"},{"en":"Drinks","tr":"İçecekler"},{"en":"Beverages","tr":"İçecekler (2)"},{"en":"Egg","tr":"Yumurta"},{"en":"Fried egg","tr":"Yağda yumurta"},{"en":"Scrambled egg","tr":"Sahanda yumurta"},{"en":"Boiled egg","tr":"Haşlanmış yumurta"},{"en":"Omelette","tr":"Omlet"},{"en":"Cheese","tr":"Peynir"},{"en":"Olives","tr":"Zeytin"},{"en":"Tomato","tr":"Domates"},{"en":"Cucumber","tr":"Salatalık"},{"en":"Butter","tr":"Tereyağ"},{"en":"Jam","tr":"Reçel"},{"en":"Honey","tr":"Bal"},{"en":"Sausage","tr":"Sosis"},{"en":"Salami","tr":"Salam"},{"en":"Cereal","tr":"Mısır gevreği"},{"en":"Bean","tr":"Fasulye"},{"en":"Mushroom","tr":"Mantar"},{"en":"Pancake","tr":"Krep"},{"en":"Waffle","tr":"Gözleme"},{"en":"Croissant","tr":"Kruvasan"},{"en":"Muffin","tr":"Küçük kek"},{"en":"Cookie","tr":"Kurabiye"},{"en":"Toast","tr":"Tost"},{"en":"Sandwich","tr":"Sandviç"},{"en":"Bagel","tr":"Simit"},{"en":"Bread","tr":"Ekmek"},{"en":"Wheat bread","tr":"Buğday ekmeği"},{"en":"White bread","tr":"Beyaz ekmek"},{"en":"Oven roasted potatoes","tr":"Fırınlanmış patates"},{"en":"Fruit","tr":"Meyve"},{"en":"Milk","tr":"Süt"},{"en":"Tea","tr":"Çay"},{"en":"Ice tea","tr":"Soğuk çay"},{"en":"Green tea","tr":"Yeşil çay"},{"en":"Coffee","tr":"Kahve"},{"en":"Fresh brewed coffee","tr":"Taze demlenmiş kahve"},{"en":"Fruit juice","tr":"Meyve suyu"},{"en":"Orange juice","tr":"Portakal suyu"},{"en":"Apple juice","tr":"Elma suyu"},{"en":"Hot chocolate","tr":"Sıcak çikolata"},{"en":"Breakfast","tr":"Kahvaltı"},{"en":"Breakfast food","tr":"Kahvaltılık yiyecekler"},{"en":"Junk food","tr":"Abur cubur"},{"en":"Nutritious food","tr":"Besleyici gıda"},{"en":"Packaged food","tr":"Paketlenmiş yiyecek"},{"en":"Healthy","tr":"Sağlıklı"},{"en":"Unhealthy","tr":"Sağlıksız"},{"en":"Side orders","tr":"Mezeler"},{"en":"Yummy","tr":"Lezzetli"},{"en":"Homemade","tr":"Ev yapımı"},{"en":"Fresh","tr":"Taze"},{"en":"Enjoy it!","tr":"Afiyet olsun!"},{"en":"Eat","tr":"Yemek"},{"en":"Drink","tr":"İçmek"},{"en":"Bake","tr":"Fırında pişirmek"},{"en":"Decide","tr":"Karar vermek"},{"en":"Prefer","tr":"Tercih etmek"},{"en":"Preferences","tr":"Tercihler"},{"en":"Weekdays","tr":"Hafta içi günler"},{"en":"Weekend","tr":"Hafta sonu"},{"en":"Every day","tr":"Her gün"},{"en":"Veggie","tr":"Vejetaryen"},{"en":"Mint","tr":"Nane"},{"en":"Pomegranate","tr":"Nar"},{"en":"Sweetened","tr":"Şekerli, tatlandırılmış"},{"en":"Fat","tr":"Yağ"},{"en":"Cacao","tr":"Kakao"},{"en":"Cacao butter","tr":"Kakao yağı"},{"en":"Coconut sugar","tr":"Hindistan cevizi şekeri"},{"en":"Ingredient","tr":"Malzeme, içerik"},{"en":"Organic ingredient","tr":"Organik madde"}],"6-3":[{"en":"Downtown","tr":"Şehir merkezi"},{"en":"Uptown","tr":"Şehir merkezinin dışında"},{"en":"Hometown","tr":"Memleket"},{"en":"City","tr":"Şehir, büyük yerleşim yeri"},{"en":"Town","tr":"Kasaba, ilçe"},{"en":"Village","tr":"Köy"},{"en":"Skyscraper","tr":"Gökdelen"},{"en":"Building","tr":"Bina"},{"en":"Flat","tr":"Apartman dairesi"},{"en":"Kiosk","tr":"Büfe"},{"en":"Street","tr":"Sokak"},{"en":"Square","tr":"Meydan"},{"en":"Playground","tr":"Oyun alanı"},{"en":"Traffic jam","tr":"Trafik sıkışıklığı"},{"en":"Neighbourhood","tr":"Yakın çevre, komşuluk"},{"en":"Rent","tr":"Kiralamak"},{"en":"For rent","tr":"Kiralık"},{"en":"Crowded","tr":"Kalabalık"},{"en":"Tall","tr":"Uzun (boy)"},{"en":"Short","tr":"Kısa"},{"en":"Large","tr":"Geniş"},{"en":"Big","tr":"Büyük"},{"en":"Small","tr":"Küçük"},{"en":"High","tr":"Yüksek"},{"en":"Low","tr":"Alçak"},{"en":"Noisy","tr":"Gürültülü"},{"en":"Quiet","tr":"Sessiz"},{"en":"Busy","tr":"Meşgul, yoğun"},{"en":"Expensive","tr":"Pahalı"},{"en":"Cheap","tr":"Ucuz"},{"en":"Good","tr":"İyi"},{"en":"Bad","tr":"Kötü"},{"en":"Beautiful","tr":"Güzel"},{"en":"Ugly","tr":"Çirkin"},{"en":"Comfortable","tr":"Rahat, konforlu"},{"en":"Exciting","tr":"Heyecan verici"},{"en":"Green","tr":"Yeşil"},{"en":"Clean","tr":"Temiz"},{"en":"Cold","tr":"Soğuk"},{"en":"Warm","tr":"Ilık"},{"en":"Hot","tr":"Sıcak"},{"en":"Fat","tr":"Şişman"},{"en":"Compare","tr":"Karşılaştırmak"},{"en":"Ride a bicycle","tr":"Bisiklet sürmek"},{"en":"Swing","tr":"Sallanmak"},{"en":"Play with ball","tr":"Top ile oynamak"},{"en":"Play on the monkey bar","tr":"Maymun tırmanışında oynamak"},{"en":"Sail the boat","tr":"Gemiyi yüzdürmek"},{"en":"Rollerblading","tr":"Tekerlekli paten sürmek"},{"en":"Fly a kite","tr":"Uçurtma uçurmak"},{"en":"Skip rope","tr":"İp atlamak"},{"en":"Sell","tr":"Satmak"},{"en":"Walk","tr":"Yürümek"},{"en":"Wait","tr":"Beklemek"},{"en":"Study","tr":"Ders çalışmak"},{"en":"Take care of","tr":"İlgilenmek"},{"en":"Feed the dog","tr":"Köpeği beslemek"},{"en":"Street cats","tr":"Sokak kedileri"}],"6-4":[{"en":"Weather","tr":"Hava, hava durumu"},{"en":"Weather condition","tr":"Hava koşulu"},{"en":"Weather forecast","tr":"Hava durumu tahmini"},{"en":"Sunny","tr":"Güneşli"},{"en":"Snowy","tr":"Karlı"},{"en":"Stormy","tr":"Fırtınalı"},{"en":"Foggy","tr":"Sisli"},{"en":"Hailing","tr":"Dolu yağışı"},{"en":"Freezing","tr":"Dondurucu"},{"en":"Windy","tr":"Rüzgârlı"},{"en":"Rainy","tr":"Yağmurlu"},{"en":"Cloudy","tr":"Bulutlu"},{"en":"Partly cloudy","tr":"Parçalı bulutlu"},{"en":"Lightning","tr":"Şimşek"},{"en":"Thunder","tr":"Gök gürültüsü"},{"en":"Emotions","tr":"Duygular"},{"en":"Emoticon","tr":"Duygu ikonu"},{"en":"Feelings","tr":"Duygular, hisler"},{"en":"Happy","tr":"Mutlu"},{"en":"Unhappy","tr":"Mutsuz"},{"en":"Sad","tr":"Üzgün"},{"en":"Anxious","tr":"Endişeli"},{"en":"Moody","tr":"Karamsar, huysuz"},{"en":"Sleepy","tr":"Uykulu"},{"en":"Depressed","tr":"Morali bozuk, bunalımlı"},{"en":"Nervous","tr":"Gergin"},{"en":"Worried","tr":"Endişeli, düşünceli"},{"en":"Tired","tr":"Yorgun"},{"en":"Cheerful","tr":"Neşeli"},{"en":"Scared","tr":"Korkmuş"},{"en":"Excited","tr":"Heyecanlı"},{"en":"Angry","tr":"Kızgın, öfkeli"},{"en":"Cold","tr":"Üşümüş"},{"en":"Hot","tr":"Sıcak"},{"en":"Surprised","tr":"Şaşırmış"},{"en":"Hungry","tr":"Karnı aç"},{"en":"Bored","tr":"Sıkılmış"},{"en":"Crying","tr":"Ağlayan"},{"en":"Smiling","tr":"Gülümseyen"},{"en":"Fall","tr":"Sonbahar"},{"en":"Autumn","tr":"Sonbahar (2)"},{"en":"Winter","tr":"Kış"},{"en":"Spring","tr":"İlkbahar"},{"en":"Summer","tr":"Yaz"},{"en":"Hometown","tr":"Memleket"},{"en":"Place","tr":"Yer, konum"},{"en":"Clear","tr":"Net, açık"},{"en":"Reason","tr":"Sebep"},{"en":"Change","tr":"Değişmek, değiştirmek"},{"en":"Need a rest","tr":"Dinlenmeye ihtiyacı olmak"},{"en":"Read a poem","tr":"Şiir okumak"},{"en":"Hope","tr":"Ummak, beklemek"},{"en":"Feel","tr":"Hissetmek"},{"en":"Wind","tr":"Rüzgâr"},{"en":"Blow","tr":"Esmek"},{"en":"Come down","tr":"Düşmek, aşağı inmek"},{"en":"Fall down","tr":"Düşmek"},{"en":"Drip-drop","tr":"Damla"},{"en":"Sound","tr":"Ses"},{"en":"Ground","tr":"Yer, toprak"},{"en":"Mime","tr":"Taklit yapmak"},{"en":"Act","tr":"Rol yapmak"}],"7-1":[{"en":"Appearance","tr":"Dış görünüş"},{"en":"Personality","tr":"Kişilik, karakter"},{"en":"Short","tr":"Kısa"},{"en":"Tall","tr":"Uzun (boy)"},{"en":"Long","tr":"Uzun"},{"en":"Plump","tr":"Tombul"},{"en":"Fat","tr":"Şişman"},{"en":"Thin","tr":"Zayıf, ince"},{"en":"Slim","tr":"İnce yapılı"},{"en":"Old","tr":"Yaşlı"},{"en":"Young","tr":"Genç"},{"en":"Big","tr":"Büyük"},{"en":"Small","tr":"Küçük"},{"en":"Handsome","tr":"Yakışıklı"},{"en":"Beautiful","tr":"Güzel"},{"en":"Pretty","tr":"Hoş"},{"en":"Attractive","tr":"Çekici"},{"en":"Ugly","tr":"Çirkin"},{"en":"Medium height","tr":"Orta boylu"},{"en":"Well-built","tr":"Kaslı"},{"en":"Straight hair","tr":"Düz saç"},{"en":"Wavy hair","tr":"Dalgalı saç"},{"en":"Curly hair","tr":"Kıvırcık saç"},{"en":"Dark hair","tr":"Koyu saç"},{"en":"Blonde hair","tr":"Sarışın"},{"en":"Freckle","tr":"Çil"},{"en":"Headscarf","tr":"Baş örtüsü"},{"en":"Smile","tr":"Gülümseme"},{"en":"Selfish","tr":"Bencil"},{"en":"Unselfish","tr":"Bencil olmayan"},{"en":"Generous","tr":"Cömert, eli açık"},{"en":"Smart","tr":"Zeki"},{"en":"Clever","tr":"Akıllı"},{"en":"Hardworking","tr":"Çalışkan"},{"en":"Lazy","tr":"Tembel"},{"en":"Fair","tr":"Adil, adaletli"},{"en":"Honest","tr":"Dürüst"},{"en":"Polite","tr":"Nazik"},{"en":"Kind","tr":"Kibar"},{"en":"Rude","tr":"Kaba"},{"en":"Punctual","tr":"Dakik"},{"en":"Stubborn","tr":"İnatçı"},{"en":"Easy-going","tr":"Uyumlu"},{"en":"Outgoing","tr":"Dışa dönük"},{"en":"Tolerant","tr":"Hoşgörülü"},{"en":"Helpful","tr":"Yardımsever"},{"en":"Patient","tr":"Sabırlı"},{"en":"Cute","tr":"Sevimli"},{"en":"Good","tr":"İyi"},{"en":"Bad","tr":"Kötü"},{"en":"Different","tr":"Farklı"},{"en":"Willing to","tr":"İstekli, hevesli"},{"en":"Funny","tr":"Eğlenceli, komik"},{"en":"Boring","tr":"Sıkıcı"},{"en":"Lucky","tr":"Şanslı"},{"en":"Caring only for oneself","tr":"Sadece kendini düşünmek"},{"en":"Tell the truth","tr":"Doğruyu söylemek"},{"en":"Tell lies","tr":"Yalan söylemek"},{"en":"Help people","tr":"İnsanlara yardım etmek"},{"en":"Hang out","tr":"Dolaşmak, takılmak"},{"en":"Share","tr":"Paylaşmak"},{"en":"Support","tr":"Desteklemek"},{"en":"Buy gifts","tr":"Hediyeler almak"},{"en":"Be late","tr":"Geç kalmak"},{"en":"Get on well with","tr":"İyi geçinmek"},{"en":"High mark","tr":"Yüksek not"},{"en":"On time","tr":"Tam zamanında"},{"en":"Family members","tr":"Aile üyeleri"},{"en":"Relative","tr":"Akraba"},{"en":"Close friend","tr":"Yakın arkadaş"},{"en":"Buddy","tr":"Kanka"},{"en":"Celebrity","tr":"Ünlü kişi"},{"en":"Famous person","tr":"Meşhur kişi"},{"en":"Free time","tr":"Boş zaman"},{"en":"Comparison","tr":"Karşılaştırma, kıyas"}],"7-2":[{"en":"Sport","tr":"Spor"},{"en":"Indoor sports","tr":"Kapalı alan sporları"},{"en":"Outdoor sports","tr":"Açık alan sporları"},{"en":"Team sports","tr":"Takım sporları"},{"en":"Team game","tr":"Takım oyunu"},{"en":"Individual sports","tr":"Bireysel sporlar"},{"en":"Daily activities","tr":"Günlük aktiviteler"},{"en":"Weekly routine","tr":"Haftalık rutin"},{"en":"Gym","tr":"Spor salonu"},{"en":"Player","tr":"Oyuncu"},{"en":"Spectator","tr":"Seyirci, izleyici"},{"en":"Opponent","tr":"Rakip"},{"en":"Athlete","tr":"Atlet, sporcu"},{"en":"Swimmer","tr":"Yüzücü"},{"en":"Swimming pool","tr":"Yüzme havuzu"},{"en":"Field","tr":"Saha (çim)"},{"en":"Court","tr":"Saha (kort)"},{"en":"Cycling","tr":"Bisiklet sürme"},{"en":"Surfing","tr":"Sörf yapma"},{"en":"Skiing","tr":"Kayak yapma"},{"en":"Skating","tr":"Patenle kayma"},{"en":"Ice skating","tr":"Buz pateni yapma"},{"en":"Doing judo","tr":"Judo yapma"},{"en":"Jogging","tr":"Tempolu koşu"},{"en":"Go running","tr":"Koşuya çıkmak"},{"en":"Go swimming","tr":"Yüzmeye gitmek"},{"en":"Breaststroke","tr":"Kurbağalama yüzüş"},{"en":"Freestyle","tr":"Serbest stil"},{"en":"Run","tr":"Koşmak"},{"en":"Train","tr":"Antrenman yapmak"},{"en":"Work out","tr":"Egzersiz yapmak"},{"en":"Do heavy exercises","tr":"Ağır egzersizler yapmak"},{"en":"Work with the weights","tr":"Ağırlıklarla çalışmak"},{"en":"Join a sports activity","tr":"Bir spor aktivitesine katılmak"},{"en":"Compete in the races","tr":"Yarışlarda yarışmak"},{"en":"Keep fit","tr":"Formda kalmak"},{"en":"Regularly","tr":"Düzenli olarak"},{"en":"Wake up early","tr":"Erken uyanmak"},{"en":"Get up early","tr":"Erkenden kalkmak"},{"en":"Get up late","tr":"Geç uyanmak"},{"en":"Eat a full breakfast","tr":"Tam bir kahvaltı yapmak"},{"en":"Eat healthy food","tr":"Sağlıklı yiyecekler yemek"},{"en":"Go on a diet","tr":"Diyete başlamak"},{"en":"Have a special diet","tr":"Özel bir diyet yapmak"},{"en":"Have junk food","tr":"Abur cubur yemek"},{"en":"Have energy drinks","tr":"Enerji içecekleri içmek"},{"en":"Give energy","tr":"Enerji vermek"},{"en":"Make someone strong","tr":"Birini güçlü yapmak"},{"en":"Injury","tr":"Yaralanma"},{"en":"Hurt","tr":"Acımak, incitmek"},{"en":"Take a nap","tr":"Kestirmek, şekerleme yapmak"},{"en":"Rest","tr":"Dinlenmek"},{"en":"Make a point","tr":"Sayı yapmak"},{"en":"Hit a ball","tr":"Topa vurmak"},{"en":"Throw","tr":"Atmak, fırlatmak"},{"en":"Touch","tr":"Dokunmak"},{"en":"Beat","tr":"Yenmek"},{"en":"Lose","tr":"Kaybetmek"},{"en":"Draw","tr":"Berabere kalmak"},{"en":"Cheer","tr":"Tezahürat yapmak"},{"en":"Success","tr":"Başarı"},{"en":"Succeed","tr":"Başarmak"},{"en":"Interview","tr":"Görüşme, röportaj"},{"en":"Watch a match","tr":"Maç izlemek"},{"en":"Goal","tr":"Hedef"},{"en":"Championship","tr":"Şampiyonluk"},{"en":"Medal","tr":"Madalya"},{"en":"Equipment","tr":"Ekipman, malzeme"},{"en":"Racket","tr":"Raket"},{"en":"Net","tr":"File"}],"7-3":[{"en":"Rich","tr":"Zengin"},{"en":"Difficult","tr":"Zor"},{"en":"Story","tr":"Hikâye"},{"en":"Date","tr":"Tarih"},{"en":"Physics","tr":"Fizik"},{"en":"Alone","tr":"Yalnız"},{"en":"Award","tr":"Ödül"},{"en":"Prize","tr":"Ödül (2)"},{"en":"Diary","tr":"Günlük (defter)"},{"en":"Write","tr":"Yazmak"},{"en":"Birth","tr":"Doğum"},{"en":"Career","tr":"Kariyer"},{"en":"Die","tr":"Ölmek"},{"en":"Different","tr":"Farklı"},{"en":"Famous","tr":"Ünlü"},{"en":"Glad","tr":"Memnun"},{"en":"Important","tr":"Önemli"},{"en":"Perfect","tr":"Mükemmel"},{"en":"Pleased","tr":"Hoşnut"},{"en":"Unhappy","tr":"Mutsuz"},{"en":"Achievement","tr":"Başarı"},{"en":"Company","tr":"Şirket"},{"en":"Education","tr":"Eğitim"},{"en":"Effort","tr":"Gayret, çaba"},{"en":"Everyone","tr":"Herkes"},{"en":"Someone","tr":"Birisi"},{"en":"Nobody","tr":"Hiç kimse"},{"en":"Letter","tr":"Mektup"},{"en":"Mate","tr":"Arkadaş, dost"},{"en":"Science","tr":"Bilim, fen"},{"en":"Sentence","tr":"Cümle"},{"en":"Become","tr":"Olmak"},{"en":"Find","tr":"Bulmak"},{"en":"Force","tr":"Zorlamak"},{"en":"Wife","tr":"Eş (bayan)"},{"en":"Husband","tr":"Eş (erkek)"},{"en":"Want","tr":"İstemek"},{"en":"Was born","tr":"Doğmak"},{"en":"Marriage","tr":"Evlilik"},{"en":"Parents","tr":"Anne-baba, ebeveyn"},{"en":"Grow up","tr":"Büyümek"},{"en":"Divorce","tr":"Ayrılık, boşanma"},{"en":"Private life","tr":"Özel hayat"},{"en":"Last years of life","tr":"Hayatın son yılları"},{"en":"Around the world","tr":"Dünya etrafında"},{"en":"Interested in","tr":"İlgi duymak"},{"en":"Acting","tr":"Rol yapma, aktörlük"},{"en":"Chronological","tr":"Tarihe göre sıralanmış"},{"en":"Research","tr":"Araştırma yapmak"},{"en":"Meet","tr":"Buluşmak, tanışmak"},{"en":"Raise","tr":"Büyütmek, yetiştirmek"},{"en":"Give information","tr":"Bilgi vermek"},{"en":"Move","tr":"Taşınmak, hareket etmek"},{"en":"Happen","tr":"Olmak, meydana gelmek"},{"en":"Get high mark","tr":"Yüksek not almak"},{"en":"Use sources","tr":"Kaynakları kullanmak"},{"en":"Search","tr":"Araştırmak"},{"en":"Receive","tr":"Almak"},{"en":"Special award","tr":"Özel ödül"},{"en":"Great success","tr":"Büyük başarı"},{"en":"Important events","tr":"Önemli olaylar"},{"en":"Want to be","tr":"Olmak istemek"},{"en":"Biographer","tr":"Biyografi yazarı"},{"en":"Easygoing","tr":"Uysal, rahat"},{"en":"Brilliant","tr":"Zeki, parlak"},{"en":"Hardworking","tr":"Çalışkan"},{"en":"Outgoing","tr":"Dışa dönük, sosyal"},{"en":"Successful","tr":"Başarılı"},{"en":"Graduate","tr":"Mezun olmak"},{"en":"Primary school","tr":"İlkokul"},{"en":"Elementary school","tr":"İlkokul (2)"},{"en":"Secondary school","tr":"Ortaokul"},{"en":"High school","tr":"Lise"},{"en":"University","tr":"Üniversite"},{"en":"College","tr":"Yüksekokul"}],"7-4":[{"en":"Wildlife","tr":"Vahşi yaşam"},{"en":"Wild animals","tr":"Vahşi hayvanlar"},{"en":"Cold-blooded animals","tr":"Soğukkanlı hayvanlar"},{"en":"Warm-blooded animals","tr":"Sıcakkanlı hayvanlar"},{"en":"Vertebrate animals","tr":"Omurgalı hayvanlar"},{"en":"Mammals","tr":"Memeli hayvanlar"},{"en":"Aquatic mammals","tr":"Suda yaşayan memeliler"},{"en":"Air-breathing animals","tr":"Hava soluyan hayvanlar"},{"en":"Carnivores","tr":"Etçil hayvanlar"},{"en":"Herbivores","tr":"Otçul hayvanlar"},{"en":"Endangered","tr":"Nesli tehlikede"},{"en":"Extinct animals","tr":"Nesli tükenmiş hayvanlar"},{"en":"Stray animals","tr":"Sokak hayvanları"},{"en":"Pets","tr":"Evcil hayvanlar"},{"en":"Reptile","tr":"Sürüngen"},{"en":"Birds","tr":"Kuşlar"},{"en":"Lion","tr":"Aslan"},{"en":"Tiger","tr":"Kaplan"},{"en":"Cheetah","tr":"Çita"},{"en":"Elephant","tr":"Fil"},{"en":"Horse","tr":"At"},{"en":"Kangaroo","tr":"Kanguru"},{"en":"Chimpanzee","tr":"Şempanze"},{"en":"Deer","tr":"Geyik"},{"en":"Camel","tr":"Deve"},{"en":"Crocodile","tr":"Timsah"},{"en":"Snake","tr":"Yılan"},{"en":"Lizard","tr":"Kertenkele"},{"en":"Turtle","tr":"Kaplumbağa"},{"en":"Ostrich","tr":"Devekuşu"},{"en":"Eagle","tr":"Kartal"},{"en":"Falcon","tr":"Şahin"},{"en":"Owl","tr":"Baykuş"},{"en":"Stork","tr":"Leylek"},{"en":"Dolphin","tr":"Yunus balığı"},{"en":"Whale","tr":"Balina"},{"en":"Shark","tr":"Köpek balığı"},{"en":"Prey","tr":"Av, kurban"},{"en":"Stomach","tr":"Mide"},{"en":"Tusk","tr":"Fil dişi"},{"en":"Trunk","tr":"Hortum"},{"en":"Hump","tr":"Hörgüç"},{"en":"Wing","tr":"Kanat"},{"en":"Long tail","tr":"Uzun kuyruk"},{"en":"Claw","tr":"Pençe"},{"en":"Feed","tr":"Beslemek"},{"en":"Move fast","tr":"Hızlı hareket etmek"},{"en":"Fly","tr":"Uçmak"},{"en":"Jump","tr":"Zıplamak"},{"en":"Swim","tr":"Yüzmek"},{"en":"Dive","tr":"Dalmak"},{"en":"Run","tr":"Koşmak"},{"en":"Shed the outer layer","tr":"Dış tabakayı değiştirmek"},{"en":"Get excited","tr":"Heyecanlanmak"},{"en":"Lift","tr":"Kaldırmak"},{"en":"Spot","tr":"Fark etmek"},{"en":"Protect","tr":"Korumak"},{"en":"Save","tr":"Kurtarmak"},{"en":"Responsible for","tr":"Sorumlu olmak"},{"en":"Find a way","tr":"Bir yol bulmak"},{"en":"Destroy","tr":"Tahrip etmek"},{"en":"Make fields","tr":"Araziler yapmak"},{"en":"Pollute","tr":"Kirletmek"},{"en":"Show respect","tr":"Saygı göstermek"},{"en":"Share","tr":"Paylaşmak"},{"en":"Belong","tr":"Ait olmak"},{"en":"Admire","tr":"Hayran olmak"},{"en":"Hunt","tr":"Avlanmak"},{"en":"Change","tr":"Değiştirmek"},{"en":"Take care of","tr":"İlgilenmek"},{"en":"Vaccinate","tr":"Aşılamak"},{"en":"Hide from danger","tr":"Tehlikeden saklanmak"},{"en":"Catch","tr":"Yakalamak"},{"en":"Struggle","tr":"Mücadele etmek"},{"en":"Vary","tr":"Çeşitlilik göstermek"},{"en":"Damage","tr":"Zarar vermek"},{"en":"Die","tr":"Ölmek"},{"en":"Kill","tr":"Öldürmek"},{"en":"Attack","tr":"Saldırmak"},{"en":"Survive","tr":"Hayatta kalmak"},{"en":"Domesticate","tr":"Evcilleştirmek"},{"en":"Disappear","tr":"Gözden kaybolmak"},{"en":"Educate","tr":"Eğitmek"},{"en":"Characteristic","tr":"Özellik"},{"en":"Kind","tr":"Tür, cins"},{"en":"Ability","tr":"Yetenek"},{"en":"Zoologist","tr":"Hayvan bilimci"},{"en":"High altitude","tr":"Yüksek irtifa"},{"en":"Sign language","tr":"İşaret dili"},{"en":"Wind","tr":"Rüzgâr"}],"8-1":[{"en":"Friendship","tr":"Arkadaşlık, dostluk"},{"en":"Close friend","tr":"Yakın arkadaş"},{"en":"Personal traits","tr":"Kişilik özellikleri"},{"en":"Alone","tr":"Yalnız"},{"en":"Fun","tr":"Eğlence"},{"en":"Happiness","tr":"Mutluluk"},{"en":"Trouble","tr":"Bela, kötülük"},{"en":"Enemy","tr":"Düşman"},{"en":"Relationship","tr":"İlişki"},{"en":"Family ties","tr":"Aile bağları"},{"en":"Common","tr":"Ortak"},{"en":"Similar interests","tr":"Benzer ilgi alanları"},{"en":"Memory","tr":"Hafıza"},{"en":"Secret","tr":"Sır"},{"en":"Jump","tr":"Zıplamak"},{"en":"Smile","tr":"Gülümsemek"},{"en":"Hope","tr":"Ummak, umut etmek"},{"en":"Twirl","tr":"Hızla döndürmek"},{"en":"Share","tr":"Paylaşmak"},{"en":"Walk","tr":"Yürümek"},{"en":"Lead","tr":"Öncülük etmek"},{"en":"Follow","tr":"Takip etmek"},{"en":"Celebrate","tr":"Kutlamak"},{"en":"Spend time","tr":"Zaman harcamak"},{"en":"Scan","tr":"Gözden geçirmek"},{"en":"Bring","tr":"Getirmek"},{"en":"Offer","tr":"Teklif etmek, sunmak"},{"en":"Accept","tr":"Kabul etmek"},{"en":"Refuse","tr":"Reddetmek"},{"en":"Invite","tr":"Davet etmek"},{"en":"Join","tr":"Katılmak"},{"en":"Attend","tr":"Katılmak (2)"},{"en":"Decide","tr":"Karar vermek"},{"en":"Elicit","tr":"Ortaya çıkarmak"},{"en":"Apologize","tr":"Özür dilemek"},{"en":"Comment","tr":"Yorum yapmak"},{"en":"Get information","tr":"Bilgi almak"},{"en":"Get on well with","tr":"İyi anlaşmak"},{"en":"Miss","tr":"Kaçırmak"},{"en":"Pick up","tr":"Arabayla almak"},{"en":"Take place","tr":"Yer almak"},{"en":"Attach","tr":"Eklemek, iliştirmek"},{"en":"Back up","tr":"Arka çıkmak, destek olmak"},{"en":"Count on","tr":"Güvenmek"},{"en":"Depend on","tr":"Güvenmek (2)"},{"en":"Trust","tr":"Güvenmek (3)"},{"en":"Tell the truth","tr":"Doğruyu söylemek"},{"en":"Lie","tr":"Yalan söylemek"},{"en":"Slumber party","tr":"Yatıya kalmalı misafirlik"},{"en":"Amusement park","tr":"Lunapark"},{"en":"Reunion","tr":"Yeniden bir araya gelme"},{"en":"Vacation","tr":"Tatil"},{"en":"Event","tr":"Olay"},{"en":"Opportunity","tr":"Olanak, fırsat"},{"en":"Ticket","tr":"Bilet"},{"en":"Invitation","tr":"Davet"},{"en":"Greeting","tr":"Karşılama, selamlaşma"},{"en":"Closing","tr":"Kapanış"},{"en":"In advance","tr":"Önceden"},{"en":"Deadline","tr":"Son tarih"},{"en":"Excuse","tr":"Mazeret, bahane"},{"en":"Location","tr":"Yer, konum"},{"en":"Fee","tr":"Ücret"},{"en":"Quotation","tr":"Alıntı"},{"en":"Proverb","tr":"Atasözü"},{"en":"Cane","tr":"Değnek"},{"en":"Waiter","tr":"Bay garson"},{"en":"Waitress","tr":"Bayan garson"},{"en":"Customer","tr":"Müşteri"},{"en":"Order","tr":"Sipariş vermek"},{"en":"Response","tr":"Cevap vermek"},{"en":"Dishes","tr":"Yemekler"},{"en":"Soup","tr":"Çorba"},{"en":"Lentil soup","tr":"Mercimek çorbası"},{"en":"Main course","tr":"Ana yemek"},{"en":"Salad","tr":"Salata"},{"en":"Dessert","tr":"Tatlı"},{"en":"Beverage","tr":"İçecek"},{"en":"Fruit juice","tr":"Meyve suyu"},{"en":"Pasta","tr":"Makarna"},{"en":"Meatball","tr":"Köfte"},{"en":"Grilled chicken","tr":"Izgara tavuk"},{"en":"Apple pie","tr":"Elmalı turta"},{"en":"Honest","tr":"Dürüst"},{"en":"Dishonest","tr":"Sahtekâr"},{"en":"Jealous","tr":"Kıskanç"},{"en":"Understanding","tr":"Anlayışlı"},{"en":"Tactful","tr":"İnce düşünceli"},{"en":"Sneaky","tr":"Sinsi"},{"en":"Generous","tr":"Cömert"},{"en":"Self-centered","tr":"Ben merkezli"},{"en":"Caring","tr":"Şefkatli"},{"en":"Fair","tr":"Adil"},{"en":"Loyal","tr":"Sadık"},{"en":"Bad-tempered","tr":"Kötü huylu"},{"en":"Mean","tr":"Huysuz, aşağılık"},{"en":"Aggressive","tr":"Saldırgan"},{"en":"Adventurous","tr":"Maceracı"},{"en":"Arrogant","tr":"Kibirli"},{"en":"Helpful","tr":"Yardımsever"},{"en":"Reliable","tr":"Güvenilir"},{"en":"Unreliable","tr":"Güvenilmez"},{"en":"Stubborn","tr":"İnatçı"},{"en":"Amusing","tr":"Eğlenceli"},{"en":"Determined","tr":"Kararlı"},{"en":"Relaxing","tr":"Rahatlatıcı"},{"en":"Relaxed","tr":"Rahatlamış"},{"en":"Exciting","tr":"Heyecan verici"},{"en":"Excited","tr":"Heyecanlı"},{"en":"Interesting","tr":"İlginç"},{"en":"Interested","tr":"İlgili, meraklı"},{"en":"Boring","tr":"Sıkıcı"},{"en":"Bored","tr":"Sıkılmış"},{"en":"Busy","tr":"Meşgul"},{"en":"Awesome","tr":"Müthiş, harika"},{"en":"Truthful","tr":"Doğru sözlü"},{"en":"Supportive","tr":"Destekleyici"},{"en":"Traditional","tr":"Geleneksel"},{"en":"Cultural","tr":"Kültürel"},{"en":"Local","tr":"Yerel"}],"8-2":[{"en":"Teenager","tr":"13-19 yaş arası genç"},{"en":"Daily routines","tr":"Günlük rutin işler"},{"en":"Get up","tr":"Uyanmak, kalkmak"},{"en":"Wake someone up","tr":"Birisini uyandırmak"},{"en":"Wash your face and hands","tr":"Yüzünü ve ellerini yıkamak"},{"en":"Have breakfast","tr":"Kahvaltı yapmak"},{"en":"Brush your teeth","tr":"Dişlerini fırçalamak"},{"en":"Take a shower","tr":"Duş almak"},{"en":"Get dressed","tr":"Giyinmek"},{"en":"Go to school","tr":"Okula gitmek"},{"en":"Walk to school","tr":"Okula yürüyerek gitmek"},{"en":"Go to school by bus","tr":"Okula otobüsle gitmek"},{"en":"Drive someone to school","tr":"Birisini okula arabayla götürmek"},{"en":"Take classes at school","tr":"Okulda derslere girmek"},{"en":"Have lunch","tr":"Öğle yemeği yemek"},{"en":"Come back home","tr":"Eve geri gelmek"},{"en":"Arrive home from school","tr":"Okuldan eve gelmek"},{"en":"Follow after-school activities","tr":"Okul sonrası etkinlikleri takip etmek"},{"en":"Have dinner","tr":"Akşam yemeği yemek"},{"en":"Spend time with family","tr":"Aile ile vakit geçirmek"},{"en":"Do homework","tr":"Ödev yapmak"},{"en":"Go to bed","tr":"Yatağa gitmek"},{"en":"Sleep","tr":"Uyumak"},{"en":"Visit grandparents","tr":"Büyükanne ve büyükbabayı ziyaret etmek"},{"en":"Listen to music","tr":"Müzik dinlemek"},{"en":"Read a newspaper","tr":"Gazete okumak"},{"en":"Chat with your friends online","tr":"Çevrimiçi sohbet etmek"},{"en":"Surf the internet","tr":"İnternette gezinmek"},{"en":"Play computer games","tr":"Bilgisayar oyunları oynamak"},{"en":"Play video games","tr":"Video oyunları oynamak"},{"en":"Watch TV programs","tr":"Televizyon programları izlemek"},{"en":"Watch a movie","tr":"Film izlemek"},{"en":"Play tennis","tr":"Tenis oynamak"},{"en":"Do karate","tr":"Karate yapmak"},{"en":"Ride a bike","tr":"Bisiklete binmek"},{"en":"Ride a horse","tr":"Ata binmek"},{"en":"Play soccer","tr":"Futbol oynamak"},{"en":"Swim at the pool","tr":"Havuzda yüzmek"},{"en":"Go out","tr":"Dışarı çıkmak"},{"en":"Walk around","tr":"Dolaşmak, gezinmek"},{"en":"Take cooking classes","tr":"Yemek dersleri almak"},{"en":"Skydiving","tr":"Paraşütle atlama"},{"en":"Skating","tr":"Patenle kayma"},{"en":"Snowboarding","tr":"Snowboard kaymak"},{"en":"Trekking","tr":"Doğa yürüyüşü"},{"en":"Campfire","tr":"Kamp ateşi"},{"en":"Take a selfie","tr":"Özçekim yapmak"},{"en":"Greet","tr":"Selamlaşmak"},{"en":"Try","tr":"Denemek"},{"en":"Attend","tr":"Katılmak"},{"en":"Join","tr":"Katılmak (2)"},{"en":"Prefer","tr":"Tercih etmek"},{"en":"Train","tr":"Antrenman yapmak"},{"en":"Look fit","tr":"Formda görünmek"},{"en":"Pay attention","tr":"Dikkat etmek"},{"en":"Interested in","tr":"İlgili olmak"},{"en":"Get high grades","tr":"Yüksek notlar almak"},{"en":"Contact","tr":"İletişim kurmak"},{"en":"Pick up","tr":"Arabayla almak"},{"en":"Feed","tr":"Beslemek"},{"en":"Prepare","tr":"Hazırlamak"},{"en":"Learn new things","tr":"Yeni şeyler öğrenmek"},{"en":"Stand","tr":"Katlanmak, dayanmak"},{"en":"Unbearable","tr":"Katlanılmaz"},{"en":"Interesting","tr":"İlginç"},{"en":"Exciting","tr":"Heyecan verici"},{"en":"Boring","tr":"Sıkıcı"},{"en":"Fun","tr":"Eğlenceli"},{"en":"Trendy","tr":"Modaya uygun"},{"en":"Ridiculous","tr":"Gülünç"},{"en":"Excellent","tr":"Mükemmel"},{"en":"Healthy","tr":"Sağlıklı"},{"en":"Lazy","tr":"Tembel"},{"en":"Enormous","tr":"Çok büyük"},{"en":"Huge","tr":"Kocaman, dev gibi"},{"en":"Difficult","tr":"Zor"},{"en":"Expensive","tr":"Pahalı"},{"en":"Be respectful of the elderly relatives","tr":"Yaşlı akrabalara saygılı olmak"},{"en":"Be realistic","tr":"Gerçekçi olmak"},{"en":"Be sensitive","tr":"Duyarlı olmak"},{"en":"Be honest with your friends and parents","tr":"Arkadaşlarına ve ailene dürüst olmak"},{"en":"Use photo and video sharing applications","tr":"Fotoğraf ve video paylaşım uygulamaları kullanmak"},{"en":"Share something on social media","tr":"Sosyal medyada bir şey paylaşmak"},{"en":"Write comments on trending topics","tr":"Gündemdeki konular hakkında yorum yazmak"},{"en":"Follow the rules","tr":"Kurallara uymak"},{"en":"Behave fairly","tr":"Adil davranmak"},{"en":"Learn about your history and traditions","tr":"Tarihini ve geleneklerini öğrenmek"},{"en":"Protect your cultural heritage","tr":"Kültürel mirasını korumak"},{"en":"Save money","tr":"Para biriktirmek"},{"en":"Keep up with the latest fashion","tr":"En son modayı takip etmek"},{"en":"Smartphone application","tr":"Akıllı telefon uygulaması"},{"en":"Free time","tr":"Boş zaman"}],"8-3":[{"en":"Spoon","tr":"Kaşık"},{"en":"Tablespoon","tr":"Yemek kaşığı"},{"en":"Teaspoon","tr":"Çay kaşığı"},{"en":"Dessertspoon","tr":"Tatlı kaşığı"},{"en":"Wooden spoon","tr":"Tahta kaşık"},{"en":"Fork","tr":"Çatal"},{"en":"Knife","tr":"Bıçak"},{"en":"Plate","tr":"Tabak"},{"en":"Grater","tr":"Rende"},{"en":"Strainer","tr":"Süzgeç"},{"en":"Mixer","tr":"Mikser"},{"en":"Pot","tr":"Tencere"},{"en":"Teapot","tr":"Çaydanlık"},{"en":"Pan","tr":"Tava"},{"en":"Saucepan","tr":"Sos tavası"},{"en":"Frying pan","tr":"Kızartma tavası"},{"en":"Cake pan","tr":"Kek kalıbı"},{"en":"Baking tray","tr":"Fırın tepsisi"},{"en":"Baking paper","tr":"Yağlı kâğıt"},{"en":"Plastic wrap","tr":"Streç film"},{"en":"Bowl","tr":"Kâse"},{"en":"Bottle","tr":"Şişe"},{"en":"Glass","tr":"Bardak"},{"en":"Cup","tr":"Fincan"},{"en":"Oven","tr":"Fırın"},{"en":"Freezer","tr":"Dondurucu"},{"en":"Fridge","tr":"Buzdolabı"},{"en":"Toothpick","tr":"Kürdan"},{"en":"Oil","tr":"Sıvı yağ"},{"en":"Olive oil","tr":"Zeytinyağ"},{"en":"Butter","tr":"Tereyağ"},{"en":"Sugar","tr":"Toz şeker"},{"en":"Powdered sugar","tr":"Pudra şekeri"},{"en":"Baking powder","tr":"Kabartma tozu"},{"en":"Coconut powder","tr":"Hindistan cevizi tozu"},{"en":"Flour","tr":"Un"},{"en":"Water","tr":"Su"},{"en":"Chocolate","tr":"Çikolata"},{"en":"Chocolate chips","tr":"Damla çikolata"},{"en":"Garlic","tr":"Sarımsak"},{"en":"Onion","tr":"Soğan"},{"en":"Potato","tr":"Patates"},{"en":"Tomato","tr":"Domates"},{"en":"Cucumber","tr":"Salatalık"},{"en":"Rice","tr":"Pirinç"},{"en":"Egg","tr":"Yumurta"},{"en":"Pasta","tr":"Makarna"},{"en":"Fish","tr":"Balık"},{"en":"Raw fish","tr":"Çiğ balık"},{"en":"Chicken","tr":"Tavuk"},{"en":"Meat","tr":"Et"},{"en":"Minced meat","tr":"Kıyma"},{"en":"Meatball","tr":"Köfte"},{"en":"Milk","tr":"Süt"},{"en":"Fruit","tr":"Meyve"},{"en":"Vegetables","tr":"Sebzeler"},{"en":"Parsley","tr":"Maydanoz"},{"en":"Dough","tr":"Hamur"},{"en":"Bread","tr":"Ekmek"},{"en":"Lentil","tr":"Mercimek"},{"en":"Mint","tr":"Nane"},{"en":"Basil","tr":"Fesleğen"},{"en":"Pepper","tr":"Biber"},{"en":"Bell pepper","tr":"Dolmalık biber"},{"en":"Chilli pepper","tr":"Acı biber"},{"en":"Black pepper","tr":"Karabiber"},{"en":"Salt","tr":"Tuz"},{"en":"Cinnamon","tr":"Tarçın"},{"en":"Cumin","tr":"Kimyon"},{"en":"Ginger","tr":"Zencefil"},{"en":"Herbs","tr":"Otlar"},{"en":"Spices","tr":"Baharatlar"},{"en":"Breadcrumb","tr":"Galeta unu"},{"en":"Cook","tr":"Pişirmek"},{"en":"Prepare","tr":"Hazırlamak"},{"en":"Fry","tr":"Yağda kızartmak"},{"en":"Boil","tr":"Haşlamak, kaynatmak"},{"en":"Dice","tr":"Küp küp doğramak"},{"en":"Chop","tr":"Kalın kalın doğramak"},{"en":"Slice","tr":"Dilimlemek"},{"en":"Cut","tr":"Kesmek"},{"en":"Mash","tr":"Ezmek, püre yapmak"},{"en":"Peel","tr":"Kabuğunu soymak"},{"en":"Bake","tr":"Fırında pişirmek"},{"en":"Roast","tr":"Fırında kızartmak"},{"en":"Grill","tr":"Izgarada pişirmek"},{"en":"Steam","tr":"Buharda pişirmek"},{"en":"Spread","tr":"Sürmek, yaymak"},{"en":"Sprinkle","tr":"Serpmek"},{"en":"Crack","tr":"Kırmak"},{"en":"Whisk","tr":"Çırpmak"},{"en":"Stir","tr":"Karıştırmak (kaşıkla)"},{"en":"Mix","tr":"Karıştırmak"},{"en":"Toss","tr":"Sallamak, atmak"},{"en":"Knead","tr":"Yoğurmak"},{"en":"Drain","tr":"Süzmek"},{"en":"Grate","tr":"Rendelemek"},{"en":"Marinate","tr":"Marine etmek"},{"en":"Season","tr":"Baharatlamak"},{"en":"Squeeze","tr":"Sıkmak"},{"en":"Roll","tr":"Merdane ile açmak"},{"en":"Heat","tr":"Isıtmak"},{"en":"Pour","tr":"Dökmek"},{"en":"Add","tr":"Eklemek"},{"en":"Dissolve","tr":"Eritmek, çözmek"},{"en":"Melt","tr":"Erimek"},{"en":"Drop","tr":"Damlatmak"},{"en":"Cut into halves","tr":"Yarıya bölmek"},{"en":"Turn","tr":"Çevirmek, döndürmek"},{"en":"Taste","tr":"Tatmak"},{"en":"Cover","tr":"Üzerini örtmek"},{"en":"Place","tr":"Yerleştirmek"},{"en":"Press firmly","tr":"Sıkıca bastırmak"},{"en":"Put","tr":"Koymak"},{"en":"Remove","tr":"Kaldırmak"},{"en":"Shape","tr":"Şekillendirmek"},{"en":"Rinse","tr":"Durulamak"},{"en":"Tie","tr":"Bağlamak"},{"en":"Use","tr":"Kullanmak"},{"en":"Complete","tr":"Tamamlamak"},{"en":"Serve","tr":"Servis etmek"},{"en":"Cuisine","tr":"Mutfak (kültür)"},{"en":"Recipe","tr":"Tarif"},{"en":"Meal","tr":"Yemek, öğün"},{"en":"Preparation","tr":"Hazırlık"},{"en":"Process","tr":"Süreç"},{"en":"Ingredients","tr":"Malzemeler, içindekiler"},{"en":"Mixture","tr":"Karışım"},{"en":"Chef","tr":"Aşçı"},{"en":"Flavor","tr":"Aroma, tat"},{"en":"Surface","tr":"Yüzey"},{"en":"Healthy","tr":"Sağlıklı"},{"en":"Unhealthy","tr":"Sağlıksız"},{"en":"Need","tr":"İhtiyaç duymak"},{"en":"Contain","tr":"İçermek"},{"en":"Traditional","tr":"Geleneksel"},{"en":"Hungry","tr":"Karnı aç, acıkmış"},{"en":"Preheated","tr":"Önceden ısıtılmış"},{"en":"Grated","tr":"Rendelenmiş"},{"en":"Melted","tr":"Eritilmiş"},{"en":"Fried","tr":"Kızartılmış"},{"en":"Lengthwise","tr":"Uzunlamasına"},{"en":"Sweet tooth","tr":"Tatlıya düşkün"}],"8-4":[{"en":"Communicate","tr":"İletişim kurmak"},{"en":"Communication","tr":"İletişim"},{"en":"Online communication","tr":"Çevrimiçi iletişim"},{"en":"Conversation","tr":"Sohbet, muhabbet"},{"en":"Call","tr":"Telefonla aramak"},{"en":"Call center","tr":"Çağrı merkezi"},{"en":"Keep in touch","tr":"İrtibatta kalmak"},{"en":"Text a message","tr":"Mesaj yazmak"},{"en":"Send a message","tr":"Mesaj göndermek"},{"en":"Leave a message","tr":"Mesaj bırakmak"},{"en":"Make a phone call","tr":"Telefon görüşmesi yapmak"},{"en":"Write a letter","tr":"Mektup yazmak"},{"en":"Write a postcard","tr":"Kartpostal yazmak"},{"en":"Send an e-mail","tr":"Mail göndermek"},{"en":"Use social networks","tr":"Sosyal ağlar kullanmak"},{"en":"Talk face to face","tr":"Yüz yüze konuşmak"},{"en":"Meet up","tr":"Buluşmak"},{"en":"Share","tr":"Paylaşmak"},{"en":"Smoke signals","tr":"Duman sinyalleri"},{"en":"Messenger birds","tr":"Haberci kuşlar"},{"en":"Printing machine","tr":"Matbaa makinesi"},{"en":"Transatlantic television transmission","tr":"Transatlantik televizyon yayını"},{"en":"Telegraph","tr":"Telgraf"},{"en":"Telephone","tr":"Telefon"},{"en":"Cell phone","tr":"Cep telefonu"},{"en":"Smartphone","tr":"Akıllı telefon"},{"en":"Application","tr":"Uygulama"},{"en":"Technological developments","tr":"Teknolojik gelişmeler"},{"en":"Invent","tr":"İcat etmek"},{"en":"Have information from distant places","tr":"Uzak yerlerden bilgi almak"},{"en":"Improve a foreign language","tr":"Yabancı dili geliştirmek"},{"en":"Find your way in the traffic","tr":"Trafikte yolunu bulmak"},{"en":"Share ideas and opinions","tr":"Fikirlerini ve düşüncelerini paylaşmak"},{"en":"Play an educative game","tr":"Eğitici oyun oynamak"},{"en":"Solve puzzles","tr":"Bulmacaları çözmek"},{"en":"Make a video","tr":"Video yapmak"},{"en":"Learn the lyrics of a song","tr":"Şarkı sözlerini öğrenmek"},{"en":"Translate a sentence","tr":"Bir cümleyi çevirmek"},{"en":"Practice your lessons","tr":"Derslerini çalışmak"},{"en":"Buy something online","tr":"İnternetten satın almak"},{"en":"Learn how to cook something","tr":"Bir şeyi nasıl pişireceğini öğrenmek"},{"en":"Give tips about a foreign country","tr":"Yabancı ülke hakkında ipuçları vermek"},{"en":"Order something to eat","tr":"Yiyecek sipariş etmek"},{"en":"Learn about something more","tr":"Daha fazla şey öğrenmek"},{"en":"Buy something","tr":"Bir şey satın almak"},{"en":"Help the people in need","tr":"İhtiyaç sahiplerine yardım etmek"},{"en":"Help disabled children","tr":"Engelli çocuklara yardım etmek"},{"en":"Donate","tr":"Bağışlamak"},{"en":"Plant trees","tr":"Ağaç dikmek"},{"en":"Give medical care","tr":"Tıbbi bakım vermek"},{"en":"Collect garbage for a clean environment","tr":"Temiz çevre için çöp toplamak"},{"en":"Send materials to the refugees","tr":"Mültecilere malzeme göndermek"},{"en":"Say good wishes","tr":"İyi dilekleri söylemek"},{"en":"Warn","tr":"Uyarmak"},{"en":"Confirm","tr":"Onaylamak"},{"en":"Hang up the phone","tr":"Telefonu kapatmak"},{"en":"Make a complaint","tr":"Şikâyette bulunmak"},{"en":"Change a product","tr":"Bir ürünü değiştirmek"},{"en":"Return a product","tr":"Bir ürünü iade etmek"},{"en":"Report problems with delivery","tr":"Teslimat sorunlarını bildirmek"},{"en":"Learn about a bill","tr":"Fatura hakkında bilgi edinmek"},{"en":"Book a flight ticket","tr":"Uçak bileti rezervasyonu yaptırmak"},{"en":"Ask for a service","tr":"Servis talep etmek"},{"en":"Put someone through to someone","tr":"Birini birine bağlamak"},{"en":"Connect","tr":"Bağlamak, iletişim sağlamak"},{"en":"Hold on","tr":"Hatta beklemek"}]};
+
+/* ══════════════════════════════════════════════════════════════════
+   HAZIR TALEBE LİSTELERİ
+   ------------------------------------------------------------------
+   Uygulama ilk açıldığında, o sınıf boşsa yüklenir.
+   Yönetici panelinden düzenlenebilir; silinen liste geri gelmez.
+   ══════════════════════════════════════════════════════════════════ */
+const HAZIR_TALEBELER = {"bayrampasa":{"5":["AHMET AKSÖZ","AHMET BURHAN YALÇIN","AHMET ÇATALBAŞ","AHMET EMİR GÜNAYDIN","AHMET EREN YILMAZ","ALİHAN KEREM ERDEM","ARŞAM HADİNEJAT","AZAT BAYROMOV","AZAT RONİ SOMER","BARAN AKKOYUN","BERAT ADİL DAYAN","BİLAL ARIKAN","BİLAL TİMUÇİN","CEMAL ALÇİKO","EMİN AKKOYUN","EMİR SELÇUK","EYMEN ALİ BAĞDAT","FATİH YUSUF TOKUŞ","H. MELİH SARIMUSTAFAOĞLU","İSMAİL EKİNCİ","KEREM YAMAÇ","MEHMET EMİN ÇALOĞLU","MELİH AKSOY","METE ÇİFÇİOĞLU","MİRAÇ TARHAN","MUHAMMET ALİ KILIÇ","MUHAMMET TUĞRA KUZU","ÖMER ASAF ABAY","ÖMER ASAF AYTEKİN","YAĞIZ DEMİR","YUSUF EYMEN AYDIN","YUSUF YATAR"],"6":["AKİF TARHAN","ALİ ABU","FARUK ALPEREN AYDEMİR","HAMZA EMİR LİVANA","İBRAHİM HALİLULLAH","KEREM KAYA","MUSTAFA DAYAN","MUSTAFA DEMİRAL","MUSTAFA EYMEN KİRKİT","ÖMER FETİH AKSU","ÖMER SARIMEHMET","ŞEVKİ AKİF KOCABAŞ","TAHİR ÖKMEN","YAŞAR ALP ERSOY","YUNUS EMRE TUBAY","YUSUF ANIL ÖZCAN","YUSUF FURKAN AYAR","YUSUF TAHA ÖZCAN"],"7":["AHMET ALİ İLERİ","AHMET HİLMİ ÇELİK","ALİ KEREM ÜNLÜ","ERDEM TUBAY","HAMZA NURİ","HÜSEYİN DEMİRAL","İLYAS BODUR","KEMAL AYDEMİR","MEHMET EYMEN KİZEK","MEHMET FATİH ASLANYOLU","MUHAMMET ALİ ERSOY","MUSAB BAYRAKTAR","MUSTAFA AKKOYUN","MUSTAFA GÖKÇEGÖZ","OSMAN KAYA"],"8":["AHMET GEZER","AHMET KIYAKOĞLU","AHMET KÖSE","AHMET ÖZCAN","AHMET UYGUR","EFE MUSTAFA OLTACI","EMİRHAN ÖZCAN","EYMEN SEMİH YAMAN","EYÜP UYGUR","FARUK BAHÇECİ","HİLMİ EŞ","HİLMİ KEREM AKINER","KAYRA BERK YURDAKUL","MEHMET SEMİH YILMAZ","TUNAHAN GÜNAYDIN"]}};
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 4 — DURUM
+   ══════════════════════════════════════════════════════════════════ */
+
+let words = {};        // { "5-1": [{en,tr},...] }  — TÜM YURTLARDA ORTAK
+let students = {};     // { yurtId: { "5": [isim,...] } }  — yurda özel
+let results = [];      // [{id,dorm,name,cls,unit,correct,total,seconds,score,wrongs,date}]
+let adminPass = ADMIN_PASS_DEFAULT;
+
+const S = {
+  screen: 'gate',      // gate | mintika | rekorlar | dorm | setup | quiz | result | admin
+  dorm: null,          // giriş yapılan yurdun id'si
+  askPass: null,       // şifre kutusu açık olan yurdun id'si
+  // vitrin
+  panelCls: {1:5, 2:5, 3:5, 4:5},
+  panelLock: {1:false, 2:false, 3:false, 4:false},
+  // yurt içi sıralama
+  scope:'yurt', bTab:'genel', bCls:5, bUnit:1, bMode:'best', bAll:false,
+  // yarışma kurulumu
+  q:'', picked:null, unit:null, _flat:[],
+  quiz:null, last:null,
+  // rekorlar ekrani filtreleri
+  rDorm:'hepsi', rCls:'hepsi', rUnit:'hepsi', rQ:'', rAll:false,
+  // yönetici
+  auth:false, aTab:'takip', aCls:5, aUnit:1,
+  // takip çizelgesi
+  tCls:'all', tOnly:'hepsi', tSort:'isim', tQ:''
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 5 — YÖNLENDİRME
+   ══════════════════════════════════════════════════════════════════ */
+
+function render(){
+  const views = { gate, mintika, rekorlar, dorm:dormHome, setup, quiz, result, admin };
+  document.getElementById('app').innerHTML = views[S.screen]();
+  document.getElementById('who').innerHTML = S.dorm
+    ? `<span class="row" style="gap:8px">
+       <span class="yb" style="background:${dorm(S.dorm).color}22;color:${dorm(S.dorm).color};border:1px solid ${dorm(S.dorm).color}55">${esc(dorm(S.dorm).name)}</span>
+       <button class="btn btn-ghost btn-sm" onclick="go('admin')">Yönetici</button>
+       <button class="btn btn-ghost btn-sm" onclick="logout()">Çıkış</button></span>`
+    : '';
+  document.getElementById('sub').textContent = S.dorm ? dorm(S.dorm).name + ' Yurdu' : 'Mıntıka · 5–8. Sınıf';
+}
+
+function goHome(){ if(S.screen==='quiz') return; stopRotation(); S.screen = S.dorm ? 'dorm' : 'gate'; S.bAll=false; render(); }
+function go(s){ if(s!=='mintika') stopRotation(); S.screen = s; S.bAll = false; render(); }
+function openMintika(){ if(!S.dorm) return; go('mintika'); startRotation(); }
+function logout(){ S.dorm=null; S.auth=false; S.picked=null; S.q=''; S.unit=null; stopRotation(); go('gate'); }
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 6 — GİRİŞ EKRANI + MINTIKA VİTRİNİ
+   ══════════════════════════════════════════════════════════════════ */
+
+function gate(){
+  let h = `<div class="card" style="text-align:center;padding:26px 20px;margin-bottom:20px">
+    <h2 style="margin:0 0 8px;font-size:22px">Yurdunuzu seçin</h2>
+    <p style="color:var(--muted);font-size:14px;margin:0">
+      Mıntıka sıralamalarını görmek için önce yurt şifresiyle giriş yapın.</p>
+  </div>`;
+
+  h += '<div class="dorms">';
+  DORMS.forEach(d => {
+    if (S.askPass === d.id){
+      h += `<div class="dorm" style="cursor:default;border-color:${d.color}">
+        <span class="bar4" style="background:${d.color}"></span>
+        <div class="nm">${esc(d.name)}</div>
+        <input id="dp" type="password" placeholder="Yurt şifresi" style="margin:10px 0 8px"
+          onkeydown="if(event.key==='Enter')tryDorm('${d.id}')">
+        <div class="row">
+          <button class="btn btn-primary btn-sm" onclick="tryDorm('${d.id}')">Gir</button>
+          <button class="btn btn-ghost btn-sm" onclick="S.askPass=null;render()">Vazgeç</button>
+        </div></div>`;
+    } else {
+      h += `<button class="dorm" onclick="S.askPass='${d.id}';render();focusPass()">
+        <span class="bar4" style="background:${d.color}"></span>
+        <div class="nm">${esc(d.name)}</div>
+        <div class="mt">Giriş için tıklayın</div></button>`;
+    }
+  });
+  h += '</div>';
+  return h;
+}
+
+/* ── MINTIKA VİTRİNİ — sadece giriş yaptıktan sonra görünür ───────── */
+function mintika(){
+  if (!S.dorm){ S.screen='gate'; return gate(); }
+
+  let h = `<div class="row" style="margin-bottom:22px">
+    <button class="btn btn-ghost" style="padding:14px 24px" onclick="go('dorm')">← Yurt Ekranı</button>
+    <button class="btn btn-primary" style="padding:14px 24px" onclick="go('rekorlar')">🏆 Rekorlar</button>
+  </div>`;
+
+  if (!results.length){
+    const kelimeVar = Object.keys(words).length > 0;
+    const talebeVar = Object.values(students).some(y => Object.values(y||{}).some(l => l && l.length));
+    h += `<div class="card" style="text-align:center;padding:38px 24px">
+      <h2 style="margin:0 0 10px;font-size:22px">Mıntıka Sonuçları</h2>
+      <p style="color:var(--muted);font-size:15px;margin:0 auto;max-width:520px">
+        Henüz yarışma yapılmadı. İlk sonuçlar geldiğinde ünite ünite sıralamalar burada görünecek.</p>
+      <div style="margin-top:22px;display:inline-block;text-align:left;font-size:14px;color:var(--muted)">
+        <div style="margin-bottom:7px">${talebeVar?'✓':'○'} Yönetici Panelinden talebeleri ekleyin</div>
+        <div style="margin-bottom:7px">${kelimeVar?'✓':'○'} Sınıf ve ünitelere kelimeleri girin (tüm yurtlarda ortak)</div>
+        <div>○ Yarışmaya başlayın</div>
+      </div></div>`;
+    return h;
+  }
+
+  h += `<div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:12px">
+    <h2 style="margin:0;font-size:22px">Mıntıka Sonuçları</h2>
+    <span class="live"><i></i> Tüm yurtlar · ilk ${TOP_N} · sınıflar sırayla</span></div>`;
+
+  h += '<div class="panels">' + UNITS.map(u => panelHTML(u)).join('') + '</div>';
+  return h;
+}
+
+/* ── DETAYLI REKORLAR EKRANI ─────────────────────────────────────── */
+function rekorlar(){
+  if (!S.dorm){ S.screen='gate'; return gate(); }
+
+  let h = `<div class="row" style="margin-bottom:22px">
+    <button class="btn btn-ghost" style="padding:14px 24px" onclick="go('mintika')">← Mıntıka Ekranı</button>
+  </div>`;
+
+  const tum = [...results].sort((a,b) => b.score - a.score || a.seconds - b.seconds);
+  if (!tum.length){
+    h += '<div class="card"><p style="color:var(--muted);margin:0">Henüz sonuç yok.</p></div>';
+    return h;
+  }
+
+  // Filtre cubugu
+  h += `<div class="card"><div class="row" style="gap:14px;align-items:flex-end;flex-wrap:wrap">
+    <div style="min-width:150px"><label>Yurt</label>
+      <select onchange="S.rDorm=this.value;render()">
+        <option value="hepsi" ${S.rDorm==='hepsi'?'selected':''}>Tüm yurtlar</option>
+        ${DORMS.map(d=>`<option value="${d.id}" ${S.rDorm===d.id?'selected':''}>${esc(d.name)}</option>`).join('')}
+      </select></div>
+    <div style="min-width:120px"><label>Sınıf</label>
+      <select onchange="S.rCls=this.value;render()">
+        <option value="hepsi" ${S.rCls==='hepsi'?'selected':''}>Tüm sınıflar</option>
+        ${CLASSES.map(c=>`<option value="${c}" ${S.rCls==String(c)?'selected':''}>${c}. Sınıf</option>`).join('')}
+      </select></div>
+    <div style="min-width:120px"><label>Ünite</label>
+      <select onchange="S.rUnit=this.value;render()">
+        <option value="hepsi" ${S.rUnit==='hepsi'?'selected':''}>Tüm üniteler</option>
+        ${UNITS.map(u=>`<option value="${u}" ${S.rUnit==String(u)?'selected':''}>Ünite ${u}</option>`).join('')}
+      </select></div>
+    <div style="flex:1;min-width:180px"><label>Talebe ara</label>
+      <input value="${esc(S.rQ)}" placeholder="Ad yaz…" oninput="S.rQ=this.value;render()"></div>
+  </div></div>`;
+
+  // Filtreleme
+  const q = S.rQ.toLocaleLowerCase('tr');
+  const f = tum.filter(r =>
+    (S.rDorm === 'hepsi' || r.dorm === S.rDorm) &&
+    (S.rCls  === 'hepsi' || r.cls  === +S.rCls) &&
+    (S.rUnit === 'hepsi' || r.unit === +S.rUnit) &&
+    (!q || r.name.toLocaleLowerCase('tr').includes(q))
+  );
+
+  h += `<div class="card">
+    <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:14px">
+      <h2 style="margin:0;font-size:20px">Rekorlar</h2>
+      <span style="color:var(--muted);font-size:13px">${f.length} kayıt</span>
+    </div>`;
+
+  if (!f.length){
+    h += '<p style="color:var(--muted);font-size:14px;margin:0">Bu filtreye uyan sonuç yok.</p></div>';
+    return h;
+  }
+
+  h += `<table><thead><tr>
+      <th style="width:50px">#</th><th>Talebe</th><th>Yurt</th>
+      <th>Sınıf</th><th>Ünite</th><th>Doğru</th><th>Süre</th><th>Tarih</th><th>Puan</th>
+    </tr></thead><tbody>`
+    + f.slice(0, S.rAll ? f.length : 50).map((r,i) => {
+        const d = dorm(r.dorm);
+        const t = new Date(r.date);
+        const ts = String(t.getDate()).padStart(2,'0') + '.' +
+                   String(t.getMonth()+1).padStart(2,'0') + '.' + t.getFullYear();
+        return `<tr class="${i===0?'top1':''}">
+          <td>${medal(i)}</td>
+          <td style="font-weight:600">${esc(r.name)}</td>
+          <td><span class="yb" style="background:${d.color}22;color:${d.color}">${esc(d.name)}</span></td>
+          <td>${r.cls}. Sınıf</td><td>Ünite ${r.unit}</td>
+          <td>${r.correct}/${r.total}</td><td>${fmt(r.seconds)}</td>
+          <td style="color:var(--muted);font-size:13px">${ts}</td>
+          <td style="color:var(--gold);font-weight:700">${r.score}</td></tr>`;
+      }).join('')
+    + '</tbody></table>';
+
+  if (f.length > 50){
+    h += `<button class="btn btn-ghost btn-sm" style="margin-top:14px" onclick="S.rAll=!S.rAll;render()">`
+       + (S.rAll ? 'İlk 50 göster' : `Tümünü göster (${f.length})`) + '</button>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function focusPass(){ const e = document.getElementById('dp'); if(e) e.focus(); }
+
+/* Yurt kartlarindaki "N talebe · M yarisma" yazilarini, tum ekrani
+   yeniden cizmeden gunceller. Boylece rekor listesinin kaymasi bozulmaz. */
+function yurtKartSayilari(){
+  const kartlar = document.querySelectorAll('.dorm .mt');
+  if (!kartlar || !kartlar.length) return;
+  let i = 0;
+  DORMS.forEach(d => {
+    if (S.askPass === d.id) return;   // sifre kutusu acik olan kartta .mt yok
+    const el = kartlar[i++];
+    if (!el) return;
+    const st = Object.values(students[d.id] || {}).reduce((a,c)=>a+(c?c.length:0), 0);
+    const rs = results.filter(r => r.dorm === d.id).length;
+    el.textContent = st + ' talebe · ' + rs + ' yarışma';
+  });
+}
+
+function tryDorm(id){
+  const el = document.getElementById('dp');
+  const v = (el ? el.value : '').trim().toLocaleLowerCase('tr');
+  // Buyuk/kucuk harf farki yok sayilir (telefonlarda ilk harf otomatik buyuyor).
+  if (v === dorm(id).pass.toLocaleLowerCase('tr')){
+    S.dorm = id; S.askPass = null; S.auth = false;
+    stopRotation();
+    go('dorm');
+  } else {
+    flash('Şifre yanlış.');
+    if(el){ el.value=''; el.focus(); }
+  }
+}
+
+/* --- vitrin panelleri --- */
+
+function panelHTML(u){
+  const c = S.panelCls[u];
+  const rows = mintikaTop(c, u);
+  let h = `<div class="panel"><h3>Ünite ${u}</h3>
+    <div class="clsdots">`;
+  CLASSES.forEach(k => {
+    h += `<button class="dot ${k===c?'on':''}" onclick="setPanel(${u},${k})">${k}</button>`;
+  });
+  h += `</div><div id="pb${u}" class="fade">${panelBody(rows)}</div></div>`;
+  return h;
+}
+
+function panelBody(rows){
+  if (!rows.length) return `<p style="color:var(--muted);font-size:13px;padding:8px 0">Bu sınıf ve ünitede henüz sonuç yok.</p>`;
+  return `<table><colgroup><col style="width:26px"><col><col style="width:46px"><col style="width:26px"><col style="width:42px"><col style="width:40px"></colgroup>
+    <thead><tr><th class="rk">#</th><th>Talebe</th><th>Yurt</th><th>D</th><th>Süre</th><th>Puan</th></tr></thead><tbody>`
+    + rows.map((r,i) => {
+        const d = dorm(r.dorm);
+        return `<tr class="${i===0?'top1':''}"><td class="rk">${medal(i)}</td>
+          <td style="font-weight:600" title="${esc(r.name)}">${esc(r.name)}</td>
+          <td><span class="yb" style="background:${d.color}22;color:${d.color}">${esc(d.name.slice(0,4))}</span></td>
+          <td>${r.correct}</td><td>${fmt(r.seconds)}</td>
+          <td style="color:var(--gold);font-weight:700">${r.score}</td></tr>`;
+      }).join('')
+    + '</tbody></table>';
+}
+
+// Belirli sınıf+ünite için TÜM yurtlardan en iyi skorlar (talebe başına 1 kayıt)
+function mintikaTop(cls, unit){
+  const f = results.filter(r => r.cls === cls && r.unit === unit);
+  const m = new Map();
+  f.forEach(r => {
+    const k = r.dorm + '|' + r.name;
+    const cur = m.get(k);
+    if (!cur || r.score > cur.score) m.set(k, r);
+  });
+  return [...m.values()].sort((a,b) => b.score - a.score || a.seconds - b.seconds).slice(0, TOP_N);
+}
+
+function setPanel(u, c){
+  S.panelCls[u] = c;
+  S.panelLock[u] = true;                       // elle seçildi -> döngü durur
+  const el = document.getElementById('pb'+u);
+  if (el){ el.innerHTML = panelBody(mintikaTop(c,u)); }
+  // nokta işaretlerini tazele
+  render();
+}
+
+let _rot = null;
+function startRotation(){
+  stopRotation();
+  _rot = setInterval(() => {
+    if (S.screen !== 'mintika') return;
+    let changed = false;
+    UNITS.forEach(u => {
+      if (S.panelLock[u]) return;
+      const i = CLASSES.indexOf(S.panelCls[u]);
+      S.panelCls[u] = CLASSES[(i+1) % CLASSES.length];
+      changed = true;
+      const el = document.getElementById('pb'+u);
+      if (el){
+        el.classList.remove('fade');
+        void el.offsetWidth;
+        el.innerHTML = panelBody(mintikaTop(S.panelCls[u], u));
+        el.classList.add('fade');
+      }
+    });
+    if (changed) refreshDots();
+  }, ROTATE_MS);
+}
+function stopRotation(){ if(_rot){ clearInterval(_rot); _rot=null; } }
+
+function refreshDots(){
+  UNITS.forEach(u => {
+    const panel = document.querySelectorAll('.panel')[u-1];
+    if (!panel) return;
+    panel.querySelectorAll('.dot').forEach((b,i) => {
+      b.classList.toggle('on', CLASSES[i] === S.panelCls[u]);
+    });
+  });
+}
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 7 — YURT İÇİ ANA EKRAN
+   ══════════════════════════════════════════════════════════════════ */
+
+function dormHome(){
+  let h = `<div class="row" style="margin-bottom:26px">
+    <button class="btn btn-primary" style="padding:16px 34px;font-size:17px" onclick="startSetup()">Yarışmaya Başla</button>
+    <button class="btn btn-ghost btn-sm" onclick="openMintika()">Vitrin</button></div>`;
+
+  h += `<div class="card"><div class="row" style="gap:6px;margin-bottom:14px">
+    <button class="tab ${S.scope==='yurt'?'on':''}" onclick="S.scope='yurt';S.bAll=false;render()">Yurt İçi</button>
+    <button class="tab ${S.scope==='mintika'?'on':''}" onclick="S.scope='mintika';S.bAll=false;render()">Mıntıka (tüm yurtlar)</button>
+  </div>
+  <div class="row" style="gap:6px;margin-bottom:18px;padding-top:12px;border-top:1px solid rgba(232,226,214,.1)">`
+  + [['genel','Genel'],['sinif','Sınıf'],['unite','Ünite']]
+      .map(([k,l]) => `<button class="tab ${S.bTab===k?'on':''}" onclick="S.bTab='${k}';S.bAll=false;render()">${l} Sıralaması</button>`).join('')
+  + '</div>';
+
+  const pool = S.scope==='yurt' ? results.filter(r=>r.dorm===S.dorm) : results;
+  if (S.bTab==='genel') h += boardGeneral(pool);
+  else if (S.bTab==='sinif') h += boardClass(pool);
+  else h += boardUnit(pool);
+  h += '</div>';
+  return h;
+}
+
+/* --- sıralama hesapları --- */
+
+function bestPerUnit(rs){
+  const m = new Map();
+  rs.forEach(r => {
+    const k = r.dorm+'|'+r.name+'|'+r.cls+'|'+r.unit;
+    const c = m.get(k);
+    if (!c || r.score > c.score) m.set(k, r);
+  });
+  return [...m.values()];
+}
+
+function totals(rs){
+  const m = new Map();
+  bestPerUnit(rs).forEach(r => {
+    const k = r.dorm+'|'+r.name+'|'+r.cls;
+    const c = m.get(k) || { name:r.name, cls:r.cls, dorm:r.dorm, score:0, units:0, correct:0, total:0 };
+    c.score += r.score; c.units++; c.correct += r.correct; c.total += r.total;
+    m.set(k, c);
+  });
+  return [...m.values()].sort((a,b) => b.score - a.score);
+}
+
+function tableHTML(rows, head, rowFn, limit){
+  if (!rows.length) return '<p style="color:var(--muted);font-size:14px">Henüz sonuç yok.</p>';
+  const lim = limit || 10;
+  const shown = S.bAll ? rows : rows.slice(0, lim);
+  let h = '<table><thead><tr>'+head+'</tr></thead><tbody>'+shown.map(rowFn).join('')+'</tbody></table>';
+  if (rows.length > lim)
+    h += `<button class="btn btn-ghost btn-sm" style="margin-top:14px" onclick="S.bAll=!S.bAll;render()">`
+       + (S.bAll ? `İlk ${lim} göster` : `Tümünü göster (${rows.length})`) + '</button>';
+  return h;
+}
+
+const ybadge = id => { const d=dorm(id); return `<span class="yb" style="background:${d.color}22;color:${d.color}">${esc(d.name)}</span>`; };
+
+function boardGeneral(pool){
+  const mint = S.scope==='mintika';
+  return tableHTML(totals(pool),
+    `<th style="width:50px">#</th><th>Talebe</th>${mint?'<th>Yurt</th>':''}<th>Sınıf</th><th>Ünite</th><th>Doğru</th><th>Toplam Puan</th>`,
+    (r,i) => `<tr class="${i===0?'top1':''}"><td>${medal(i)}</td><td style="font-weight:600">${esc(r.name)}</td>
+      ${mint?`<td>${ybadge(r.dorm)}</td>`:''}<td>${r.cls}. Sınıf</td><td>${r.units}/4</td>
+      <td>${r.correct}/${r.total}</td><td style="color:var(--gold);font-weight:700">${r.score}</td></tr>`);
+}
+
+function boardClass(pool){
+  const mint = S.scope==='mintika';
+  let h = `<div style="max-width:200px;margin-bottom:16px"><label>Sınıf</label>
+    <select onchange="S.bCls=+this.value;S.bAll=false;render()">`
+    + CLASSES.map(c => `<option value="${c}" ${S.bCls===c?'selected':''}>${c}. Sınıf</option>`).join('')
+    + '</select></div>';
+  return h + tableHTML(totals(pool.filter(r=>r.cls===S.bCls)),
+    `<th style="width:50px">#</th><th>Talebe</th>${mint?'<th>Yurt</th>':''}<th>Ünite</th><th>Doğru</th><th>Toplam Puan</th>`,
+    (r,i) => `<tr class="${i===0?'top1':''}"><td>${medal(i)}</td><td style="font-weight:600">${esc(r.name)}</td>
+      ${mint?`<td>${ybadge(r.dorm)}</td>`:''}<td>${r.units}/4</td><td>${r.correct}/${r.total}</td>
+      <td style="color:var(--gold);font-weight:700">${r.score}</td></tr>`, 20);
+}
+
+function boardUnit(pool){
+  const mint = S.scope==='mintika';
+  const f = pool.filter(r => r.cls===S.bCls && r.unit===S.bUnit);
+  const rows = (S.bMode==='best' ? bestPerUnit(f) : f).sort((a,b) => b.score-a.score || a.seconds-b.seconds);
+  let h = '<div class="row" style="margin-bottom:16px">'
+    + `<div style="min-width:140px"><label>Sınıf</label><select onchange="S.bCls=+this.value;S.bAll=false;render()">`
+    + CLASSES.map(c=>`<option value="${c}" ${S.bCls===c?'selected':''}>${c}. Sınıf</option>`).join('') + '</select></div>'
+    + `<div style="min-width:140px"><label>Ünite</label><select onchange="S.bUnit=+this.value;S.bAll=false;render()">`
+    + UNITS.map(u=>`<option value="${u}" ${S.bUnit===u?'selected':''}>Ünite ${u}</option>`).join('') + '</select></div>'
+    + `<div style="min-width:190px"><label>Gösterim</label><select onchange="S.bMode=this.value;S.bAll=false;render()">`
+    + `<option value="best" ${S.bMode==='best'?'selected':''}>Sadece en iyi skorlar</option>`
+    + `<option value="all" ${S.bMode==='all'?'selected':''}>Tüm denemeler</option></select></div></div>`;
+  return h + tableHTML(rows,
+    `<th style="width:50px">#</th><th>Talebe</th>${mint?'<th>Yurt</th>':''}<th>Doğru</th><th>Süre</th><th>Puan</th><th>Tarih</th>`,
+    (r,i) => `<tr class="${i===0?'top1':''}"><td>${medal(i)}</td><td style="font-weight:600">${esc(r.name)}</td>
+      ${mint?`<td>${ybadge(r.dorm)}</td>`:''}<td>${r.correct}/${r.total}</td><td>${fmt(r.seconds)}</td>
+      <td style="color:var(--gold);font-weight:700">${r.score}</td>
+      <td style="color:var(--muted);font-size:13px">${new Date(r.date).toLocaleDateString('tr-TR')}</td></tr>`, 20);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 8 — YARIŞMA KURULUMU
+   ══════════════════════════════════════════════════════════════════ */
+
+function startSetup(){ S.q=''; S.picked=null; S.unit=null; go('setup'); }
+
+function myStudents(cls){ return ((students[S.dorm]||{})[cls] || (students[S.dorm]||{})[String(cls)] || []); }
+
+function setup(){
+  const q = S.q.toLocaleLowerCase('tr');
+  const flat = CLASSES.flatMap(c => myStudents(c).map(n => ({name:n, cls:c})))
+                      .filter(s => s.name.toLocaleLowerCase('tr').includes(q));
+  S._flat = flat;
+
+  let h = `<button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:18px">← ${esc(dorm(S.dorm).name)} ana ekranı</button>`;
+  h += '<div class="card"><h2 style="margin-top:0;font-size:20px">1 · Talebe seç</h2>';
+  if (S.picked){
+    h += `<div class="row"><span style="font-size:20px;font-weight:700;color:var(--paper)">${esc(S.picked.name)}</span>
+      <span class="pill">${S.picked.cls}. Sınıf</span>${ybadge(S.dorm)}
+      <button class="btn btn-ghost btn-sm" onclick="S.picked=null;S.unit=null;render()">Değiştir</button></div>`;
+  } else {
+    const toplam = CLASSES.reduce((a,c)=>a+myStudents(c).length,0);
+    h += `<input id="srch" placeholder="Adını yaz…" value="${esc(S.q)}" oninput="filterList(this.value)">
+      <p style="color:var(--muted);font-size:12px;margin:8px 0 0">${toplam} talebe kayıtlı${S.q?` · ${flat.length} eşleşme`:' · aramak için yazmaya başlayın'}</p>
+      <div id="slist" style="max-height:300px;overflow-y:auto;margin-top:10px">${listHTML(flat)}</div>`;
+  }
+  h += '</div>';
+
+  if (S.picked){
+    h += historyCard(S.picked);
+    h += '<div class="card"><h2 style="margin-top:0;font-size:20px">2 · Ünite seç</h2><div class="grid">';
+    UNITS.forEach(u => {
+      const n = (words[wkey(S.picked.cls,u)]||[]).length, dis = n < 4;
+      const mine = results.filter(r => r.dorm===S.dorm && r.name===S.picked.name && r.cls===S.picked.cls && r.unit===u);
+      const best = mine.length ? Math.max(...mine.map(r=>r.score)) : null;
+      h += `<button class="opt ${S.unit===u?'sel':''}" style="margin-bottom:0" ${dis?'disabled':''} onclick="uniteSec(${u})">
+        <div style="font-weight:700">Ünite ${u}</div>
+        <div style="font-size:13px;color:var(--muted)">${n} kelime${dis?' · yetersiz':' · 100 soru'}</div>
+        ${best!==null
+          ? `<div style="font-size:13px;color:var(--gold);margin-top:4px">En iyin: ${best} puan · ${mine.length} deneme</div>`
+          : '<div style="font-size:13px;color:var(--muted);margin-top:4px">Hiç denemedin</div>'}</button>`;
+    });
+    h += `</div><p style="color:var(--muted);font-size:13px;margin:16px 0 0">
+      Üniteye tıklayınca yarışma hemen başlar.</p></div>`;
+  }
+  return h;
+}
+
+function listHTML(flat){
+  return flat.length
+    ? flat.map((s,i) => `<button class="opt" style="font-size:15px;padding:12px 16px" onclick="pickStudent(${i})">${esc(s.name)}
+        <span style="color:var(--muted);font-size:13px">— ${s.cls}. Sınıf</span></button>`).join('')
+    : '<p style="color:var(--muted);font-size:14px">Talebe bulunamadı. Yönetici panelinden ekleyin.</p>';
+}
+function filterList(v){
+  S.q = v;
+  const q = v.toLocaleLowerCase('tr');
+  S._flat = CLASSES.flatMap(c => myStudents(c).map(n=>({name:n,cls:c})))
+                   .filter(s => s.name.toLocaleLowerCase('tr').includes(q));
+  const el = document.getElementById('slist');
+  if (el) el.innerHTML = listHTML(S._flat);
+  const cnt = document.getElementById('scount');
+  if (cnt) cnt.textContent = S._flat.length + ' eşleşme';
+}
+function pickStudent(i){ const s = S._flat[i]; if(!s) return; S.picked = {name:s.name, cls:s.cls}; S.unit=null; render(); }
+
+/* Uniteye tiklayinca yarisma dogrudan baslar. */
+function uniteSec(u){
+  S.unit = u;
+  beginQuiz();
+}
+
+function historyCard(p){
+  const mine = results.filter(r => r.dorm===S.dorm && r.name===p.name && r.cls===p.cls);
+  if (!mine.length) return '';
+  const bests = UNITS.map(u => {
+    const f = mine.filter(r => r.unit===u);
+    if (!f.length) return null;
+    return { unit:u, best:f.reduce((a,c)=>c.score>a.score?c:a), tries:f.length };
+  }).filter(Boolean);
+  const toplam = bests.reduce((s,x)=>s+x.best.score, 0);
+  const son = mine.reduce((a,c)=>c.date>a.date?c:a);
+  return `<div class="card"><div class="row" style="justify-content:space-between;align-items:baseline">
+    <h2 style="margin:0;font-size:20px">Geçmiş sonuçların</h2>
+    <span style="color:var(--muted);font-size:13px">Toplam: <b style="color:var(--gold)">${toplam}</b> puan · ${mine.length} deneme</span></div>
+  <p style="color:var(--muted);font-size:13px;margin:10px 0">Son denemen: Ünite ${son.unit} · ${son.correct}/${son.total} doğru · ${fmt(son.seconds)} · ${son.score} puan
+    <span style="margin-left:6px">(${new Date(son.date).toLocaleDateString('tr-TR')})</span></p>
+  <table><thead><tr><th>Ünite</th><th>Doğru</th><th>Süre</th><th>En iyi puan</th><th>Deneme</th></tr></thead><tbody>`
+  + bests.map(x => `<tr><td>Ünite ${x.unit}</td><td>${x.best.correct}/${x.best.total}</td><td>${fmt(x.best.seconds)}</td>
+      <td style="color:var(--gold);font-weight:700">${x.best.score}</td><td>${x.tries}</td></tr>`).join('')
+  + `</tbody></table>
+  <p style="color:var(--muted);font-size:12px;margin-top:12px">Sıralamalarda her ünitedeki en iyi denemen sayılır. Tekrar girip puanını yükseltebilirsin.</p></div>`;
+}
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 9 — YARIŞMA
+   ══════════════════════════════════════════════════════════════════ */
+
+function beginQuiz(){
+  const list = words[wkey(S.picked.cls, S.unit)] || [];
+  const base = [];
+  list.forEach(w => {
+    base.push({p:w.en, a:w.tr, dir:'en', pool:'tr'});
+    base.push({p:w.tr, a:w.en, dir:'tr', pool:'en'});
+  });
+  // Güvenlik: kelime yoksa yarışma başlatılamaz (sonsuz döngüyü önler).
+  if (base.length < 8){
+    flash('Bu ünitede yeterli kelime yok. Yönetici panelinden kelime eklenmeli.');
+    S.unit = null; render();
+    return;
+  }
+  // Havuzu karıştırarak TOTAL_Q soruya tamamla; kelimeler bitince baştan döner.
+  const picked = [];
+  while (picked.length < TOTAL_Q){
+    for (const q of shuffle(base)){ if (picked.length >= TOTAL_Q) break; picked.push(q); }
+  }
+  const questions = picked.map(q => {
+    const others = [...new Set(list.map(w => q.pool==='tr' ? w.tr : w.en))].filter(v => v !== q.a);
+    return {...q, opts: shuffle([q.a, ...shuffle(others).slice(0,3)])};
+  });
+
+  S.quiz = { name:S.picked.name, cls:S.picked.cls, unit:S.unit, questions,
+             idx:0, correct:0, wrongs:[], sel:null, start:Date.now(), sec:0 };
+  go('quiz');
+  clearInterval(window._tick);
+  window._tick = setInterval(() => {
+    if (S.screen !== 'quiz'){ clearInterval(window._tick); return; }
+    S.quiz.sec = Math.floor((Date.now() - S.quiz.start)/1000);
+    const e = document.getElementById('tmr');
+    if (e) e.textContent = fmt(S.quiz.sec);
+  }, 500);
+}
+
+function quiz(){
+  const z = S.quiz, q = z.questions[z.idx];
+  const pct = ((z.idx + (z.sel?1:0)) / z.questions.length) * 100;
+  let h = `<div class="row" style="justify-content:space-between;margin-bottom:14px">
+    <div><strong style="color:var(--paper)">${esc(z.name)}</strong>
+      <span class="pill">${z.cls}. Sınıf · Ünite ${z.unit}</span> ${ybadge(S.dorm)}</div>
+    <div class="row" style="gap:18px"><span class="timer" id="tmr">${fmt(z.sec)}</span>
+      <span style="color:var(--muted);font-size:14px">${z.idx+1}/${z.questions.length}</span>
+      <button class="btn btn-ghost btn-sm" onclick="bitirQuiz()">Yarışı Bitir</button>
+      <button class="btn btn-danger btn-sm" onclick="abortQuiz()">Çık</button></div></div>
+    <div class="bar"><div style="width:${pct}%"></div></div>
+    <div class="card" style="text-align:center">
+      <div class="eyebrow">${q.dir==='en' ? 'İngilizce → Türkçe' : 'Türkçe → İngilizce'}</div>
+      <div class="big">${esc(q.p)}</div></div>`;
+  q.opts.forEach((o,i) => {
+    let cls = 'opt';
+    if (z.sel){ if (o === q.a) cls += ' correct'; else if (z.sel === o) cls += ' wrong'; }
+    h += `<button class="${cls}" onclick="choose(${i})">${esc(o)}</button>`;
+  });
+  h += `<p style="color:var(--muted);font-size:13px;margin-top:14px">Doğru: ${z.correct} · Yanlış: ${z.wrongs.length}</p>`;
+  return h;
+}
+
+function abortQuiz(){
+  if (confirm('Yarışma yarıda bitirilsin mi? Sonuç KAYDEDİLMEZ.')){
+    clearInterval(window._tick); goHome();
+  }
+}
+
+/* Yarisi erken bitirir ve o ana kadarki sonucu KAYDEDER.
+   Cevaplanmamis sorular yanlis sayilmaz; toplam, cozulen soru sayisidir. */
+function bitirQuiz(){
+  const z = S.quiz;
+  const cozulen = z.idx + (z.sel ? 1 : 0);
+  if (!cozulen){
+    flash('En az bir soru cevaplamalısın.');
+    return;
+  }
+  const kalan = z.questions.length - cozulen;
+  if (!confirm('Yarışma şimdi bitirilsin mi?\n\n' + cozulen + ' soru çözüldü, ' +
+               kalan + ' soru boş kalacak.\nSonuç bu haliyle kaydedilecek.')) return;
+  clearInterval(window._tick);
+  finishQuiz(cozulen);
+}
+
+function choose(i){
+  const z = S.quiz; if (z.sel !== null) return;
+  const q = z.questions[z.idx], opt = q.opts[i];
+  z.sel = opt;
+  if (opt === q.a) z.correct++;
+  else z.wrongs.push({prompt:q.p, answer:q.a, given:opt});
+  render();
+  setTimeout(() => {
+    if (z.idx + 1 >= z.questions.length) finishQuiz();
+    else { z.idx++; z.sel = null; render(); }
+  }, 550);
+}
+
+async function finishQuiz(cozulen){
+  clearInterval(window._tick);
+  const z = S.quiz;
+  // Erken bitirmede toplam, cozulen soru sayisidir; bos sorular yanlis sayilmaz.
+  const toplam = (typeof cozulen === 'number' && cozulen > 0) ? cozulen : z.questions.length;
+  const seconds = Math.floor((Date.now() - z.start)/1000);
+  const bonus = Math.max(0, toplam*10 - seconds) * 0.5;
+  const res = {
+    id: Date.now() + '-' + Math.random().toString(36).slice(2,7),
+    dorm: S.dorm, name: z.name, cls: z.cls, unit: z.unit,
+    correct: z.correct, total: toplam, seconds,
+    score: Math.round(z.correct*10 + bonus),
+    wrongs: z.wrongs, date: Date.now()
+  };
+  results.push(res);
+  const yazildi = await DB.addResult(res);
+  if (!yazildi){
+    // Kaydedilemedi: kullaniciyi uyar, sonuc yerel olarak gorunmeye devam etsin.
+    flash('Sonuç kaydedilemedi! İnternet bağlantısını kontrol edin.');
+    res._kaydedilmedi = true;
+  }
+  S.last = res;
+  go('result');
+  // Diger bilgisayarlarin sonucu gormesi icin ortak listeyi hemen tazele.
+  setTimeout(tazele, 800);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 10 — SONUÇ EKRANI
+   ══════════════════════════════════════════════════════════════════ */
+
+function result(){
+  const r = S.last;
+  const bonus = Math.round(Math.max(0, r.total*10 - r.seconds) * 0.5);
+  const prev = results.filter(x => x.dorm===r.dorm && x.name===r.name && x.cls===r.cls && x.unit===r.unit && x.id!==r.id);
+  const prevBest = prev.length ? Math.max(...prev.map(x=>x.score)) : null;
+
+  let badge;
+  if (prevBest === null) badge = '<div style="color:var(--muted);font-size:14px;margin-top:8px">Bu ünitedeki ilk denemen.</div>';
+  else if (r.score > prevBest) badge = `<div style="color:var(--green);font-size:15px;font-weight:600;margin-top:8px">🎉 Yeni rekor! Önceki en iyin ${prevBest} puandı (+${r.score-prevBest}).</div>`;
+  else badge = `<div style="color:var(--muted);font-size:14px;margin-top:8px">En iyi puanın ${prevBest} olarak kalıyor. Sıralamada o sayılır.</div>`;
+
+  // mıntıka sırası
+  const mt = mintikaTop(r.cls, r.unit);
+  const rank = mt.findIndex(x => x.dorm===r.dorm && x.name===r.name);
+
+  let h = '';
+  if (r._kaydedilmedi){
+    h += `<div class="card" style="border-color:rgba(178,69,60,.5);background:rgba(178,69,60,.12)">
+      <b style="color:#f0a49d">⚠ Sonuç sunucuya kaydedilemedi.</b>
+      <p style="color:var(--muted);font-size:13px;margin:8px 0 0">
+        Bu puan sıralamaya girmeyecek. İnternet bağlantısını kontrol edip yarışmayı tekrarlayın.</p></div>`;
+  }
+  h += `<div class="card" style="text-align:center">
+    <div style="font-size:13px;color:var(--muted)">${esc(r.name)} · ${r.cls}. Sınıf · Ünite ${r.unit} · ${esc(dorm(r.dorm).name)}</div>
+    <div class="score">${r.score}</div><div style="color:var(--muted);font-size:14px">puan</div>${badge}
+    <div class="row" style="justify-content:center;gap:34px;margin-top:24px">
+      <div class="stat"><b>${r.correct}/${r.total}</b><span>Doğru</span></div>
+      <div class="stat"><b>${fmt(r.seconds)}</b><span>Süre</span></div>
+      <div class="stat"><b>%${Math.round(r.correct/r.total*100)}</b><span>Başarı</span></div>
+      <div class="stat"><b>${bonus}</b><span>Hız bonusu</span></div>
+      ${rank>=0 ? `<div class="stat"><b>${rank+1}.</b><span>Mıntıka sırası</span></div>` : ''}
+    </div></div>`;
+
+  if (r.wrongs.length){
+    h += `<div class="card"><h3 style="margin-top:0;font-size:18px">Yanlışlar (${r.wrongs.length})</h3>
+      <table><thead><tr><th>Soru</th><th>Doğru cevap</th><th>Verilen</th></tr></thead><tbody>`
+      + r.wrongs.map(w => `<tr><td>${esc(w.prompt)}</td><td style="color:var(--green)">${esc(w.answer)}</td>
+          <td style="color:#f0a49d">${esc(w.given)}</td></tr>`).join('')
+      + '</tbody></table></div>';
+  }
+  h += `<div class="row"><button class="btn btn-primary" onclick="goHome()">Sıralamayı gör</button>
+    <button class="btn btn-ghost" onclick="againSame()">Bu üniteyi tekrar dene</button>
+    <button class="btn btn-ghost" onclick="startSetup()">Yeni yarışma</button></div>`;
+  return h;
+}
+
+function againSame(){ const r = S.last; S.picked = {name:r.name, cls:r.cls}; S.unit = r.unit; beginQuiz(); }
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 11 — YÖNETİCİ PANELİ
+   ══════════════════════════════════════════════════════════════════ */
+
+function admin(){
+  if (!S.auth){
+    return `<div class="card" style="max-width:400px"><h2 style="margin-top:0">Yönetici girişi</h2>
+      <p style="color:var(--muted);font-size:13px;margin-top:0">${esc(dorm(S.dorm).name)} Yurdu</p>
+      <label>Şifre</label><input id="ap" type="password" onkeydown="if(event.key==='Enter')tryAdmin()">
+      <div class="row" style="margin-top:14px">
+        <button class="btn btn-primary" onclick="tryAdmin()">Giriş yap</button>
+        <button class="btn btn-ghost" onclick="goHome()">Geri</button></div></div>`;
+  }
+  let h = `<button class="btn btn-ghost btn-sm" onclick="goHome()" style="margin-bottom:18px">← ${esc(dorm(S.dorm).name)} ana ekranı</button>
+    <div class="row" style="gap:6px;margin-bottom:18px">`
+    + [['takip','Takip Çizelgesi'],['ogrenci','Talebeler'],
+       ['kelime', canEditWords()?'Kelimeler':'Kelimeler 🔒'],
+       ...(canEditWords() ? [['yurt','Yurtlar']] : []),
+       ['ayar','Ayarlar']]
+        .map(([k,l]) => `<button class="tab ${S.aTab===k?'on':''}" onclick="S.aTab='${k}';render()">${l}</button>`).join('')
+    + '</div>';
+  if (S.aTab==='yurt') h += canEditWords() ? dormAdmin() : trackAdmin();
+  else if (S.aTab==='takip') h += trackAdmin();
+  else if (S.aTab==='ogrenci') h += studentAdmin();
+  else if (S.aTab==='kelime') h += wordAdmin();
+  else h += settings();
+  return h;
+}
+
+function tryAdmin(){
+  const v = document.getElementById('ap').value.trim();
+  if (v.toLocaleLowerCase('tr') === adminPass.toLocaleLowerCase('tr')){ S.auth = true; render(); }
+  else flash('Şifre yanlış.');
+}
+
+function curStudents(){ return ((students[S.dorm]||{})[S.aCls] || (students[S.dorm]||{})[String(S.aCls)] || []); }
+
+async function setStudents(list){
+  students[S.dorm] = students[S.dorm] || {};
+  students[S.dorm][S.aCls] = list;
+  const ok = await DB.saveStudents(students);
+  flash(ok ? 'Kaydedildi' : 'Kaydedilemedi');
+  render();
+}
+
+/* --- takip çizelgesi: kim hangi üniteyi yapmış --- */
+
+function trackAdmin(){
+  const scope = S.tCls || 'all';
+  const siniflar = scope === 'all' ? CLASSES : [Number(scope)];
+  const ara = (S.tQ || '').toLocaleLowerCase('tr');
+
+  let satirlar = [];
+  siniflar.forEach(c => {
+    const liste = ((students[S.dorm]||{})[c] || (students[S.dorm]||{})[String(c)] || []);
+    liste.forEach(name => {
+      const durum = UNITS.map(u => {
+        const d = results.filter(r => r.dorm===S.dorm && r.name===name && r.cls===c && r.unit===u);
+        if (!d.length) return null;
+        return { tries: d.length, best: Math.max(...d.map(x => x.score)),
+                 correct: d.reduce((a,x) => x.score > a.score ? x : a).correct };
+      });
+      satirlar.push({ name, cls:c, durum, yapilan: durum.filter(Boolean).length });
+    });
+  });
+
+  if (ara) satirlar = satirlar.filter(s => s.name.toLocaleLowerCase('tr').includes(ara));
+  if (S.tOnly === 'eksik') satirlar = satirlar.filter(s => s.yapilan < 4);
+  else if (S.tOnly === 'hic') satirlar = satirlar.filter(s => s.yapilan === 0);
+
+  const sirala = S.tSort || 'isim';
+  if (sirala === 'eksik') satirlar.sort((a,b) => a.yapilan - b.yapilan || trSort(a.name,b.name));
+  else if (sirala === 'tam') satirlar.sort((a,b) => b.yapilan - a.yapilan || trSort(a.name,b.name));
+  else satirlar.sort((a,b) => a.cls - b.cls || trSort(a.name,b.name));
+
+  // özet
+  const tumu = [];
+  CLASSES.forEach(c => ((students[S.dorm]||{})[c] || (students[S.dorm]||{})[String(c)] || []).forEach(n => tumu.push({n,c})));
+  const toplamHucre = tumu.length * 4;
+  const yapilanHucre = tumu.reduce((a,t) => a + UNITS.filter(u =>
+    results.some(r => r.dorm===S.dorm && r.name===t.n && r.cls===t.c && r.unit===u)).length, 0);
+  const oran = toplamHucre ? Math.round(yapilanHucre/toplamHucre*100) : 0;
+
+  let h = `<div class="card">
+  <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:4px">
+    <h3 style="margin:0">Takip Çizelgesi</h3>
+    <span style="color:var(--muted);font-size:13px">${esc(dorm(S.dorm).name)} · ${tumu.length} talebe · %${oran} tamamlandı</span></div>
+  <p style="color:var(--muted);font-size:13px;margin:6px 0 16px">
+    <span class="tick ok">✓</span> yapmış &nbsp;·&nbsp; <span class="tick no">✕</span> yapmamış &nbsp;·&nbsp; kutuya dokunun, en iyi puanı görün</p>
+
+  <div class="row" style="margin-bottom:16px">
+    <div style="min-width:150px"><label>Sınıf</label><select onchange="S.tCls=this.value;render()">
+      <option value="all" ${scope==='all'?'selected':''}>Tüm sınıflar</option>
+      ${CLASSES.map(c=>`<option value="${c}" ${String(scope)===String(c)?'selected':''}>${c}. Sınıf</option>`).join('')}</select></div>
+    <div style="min-width:170px"><label>Göster</label><select onchange="S.tOnly=this.value;render()">
+      <option value="hepsi" ${(S.tOnly||'hepsi')==='hepsi'?'selected':''}>Hepsi</option>
+      <option value="eksik" ${S.tOnly==='eksik'?'selected':''}>Eksiği olanlar</option>
+      <option value="hic" ${S.tOnly==='hic'?'selected':''}>Hiç girmeyenler</option></select></div>
+    <div style="min-width:170px"><label>Sırala</label><select onchange="S.tSort=this.value;render()">
+      <option value="isim" ${sirala==='isim'?'selected':''}>Sınıf ve isme göre</option>
+      <option value="eksik" ${sirala==='eksik'?'selected':''}>En çok eksiği olan</option>
+      <option value="tam" ${sirala==='tam'?'selected':''}>En çok tamamlayan</option></select></div>
+    <div style="flex:1;min-width:180px"><label>Ara</label>
+      <input placeholder="Talebe adı" value="${esc(S.tQ||'')}" oninput="S.tQ=this.value;render()"></div>
+  </div>`;
+
+  if (!tumu.length)
+    return h + '<p style="color:var(--muted);font-size:14px">Bu yurtta kayıtlı talebe yok. Talebeler sekmesinden ekleyin.</p></div>';
+  if (!satirlar.length)
+    return h + '<p style="color:var(--muted);font-size:14px">Bu filtreye uyan talebe yok.</p></div>';
+
+  h += `<div style="overflow-x:auto"><table><thead><tr>
+    <th style="width:36px">#</th><th>Talebe</th><th style="width:60px">Sınıf</th>
+    ${UNITS.map(u=>`<th style="width:76px;text-align:center">Ünite ${u}</th>`).join('')}
+    <th style="width:80px;text-align:center">Durum</th></tr></thead><tbody>`;
+
+  satirlar.forEach((s,i) => {
+    const tam = s.yapilan === 4, hic = s.yapilan === 0;
+    h += `<tr><td style="color:var(--muted);font-size:12px">${i+1}</td>
+      <td style="font-weight:600">${esc(s.name)}</td>
+      <td style="color:var(--muted)">${s.cls}</td>`;
+    s.durum.forEach((d,j) => {
+      h += d
+        ? `<td style="text-align:center"><span class="tick ok" title="En iyi: ${d.best} puan · ${d.correct}/100 doğru · ${d.tries} deneme">✓</span></td>`
+        : `<td style="text-align:center"><span class="tick no" title="Ünite ${UNITS[j]} yapılmadı">✕</span></td>`;
+    });
+    h += `<td style="text-align:center;font-size:12px;font-weight:600;color:${tam?'var(--green)':hic?'var(--rose)':'var(--gold)'}">${s.yapilan}/4</td></tr>`;
+  });
+
+  h += '</tbody></table></div>';
+  h += `<div class="row" style="margin-top:16px">
+    <button class="btn btn-ghost btn-sm" onclick="copyTrack()">Listeyi kopyala</button>
+    <span style="color:var(--muted);font-size:12px;align-self:center">${satirlar.length} talebe listeleniyor</span></div></div>`;
+  return h;
+}
+
+function copyTrack(){
+  const siniflar = (S.tCls && S.tCls!=='all') ? [Number(S.tCls)] : CLASSES;
+  let out = dorm(S.dorm).name + ' — Takip Çizelgesi\n\n';
+  siniflar.forEach(c => {
+    const liste = ((students[S.dorm]||{})[c] || (students[S.dorm]||{})[String(c)] || []);
+    if (!liste.length) return;
+    out += c + '. SINIF\n';
+    liste.forEach(name => {
+      const im = UNITS.map(u =>
+        results.some(r => r.dorm===S.dorm && r.name===name && r.cls===c && r.unit===u) ? '✓' : '✕').join(' ');
+      out += '  ' + name.padEnd(28,' ') + im + '\n';
+    });
+    out += '\n';
+  });
+  if (navigator.clipboard) navigator.clipboard.writeText(out).then(()=>flash('Panoya kopyalandı'));
+  else flash('Kopyalanamadı');
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   YURT YÖNETİMİ — sadece yetkili yurt (WORD_ADMIN) erişebilir
+   ══════════════════════════════════════════════════════════════════ */
+
+const YURT_RENKLERI = ['#C8A44D','#4EA87C','#5B9BD5','#C77DBB','#E08A4B','#7FB069','#9B8BD4','#D96C6C'];
+
+function yurtId(ad){
+  const harita = {'ç':'c','ğ':'g','ı':'i','İ':'i','ö':'o','ş':'s','ü':'u','â':'a','î':'i','û':'u'};
+  let s = ad.toLocaleLowerCase('tr').split('').map(c => harita[c] || c).join('');
+  s = s.replace(/[^a-z0-9]/g,'');
+  if (!s) s = 'yurt';
+  let sonuc = s, n = 2;
+  while (DORMS.some(d => d.id === sonuc)) sonuc = s + n++;
+  return sonuc;
+}
+
+function dormAdmin(){
+  let h = `<div class="card">
+  <p style="color:var(--gold);font-size:13px;margin-top:0">⚠ Yurt listesi <b>tüm cihazlarda ortaktır</b>. Buradaki değişiklik herkeste geçerli olur.</p>
+
+  <h3 style="margin:18px 0 10px">Yeni yurt ekle</h3>
+  <div class="row" style="margin-bottom:8px">
+    <input id="ynAd" placeholder="Yurt adı" style="flex:2;min-width:160px">
+    <input id="ynSifre" placeholder="Giriş şifresi" style="flex:1;min-width:140px"
+      onkeydown="if(event.key==='Enter')yurtEkle()">
+    <button class="btn btn-primary" onclick="yurtEkle()">Ekle</button>
+  </div>
+  <p style="color:var(--muted);font-size:12px;margin:0 0 26px">Şifre en az 4 karakter olmalı. Büyük/küçük harf farkı gözetilmez.</p>
+
+  <h3 style="margin:0 0 12px">Mevcut yurtlar (${DORMS.length})</h3>`;
+
+  DORMS.forEach((d,i) => {
+    const tal = Object.values(students[d.id] || {}).reduce((a,l) => a + (l?l.length:0), 0);
+    const son = results.filter(r => r.dorm === d.id).length;
+    const kilitli = d.id === WORD_ADMIN;
+    h += `<div class="card" style="margin-bottom:12px;border-left:4px solid ${d.color}">
+      <div class="row" style="margin-bottom:10px">
+        <div style="flex:2;min-width:150px"><label>Yurt adı</label>
+          <input value="${esc(d.name)}" onchange="yurtGuncelle(${i},'name',this.value)"></div>
+        <div style="flex:1;min-width:130px"><label>Şifre</label>
+          <input value="${esc(d.pass)}" onchange="yurtGuncelle(${i},'pass',this.value)"></div>
+        <div style="min-width:110px"><label>Renk</label>
+          <select onchange="yurtGuncelle(${i},'color',this.value)">
+            ${YURT_RENKLERI.map(c => `<option value="${c}" ${d.color===c?'selected':''}>${c}</option>`).join('')}
+          </select></div>
+      </div>
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <span style="color:var(--muted);font-size:13px">
+          ${tal} talebe · ${son} yarışma sonucu
+          ${kilitli ? ' · <b style="color:'+d.color+'">yönetici yurt</b>' : ''}</span>
+        ${kilitli
+          ? '<span style="color:var(--muted);font-size:12px">🔒 silinemez</span>'
+          : `<button class="btn btn-danger btn-sm" onclick="yurtSil(${i})">Yurdu sil</button>`}
+      </div></div>`;
+  });
+
+  h += `<p style="color:var(--muted);font-size:12px;margin-top:16px">
+    Bir yurt silindiğinde talebeleri ve yarışma sonuçları da silinir. Bu işlem geri alınamaz.</p></div>`;
+  return h;
+}
+
+async function yurtEkle(){
+  const ad = document.getElementById('ynAd').value.trim();
+  const sf = document.getElementById('ynSifre').value.trim();
+  if (!ad){ flash('Yurt adı girin.'); return; }
+  if (sf.length < 4){ flash('Şifre en az 4 karakter olmalı.'); return; }
+  if (DORMS.some(d => d.name.toLocaleLowerCase('tr') === ad.toLocaleLowerCase('tr'))){
+    flash('Bu isimde bir yurt zaten var.'); return;
+  }
+  if (DORMS.some(d => d.pass.toLocaleLowerCase('tr') === sf.toLocaleLowerCase('tr'))){
+    flash('Bu şifre başka bir yurtta kullanılıyor.'); return;
+  }
+  DORMS = [...DORMS, { id: yurtId(ad), name: ad, pass: sf,
+                       color: YURT_RENKLERI[DORMS.length % YURT_RENKLERI.length] }];
+  const ok = await DB.saveDorms(DORMS);
+  flash(ok ? ad + ' eklendi' : 'Kaydedilemedi');
+  render();
+}
+
+async function yurtGuncelle(i, alan, deger){
+  const v = deger.trim();
+  if (!v){ flash('Boş bırakılamaz.'); render(); return; }
+  if (alan === 'pass' && v.length < 4){ flash('Şifre en az 4 karakter olmalı.'); render(); return; }
+  if (alan === 'pass' && DORMS.some((d,j) => j !== i && d.pass.toLocaleLowerCase('tr') === v.toLocaleLowerCase('tr'))){
+    flash('Bu şifre başka bir yurtta kullanılıyor.'); render(); return;
+  }
+  if (alan === 'name' && DORMS.some((d,j) => j !== i && d.name.toLocaleLowerCase('tr') === v.toLocaleLowerCase('tr'))){
+    flash('Bu isimde bir yurt zaten var.'); render(); return;
+  }
+  DORMS = DORMS.map((d,j) => j === i ? {...d, [alan]: v} : d);
+  const ok = await DB.saveDorms(DORMS);
+  flash(ok ? 'Kaydedildi' : 'Kaydedilemedi');
+  render();
+}
+
+async function yurtSil(i){
+  const d = DORMS[i];
+  if (!d) return;
+  if (d.id === WORD_ADMIN){ flash('Yönetici yurt silinemez.'); return; }
+  const tal = Object.values(students[d.id] || {}).reduce((a,l) => a + (l?l.length:0), 0);
+  const son = results.filter(r => r.dorm === d.id).length;
+  if (!confirm(d.name + ' yurdu silinecek.\n\n' + tal + ' talebe ve ' + son +
+               ' yarışma sonucu da silinecek.\n\nBu işlem geri alınamaz. Devam edilsin mi?')) return;
+
+  DORMS = DORMS.filter((_,j) => j !== i);
+  delete students[d.id];
+  results = results.filter(r => r.dorm !== d.id);
+
+  await DB.saveDorms(DORMS);
+  await DB.saveStudents(students);
+  await DB.deleteDormResults(d.id);
+
+  // Silinen yurdun vitrin panelleri bozulmasin
+  flash(d.name + ' silindi');
+  render();
+}
+
+function studentAdmin(){
+  const list = curStudents();
+  return `<div class="card">
+  <p style="color:var(--muted);font-size:13px;margin-top:0">Bu liste sadece <b style="color:${dorm(S.dorm).color}">${esc(dorm(S.dorm).name)}</b> yurduna aittir.</p>
+  <div style="max-width:200px;margin-bottom:18px"><label>Sınıf</label>
+    <select onchange="S.aCls=+this.value;render()">${CLASSES.map(c=>`<option value="${c}" ${S.aCls===c?'selected':''}>${c}. Sınıf</option>`).join('')}</select></div>
+  <div class="row" style="margin-bottom:18px;flex-wrap:nowrap">
+    <input id="sname" placeholder="Talebe adı soyadı" onkeydown="if(event.key==='Enter')addStudent()">
+    <button class="btn btn-primary" style="white-space:nowrap" onclick="addStudent()">Ekle</button></div>
+  <details style="margin-bottom:18px"><summary>Toplu ekle</summary>
+    <textarea id="sbulk" rows="6" placeholder="Her satıra bir isim:&#10;Ali Yılmaz&#10;Ayşe Demir"></textarea>
+    <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="addStudentsBulk()">Listeyi ekle</button></details>
+  <p style="color:var(--muted);font-size:13px">${list.length} talebe · ${S.aCls}. sınıf</p>
+  ${list.map((n,i)=>`<div class="listrow"><span>${esc(n)}</span>
+    <button class="btn btn-danger btn-sm" onclick="delStudent(${i})">Sil</button></div>`).join('')}</div>`;
+}
+
+function addStudent(){
+  const el = document.getElementById('sname'), n = el.value.trim();
+  const list = curStudents();
+  if (!n || list.includes(n)) return;
+  setStudents([...list, n].sort(trSort));
+}
+function addStudentsBulk(){
+  const ns = document.getElementById('sbulk').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if (!ns.length) return;
+  setStudents([...new Set([...curStudents(), ...ns])].sort(trSort));
+}
+function delStudent(i){ setStudents(curStudents().filter((_,j)=>j!==i)); }
+
+/* --- kelimeler (ortak) --- */
+
+async function setWords(next){
+  if (!canEditWords()){ flash('Kelime düzenleme yetkiniz yok.'); return; }
+  words = next;
+  const ok = await DB.saveWords(words);
+  flash(ok ? 'Kaydedildi · tüm yurtlarda geçerli' : 'Kaydedilemedi');
+  render();
+}
+
+function wordAdmin(){
+  const k = wkey(S.aCls, S.aUnit), list = words[k] || [];
+  const yetkili = canEditWords();
+  const secici = `<div class="row" style="margin-bottom:18px">
+    <div style="min-width:140px"><label>Sınıf</label><select onchange="S.aCls=+this.value;render()">
+      ${CLASSES.map(c=>`<option value="${c}" ${S.aCls===c?'selected':''}>${c}. Sınıf</option>`).join('')}</select></div>
+    <div style="min-width:140px"><label>Ünite</label><select onchange="S.aUnit=+this.value;render()">
+      ${UNITS.map(u=>`<option value="${u}" ${S.aUnit===u?'selected':''}>Ünite ${u}</option>`).join('')}</select></div></div>`;
+
+  // --- Yetkisiz yurtlar: sadece görüntüleme ---
+  if (!yetkili){
+    return `<div class="card">
+    <p style="font-size:13px;margin-top:0;color:var(--muted)">🔒 Kelime listeleri <b style="color:${dorm(WORD_ADMIN).color}">${esc(dorm(WORD_ADMIN).name)}</b> yurdu tarafından yönetilir ve tüm yurtlarda ortaktır. Buradan görüntüleyebilir, değiştiremezsiniz.</p>
+    ${secici}
+    <p style="color:var(--muted);font-size:13px">${list.length} kelime · her test 100 sorudur${list.length && list.length<50 ? ' (kelimeler tekrar sorulur)' : ''}</p>
+    ${list.length ? `<table><thead><tr><th style="width:40px">#</th><th>İngilizce</th><th>Türkçe</th></tr></thead><tbody>`
+      + list.map((w,i)=>`<tr><td style="color:var(--muted)">${i+1}</td><td>${esc(w.en)}</td><td>${esc(w.tr)}</td></tr>`).join('')
+      + '</tbody></table>'
+      : '<p style="color:var(--muted);font-size:14px">Bu ünitede henüz kelime yok.</p>'}</div>`;
+  }
+
+  // --- Bayrampaşa: tam düzenleme ---
+  return `<div class="card">
+  <p style="color:var(--gold);font-size:13px;margin-top:0">⚠ Kelime listelerini <b>sadece bu yurt</b> düzenleyebilir ve yaptığınız değişiklik <b>tüm yurtlarda</b> (Suriçi, Bayrampaşa, Cibali, Seyitkamilbey) aynı anda geçerli olur.</p>
+  ${secici}
+  <div class="row" style="margin-bottom:18px">
+    <input id="wen" placeholder="İngilizce" style="flex:1;min-width:140px">
+    <input id="wtr" placeholder="Türkçe" style="flex:1;min-width:140px" onkeydown="if(event.key==='Enter')addWord()">
+    <button class="btn btn-primary" onclick="addWord()">Ekle</button></div>
+  <details style="margin-bottom:18px"><summary>Toplu ekle</summary>
+    <textarea id="wbulk" rows="7" placeholder="Her satıra bir kelime:&#10;apple - elma&#10;book - kitap"></textarea>
+    <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="addWordsBulk()">Listeyi ekle</button></details>
+  <p style="color:var(--muted);font-size:13px">${list.length} kelime · her test 100 sorudur${list.length && list.length<50 ? ' (kelimeler tekrar sorulur)' : ''}</p>
+  ${list.map((w,i)=>`<div class="row" style="gap:8px;margin-bottom:8px;flex-wrap:nowrap">
+    <span style="color:var(--muted);font-size:12px;width:28px">${i+1}</span>
+    <input value="${esc(w.en)}" style="flex:1" onchange="editWord(${i},'en',this.value)">
+    <input value="${esc(w.tr)}" style="flex:1" onchange="editWord(${i},'tr',this.value)">
+    <button class="btn btn-danger btn-sm" onclick="delWord(${i})">Sil</button></div>`).join('')}</div>`;
+}
+
+function addWord(){
+  const e = document.getElementById('wen').value.trim(), t = document.getElementById('wtr').value.trim();
+  if (!e || !t) return;
+  const k = wkey(S.aCls, S.aUnit);
+  setWords({...words, [k]: [...(words[k]||[]), {en:e, tr:t}]});
+}
+function addWordsBulk(){
+  const items = document.getElementById('wbulk').value.split('\n')
+    .map(l => l.split(/\s+-\s+|\t|,/).map(s=>s.trim()))
+    .filter(p => p.length>=2 && p[0] && p[1]).map(p => ({en:p[0], tr:p[1]}));
+  if (!items.length) return;
+  const k = wkey(S.aCls, S.aUnit);
+  setWords({...words, [k]: [...(words[k]||[]), ...items]});
+}
+function delWord(i){ const k = wkey(S.aCls,S.aUnit); setWords({...words, [k]:(words[k]||[]).filter((_,j)=>j!==i)}); }
+function editWord(i,f,v){ const k = wkey(S.aCls,S.aUnit); setWords({...words, [k]:(words[k]||[]).map((w,j)=>j===i?{...w,[f]:v}:w)}); }
+
+/* --- ayarlar --- */
+
+function settings(){
+  const mine = results.filter(r => r.dorm===S.dorm);
+  return `<div class="card">
+  <h3 style="margin-top:0">Yönetici şifresi</h3>
+  <p style="color:var(--muted);font-size:13px">Bu cihazdaki tüm yurtların yönetici paneli için geçerlidir.</p>
+  <div class="row" style="max-width:420px;margin-bottom:26px;flex-wrap:nowrap">
+    <input id="np" placeholder="Yeni şifre"><button class="btn btn-primary" onclick="changePass()">Kaydet</button></div>
+
+  <h3>Yedek</h3>
+  <p style="color:var(--muted);font-size:13px">Kelimeler, talebeler ve tüm yarışma sonuçları.</p>
+  <div class="row" style="margin-bottom:26px">
+    <button class="btn btn-ghost btn-sm" onclick="downloadBackup()">Dosya olarak indir</button>
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('impbox').classList.toggle('hide')">Geri yükle</button></div>
+  <div id="impbox" class="hide" style="margin-bottom:26px">
+    <textarea id="imp" rows="4" placeholder="Yedek JSON metnini yapıştırın"></textarea>
+    <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="importBackup()">Yükle</button></div>
+
+  <h3>Sonuçları temizle</h3>
+  <p style="color:var(--muted);font-size:13px">${esc(dorm(S.dorm).name)}: ${mine.length} deneme · Mıntıka toplamı: ${results.length} deneme</p>
+  <div class="row" style="margin-bottom:26px">
+    <button class="btn btn-danger btn-sm" onclick="clearDormResults()">Bu yurdun sonuçlarını sil</button>
+    <button class="btn btn-danger btn-sm" onclick="clearAllResults()">Tüm mıntıka sonuçlarını sil</button></div>
+
+  <h3>Sıfırlama</h3>
+  <p style="color:var(--muted);font-size:13px">Talebeler ve tüm sonuçlar silinir${canEditWords()?', kelime listeleri de silinir':' (kelime listelerine dokunulmaz)'}. Geri alınamaz.</p>
+  <button class="btn btn-danger btn-sm" onclick="wipeAll()">Her şeyi sil</button></div>`;
+}
+
+async function changePass(){
+  const v = document.getElementById('np').value.trim();
+  if (!v) return;
+  adminPass = v; lsSet(LS.pass, v);
+  flash('Şifre güncellendi'); render();
+}
+function downloadBackup(){
+  const blob = new Blob([JSON.stringify({words, students, results}, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kelime-yarismasi-yedek-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+async function importBackup(){
+  try{
+    const d = JSON.parse(document.getElementById('imp').value);
+    if (d.words){
+      if (canEditWords()){ words = d.words; await DB.saveWords(words); }
+      else flash('Kelimeler atlandı · düzenleme yetkisi ' + dorm(WORD_ADMIN).name + ' yurdunda');
+    }
+    if (d.students){ students = d.students; await DB.saveStudents(students); }
+    if (d.results){ results = d.results; await DB.replaceResults(results); }
+    flash('Geri yüklendi'); render();
+  }catch(e){ alert('Geçersiz JSON. Yedek metnini olduğu gibi yapıştırın.'); }
+}
+async function clearDormResults(){
+  if (!confirm(dorm(S.dorm).name + ' yurdunun tüm sonuçları silinecek. Devam edilsin mi?')) return;
+  results = results.filter(r => r.dorm !== S.dorm);
+  await DB.replaceResults(results); flash('Silindi'); render();
+}
+async function clearAllResults(){
+  if (!confirm('TÜM YURTLARIN sonuçları silinecek. Devam edilsin mi?')) return;
+  results = [];
+  await DB.replaceResults(results); flash('Silindi'); render();
+}
+async function wipeAll(){
+  if (!confirm('Tüm talebeler, kelimeler ve sonuçlar silinecek. Devam edilsin mi?')) return;
+  students = {}; results = [];
+  await DB.saveStudents(students); await DB.replaceResults(results);
+  if (canEditWords()){ words = {}; await DB.saveWords(words); }
+  flash('Her şey silindi'); render();
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BÖLÜM 12 — BAŞLATMA
+   ══════════════════════════════════════════════════════════════════ */
+
+async function boot(){
+  // Veritabani TEK SEFER okunur; eksikler bellekte tamamlanip ekran hemen
+  // cizilir. Veritabanina yazma islemi arka planda yapilir, kullanici beklemez.
+  const d = await DB.load();
+
+  // YURTLAR: veritabanindaki liste kullanilir, yoksa varsayilanlar yazilir.
+  if (Array.isArray(d.dorms) && d.dorms.length){
+    DORMS = d.dorms;
+  } else {
+    DORMS = VARSAYILAN_YURTLAR.map(x => ({...x}));
+    DB.saveDorms(DORMS);
+  }
+
+  const dbKelime = (d.words    && typeof d.words    === 'object') ? d.words    : {};
+  const dbTalebe = (d.students && typeof d.students === 'object') ? d.students : {};
+
+  // KELIMELER: eksik uniteler tamamlanir, mevcut uniteler korunur.
+  words = {...dbKelime};
+  let kelimeDegisti = false;
+  Object.keys(HAZIR_KELIMELER).forEach(k => {
+    if (!(words[k] && words[k].length)){ words[k] = HAZIR_KELIMELER[k]; kelimeDegisti = true; }
+  });
+
+  // TALEBELER: bos siniflar doldurulur, DOLU olanlara dokunulmaz.
+  students = {...dbTalebe};
+  let talebeDegisti = false;
+  Object.keys(HAZIR_TALEBELER).forEach(yurt => {
+    students[yurt] = {...(students[yurt] || {})};
+    Object.keys(HAZIR_TALEBELER[yurt]).forEach(sinif => {
+      const varOlan = students[yurt][sinif];
+      if (!(varOlan && varOlan.length)){
+        students[yurt][sinif] = [...HAZIR_TALEBELER[yurt][sinif]];
+        talebeDegisti = true;
+      }
+    });
+  });
+
+  results = Array.isArray(d.results) ? d.results : [];
+  adminPass = ls(LS.pass, ADMIN_PASS_DEFAULT);
+
+  // Yazma islemleri ekrani bekletmez.
+  if (kelimeDegisti) DB.saveWords(words);
+  if (talebeDegisti) DB.saveStudents(students);
+
+  DB.watch(tazele);          // anlik bildirim (Realtime acikssa)
+  startAutoRefresh();        // yedek: duzenli yenileme
+
+  render();
+}
+
+/* ── Veriyi yeniden cekip ekrani tazeler ─────────────────────────────
+   Supabase Realtime kapali olsa bile sonuclarin diger bilgisayarlara
+   ulasmasini garantiler.                                            */
+let _tazeleniyor = false;
+async function tazele(){
+  if (_tazeleniyor) return;          // ust uste calismasin
+  if (S.screen === 'quiz') return;   // yarisma sirasinda dokunma
+  _tazeleniyor = true;
+  try{
+    const n = await DB.load();
+    const oncekiSonuc = results.length;
+    if (Array.isArray(n.results)) results = n.results;
+    if (n.words && Object.keys(n.words).length) words = n.words;
+    if (n.students && Object.keys(n.students).length) students = n.students;
+    if (Array.isArray(n.dorms) && n.dorms.length) DORMS = n.dorms;
+
+    if (S.screen === 'mintika'){
+      // Vitrin panellerini yerinde tazele (tum ekrani cizmeye gerek yok)
+      UNITS.forEach(u => {
+        const el = document.getElementById('pb'+u);
+        if (el) el.innerHTML = panelBody(mintikaTop(S.panelCls[u], u));
+      });
+    } else if ((S.screen === 'dorm' || S.screen === 'rekorlar') && results.length !== oncekiSonuc){
+      // Yurt ici siralama ekrani aciksa tazele
+      render();
+    }
+  }catch(e){
+    console.error('Tazeleme hatasi:', e);
+  }finally{
+    _tazeleniyor = false;
+  }
+}
+
+/* Duzenli yenileme: 15 saniyede bir. Sekme arka plandayken calismaz. */
+let _oto = null;
+function startAutoRefresh(){
+  if (_oto) clearInterval(_oto);
+  _oto = setInterval(() => {
+    if (document.hidden) return;              // sekme gorunmuyorsa bosuna cekme
+    if (S.screen === 'quiz') return;          // yarisma sirasinda dokunma
+    if (S.screen === 'admin' && S.aTab !== 'takip') return;  // form doldurulurken bozma
+    tazele();
+  }, 15000);
+}
+
+/* Sekmeye geri donuldugunde hemen tazele */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && S.screen !== 'quiz') tazele();
+});
+boot().catch(err => {
+  console.error(err);
+  document.getElementById('app').innerHTML =
+    `<div class="card" style="text-align:center;padding:40px 24px">
+       <h2 style="margin:0 0 10px;font-size:20px">Bağlantı kurulamadı</h2>
+       <p style="color:var(--muted);font-size:14px;margin:0 auto;max-width:460px">
+         Veritabanına ulaşılamıyor. İnternet bağlantınızı kontrol edip sayfayı yenileyin.</p>
+       <button class="btn btn-primary" style="margin-top:18px" onclick="location.reload()">Yeniden dene</button>
+     </div>`;
+});
+
+/* ══════════════════════════════════════════════════════════════════
+   ORTAK VERİTABANI ÖRNEĞİ (Supabase)
+   ------------------------------------------------------------------
+   1) <head> icine su etiketi ekleyin (kose parantezlerle):
+      script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+   2) BÖLÜM 1'deki DB nesnesini şununla değiştirin:
+
+   const sb = supabase.createClient('PROJE_URL', 'ANON_KEY');
+   const DB = {
+     async load(){
+       const [w,s,r] = await Promise.all([
+         sb.from('ayarlar').select('deger').eq('anahtar','words').single(),
+         sb.from('ayarlar').select('deger').eq('anahtar','students').single(),
+         sb.from('sonuclar').select('*').order('date')
+       ]);
+       return { words: w.data?.deger || null,
+                students: s.data?.deger || null,
+                results: r.data || [] };
+     },
+     async saveWords(w){ await sb.from('ayarlar').upsert({anahtar:'words', deger:w}); return true; },
+     async saveStudents(s){ await sb.from('ayarlar').upsert({anahtar:'students', deger:s}); return true; },
+     async addResult(r){ await sb.from('sonuclar').insert(r); return true; },
+     async replaceResults(list){
+       await sb.from('sonuclar').delete().neq('id','');
+       if (list.length) await sb.from('sonuclar').insert(list);
+       return true;
+     },
+     watch(fn){
+       sb.channel('canli')
+         .on('postgres_changes', {event:'*', schema:'public'}, fn)
+         .subscribe();
+     }
+   };
+
+   Gereken tablolar:
+     ayarlar(anahtar text primary key, deger jsonb)
+     sonuclar(id text primary key, dorm text, name text, cls int, unit int,
+              correct int, total int, seconds int, score int, wrongs jsonb, date bigint)
+   ══════════════════════════════════════════════════════════════════ */
+</script>
+</body>
+</html>
