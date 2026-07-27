@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talebe Puan Sistemi</title>
+<style>
+  :root{
+    --ink:#1a2420; --soft:#5a6a62;
+    --green:#14532d; --green-mid:#1f7a45; --green-pale:#e6f2ea;
+    --red:#b3261e; --red-pale:#fdecea;
+    --gold:#a67c00; --gold-pale:#fff6de;
+    --line:#dce3de; --bg:#f4f6f4; --card:#fff; --r:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;}
+  header{background:var(--green);color:#fff;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:60;}
+  header h1{font-size:17px;font-weight:700;}
+  header .sub{font-size:12px;opacity:.8;display:block;margin-top:2px;}
+  .dbox{display:flex;gap:8px;align-items:center;}
+  input[type=date],input[type=text],input[type=number],input[type=search]{
+    font-family:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);}
+  header input[type=date]{border:none;}
+  .btn{border:none;border-radius:8px;padding:8px 13px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .btn:active{filter:brightness(.92);}
+  .btn-sm{padding:6px 10px;font-size:13px;}
+  .btn-light{background:rgba(255,255,255,.2);color:#fff;}
+  .btn-green{background:var(--green-mid);color:#fff;}
+  .btn-out{background:#fff;color:var(--green);border:1.5px solid var(--green-mid);}
+  .btn-red{background:#fff;color:var(--red);border:1.5px solid var(--red);}
+  nav{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:58px;z-index:55;overflow-x:auto;}
+  nav button{flex:1;min-width:88px;padding:12px 6px;border:none;background:none;font-size:14px;font-weight:600;color:var(--soft);cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;white-space:nowrap;}
+  nav button.active{color:var(--green);border-bottom-color:var(--green);}
+  main{padding:12px;max-width:1300px;margin:0 auto;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+  .panel h2{font-size:15px;color:var(--green);margin-bottom:10px;}
+  .panel h2 small{font-weight:400;font-size:12px;color:var(--soft);}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .info{font-size:13px;color:var(--soft);}
+  .hidden{display:none !important;}
+  .empty{padding:22px;text-align:center;color:var(--soft);font-size:14px;}
+
+  /* ---- takip tablosu ---- */
+  .twrap{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:auto;max-height:calc(100vh - 230px);}
+  table.tk{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;}
+  table.tk th,table.tk td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);}
+  th.nh{position:sticky;left:0;top:0;z-index:30;background:var(--green);color:#fff;min-width:170px;text-align:left;padding:8px 10px;font-size:12px;text-transform:uppercase;}
+  th.ch{background:var(--green-pale);color:var(--green);position:sticky;top:0;z-index:20;min-width:56px;max-width:56px;padding:6px 3px;font-size:11px;font-weight:600;vertical-align:bottom;}
+  th.ch .cl{writing-mode:vertical-rl;transform:rotate(180deg);height:92px;white-space:nowrap;display:inline-block;text-align:left;}
+  th.ch .cp{display:block;margin-top:4px;font-size:11px;font-weight:800;}
+  th.ch .cp.neg{color:var(--red);} th.ch .cp.pos{color:var(--green-mid);}
+  th.th-tot{position:sticky;right:0;top:0;z-index:30;background:var(--green);color:#fff;font-size:11px;padding:6px;min-width:62px;}
+  td.nm{position:sticky;left:0;z-index:10;background:#fff;padding:8px 10px;font-weight:600;font-size:13.5px;white-space:nowrap;min-width:170px;}
+  tr:nth-child(even) td.nm{background:#fafbfa;}
+  td.cell{width:56px;min-width:56px;height:42px;text-align:center;cursor:pointer;user-select:none;font-size:15px;font-weight:700;color:#c8d2cc;}
+  td.cell:hover{background:var(--green-pale);}
+  td.cell.on-neg{background:var(--red-pale);color:var(--red);}
+  td.cell.on-pos{background:var(--green-pale);color:var(--green-mid);}
+  /* basılı tutma göstergesi */
+  td.cell.hold, .chip2.hold{
+    background-image:linear-gradient(to top, rgba(31,122,69,.45), rgba(31,122,69,.45));
+    background-repeat:no-repeat;background-position:bottom;
+    animation:holdfill 2s linear forwards;
+  }
+  @keyframes holdfill{ from{background-size:100% 0%} to{background-size:100% 100%} }
+  td.dtot{position:sticky;right:0;background:#fff;z-index:10;text-align:center;font-weight:800;font-size:14px;min-width:62px;border-left:1px solid var(--line);}
+  td.dtot.neg{color:var(--red);} td.dtot.pos{color:var(--green-mid);} td.dtot.zero{color:#c8d2cc;}
+
+  /* ---- sıralama listesi ---- */
+  .lb{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid var(--line);}
+  .lb .rk{width:30px;text-align:center;font-weight:800;color:var(--soft);font-size:14px;flex-shrink:0;}
+  .lb .nmz{flex:1;font-weight:600;font-size:14px;}
+  .lb .bar{height:8px;border-radius:4px;background:var(--green-mid);min-width:2px;}
+  .lb .barneg{height:8px;border-radius:4px;background:var(--red);min-width:2px;}
+  .lb .pt{width:62px;text-align:right;font-weight:800;font-size:15px;}
+  .lb .pt.pos{color:var(--green-mid);} .lb .pt.neg{color:var(--red);} .lb .pt.zero{color:var(--soft);}
+  .lb.top{background:var(--gold-pale);border-radius:8px;}
+  .lb.top .rk{color:var(--gold);}
+
+  .winner{background:linear-gradient(135deg,#fff9e8,#fff);border:2px solid #e8c76a;border-radius:var(--r);padding:16px;text-align:center;margin-bottom:12px;}
+  .winner .lbl{font-size:12px;letter-spacing:1px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+  .winner .who{font-size:22px;font-weight:800;margin:6px 0 2px;}
+  .winner .pts{font-size:14px;color:var(--soft);}
+  .winner .medal{font-size:30px;}
+
+  .wcard{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px;background:#fff;}
+  .wcard.now{border-color:var(--green-mid);box-shadow:0 0 0 2px var(--green-pale);}
+  .wcard .wh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+  .wcard .wt{font-weight:800;font-size:15px;color:var(--green);}
+  .wcard .wd{font-size:12px;color:var(--soft);}
+  .tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--green-pale);color:var(--green);}
+  .tag.live{background:var(--gold-pale);color:var(--gold);}
+  .tag.soon{background:#eef0ef;color:var(--soft);}
+  .podium{display:flex;gap:8px;flex-wrap:wrap;}
+  .pod{flex:1;min-width:110px;background:#fafbfa;border-radius:8px;padding:8px;text-align:center;}
+  .pod.p1{background:var(--gold-pale);}
+  .pod .pm{font-size:16px;} .pod .pn{font-size:12.5px;font-weight:700;margin:2px 0;}
+  .pod .pp{font-size:13px;font-weight:800;color:var(--green-mid);}
+
+  /* ---- veli bilgilendirme ---- */
+  .vb-pick{display:flex;gap:8px;align-items:center;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);
+    max-width:700px;margin:0 auto;width:100%;}
+  .vb-pick select{flex:1;min-width:0;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:15px;background:#fff;}
+  .vb-pick #vbWeek{flex:0 0 auto;width:auto;}
+  .vb-weeks{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;background:#eef2ef;border-bottom:1px solid var(--line);
+    max-width:700px;margin:0 auto;width:100%;}
+  .vb-weeks button{border:1.5px solid var(--line);background:#fff;color:var(--soft);border-radius:8px;
+    padding:7px 12px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .vb-weeks button.on{background:var(--green);border-color:var(--green);color:#fff;}
+  .vb-body{flex:1;overflow:auto;padding:12px;max-width:700px;margin:0 auto;width:100%;background:#eef2ef;}
+  .vb-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px;}
+  .vb-name{font-size:20px;font-weight:800;color:var(--green);}
+  .vb-meta{font-size:13px;color:var(--soft);margin-top:2px;}
+  .vb-congrats{background:linear-gradient(135deg,#fff9e8,#fff);border:2px solid #e8c76a;border-radius:var(--r);
+    padding:14px;text-align:center;margin-bottom:12px;}
+  .vb-congrats .c1{font-size:30px;} .vb-congrats .c2{font-size:16px;font-weight:800;color:var(--gold);margin-top:4px;}
+  .vb-congrats .c3{font-size:13px;color:var(--soft);margin-top:2px;}
+  .vb-stat{display:flex;gap:10px;margin-bottom:12px;}
+  .vb-stat .st{flex:1;background:#fafbfa;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center;}
+  .vb-stat .st .n{font-size:22px;font-weight:800;color:var(--green);}
+  .vb-stat .st .l{font-size:11.5px;color:var(--soft);margin-top:2px;}
+  .vb-sec{margin-bottom:12px;}
+  .vb-sec h3{font-size:13px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+  .vb-sec.bad h3{color:var(--red);} .vb-sec.good h3{color:var(--green-mid);}
+  .vb-item{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px;margin-bottom:5px;}
+  .vb-item.bad{background:#fbdedb;} .vb-item.good{background:#d7ecdd;}
+  .vb-item.zero{background:#e4e9e5;color:#8a988f;}
+  .vb-item.zero b{color:#b3bdb6;}
+  .vb-item b{flex-shrink:0;}
+  .vb-item.bad b{color:var(--red);} .vb-item.good b{color:var(--green-mid);}
+  .vb-days{display:flex;gap:4px;margin-top:6px;}
+  .vb-days .d{flex:1;text-align:center;font-size:11px;color:var(--soft);background:#fafbfa;border:1px solid var(--line);border-radius:6px;padding:5px 2px;}
+  .vb-days .d b{display:block;font-size:14px;margin-top:2px;}
+  .vb-days .d b.p{color:var(--green-mid);} .vb-days .d b.n{color:var(--red);} .vb-days .d b.z{color:#c8d2cc;}
+  .vb-foot{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#fff;}
+  .vb-none{padding:16px;text-align:center;color:var(--soft);background:var(--green-pale);border-radius:10px;}
+  .vb-praise{font-size:13px;color:var(--green-mid);margin-bottom:8px;line-height:1.4;}
+
+
+  .ddq{position:fixed;inset:0;z-index:900;background:var(--bg);display:flex;flex-direction:column;}
+  .ddq-bar{background:var(--green);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;justify-content:space-between;}
+  .ddq-title{font-weight:700;font-size:16px;flex:1;text-align:center;}
+  .ddq-body{flex:1;overflow:auto;padding:12px;max-width:900px;margin:0 auto;width:100%;}
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+  .tcard{background:#fff;border:1px solid var(--line);border-left:5px solid var(--green-mid);border-radius:var(--r);
+    padding:16px 14px;cursor:pointer;text-align:left;font-family:inherit;width:100%;}
+  .tcard:active{background:var(--green-pale);}
+  .tcard .tn{font-size:17px;font-weight:800;color:var(--green);}
+  .tcard .tg{font-size:12.5px;color:var(--soft);margin-top:4px;}
+  .qrow{display:flex;align-items:center;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .qrow .qn{flex:1;min-width:110px;font-size:15px;font-weight:600;}
+  .qrow .seg button{padding:10px 13px;font-size:15px;min-width:50px;}
+  .qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px;}
+  .qhead .qt{font-weight:800;color:var(--green);font-size:16px;}
+  .qhead .qs{font-size:12.5px;color:var(--soft);}
+
+  /* ---- dahili ders grupları ---- */
+  .gcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px;}
+  .gcard .gh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+  .gcard .gt{font-weight:800;font-size:15px;color:var(--green);}
+  .gcard .gm{font-size:12.5px;color:var(--soft);}
+  .grow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .grow .gn{flex:1;min-width:120px;font-size:14px;font-weight:600;}
+  .seg{display:flex;gap:4px;}
+  .seg button{
+    border:1.5px solid var(--line);background:#fff;color:var(--soft);border-radius:8px;
+    padding:7px 11px;font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;min-width:44px;
+  }
+  .seg button.on-neg{background:var(--red-pale);border-color:var(--red);color:var(--red);}
+  .seg button.on-pos{background:var(--green-pale);border-color:var(--green-mid);color:var(--green-mid);}
+  .seg button.on-zero{background:#eef1ef;border-color:#c9d2cc;color:var(--ink);}
+  .mem{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px;}
+  .mem label{display:flex;align-items:center;gap:7px;font-size:13.5px;background:#fafbfa;border:1px solid var(--line);
+    border-radius:8px;padding:7px 9px;cursor:pointer;}
+  .mem input{width:16px;height:16px;accent-color:var(--green);}
+
+  .srow{display:flex;align-items:center;gap:8px;padding:8px 4px;border-bottom:1px solid var(--line);}
+  .srow.off{opacity:.5;}
+  .srow.off input[type=text]{background:#f2f4f2;}
+  .sw{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;flex-shrink:0;}
+  .sw input{display:none;}
+  .sw .track{width:42px;height:24px;border-radius:14px;background:#c9d2cc;position:relative;transition:background .2s;display:block;}
+  .sw .knob{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;
+    transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+  .sw input:checked + .track{background:var(--green-mid);}
+  .sw input:checked + .track .knob{left:21px;}
+  .sw .swlbl{font-size:12.5px;color:var(--soft);min-width:46px;}
+  .srow .sn{flex:1;font-size:14px;font-weight:600;}
+  .srow input[type=text]{flex:1;}
+  .cfg{display:flex;align-items:center;gap:8px;padding:8px 4px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .cfg .cn{flex:1;min-width:130px;font-size:14px;font-weight:600;}
+  .cfg input[type=number]{width:70px;text-align:center;}
+  .cfg .unit{font-size:12px;color:var(--soft);}
+  footer{padding:16px;text-align:center;font-size:12px;color:var(--soft);}
+  /* ================= TV MODU ================= */
+  .tv{position:fixed;inset:0;z-index:999;background:linear-gradient(160deg,#0d3a20,#14532d 55%,#0b2e19);
+      color:#fff;display:flex;flex-direction:column;overflow:hidden;}
+  .tv-bar{display:flex;justify-content:space-between;align-items:center;padding:1.4vh 2.4vw;flex-shrink:0;}
+  .tv-brand{font-size:2.1vh;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.7;}
+  .tv-ctrl{display:flex;gap:.6vw;opacity:.25;transition:opacity .25s;}
+  .tv:hover .tv-ctrl{opacity:1;}
+  .tv-ctrl button{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:8px;
+      font-size:2vh;padding:.7vh 1.4vh;cursor:pointer;font-family:inherit;line-height:1;}
+  .tv-ctrl button:hover{background:rgba(255,255,255,.3);}
+  .tv-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 32vw 0 4vw;min-height:0;}
+
+  .tv-rail{
+    position:absolute;right:2vw;top:8.5vh;bottom:2.5vh;width:27vw;
+    display:flex;flex-direction:column;gap:1.4vh;
+  }
+  .tv-side{
+    flex:1;min-height:0;
+    background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.16);border-radius:1.6vh;
+    padding:1.6vh 1.6vw;display:flex;flex-direction:column;overflow:hidden;
+  }
+  .tv-side.season{background:rgba(245,208,106,.12);border-color:rgba(245,208,106,.32);}
+  .tv-side .sk{font-size:1.7vh;letter-spacing:.16em;text-transform:uppercase;color:#f5d06a;font-weight:700;}
+  .tv-side .snm{font-size:2.9vh;font-weight:800;margin:.4vh 0 .9vh;line-height:1.1;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tv-side .stt{display:flex;justify-content:space-between;align-items:baseline;
+    border-top:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18);
+    padding:.8vh 0;margin-bottom:.8vh;font-size:1.8vh;opacity:.85;}
+  .tv-side .stt b{font-size:2.9vh;color:#9ce0b4;}
+  .tv-side .stt b.neg{color:#ff9d95;}
+  .tv-side .ln{display:flex;justify-content:space-between;gap:1vw;font-size:1.8vh;padding:.45vh 0;}
+  .tv-side .ln .l{opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tv-side .ln .r{font-weight:800;flex-shrink:0;color:#9ce0b4;}
+  .tv-side .ln .r.neg{color:#ff9d95;}
+  .tv-side .days{display:flex;gap:.4vw;margin-top:auto;padding-top:.9vh;border-top:1px solid rgba(255,255,255,.18);}
+  .tv-side .dd{flex:1;text-align:center;font-size:1.4vh;opacity:.75;}
+  .tv-side .dd b{display:block;font-size:1.8vh;margin-top:.25vh;opacity:1;}
+  .tv-side .dd b.p{color:#9ce0b4;} .tv-side .dd b.n{color:#ff9d95;} .tv-side .dd b.z{opacity:.35;}
+  .tv-side .none{font-size:1.9vh;opacity:.6;padding:1.4vh 0;}
+  .tv-side .pos-of{font-size:1.5vh;opacity:.55;margin-top:.8vh;text-align:right;}
+  @media(max-width:900px){
+    .tv-body{padding:0 4vw;}
+    .tv-rail{display:none;}
+  }
+  .tv-dots{display:flex;justify-content:center;gap:1vh;padding:2vh;flex-shrink:0;}
+  .tv-dots i{width:1.1vh;height:1.1vh;border-radius:50%;background:rgba(255,255,255,.28);display:block;}
+  .tv-dots i.on{background:#f5d06a;width:3.4vh;border-radius:1vh;}
+  .fade{animation:fadeIn .55s ease both;}
+  .tvt-wrap .fade, .tvt-wrap{animation:none;}
+  #mqInner{will-change:transform;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(2vh)}to{opacity:1;transform:none}}
+
+  .tv-kicker{font-size:2.4vh;letter-spacing:.22em;text-transform:uppercase;color:#f5d06a;font-weight:700;text-align:center;}
+  .tv-sub{font-size:2.2vh;opacity:.65;text-align:center;margin-top:.8vh;}
+  .tv-hero{text-align:center;margin:2vh 0 3vh;}
+  .tv-hero .cup{font-size:11vh;line-height:1;}
+  .tv-hero .name{font-size:8.5vh;font-weight:800;line-height:1.05;margin:1vh 0;text-shadow:0 .4vh 2vh rgba(0,0,0,.35);
+    max-height:44vh;overflow:hidden;overflow-wrap:break-word;}
+  .tv-hero .pts{font-size:4.4vh;font-weight:700;color:#f5d06a;}
+  .tv-title{font-size:4.6vh;font-weight:800;text-align:center;margin-bottom:1vh;}
+
+  .tv-list{max-width:88vw;margin:0 auto;width:100%;}
+  .tv-row{display:flex;align-items:center;gap:2vw;padding:1.5vh 2.2vw;border-radius:1.4vh;
+      background:rgba(255,255,255,.07);margin-bottom:1.1vh;font-size:3.4vh;}
+  .tv-row.gold{background:linear-gradient(90deg,rgba(245,208,106,.28),rgba(245,208,106,.06));}
+  .tv-row .r{width:6vh;text-align:center;font-weight:800;opacity:.75;flex-shrink:0;}
+  .tv-row .n{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tv-row .p{font-weight:800;color:#9ce0b4;min-width:9vh;text-align:right;}
+  .tv-row .p.neg{color:#ff9d95;}
+  .tv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6vw;max-width:92vw;margin:0 auto;width:100%;}
+  .tv-card{background:rgba(255,255,255,.08);border-radius:1.6vh;padding:2.2vh 1.4vw;text-align:center;}
+  .tv-card.live{background:linear-gradient(160deg,rgba(245,208,106,.3),rgba(255,255,255,.06));}
+  .tv-card .wk{font-size:2.1vh;opacity:.7;letter-spacing:.1em;text-transform:uppercase;}
+  .tv-card .wn{font-size:3.2vh;font-weight:800;margin:1vh 0 .4vh;line-height:1.15;}
+  .tv-card .wp{font-size:2.6vh;color:#f5d06a;font-weight:700;}
+  .tv-empty{text-align:center;font-size:3.4vh;opacity:.6;}
+  .tv-chips{display:flex;flex-wrap:wrap;gap:.8vh 1vw;justify-content:center;max-width:88vw;margin:1vh auto 0;max-height:32vh;overflow:hidden;}
+  .tv-chips span{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);
+    border-radius:1vh;padding:.7vh 1.1vw;font-size:2.3vh;font-weight:600;white-space:nowrap;}
+  .tv-chips span.more{background:rgba(245,208,106,.22);color:#f5d06a;}
+  .win-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px;}
+  .win-chips span{background:#fff;border:1px solid #e8d9a8;border-radius:6px;padding:3px 8px;font-size:12.5px;font-weight:600;}
+
+  /* --- kayan günlük tablo --- */
+  .tvt-wrap{display:flex;flex-direction:column;min-height:0;flex:1;max-height:78vh;}
+  table.tvt{width:100%;table-layout:fixed;border-collapse:collapse;}
+  table.tvt th{
+    background:rgba(255,255,255,.10);color:#fff;font-weight:700;font-size:1.5vh;
+    padding:.8vh .2vw;vertical-align:bottom;border-right:1px solid rgba(255,255,255,.10);
+  }
+  table.tvt th .vl{writing-mode:vertical-rl;transform:rotate(180deg);height:23vh;
+    white-space:nowrap;display:inline-block;text-align:left;line-height:1;letter-spacing:-.02em;}
+  table.tvt th .vp{display:block;margin-top:.6vh;font-size:1.7vh;font-weight:800;}
+  table.tvt th .vp.neg{color:#ff9d95;} table.tvt th .vp.pos{color:#9ce0b4;}
+  table.tvt th.nmh{text-align:left;padding-left:1.4vw;font-size:2vh;letter-spacing:.1em;text-transform:uppercase;}
+  table.tvt th.toth{background:rgba(245,208,106,.18);font-size:1.8vh;}
+  table.tvt td{
+    padding:1.15vh .3vw;text-align:center;font-size:2.4vh;font-weight:700;
+    border-bottom:1px solid rgba(255,255,255,.08);border-right:1px solid rgba(255,255,255,.06);
+  }
+  table.tvt td.nmc{text-align:left;padding-left:1.4vw;font-weight:600;font-size:2.5vh;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  table.tvt td.z{color:rgba(255,255,255,.22);}
+  table.tvt td.neg{color:#ff9d95;background:rgba(255,120,110,.10);}
+  table.tvt td.pos{color:#9ce0b4;background:rgba(140,224,180,.10);}
+  table.tvt td.totc{font-size:2.7vh;font-weight:800;background:rgba(245,208,106,.10);}
+  .mq-box{overflow:hidden;flex:1;min-height:0;
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 5%,#000 92%,transparent);
+    mask-image:linear-gradient(180deg,transparent,#000 5%,#000 92%,transparent);}
+  @keyframes mq{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+
+  .cards{display:none;}
+  .scard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-bottom:10px;}
+  .scard .sh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;}
+  .scard .sh .snm{font-weight:700;font-size:15px;}
+  .scard .sh .stot{font-weight:800;font-size:16px;min-width:44px;text-align:right;}
+  .stot.pos{color:var(--green-mid);} .stot.neg{color:var(--red);} .stot.zero{color:#b9c4bd;}
+  .chips{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .chip2{
+    display:flex;align-items:center;justify-content:space-between;gap:6px;
+    border:1px solid var(--line);border-radius:10px;padding:9px 10px;cursor:pointer;
+    background:#fbfcfb;min-height:46px;
+  }
+  .chip2 .t{font-size:12.5px;font-weight:600;line-height:1.25;}
+  .chip2 .v{font-size:13px;font-weight:800;color:#b9c4bd;flex-shrink:0;}
+  .chip2.neg{background:var(--red-pale);border-color:#f0c9c5;}
+  .chip2.neg .v{color:var(--red);}
+  .chip2.pos{background:var(--green-pale);border-color:#bcdcc8;}
+  .chip2.pos .v{color:var(--green-mid);}
+
+  @media(max-width:700px){
+    .twrap{display:none;}
+    .cards{display:block;}
+    /* işaretleme ekranı telefonda da tablo olarak kalsın */
+    #tkWrap{display:block;max-height:calc(100vh - 250px);}
+    #tkCards{display:none;}
+    nav button{flex:0 0 auto;padding:12px 14px;}
+    #tkWrap td.nm, #tkWrap th.nh{min-width:118px;max-width:118px;}
+    #tkWrap td.nm{font-size:11.5px;white-space:normal;line-height:1.2;padding:6px 6px;}
+    #tkWrap th.nh{font-size:10.5px;padding:6px;}
+    #tkWrap th.ch{min-width:40px;max-width:40px;font-size:10px;padding:4px 2px;}
+    #tkWrap th.ch .cl{height:82px;}
+    #tkWrap th.ch .cp{font-size:10.5px;}
+    #tkWrap td.cell{width:40px;min-width:40px;height:40px;font-size:13px;}
+    #tkWrap td.dtot,#tkWrap th.th-tot{min-width:46px;font-size:12.5px;}
+    #tkWrap th.th-tot{font-size:10px;padding:4px;}
+    header{position:static;}
+    nav{top:0;}
+    header h1{font-size:16px;}
+  }
+  @media(max-width:700px){
+    .twrap{display:none;}
+    .cards{display:block;}
+    /* işaretleme ekranı telefonda da tablo olarak kalsın */
+    #tkWrap{display:block;max-height:calc(100vh - 250px);}
+    #tkCards{display:none;}
+    nav button{flex:0 0 auto;padding:12px 14px;}
+    #tkWrap td.nm, #tkWrap th.nh{min-width:118px;max-width:118px;}
+    #tkWrap td.nm{font-size:11.5px;white-space:normal;line-height:1.2;padding:6px 6px;}
+    #tkWrap th.nh{font-size:10.5px;padding:6px;}
+    #tkWrap th.ch{min-width:40px;max-width:40px;font-size:10px;padding:4px 2px;}
+    #tkWrap th.ch .cl{height:82px;}
+    #tkWrap th.ch .cp{font-size:10.5px;}
+    #tkWrap td.cell{width:40px;min-width:40px;height:40px;font-size:13px;}
+    #tkWrap td.dtot,#tkWrap th.th-tot{min-width:46px;font-size:12.5px;}
+    #tkWrap th.th-tot{font-size:10px;padding:4px;}
+    header{position:static;}
+    nav{top:0;}
+    header h1{font-size:16px;}
+    main{padding:10px 8px;}
+    .panel{padding:12px 10px;}
+    .lb{gap:6px;padding:9px 2px;}
+    .lb .rk{width:24px;font-size:13px;}
+    .lb .nmz{font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:2;}
+    .lb .pt{width:46px;font-size:14px;}
+    .winner .who{font-size:19px;}
+    .champ-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .champ-scroll .cfg{width:max-content;min-width:100%;}
+    .cfg{gap:6px;}
+    .cfg .cn{flex-basis:100%;min-width:0;}
+    #catList .cfg input[type=number]{width:64px;}
+    .srow{flex-wrap:wrap;}
+    .srow input[type=text]{min-width:0;flex:1;}
+  }
+  @media(max-width:380px){ .chips{grid-template-columns:1fr;} }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="gate" style="position:fixed;inset:0;z-index:2000;background:linear-gradient(160deg,#0d3a20,#14532d);
+     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;">
+  <div style="color:#fff;font-size:22px;font-weight:800;letter-spacing:.5px;">Talebe Puan Sistemi</div>
+  <div style="color:rgba(255,255,255,.7);font-size:14px;">Devam etmek için şifreyi girin</div>
+  <input id="gatePass" type="password" inputmode="numeric" placeholder="Şifre"
+     style="font-size:20px;padding:12px 16px;border:none;border-radius:10px;width:200px;text-align:center;letter-spacing:4px;"
+     onkeydown="if(event.key==='Enter')gateTry()">
+  <button onclick="gateTry()" style="background:#1f7a45;color:#fff;border:none;border-radius:10px;
+     padding:12px 28px;font-size:16px;font-weight:700;cursor:pointer;">Giriş</button>
+  <div id="gateErr" style="color:#ffb4ae;font-size:13px;height:16px;"></div>
+</div>
+
+<script>
+(function(){
+  var PASS="1453";
+  if(sessionStorage.getItem("gateOK")==="1"){ document.getElementById("gate").style.display="none"; }
+  else { document.body.style.overflow="hidden"; setTimeout(function(){ var p=document.getElementById("gatePass"); if(p) p.focus(); },200); }
+  window.gateTry=function(){
+    var v=document.getElementById("gatePass").value;
+    if(v===PASS){
+      sessionStorage.setItem("gateOK","1");
+      document.getElementById("gate").style.display="none";
+      document.body.style.overflow="";
+    } else {
+      document.getElementById("gateErr").textContent="Şifre yanlış";
+      document.getElementById("gatePass").value="";
+      document.getElementById("gatePass").focus();
+    }
+  };
+})();
+</script>
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-light btn-sm" onclick="vbOpen()" style="font-size:14px">📣 Veli Bilgi</button>
+    <div>
+      <h1>Talebe Puan Sistemi</h1>
+      <span class="sub" id="hsub"></span>
+      <span class="sub" id="syncBadge" style="margin-left:8px;font-weight:700">● bağlanıyor…</span>
+    </div>
+  </div>
+  <div class="dbox">
+    <button class="btn btn-light btn-sm" onclick="tvStart()">📺 TV Modu</button>
+    <button class="btn btn-light btn-sm" id="btnToday">Bugün</button>
+    <input type="date" id="dayPicker">
+  </div>
+</header>
+
+<nav>
+  <button id="t_track" class="active" onclick="tab('track')">Günlük İşaretleme</button>
+  <button id="t_week" onclick="tab('week')">Bu Hafta</button>
+  <button id="t_season" onclick="tab('season')">Sezon / Yazın Talebesi</button>
+  <button id="t_report" onclick="tab('report')">Rapor</button>
+  <button id="t_students" onclick="tab('students')">Talebeler</button>
+  <button id="t_settings" onclick="tab('settings')">Ayarlar</button>
+</nav>
+
+<main>
+
+<!-- ================= GÜNLÜK ================= -->
+<section id="v_track">
+  <div class="row" style="margin-bottom:10px">
+    <input type="search" id="search" placeholder="Talebe ara..." style="flex:1;min-width:150px">
+    <button class="btn btn-out btn-sm" onclick="clearDay()">Günü Temizle</button>
+  </div>
+  <div class="info" id="dayInfo" style="margin-bottom:8px"></div>
+  <div class="twrap" id="tkWrap"><table class="tk" id="tkTable"></table></div>
+  <div class="cards" id="tkCards"></div>
+  <p class="info" style="margin-top:8px">
+    Bir hücreye <b>kısa bir an basılı tutunca</b> işaretlenir (yeşil dolgu dolduğunda). Yanlış dokunmalar sayılmaz.
+    İşaretler o günün tarihine kaydedilir; <b>ertesi gün çizelge boş açılır</b>, önceki günler hafızada kalır.
+    Geçmiş bir günü görmek veya düzeltmek için üstteki tarihi değiştirin.
+  </p>
+</section>
+
+<!-- ================= BU HAFTA ================= -->
+<section id="v_week" class="hidden">
+  <div class="panel">
+    <div class="row">
+      <button class="btn btn-out btn-sm" onclick="shiftWeek(-1)">◀ Önceki</button>
+      <div style="flex:1;text-align:center">
+        <div style="font-weight:800;color:var(--green)" id="wTitle"></div>
+        <div class="info" id="wDates"></div>
+      </div>
+      <button class="btn btn-out btn-sm" onclick="shiftWeek(1)">Sonraki ▶</button>
+    </div>
+  </div>
+  <div id="wWinner"></div>
+  <div class="panel">
+    <h2>Haftalık Sıralama</h2>
+    <div id="wBoard"></div>
+  </div>
+  <div class="panel">
+    <h2>Günlük Dağılım <small>— haftanın günlerine göre toplam puan</small></h2>
+    <div id="wDays"></div>
+  </div>
+</section>
+
+<!-- ================= SEZON ================= -->
+<section id="v_season" class="hidden">
+  <div id="sWarn"></div>
+  <div id="sWinner"></div>
+  <div class="panel">
+    <h2>Genel Sıralama <small>— sezon toplamı</small></h2>
+    <div id="sBoard"></div>
+  </div>
+  <div class="panel">
+    <h2>Haftalar</h2>
+    <div id="sWeeks"></div>
+  </div>
+  <div class="panel">
+    <h2>Haftalık Şampiyonlar Tablosu</h2>
+    <div id="sChamps"></div>
+  </div>
+</section>
+
+<!-- ================= RAPOR ================= -->
+<section id="v_report" class="hidden">
+  <div class="panel">
+    <div class="row">
+      <button class="btn btn-green btn-sm" id="rm_week" onclick="setRepMode('week')">Haftalık</button>
+      <button class="btn btn-out btn-sm" id="rm_season" onclick="setRepMode('season')">Yazlık (Tüm Sezon)</button>
+      <select id="repWeek" onchange="repWeekChange(this.value)"
+        style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px"></select>
+      <button class="btn btn-out btn-sm" onclick="repSort()" id="repSortBtn">Sıralama: Puana göre</button>
+    </div>
+    <div class="info" id="repInfo" style="margin-top:8px"></div>
+  </div>
+  <div class="twrap" id="repWrap" style="max-height:calc(100vh - 220px)"><table class="tk" id="repTbl"></table></div>
+  <div class="cards" id="repCards"></div>
+  <div class="panel" style="margin-top:12px">
+    <button class="btn btn-green btn-sm" onclick="exportReportCSV()">Bu Raporu CSV İndir</button>
+    <p class="info" style="margin-top:8px">Hücrelerde işaret adedi, parantez içinde puan karşılığı yazar. Alt satır madde toplamlarıdır.</p>
+  </div>
+</section>
+
+<!-- ================= TALEBELER ================= -->
+<section id="v_students" class="hidden">
+  <div class="panel">
+    <h2>Talebe Ekle</h2>
+    <div class="row">
+      <input type="text" id="newStudent" placeholder="Talebe adı soyadı" style="flex:1;min-width:180px">
+      <button class="btn btn-green" onclick="addStudent()">Ekle</button>
+    </div>
+    <p class="info" style="margin-top:8px">Birden fazla ismi alt alta yapıştırıp "Ekle"ye basabilirsiniz (her satır bir talebe).</p>
+    <textarea id="bulk" placeholder="Toplu ekleme: her satıra bir isim" style="width:100%;margin-top:8px;min-height:70px;padding:10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px"></textarea>
+    <button class="btn btn-out btn-sm" style="margin-top:6px" onclick="addBulk()">Toplu Ekle</button>
+  </div>
+  <div class="panel">
+    <h2>Talebe Listesi <small id="stuCount"></small></h2>
+    <p class="info" style="margin-bottom:10px">
+      Sağdaki anahtar <b>açıkken</b> talebe işaretleme ekranında, raporlarda, dahili derste ve TV modunda görünür.
+      <b>Kapatırsanız</b> hiçbir yerde görünmez ama geçmiş kayıtları hafızada durur; tekrar açtığınızda puanlarıyla birlikte geri gelir.
+    </p>
+    <div id="stuList"></div>
+  </div>
+</section>
+
+<!-- ================= AYARLAR ================= -->
+<section id="v_settings" class="hidden">
+  <div class="panel">
+    <h2>Sezon Ayarı <small>— sezon dönemi</small></h2>
+    <div class="row">
+      <label class="info">1. haftanın başlangıcı (Pazartesi):</label>
+      <input type="date" id="seasonStart" onchange="setSeasonStart(this.value)">
+    </div>
+    <div class="row" style="margin-top:8px">
+      <label class="info">Sezon kaç hafta sürsün:</label>
+      <select id="seasonWeeksSel" onchange="setSeasonWeeks(this.value)"
+        style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px">
+        <option value="4">4 hafta</option>
+        <option value="5">5 hafta</option>
+        <option value="6">6 hafta</option>
+        <option value="7">7 hafta</option>
+        <option value="8">8 hafta</option>
+      </select>
+    </div>
+    <div class="info" id="seasonInfo" style="margin-top:8px"></div>
+  </div>
+  <div class="panel">
+    <h2>Puan Tablosu <small>— değerleri değiştirebilirsiniz</small></h2>
+    <div id="catList"></div>
+    <div class="row" style="margin-top:12px">
+      <input type="text" id="newCatName" placeholder="Yeni madde adı" style="flex:1;min-width:150px">
+      <input type="number" id="newCatPts" placeholder="Puan" value="-1" style="width:80px">
+      <button class="btn btn-green btn-sm" onclick="addCat()">Ekle</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Başlangıç Puanı</h2>
+    <div class="row">
+      <label class="info">Her talebe sezona kaç puanla başlasın:</label>
+      <input type="number" id="baseIn" min="0" max="1000" style="width:90px" onchange="setBase(this.value)">
+    </div>
+    <p class="info" style="margin-top:8px">
+      Herkes sezona bu puanla başlar. Puan hafta hafta sıfırlanmaz; altı hafta boyunca
+      aynı havuzdan düşer veya artar. Sezon sonunda kaç puan kaldığı görünür.
+    </p>
+  </div>
+<div class="panel">
+    <h2>İşaretleme Şekli</h2>
+    <div class="row">
+      <label class="info">Hücreye basılı tutma süresi:</label>
+      <select id="holdSel" onchange="setHold(this.value)"
+        style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px">
+        <option value="0">Anında (tek dokunuş)</option>
+        <option value="250">0,25 saniye (çok hızlı)</option>
+        <option value="450">0,45 saniye (önerilen)</option>
+        <option value="700">0,7 saniye</option>
+        <option value="1000">1 saniye</option>
+        <option value="2000">2 saniye</option>
+      </select>
+    </div>
+    <p class="info" style="margin-top:8px">Basılı tutma, cebinizdeki telefonda veya kalabalıkta yanlışlıkla işaretlemeyi önler.</p>
+  </div>
+  <div class="panel">
+    <h2>Veri İşlemleri</h2>
+    <div class="row">
+      <button class="btn btn-green btn-sm" onclick="exportCSV()">CSV İndir</button>
+      <button class="btn btn-out btn-sm" onclick="backup()">Yedek Al</button>
+      <button class="btn btn-out btn-sm" onclick="document.getElementById('rf').click()">Yedek Yükle</button>
+      <input type="file" id="rf" accept=".json" class="hidden" onchange="restore(this)">
+    </div>
+    <p class="info" style="margin-top:8px">Kayıtlar bu cihazın tarayıcısında saklanır. Ara sıra yedek almanız tavsiye edilir.</p>
+  </div>
+</section>
+
+</main>
+<!-- ================= TV MODU ================= -->
+<div id="tv" class="tv hidden">
+  <div class="tv-bar">
+    <div class="tv-brand" id="tvBrand"></div>
+    <div class="tv-ctrl">
+      <button onclick="tvPrev()">◀</button>
+      <button onclick="tvToggle()" id="tvPlay">⏸</button>
+      <button onclick="tvNext()">▶</button>
+      <button onclick="tvStop()">✕</button>
+    </div>
+  </div>
+  <div class="tv-body" id="tvBody"></div>
+  <div class="tv-rail">
+    <div class="tv-side" id="tvSideTop"></div>
+    <div class="tv-side" id="tvSide"></div>
+  </div>
+  <div class="tv-dots" id="tvDots"></div>
+</div>
+
+<!-- ========== VELİ BİLGİLENDİRME ========== -->
+<div id="vb" class="ddq hidden">
+  <div class="ddq-bar">
+    <button class="btn btn-light btn-sm" onclick="vbClose()">✕</button>
+    <div class="ddq-title">Veli Bilgilendirme</div>
+    <button class="btn btn-light btn-sm" onclick="vbShare()">Paylaş</button>
+  </div>
+  <div class="vb-pick">
+    <button class="btn btn-out btn-sm" onclick="vbStep(-1)">◀</button>
+    <select id="vbStudent" onchange="renderVB()"></select>
+    <button class="btn btn-out btn-sm" onclick="vbStep(1)">▶</button>
+  </div>
+  <div class="vb-weeks" id="vbWeeks"></div>
+  <div class="vb-body" id="vbBody"></div>
+  <div class="vb-foot">
+    <button class="btn btn-out btn-sm" onclick="vbCopy(this)">Metni Kopyala</button>
+    <button class="btn btn-green btn-sm" onclick="vbShare()" style="margin-left:auto">WhatsApp / Paylaş</button>
+  </div>
+</div>
+
+<footer>Talebe Puan Sistemi — veriler cihazınızda saklanır.</footer>
+
+<script>
+/* ================= DEPOLAMA ================= */
+var K_DATA="psData", K_STU="psStudents", K_CAT="psCats", K_CFG="psConfig";
+function ls(k,d){ try{ var v=JSON.parse(localStorage.getItem(k)); return v===null?d:v; }catch(e){ return d; } }
+function put(k,v){
+  try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){ alert("Kayıt yapılamadı: "+e.message); }
+  cloudPush(k, v);
+}
+
+/* ================= SUPABASE BULUT SENKRON ================= */
+var SB_URL = "https://zowvygqlbrtotkygszsg.supabase.co";
+var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpvd3Z5Z3FsYnJ0b3RreWdzenNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIwOTAsImV4cCI6MjA5MTY3ODA5MH0.jUOcm2ZRL8VlAxLLWMj6unoDl7981lndSyQFji18w0A";
+var SYNC_KEYS = ["psData","psStudents","psCats","psConfig"];   // buluta taşınacak anahtarlar
+var sb=null, cloudReady=false, applyingRemote=false, pushT={};
+
+function setSyncBadge(txt, color){
+  var el=document.getElementById("syncBadge"); if(!el) return;
+  el.textContent=txt; el.style.color=color||"#fff";
+}
+function cloudPush(k, v){
+  if(!sb || SYNC_KEYS.indexOf(k)===-1 || applyingRemote) return;
+  if(!cloudReady) return;                 // ilk yükleme bitmeden buluta yazma (ezme önlenir)
+  clearTimeout(pushT[k]);
+  pushT[k] = setTimeout(function(){
+    sb.from("kv").upsert({k:k, v:v, updated_at:new Date().toISOString()}).then(function(r){
+      if(r.error) setSyncBadge("● senkron hatası", "#ffb4ae");
+      else setSyncBadge("● bulutta", "#9ce0b4");
+    });
+  }, 400);
+}
+function applyRemote(k, v){
+  if(SYNC_KEYS.indexOf(k)===-1) return;
+  applyingRemote=true;
+  localStorage.setItem(k, JSON.stringify(v));
+  if(k==="psData") DATA=v;
+  else if(k==="psStudents") STU=v;
+  else if(k==="psCats") CATS=v;
+  else if(k==="psConfig") CFG=v;
+  applyingRemote=false;
+  refreshAll();
+}
+function refreshAll(){
+  try{
+    buildTable(); loadDay();
+    if(!document.getElementById("v_students").classList.contains("hidden")) renderStudents();
+    if(!document.getElementById("v_settings").classList.contains("hidden")) renderSettings();
+    if(!document.getElementById("v_week").classList.contains("hidden")) renderWeek();
+    if(!document.getElementById("v_season").classList.contains("hidden")) renderSeason();
+    if(!document.getElementById("v_report").classList.contains("hidden")) renderReportTab();
+    if(!document.getElementById("tv").classList.contains("hidden")){ tvRender(); tvSideRender(); }
+    if(!document.getElementById("vb").classList.contains("hidden")) renderVB();
+  }catch(e){}
+}
+function cloudInit(){
+  if(!window.supabase){ setSyncBadge("● çevrimdışı", "#ffd9a0"); return; }
+  try{ sb = window.supabase.createClient(SB_URL, SB_KEY); }
+  catch(e){ setSyncBadge("● çevrimdışı", "#ffd9a0"); return; }
+  setSyncBadge("● bağlanıyor…", "#ffe08a");
+  /* ilk yükleme: buluttaki veriyi çek */
+  sb.from("kv").select("k,v").then(function(r){
+    if(r.error){ setSyncBadge("● çevrimdışı", "#ffd9a0"); return; }
+    var have={};
+    (r.data||[]).forEach(function(row){
+      have[row.k]=true; applyRemote(row.k, row.v);
+    });
+    cloudReady=true;                        // artık yazmaya izin var
+    /* buluttaki EKSİK anahtarlar için yerel veriyi bir kez gönder */
+    SYNC_KEYS.forEach(function(k){
+      if(!have[k]){
+        var v=ls(k,null);
+        if(v!==null) sb.from("kv").upsert({k:k, v:v, updated_at:new Date().toISOString()});
+      }
+    });
+    setSyncBadge("● bulutta", "#9ce0b4");
+    /* buluttan gelen ayar eski sezonu taşıyorsa, bu haftayı 1. hafta yap */
+    if(!CFG.seasonReset20260727c){
+      CFG.seasonWeeks = 5;
+      CFG.baseScore = 500;
+      CFG.seasonStart = mondayOf(new Date());
+      CFG.seasonReset20260727c = 1;
+      put(K_CFG, CFG);
+      refreshAll();
+    }
+  });
+  /* canlı dinleme: diğer cihaz yazınca anında uygula */
+  sb.channel("kv-live")
+    .on("postgres_changes", {event:"*", schema:"public", table:"kv"}, function(p){
+      var row=p.new; if(row && row.k) applyRemote(row.k, row.v);
+    })
+    .subscribe();
+}
+
+var DEFAULT_CATS = [
+  {id:"c1", n:"Namaza Geç Kalma",    p:-1, max:5},
+  {id:"c8", n:"Takkesiz",            p:-1, max:5},
+  {id:"c2", n:"Tabak Kontrol",       p:-1, max:3},
+  {id:"c3", n:"Mescitte Konuşmak",   p:-1, max:5},
+  {id:"c4", n:"Yatakhanede Konuşmak",p:-1, max:5},
+  {id:"c5", n:"Tuvalet Temizliği",   p:-1, max:3},
+  {id:"c11",n:"Kılık Kıyafet",       p:-1, max:3},
+  {id:"c6", n:"Yatılı Kalmak",       p: 3, max:1},
+  {id:"c9", n:"İngilizce Kelime Ezberi", p: 1, max:5}
+];
+
+var DATA  = ls(K_DATA, {});      // DATA[tarih][talebeId][catId] = adet
+var STU   = ls(K_STU, []);       // [{id,name,active}]
+var CATS  = ls(K_CAT, DEFAULT_CATS);
+var CFG   = ls(K_CFG, {});
+
+/* ilk açılışta hazır talebe listesi */
+var SEED_STUDENTS = [
+"AHMET GEZER","AHMET ÖZCAN","AHMET UYGUR","EYÜP UYGUR","HİLMİ EŞ",
+"AHMET KIYAKOĞLU","HİLMİ KEREM AKINER","TUNAHAN GÜNAYDIN","EFE MUSTAFA OLTACI","YUSUF MİRAÇ",
+"AHMET ALİ İLERİ","MEHMET FATİH ASLANYOLU","MUSAB BAYRAKTAR","ERDEM TUBAY","KEMAL AYDEMİR",
+"OSMAN KAYA","İLYAS BODUR","MUSTAFA AKKOYUN","ALİ ABU","ÖMER SARIMEHMET",
+"YUNUS EMRE TUBAY","FARUK ALPEREN AYDEMİR","YUSUF TAHA ÖZCAN","MUSTAFA DAYAN","KEREM KAYA",
+"AKİF TARHAN","HAMZA EMİR LİVANA","AHMET BURHAN YALÇIN","YUSUF EYMEN AYDIN","BİLAL ARIKAN",
+"AHMET EMİR GÜNAYDIN","İSMAİL EKİNCİ","METE ÇİFÇİOĞLU","AHMET ÇATALBAŞ","CEMAL ALÇİKO",
+"ARŞAM HADİNEJAT","AHMET EREN YILMAZ","AZAT BAYROMOV","YUSUF YATAR","BARAN AKKOYUN",
+"MİRAÇ TARHAN","EYMEN ALİ BAĞDAT","BİLAL TİMUÇİN","MELİH AKSOY","ÖMER FETİH AKSU",
+"YUSUF ANIL ÖZCAN","YAŞAR ALP ERSOY","ALİ KEREM ÜNLÜ","MUHAMMET ALİ ERSOY","MUSTAFA GÖKÇEGÖZ",
+"EMİRHAN ÖZCAN"
+];
+if(!STU.length){
+  if(!CFG.nextId) CFG.nextId = 1;
+  SEED_STUDENTS.forEach(function(n){ STU.push({id:CFG.nextId++, name:n, active:true}); });
+  put(K_STU,STU); put(K_CFG,CFG);
+}
+/* daha önce kaydedilmiş listeye sonradan eklenen maddeleri getir */
+(function(){
+  var have = {}, removed = CFG.removedCats || [], added = false;
+  CATS.forEach(function(c){ have[c.id]=1; });
+  DEFAULT_CATS.forEach(function(d){
+    if(!have[d.id] && removed.indexOf(d.id)===-1){
+      var at = -1;
+      for(var i=0;i<DEFAULT_CATS.length;i++) if(DEFAULT_CATS[i].id===d.id) at=i;
+      CATS.splice(at>-1?Math.min(at,CATS.length):CATS.length, 0, {id:d.id,n:d.n,p:d.p,max:d.max});
+      added = true;
+    }
+  });
+  if(added) put(K_CAT, CATS);
+})();
+if(!CFG.seasonStart) CFG.seasonStart = mondayOf(new Date());
+if(!CFG.nextId) CFG.nextId = 1;
+put(K_CFG, CFG);
+
+/* ================= TARİH ================= */
+function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function parse(s){ var p=s.split("-"); return new Date(+p[0], p[1]-1, +p[2]); }
+function today(){ return iso(new Date()); }
+function mondayOf(d){ var x=new Date(d); x.setDate(x.getDate()-((x.getDay()+6)%7)); return iso(x); }
+function addDays(s,n){ var d=parse(s); d.setDate(d.getDate()+n); return iso(d); }
+function fmtLong(s){ return parse(s).toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); }
+function fmtShort(s){ return parse(s).toLocaleDateString("tr-TR",{day:"numeric",month:"short"}); }
+function diffDays(a,b){ return Math.round((parse(b)-parse(a))/86400000); }
+
+var currentDay = today();
+var viewWeek = null;            // görüntülenen haftanın pazartesisi
+
+/* ================= YARDIMCI ================= */
+function activeStudents(){ return STU.filter(function(s){return s.active!==false;}); }
+function stuName(id){ for(var i=0;i<STU.length;i++) if(STU[i].id===id) return STU[i].name; return "(silinmiş talebe)"; }
+function catById(id){ for(var i=0;i<CATS.length;i++) if(CATS[i].id===id) return CATS[i]; return null; }
+function getCount(day, sid, cid){ return ((DATA[day]||{})[sid]||{})[cid] || 0; }
+/* otomatik +1 tabandır; bildirimlerde "işlem" sayılmaz */
+function realItems(day, sid){
+  var rec = (DATA[day]||{})[sid]||{}, out=[];
+  CATS.forEach(function(c){
+    var n = rec[c.id]||0; if(!n) return;
+    out.push({id:c.id, name:c.n, n:n, p:n*c.p});
+  });
+  return out;
+}
+function dayPoints(day, sid){
+  var rec = (DATA[day]||{})[sid]||{}, t=0;
+  for(var cid in rec){ var c=catById(cid); if(c) t += rec[cid]*c.p; }
+  return t;
+}
+function rangePoints(sid, from, to){
+  var t=0;
+  for(var d in DATA){ if(d>=from && d<=to) t += dayPoints(d, sid); }
+  return t;
+}
+function medal(i){ return i===0?"🥇":i===1?"🥈":i===2?"🥉":""; }
+
+/* 100 puanla başla, eksildikçe düş */
+var SEASON_WEEKS = 5;   // sezon kaç hafta
+function seasonWeeks(){ return CFG.seasonWeeks || SEASON_WEEKS; }
+function lastWeek(){ return seasonWeeks()-1; }
+function baseScore(){ return CFG.baseScore===undefined ? seasonWeeks()*100 : CFG.baseScore; }
+function remaining(sid, to){ return baseScore() + rangePoints(sid, weekStart(0), to); }
+function fmtRem(v){ return String(v); }
+function fmtDelta(v){ return (v>0?"+":"")+v; }
+
+/* eşitlik durumunda isim yığmadan özet göster */
+function tieInfo(board){
+  if(!board.length) return null;
+  var base = baseScore();
+  function R(b){ return b.key!==undefined ? b.key : (b.rem===undefined ? base+b.pts : b.rem); }
+  var top = board[0], tied = board.filter(function(b){ return R(b)===R(top); });
+  var all = (tied.length === board.length);
+  var txt;
+  if(tied.length===1)      txt = tied[0].name;
+  else if(tied.length<=3)  txt = tied.map(function(t){return t.name;}).join(" & ");
+  else                     txt = tied.length+" talebe eşit";
+  return {pts:R(top), delta:top.pts||0, tied:tied, count:tied.length, all:all, text:txt,
+          note: tied.length>1 ? (all ? "Tüm talebeler eşit — henüz öne çıkan yok" : tied.length+" talebe eşit puanda") : ""};
+}
+function heroSize(txt){
+  var n = String(txt).length;
+  return n>34 ? "4.4vh" : n>22 ? "5.8vh" : n>14 ? "7vh" : "8.5vh";
+}
+
+/* ================= GÜNLÜK İŞARETLEME ================= */
+var tkTable = document.getElementById("tkTable");
+var dayPicker = document.getElementById("dayPicker");
+dayPicker.value = currentDay;
+
+function sortedForTracking(){
+  return activeStudents().slice().sort(function(a,b){ return a.name.localeCompare(b.name,"tr"); });
+}
+function buildTable(){
+  var list = sortedForTracking();
+  if(!list.length){
+    tkTable.innerHTML = "<tbody><tr><td class='empty'>Henüz talebe eklenmemiş. \"Talebeler\" sekmesinden ekleyin.</td></tr></tbody>";
+    return;
+  }
+  var h = "<thead><tr><th class='nh'>Talebe</th>";
+  CATS.forEach(function(c){
+    h += "<th class='ch'><span class='cl'>"+esc(c.n)+"</span><span class='cp "+(c.p<0?"neg":"pos")+"'>"+(c.p>0?"+":"")+c.p+"</span></th>";
+  });
+  h += "<th class='th-tot'>Günlük<br>Puan</th></tr></thead><tbody>";
+  list.forEach(function(s){
+    h += "<tr data-name=\""+esc(s.name.toLocaleLowerCase("tr"))+"\"><td class='nm'>"+esc(s.name)+"</td>";
+    CATS.forEach(function(c){
+      h += "<td class='cell' data-s='"+s.id+"' data-c='"+c.id+"' title=\""+esc(s.name)+" — "+esc(c.n)+"\">0</td>";
+    });
+    h += "<td class='dtot' id='dt-"+s.id+"'>0</td></tr>";
+  });
+  tkTable.innerHTML = h+"</tbody>";
+  buildCards();
+  loadDay();
+}
+function buildCards(){
+  var list = sortedForTracking(), box = document.getElementById("tkCards");
+  if(!list.length){ box.innerHTML = "<div class='panel'><div class='empty'>Henüz talebe eklenmemiş. \"Talebeler\" sekmesinden ekleyin.</div></div>"; return; }
+  box.innerHTML = list.map(function(s){
+    return "<div class='scard' data-name=\""+esc(s.name.toLocaleLowerCase("tr"))+"\">"+
+      "<div class='sh'><div class='snm'>"+esc(s.name)+"</div><div class='stot' id='ct-"+s.id+"'>0</div></div>"+
+      "<div class='chips'>"+ CATS.map(function(c){
+        return "<div class='chip2' data-s='"+s.id+"' data-c='"+c.id+"'>"+
+          "<span class='t'>"+esc(c.n)+"</span>"+
+          "<span class='v'>"+(c.p>0?"+":"")+c.p+"</span></div>";
+      }).join("") +"</div></div>";
+  }).join("");
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* ---- iki saniye basılı tutunca işaretle ---- */
+var holdTimer=null, holdEl=null, holdX=0, holdY=0;
+function holdMs(){ return CFG.holdMs===undefined ? 450 : CFG.holdMs; }
+function holdCancel(){
+  if(holdTimer){ clearTimeout(holdTimer); holdTimer=null; }
+  if(holdEl){ holdEl.classList.remove("hold"); holdEl.style.animationDuration=""; holdEl=null; }
+}
+function holdBegin(el, sid, cid, e){
+  holdCancel();
+  var ms = holdMs();
+  if(!ms){ bump(sid, cid); return; }          // "anında" seçilmişse beklemeden işaretle
+  holdEl = el; holdX = e.clientX; holdY = e.clientY;
+  el.classList.add("hold");
+  el.style.animationDuration = (ms/1000)+"s";
+  holdTimer = setTimeout(function(){
+    var target = holdEl;
+    holdCancel();
+    if(target){
+      if(navigator.vibrate) try{ navigator.vibrate(45); }catch(err){}
+      bump(sid, cid);
+    }
+  }, ms);
+}
+function holdTarget(e){
+  var td = e.target.closest ? e.target.closest("td.cell") : null;
+  if(td) return {el:td, s:+td.dataset.s, c:td.dataset.c};
+  var ch = e.target.closest ? e.target.closest(".chip2") : null;
+  if(ch) return {el:ch, s:+ch.dataset.s, c:ch.dataset.c};
+  return null;
+}
+["tkTable","tkCards"].forEach(function(id){
+  var box = document.getElementById(id);
+  box.addEventListener("pointerdown", function(e){
+    var t = holdTarget(e);
+    if(t) holdBegin(t.el, t.s, t.c, e);
+  });
+  box.addEventListener("contextmenu", function(e){ if(holdTarget(e)) e.preventDefault(); });
+});
+document.addEventListener("pointerup", holdCancel);
+document.addEventListener("pointercancel", holdCancel);
+document.addEventListener("pointermove", function(e){
+  if(!holdEl) return;
+  if(Math.abs(e.clientX-holdX)>12 || Math.abs(e.clientY-holdY)>12) holdCancel();
+});
+window.addEventListener("scroll", holdCancel, true);
+function bump(sid, cid){
+  var c = catById(cid); if(!c) return;
+  var cur = getCount(currentDay, sid, cid);
+  var next = cur+1 > (c.max||5) ? 0 : cur+1;
+  if(!DATA[currentDay]) DATA[currentDay]={};
+  if(!DATA[currentDay][sid]) DATA[currentDay][sid]={};
+  if(next) DATA[currentDay][sid][cid]=next; else delete DATA[currentDay][sid][cid];
+  if(!Object.keys(DATA[currentDay][sid]).length) delete DATA[currentDay][sid];
+  if(!Object.keys(DATA[currentDay]).length) delete DATA[currentDay];
+  put(K_DATA, DATA);
+  var td = tkTable.querySelector("td.cell[data-s='"+sid+"'][data-c='"+cid+"']");
+  if(td) paintCell(td, next, c);
+  var ch = document.querySelector(".chip2[data-s='"+sid+"'][data-c='"+cid+"']");
+  if(ch) paintChip(ch, next, c);
+  paintTotal(sid);
+  dayInfo();
+}
+function paintChip(ch, n, c){
+  ch.querySelector(".v").textContent = n ? (c.p>0?"+":"")+(n*c.p) : (c.p>0?"+":"")+c.p;
+  ch.classList.toggle("neg", n>0 && c.p<0);
+  ch.classList.toggle("pos", n>0 && c.p>0);
+}
+function paintCell(td, n, c){
+  var p = n*c.p;
+  td.textContent = n ? (p>0?"+":"")+p : "0";
+  td.classList.toggle("on-neg", n>0 && c.p<0);
+  td.classList.toggle("on-pos", n>0 && c.p>0);
+}
+function paintTotal(sid){
+  var t = dayPoints(currentDay, sid), txt=(t>0?"+":"")+t, cls=(t>0?"pos":t<0?"neg":"zero");
+  var el = document.getElementById("dt-"+sid);
+  if(el){ el.textContent=txt; el.className="dtot "+cls; }
+  var el2 = document.getElementById("ct-"+sid);
+  if(el2){ el2.textContent=txt; el2.className="stot "+cls; }
+}
+function loadDay(){
+  Array.prototype.forEach.call(tkTable.querySelectorAll("td.cell"), function(td){
+    paintCell(td, getCount(currentDay, +td.dataset.s, td.dataset.c), catById(td.dataset.c));
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".chip2"), function(ch){
+    paintChip(ch, getCount(currentDay, +ch.dataset.s, ch.dataset.c), catById(ch.dataset.c));
+  });
+  activeStudents().forEach(function(s){ paintTotal(s.id); });
+  document.getElementById("hsub").textContent = fmtLong(currentDay);
+  dayInfo();
+}
+function dayInfo(){
+  var rec = DATA[currentDay]||{}, tot=0;
+  var n = activeStudents().filter(function(s){ return realItems(currentDay, s.id).length; }).length;
+  for(var sid in rec) tot += dayPoints(currentDay, +sid);
+  var wi = weekIndexOf(currentDay);
+  document.getElementById("dayInfo").innerHTML =
+    "<b>"+fmtLong(currentDay)+"</b> — "+n+" talebede işlem, günün toplam puanı: <b>"+(tot>0?"+":"")+tot+"</b>"+
+    (wi>=0&&wi<seasonWeeks() ? " · <b>"+(wi+1)+". Hafta</b>" : " · <span style='color:var(--soft)'>sezon dışı</span>");
+}
+function clearDay(){
+  if(!DATA[currentDay]) return;
+  if(confirm(fmtLong(currentDay)+" gününe ait tüm işaretler silinsin mi?")){
+    delete DATA[currentDay]; put(K_DATA,DATA); loadDay();
+  }
+}
+dayPicker.addEventListener("change", function(){ if(this.value){ currentDay=this.value; loadDay(); } });
+document.getElementById("btnToday").addEventListener("click", function(){ currentDay=today(); dayPicker.value=currentDay; loadDay(); });
+document.getElementById("search").addEventListener("input", function(){
+  var q=this.value.toLocaleLowerCase("tr").trim();
+  Array.prototype.forEach.call(document.querySelectorAll("#tkTable tbody tr, #tkCards .scard"), function(el){
+    el.style.display = (!q || (el.dataset.name||"").indexOf(q)>-1) ? "" : "none";
+  });
+});
+
+/* ---- gece yarısı otomatik gün dönüşü ---- */
+var lastKnownToday = today();
+function checkRollover(){
+  var t = today();
+  if(t === lastKnownToday) return;
+  var wasOnToday = (currentDay === lastKnownToday);   // kullanıcı bugüne bakıyorduysa yeni güne geç
+  lastKnownToday = t;
+  if(wasOnToday){
+    currentDay = t;
+    dayPicker.value = t;
+    loadDay();                                        // yeni gün: çizelge boş gelir, dün hafızada kalır
+    if(!document.getElementById("v_week").classList.contains("hidden")) renderWeek();
+    if(!document.getElementById("v_season").classList.contains("hidden")) renderSeason();
+    if(!document.getElementById("v_report").classList.contains("hidden")) renderReportTab();
+    if(!document.getElementById("tv").classList.contains("hidden")){ tvRender(); tvSideRender(); }
+    if(!document.getElementById("vb").classList.contains("hidden")) renderVB();
+  }
+}
+setInterval(checkRollover, 30000);
+document.addEventListener("visibilitychange", function(){ if(!document.hidden) checkRollover(); });
+window.addEventListener("focus", checkRollover);
+
+/* ================= HAFTA HESABI ================= */
+function weekStart(i){ return addDays(CFG.seasonStart, i*7); }
+function weekEnd(i){ return addDays(CFG.seasonStart, i*7+6); }
+function weekIndexOf(day){
+  var d = diffDays(CFG.seasonStart, day);
+  return d<0 ? -1 : Math.floor(d/7);
+}
+function weekBoard(i){
+  var from=weekStart(i), to=weekEnd(i);
+  return activeStudents().map(function(s){
+    return {id:s.id, name:s.name, pts:rangePoints(s.id, from, to), rem:remaining(s.id, to)};
+  }).map(function(x){ x.key = x.pts; return x; })            // hafta sıralaması: o haftanın puanı
+    .sort(function(a,b){ return b.pts-a.pts || b.rem-a.rem || a.name.localeCompare(b.name,"tr"); });
+}
+function seasonBoard(){
+  var from=weekStart(0), to=weekEnd(lastWeek());
+  return activeStudents().map(function(s){
+    var wk=[]; for(var i=0;i<seasonWeeks();i++) wk.push(rangePoints(s.id, weekStart(i), weekEnd(i)));
+    return {id:s.id, name:s.name, pts:rangePoints(s.id, from, to), rem:remaining(s.id, to), wk:wk};
+  }).map(function(x){ x.key = x.rem; return x; })            // genel sıralama: kalan puan
+    .sort(function(a,b){ return b.rem-a.rem || a.name.localeCompare(b.name,"tr"); });
+}
+function outsideSeason(){
+  var f=weekStart(0), t=weekEnd(lastWeek()), days=[], marks=0, first=null;
+  for(var d in DATA){
+    if(d>=f && d<=t) continue;
+    var any=0;
+    for(var sid in DATA[d]) for(var c in DATA[d][sid]) any++;
+    if(!any) continue;
+    days.push(d); marks+=any;
+    if(!first || d<first) first=d;
+  }
+  return {days:days.length, marks:marks, first:first, before:days.filter(function(d){return d<f;}).length};
+}
+function hasRecords(from,to){ for(var d in DATA){ if(d>=from && d<=to) return true; } return false; }
+
+/* ================= BU HAFTA ================= */
+function shiftWeek(n){
+  var i = diffDays(CFG.seasonStart, viewWeek)/7 + n;
+  viewWeek = addDays(CFG.seasonStart, Math.round(i)*7);
+  renderWeek();
+}
+function renderWeek(){
+  if(!viewWeek){
+    var wi = weekIndexOf(today());
+    viewWeek = weekStart(wi<0?0:(wi>5?5:wi));
+  }
+  var i = Math.round(diffDays(CFG.seasonStart, viewWeek)/7);
+  var from = viewWeek, to = addDays(viewWeek,6);
+  document.getElementById("wTitle").textContent = (i>=0&&i<seasonWeeks()) ? (i+1)+". Hafta" : "Sezon Dışı Hafta";
+  document.getElementById("wDates").textContent = fmtShort(from)+" – "+fmtShort(to);
+
+  var board = activeStudents().map(function(s){
+    return {id:s.id,name:s.name,pts:rangePoints(s.id,from,to)};
+  }).sort(function(a,b){ return b.pts-a.pts || a.name.localeCompare(b.name,"tr"); });
+
+  var wrap = document.getElementById("wWinner");
+  if(!board.length || !hasRecords(from,to)){
+    wrap.innerHTML = "<div class='panel'><div class='empty'>Bu haftaya ait kayıt yok.</div></div>";
+  }else{
+    var w = tieInfo(board);
+    wrap.innerHTML = w.count>3
+      ? "<div class='winner'><div class='medal'>🏆</div><div class='lbl'>Haftanın Talebeleri</div>"+
+        "<div class='who'>"+fmtDelta(w.pts)+" puan</div>"+
+        "<div class='pts'>"+w.count+" talebe zirvede"+(w.pts>0?" — puanını yükseltti":(w.pts===0?" — bu hafta hiç puan kaybetmedi":""))+"</div>"+
+        winChips(w.tied)+"</div>"
+      : "<div class='winner'><div class='medal'>🏆</div><div class='lbl'>"+(w.count>1?"Haftanın Talebeleri":"Haftanın Talebesi")+"</div>"+
+        "<div class='who'>"+esc(w.text)+"</div>"+
+        "<div class='pts'>Bu hafta "+fmtDelta(w.pts)+" puan"+(w.tied[0]?" · "+baseScore()+"'den kalan: "+w.tied[0].rem:"")+"</div></div>";
+  }
+  document.getElementById("wBoard").innerHTML = renderBoard(board, true);
+
+  /* günlük dağılım */
+  var DOWN=["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"], h="";
+  var vals=[];
+  for(var k=0;k<7;k++){
+    var d=addDays(from,k), t=0, rec=DATA[d]||{};
+    for(var sid in rec) t += dayPoints(d, +sid);
+    vals.push(t);
+  }
+  var mx = Math.max.apply(null,[1].concat(vals.map(Math.abs)));
+  for(var k=0;k<7;k++){
+    h += "<div class='lb'><div class='rk' style='width:44px'>"+DOWN[k]+"</div>"+
+         "<div style='flex:1'><div class='"+(vals[k]<0?"barneg":"bar")+"' style='width:"+(Math.abs(vals[k])/mx*100)+"%'></div></div>"+
+         "<div class='pt "+(vals[k]>0?"pos":vals[k]<0?"neg":"zero")+"'>"+(vals[k]>0?"+":"")+vals[k]+"</div></div>";
+  }
+  document.getElementById("wDays").innerHTML = h;
+}
+function winChips(list, max){
+  max = max || 12;
+  var show = list.slice(0,max), rest = list.length - show.length;
+  return "<div class='win-chips'>"+show.map(function(x){ return "<span>"+esc(x.name)+"</span>"; }).join("")+
+    (rest>0 ? "<span style='background:#f7edd2'>+"+rest+" daha</span>" : "")+"</div>";
+}
+function renderBoard(board, weekMode){
+  if(!board.length) return "<div class='empty'>Talebe yok.</div>";
+  var base = baseScore();
+  var vals = board.map(function(b){ return weekMode ? b.pts : (b.rem===undefined? base+b.pts : b.rem); });
+  var mx = Math.max.apply(null, (weekMode?[0]:[base]).concat(vals));
+  var mn = Math.min.apply(null, [0].concat(vals));
+  var span = Math.max(1, mx-mn);
+  return board.map(function(b,i){
+    var rem = (b.rem===undefined? base+b.pts : b.rem);
+    var val = weekMode ? b.pts : rem;
+    var w = Math.max(2, Math.min(100, (val-mn)/span*100));
+    var neg = weekMode ? (b.pts<0) : (rem<base*0.6);
+    var pos = weekMode ? (b.pts>0) : (rem>base);
+    return "<div class='lb "+(i===0?"top":"")+"'>"+
+      "<div class='rk'>"+(medal(i)||(i+1))+"</div>"+
+      "<div class='nmz'>"+esc(b.name)+"</div>"+
+      "<div style='flex:1;min-width:40px'><div class='"+(neg?"barneg":"bar")+"' style='width:"+w+"%'></div></div>"+
+      "<div class='pt "+(pos?"pos":neg?"neg":"")+"'>"+(weekMode?fmtDelta(b.pts):rem)+
+        (weekMode?"":"<span style='font-size:11px;font-weight:600;opacity:.55'>/"+base+"</span>")+
+        "<small style='display:block;font-size:11px;font-weight:600;opacity:.7'>"+
+          (weekMode ? baseScore()+"'den kalan: "+rem : (b.pts?fmtDelta(b.pts):"&nbsp;"))+"</small>"+
+      "</div></div>";
+  }).join("");
+}
+
+/* ================= SEZON ================= */
+function renderSeason(){
+  var os = outsideSeason();
+  document.getElementById("sWarn").innerHTML = os.days ?
+    ("<div class='panel' style='border-color:#e8c76a;background:#fff9e8'>"+
+     "<b style='color:var(--amber)'>Sezon dışında "+os.days+" gün, "+os.marks+" işaret var.</b>"+
+     "<div class='info' style='margin-top:6px'>Bu kayıtlar günlük çizelgede duruyor ama haftalık ve genel puana girmiyor. "+
+     "Sezon aralığı: "+fmtShort(weekStart(0))+" – "+fmtShort(weekEnd(lastWeek()))+".</div>"+
+     (os.first ? "<button class='btn btn-out btn-sm' style='margin-top:8px' onclick=\"setSeasonStart('"+os.first+"')\">"+
+        "Sezonu "+fmtShort(os.first)+" tarihinden başlat</button>" : "")+
+     "</div>") : "";
+  var board = seasonBoard();
+  var from=weekStart(0), to=weekEnd(lastWeek());
+  var done = today() > to;
+  var wrap = document.getElementById("sWinner");
+  if(!board.length || !hasRecords(from,to)){
+    wrap.innerHTML = "<div class='panel'><div class='empty'>Sezona ait kayıt yok.</div></div>";
+  }else{
+    var w = tieInfo(board);
+    wrap.innerHTML = w.count>3
+      ? "<div class='winner'><div class='medal'>"+(done?"🏆":"⭐")+"</div>"+
+        "<div class='lbl'>"+(done?"Yazın Talebeleri":"Zirvedekiler")+"</div>"+
+        "<div class='who'>"+w.pts+" puan</div>"+
+        "<div class='pts'>"+w.count+" talebe zirvede"+(w.pts>baseScore()?" — puanını yükseltti":(w.pts===baseScore()?" — hiç puan kaybetmedi":""))+
+        " · "+fmtShort(from)+" – "+fmtShort(to)+"</div>"+winChips(w.tied)+"</div>"
+      : "<div class='winner'><div class='medal'>"+(done?"🏆":"⭐")+"</div>"+
+        "<div class='lbl'>"+(done?"Yazın Talebesi":"Şu Anki Lider")+"</div>"+
+        "<div class='who'>"+esc(w.text)+"</div>"+
+        "<div class='pts'>"+w.pts+" puan kaldı · "+fmtShort(from)+" – "+fmtShort(to)+
+        (done?"":" · sezon devam ediyor")+"</div></div>";
+  }
+  if(board.length){
+    var avg = Math.round(board.reduce(function(a,b){return a+b.rem;},0)/board.length);
+    var lost = board.reduce(function(a,b){return a+Math.min(0,b.pts);},0);
+    document.getElementById("sBoard").innerHTML =
+      "<div class='cards' style='margin-bottom:10px'>"+
+      "<div class='card'><div class='num'>"+baseScore()+"</div><div class='lbl'>Başlangıç puanı</div></div>"+
+      "<div class='card'><div class='num'>"+avg+"</div><div class='lbl'>Ortalama kalan</div></div>"+
+      "<div class='card'><div class='num'>"+board[0].rem+"</div><div class='lbl'>En yüksek: "+esc(board[0].name)+"</div></div>"+
+      "<div class='card warn'><div class='num'>"+lost+"</div><div class='lbl'>Toplam kaybedilen</div></div>"+
+      "</div>" + renderBoard(board);
+  } else document.getElementById("sBoard").innerHTML = renderBoard(board);
+
+  /* haftalar */
+  var wi = weekIndexOf(today()), h="";
+  for(var i=0;i<seasonWeeks();i++){
+    var f=weekStart(i), t=weekEnd(i);
+    var b = weekBoard(i).filter(function(x){return true;});
+    var live = (i===wi), future = (today() < f);
+    var tag = live ? "<span class='tag live'>Devam ediyor</span>"
+            : future ? "<span class='tag soon'>Başlamadı</span>"
+            : "<span class='tag'>Tamamlandı</span>";
+    var pod = "";
+    if(hasRecords(f,t)){
+      pod = "<div class='podium'>"+b.slice(0,3).map(function(x,k){
+        return "<div class='pod "+(k===0?"p1":"")+"'><div class='pm'>"+medal(k)+"</div><div class='pn'>"+esc(x.name)+"</div><div class='pp'>"+fmtDelta(x.pts)+"</div><div style='font-size:11px;color:var(--soft)'>kalan "+x.rem+"</div></div>";
+      }).join("")+"</div>";
+    } else pod = "<div class='info'>Kayıt yok.</div>";
+    h += "<div class='wcard "+(live?"now":"")+"'><div class='wh'><div><div class='wt'>"+(i+1)+". Hafta</div>"+
+         "<div class='wd'>"+fmtShort(f)+" – "+fmtShort(t)+"</div></div>"+tag+"</div>"+pod+"</div>";
+  }
+  document.getElementById("sWeeks").innerHTML = h;
+
+  /* şampiyonlar tablosu */
+  var rows = board.slice(0,10);
+  var th = "<div class='cfg' style='font-weight:700;color:var(--green);font-size:12px'><div class='cn'>Talebe</div>";
+  for(var i=0;i<seasonWeeks();i++) th += "<div style='width:40px;text-align:center'>"+(i+1)+".H</div>";
+  th += "<div style='width:56px;text-align:right'>Kalan</div></div>";
+  var body = rows.map(function(r){
+    return "<div class='cfg'><div class='cn'>"+esc(r.name)+"</div>"+
+      r.wk.map(function(p){ return "<div style='width:40px;text-align:center;font-size:13px;color:"+(p>0?"var(--green-mid)":p<0?"var(--red)":"var(--soft)")+"'>"+(p?fmtDelta(p):"–")+"</div>"; }).join("")+
+      "<div style='width:56px;text-align:right;font-weight:800'>"+r.rem+"</div></div>";
+  }).join("");
+  document.getElementById("sChamps").innerHTML = rows.length ? "<div class='champ-scroll'>"+th+body+"</div>" : "<div class='empty'>Kayıt yok.</div>";
+}
+
+/* ================= RAPOR SEKMESİ ================= */
+var repMode="week", repWeekIdx=null, repSortMode="pts";
+
+function setRepMode(m){ repMode=m; renderReportTab(); }
+function repWeekChange(v){ repWeekIdx=parseInt(v,10); repMode="week"; renderReportTab(); }
+function repSort(){ repSortMode = repSortMode==="pts" ? "name" : "pts"; renderReportTab(); }
+
+function repRange(){
+  if(repMode==="season") return {from:weekStart(0), to:weekEnd(lastWeek()), label:"Yazlık — Tüm Sezon"};
+  var wi = repWeekIdx;
+  if(wi===null||isNaN(wi)){ wi = weekIndexOf(today()); if(wi<0||wi>5) wi=0; repWeekIdx=wi; }
+  return {from:weekStart(wi), to:weekEnd(wi), label:(wi+1)+". Hafta"};
+}
+function renderReportTab(){
+  var R = repRange(), list = activeStudents();
+
+  document.getElementById("rm_week").className   = "btn btn-sm "+(repMode==="week"?"btn-green":"btn-out");
+  document.getElementById("rm_season").className = "btn btn-sm "+(repMode==="season"?"btn-green":"btn-out");
+  document.getElementById("repSortBtn").textContent = "Sıralama: "+(repSortMode==="pts"?"Puana göre":"İsme göre");
+  var sel = document.getElementById("repWeek");
+  sel.innerHTML = "";
+  for(var i=0;i<seasonWeeks();i++){
+    var o=document.createElement("option");
+    o.value=i; o.textContent=(i+1)+". Hafta ("+fmtShort(weekStart(i))+" – "+fmtShort(weekEnd(i))+")";
+    if(repMode==="week" && i===repWeekIdx) o.selected=true;
+    sel.appendChild(o);
+  }
+  sel.disabled = (repMode==="season");
+  sel.style.opacity = repMode==="season" ? ".5" : "1";
+
+  /* veriler */
+  var rows = list.map(function(s){
+    var counts = catBreakdown(s.id, R.from, R.to);
+    return {id:s.id, name:s.name, counts:counts, pts:rangePoints(s.id, R.from, R.to), rem:remaining(s.id, R.to)};
+  });
+  rows.sort(function(a,b){
+    return repSortMode==="name" ? a.name.localeCompare(b.name,"tr")
+                                : (b.pts-a.pts) || a.name.localeCompare(b.name,"tr");
+  });
+  var colTot={}, grand=0, marks=0;
+  rows.forEach(function(r){
+    CATS.forEach(function(c){ if(r.counts[c.id]){ colTot[c.id]=(colTot[c.id]||0)+r.counts[c.id]; marks+=r.counts[c.id]; } });
+    grand += r.pts;
+  });
+  document.getElementById("repInfo").innerHTML =
+    "<b>"+R.label+"</b> · "+fmtShort(R.from)+" – "+fmtShort(R.to)+
+    " · toplam <b>"+marks+"</b> işaret · net puan <b>"+(grand>0?"+":"")+grand+"</b>";
+
+  /* masaüstü tablo */
+  if(!rows.length){
+    document.getElementById("repTbl").innerHTML = "<tbody><tr><td class='empty'>Talebe yok.</td></tr></tbody>";
+    document.getElementById("repCards").innerHTML = "<div class='panel'><div class='empty'>Talebe yok.</div></div>";
+    return;
+  }
+  var h = "<thead><tr><th class='nh'>Talebe</th>";
+  CATS.forEach(function(c){
+    h += "<th class='ch'><span class='cl'>"+esc(c.n)+"</span><span class='cp "+(c.p<0?"neg":"pos")+"'>"+(c.p>0?"+":"")+c.p+"</span></th>";
+  });
+  h += "<th class='th-tot' style='right:70px'>Dönem</th><th class='th-tot'>Kalan<br>Puan</th></tr></thead><tbody>";
+  rows.forEach(function(r){
+    h += "<tr><td class='nm'>"+esc(r.name)+"</td>";
+    CATS.forEach(function(c){
+      var n=r.counts[c.id]||0, p=n*c.p;
+      h += "<td class='cell "+(n?(c.p<0?"on-neg":"on-pos"):"")+"'>"+(n? (p>0?"+":"")+p : "0")+"</td>";
+    });
+    h += "<td class='dtot "+(r.pts>0?"pos":r.pts<0?"neg":"zero")+"' style='right:70px'>"+(r.pts?fmtDelta(r.pts):"–")+"</td>"+
+         "<td class='dtot "+(r.rem>=baseScore()?"pos":r.rem<baseScore()*0.6?"neg":"")+"'>"+r.rem+"</td></tr>";
+  });
+  h += "<tr style='background:#f0f4f1;font-weight:800'><td class='nm' style='background:#f0f4f1'>MADDE TOPLAMI</td>";
+  CATS.forEach(function(c){
+    var n=colTot[c.id]||0;
+    h += "<td style='text-align:center;font-size:13px;color:"+(n?(c.p<0?"var(--red)":"var(--green-mid)"):"#c8d2cc")+"'>"+n+"</td>";
+  });
+  h += "<td class='dtot "+(grand>0?"pos":grand<0?"neg":"zero")+"' style='background:#f0f4f1;right:70px'>"+(grand?fmtDelta(grand):"–")+"</td>"+
+       "<td class='dtot' style='background:#f0f4f1'>&nbsp;</td></tr>";
+  document.getElementById("repTbl").innerHTML = h+"</tbody>";
+
+  /* mobil kartlar */
+  document.getElementById("repCards").innerHTML = rows.map(function(r,i){
+    var lines = CATS.filter(function(c){ return r.counts[c.id]; }).map(function(c){
+      var n=r.counts[c.id], p=n*c.p;
+      return "<div style='display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid var(--line)'>"+
+        "<span>"+esc(c.n)+" ×"+n+"</span>"+
+        "<b style='color:"+(p<0?"var(--red)":"var(--green-mid)")+"'>"+(p>0?"+":"")+p+"</b></div>";
+    }).join("");
+    return "<div class='scard'><div class='sh'><div class='snm'>"+(i+1)+". "+esc(r.name)+"</div>"+
+      "<div class='stot "+(r.rem>=baseScore()?"pos":r.rem<baseScore()*0.6?"neg":"")+"'>"+r.rem+
+      (r.pts?"<small style='display:block;font-size:11px;opacity:.7'>"+fmtDelta(r.pts)+"</small>":"")+"</div></div>"+
+      (lines || "<div class='info'>Bu dönemde kaydı yok.</div>")+"</div>";
+  }).join("");
+}
+function exportReportCSV(){
+  var R=repRange(), list=activeStudents();
+  var csv="\uFEFFDönem;"+R.label+" ("+R.from+" - "+R.to+")\nTalebe;"+CATS.map(function(c){return c.n+" (adet)";}).join(";")+";Dönem Puanı;Kalan Puan\n";
+  list.map(function(s){
+    return {name:s.name, counts:catBreakdown(s.id,R.from,R.to), pts:rangePoints(s.id,R.from,R.to), rem:remaining(s.id,R.to)};
+  }).sort(function(a,b){ return b.pts-a.pts; }).forEach(function(r){
+    csv += r.name+";"+CATS.map(function(c){ return r.counts[c.id]||0; }).join(";")+";"+r.pts+";"+r.rem+"\n";
+  });
+  download("rapor-"+R.label.replace(/[^\wğüşiöçĞÜŞİÖÇ]+/gi,"-")+"-"+today()+".csv", csv, "text/csv;charset=utf-8");
+}
+
+/* ================= VELİ BİLGİLENDİRME ================= */
+var vbInit=false, vbWeeksSel=[];
+function vbOpen(){
+  document.getElementById("vb").classList.remove("hidden"); document.body.style.overflow="hidden";
+  var ssel=document.getElementById("vbStudent");
+  ssel.innerHTML = sortedForTracking().map(function(s){ return "<option value='"+s.id+"'>"+esc(s.name)+"</option>"; }).join("");
+  var wi=weekIndexOf(today()); if(wi<0||wi>lastWeek()) wi=lastWeek();
+  vbWeeksSel = [wi];
+  vbInit=true; vbWeeks(); renderVB();
+}
+function vbWeeks(){
+  var box=document.getElementById("vbWeeks"), h="";
+  for(var i=0;i<seasonWeeks();i++){
+    h += "<button class='"+(vbWeeksSel.indexOf(i)>-1?"on":"")+"' onclick='vbToggleWeek("+i+")'>"+(i+1)+". Hafta</button>";
+  }
+  h += "<button onclick='vbAllWeeks()' style='margin-left:auto'>Tümü</button>";
+  box.innerHTML = h;
+}
+function vbToggleWeek(i){
+  var p = vbWeeksSel.indexOf(i);
+  if(p>-1){ if(vbWeeksSel.length>1) vbWeeksSel.splice(p,1); }
+  else vbWeeksSel.push(i);
+  vbWeeksSel.sort(function(a,b){return a-b;});
+  vbWeeks(); renderVB();
+}
+function vbAllWeeks(){
+  vbWeeksSel=[]; for(var i=0;i<seasonWeeks();i++) vbWeeksSel.push(i);
+  vbWeeks(); renderVB();
+}
+function vbClose(){ document.getElementById("vb").classList.add("hidden"); document.body.style.overflow=""; }
+function vbStep(d){
+  var sel=document.getElementById("vbStudent");
+  var i=sel.selectedIndex + d;
+  if(i<0) i=sel.options.length-1; if(i>=sel.options.length) i=0;
+  sel.selectedIndex=i; renderVB();
+}
+function vbData(){
+  var sid = +document.getElementById("vbStudent").value;
+  var weeks = vbWeeksSel.slice().sort(function(a,b){return a-b;});
+  if(!weeks.length) weeks=[lastWeek()];
+  var from=weekStart(weeks[0]), to=weekEnd(weeks[weeks.length-1]);
+  /* seçili haftaların birleşik sayımı */
+  var counts={};
+  weeks.forEach(function(wi){
+    var c=catBreakdown(sid, weekStart(wi), weekEnd(wi));
+    for(var k in c) counts[k]=(counts[k]||0)+c[k];
+  });
+  var rows = CATS.map(function(c){
+    var n = counts[c.id]||0;
+    return {name:c.n, n:n, unit:c.p, p:n*c.p, neg:c.p<0};
+  });
+  /* tebrik: seçili haftaların hepsinde ilk 15'te miyse */
+  var bestRank=999, worstRank=0;
+  weeks.forEach(function(wi){
+    var board=weekBoard(wi), r=0;
+    for(var i=0;i<board.length;i++) if(board[i].id===sid) r=i+1;
+    if(r){ bestRank=Math.min(bestRank,r); worstRank=Math.max(worstRank,r); }
+  });
+  var label = weeks.length===1 ? (weeks[0]+1)+". Hafta Raporu"
+            : weeks.length===seasonWeeks() ? "Tüm Sezon Raporu"
+            : weeks.map(function(w){return (w+1);}).join(", ")+". Haftalar";
+  return {sid:sid, weeks:weeks, from:from, to:to, rows:rows,
+          rank:(worstRank<=15 && worstRank>0)?worstRank:0,   // hepsinde ilk 15
+          name:stuName(sid), label:label};
+}
+function renderVB(){
+  if(!vbInit) return;
+  var d = vbData(), box=document.getElementById("vbBody");
+
+  var congrats = (d.rank>0 && d.rank<=15) ?
+    "<div class='vb-congrats'><div class='c1'>🏆</div>"+
+    "<div class='c2'>Haftanın Talebesi olmuştur, tebrik ederiz!</div>"+
+    "<div class='c3'>"+(d.weeks.length>1?"Seçili haftaların hepsinde":d.label+"nda")+" ilk 15 içinde</div></div>" : "";
+
+  var attn = d.rows.filter(function(it){ return it.neg && it.n>0; })
+    .sort(function(a,b){ return b.n-a.n; });
+  var attnSec = attn.length ?
+    "<div class='vb-sec bad'><h3>⚠ Dikkat Etmesi Gereken Konular</h3>"+
+    attn.map(function(it){ return "<div class='vb-item bad'><span>"+esc(it.name)+"</span><b>"+it.n+" kez</b></div>"; }).join("")+
+    "</div>" :
+    "<div class='vb-sec good'><h3>✓ Dikkat Edilecek Konu Yok</h3>"+
+    "<div class='vb-none'>Bu hafta olumsuz bir kaydı bulunmuyor. Kendisini tebrik ederiz.</div></div>";
+
+  /* eksi almadığı (temiz kalınan) maddeler için tebrik */
+  var clean = d.rows.filter(function(it){ return it.neg && it.n===0; });
+  var praiseSec = clean.length ?
+    "<div class='vb-sec good'><h3>👏 Tebrik Edilecek Konular</h3>"+
+    "<div class='vb-praise'>Bu hafta aşağıdaki konularda hiç olumsuz kaydı olmadı, kendisini tebrik ederiz:</div>"+
+    clean.map(function(it){ return "<div class='vb-item good'><span>"+esc(it.name)+"</span><b>✓</b></div>"; }).join("")+
+    "</div>" : "";
+
+  box.innerHTML =
+    "<div class='vb-card'><div class='vb-name'>"+esc(d.name)+"</div>"+
+    "<div class='vb-meta'>"+d.label+" · "+fmtShort(d.from)+" – "+fmtShort(d.to)+"</div></div>"+
+    congrats+
+    attnSec+
+    praiseSec;
+}
+function vbText(){
+  var d = vbData();
+  var t = "📋 Veli Bilgilendirmesi — "+d.name+"\n"+(d.wi+1)+". Hafta ("+fmtShort(d.from)+" – "+fmtShort(d.to)+")\n";
+  if(d.rank>0 && d.rank<=15) t += "\n🏆 Haftanın Talebesi olmuştur, tebrik ederiz!\n";
+  var attn = d.rows.filter(function(it){ return it.neg && it.n>0; }).sort(function(a,b){ return b.n-a.n; });
+  if(attn.length){
+    t += "\n⚠ Dikkat etmesi gereken konular:\n";
+    attn.forEach(function(it){ t += "  • "+it.name+" ("+it.n+" kez)\n"; });
+  } else {
+    t += "\n✓ Bu hafta olumsuz bir kaydı bulunmuyor. Kendisini tebrik ederiz.\n";
+  }
+  var clean = d.rows.filter(function(it){ return it.neg && it.n===0; });
+  if(clean.length){
+    t += "\n👏 Tebrik edilecek konular (hiç olumsuz kaydı olmadı):\n";
+    clean.forEach(function(it){ t += "  • "+it.name+"\n"; });
+  }
+  t += "\nHayırlı günler dileriz.";
+  return t;
+}
+function vbCopy(btn){
+  var txt = vbText();
+  function ok(){ var o=btn.textContent; btn.textContent="Kopyalandı ✓"; setTimeout(function(){ btn.textContent=o; },1500); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok).catch(function(){ vbFallback(txt, ok); });
+  } else vbFallback(txt, ok);
+}
+function vbFallback(txt, ok){
+  var ta=document.createElement("textarea");
+  ta.value=txt; document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); ok(); }catch(e){ alert("Kopyalanamadı."); }
+  document.body.removeChild(ta);
+}
+function vbShare(){
+  var txt = vbText();
+  if(navigator.share){
+    navigator.share({title:"Günlük Talebe Bilgilendirmesi", text:txt}).catch(function(){});
+  } else {
+    window.open("https://wa.me/?text="+encodeURIComponent(txt), "_blank");
+  }
+}
+
+/* ================= TALEBELER ================= */
+function addStudent(){
+  var el=document.getElementById("newStudent"), n=el.value.trim();
+  if(!n) return;
+  STU.push({id:CFG.nextId++, name:n, active:true});
+  put(K_STU,STU); put(K_CFG,CFG);
+  el.value=""; renderStudents(); buildTable();
+}
+function addBulk(){
+  var el=document.getElementById("bulk");
+  var names = el.value.split("\n").map(function(x){return x.trim();}).filter(Boolean);
+  if(!names.length) return;
+  names.forEach(function(n){ STU.push({id:CFG.nextId++, name:n, active:true}); });
+  put(K_STU,STU); put(K_CFG,CFG);
+  el.value=""; renderStudents(); buildTable();
+  alert(names.length+" talebe eklendi.");
+}
+function renameStudent(id, val){
+  for(var i=0;i<STU.length;i++) if(STU[i].id===id) STU[i].name=val.trim()||STU[i].name;
+  put(K_STU,STU); buildTable();
+}
+function setActive(id, on){
+  for(var i=0;i<STU.length;i++) if(STU[i].id===id) STU[i].active = !!on;
+  put(K_STU,STU); renderStudents(); buildTable();
+}
+function removeStudent(id){
+  if(!confirm(stuName(id)+" tamamen SİLİNSİN mi? Geçmiş kayıtları raporlardan da kalkar. Sadece gizlemek için sağdaki anahtarı kapatın.")) return;
+  STU = STU.filter(function(s){ return s.id!==id; });
+  put(K_STU,STU); renderStudents(); buildTable();
+}
+function renderStudents(){
+  var act = activeStudents().length;
+  document.getElementById("stuCount").textContent = "— "+act+" listede, "+(STU.length-act)+" gizli";
+  if(!STU.length){ document.getElementById("stuList").innerHTML = "<div class='empty'>Henüz talebe yok.</div>"; return; }
+  var n=0;
+  document.getElementById("stuList").innerHTML = STU.map(function(s){
+    var on = s.active!==false;
+    if(on) n++;
+    return "<div class='srow"+(on?"":" off")+"'>"+
+      "<div style='width:26px;color:var(--soft);font-size:13px'>"+(on?n:"–")+"</div>"+
+      "<input type='text' value=\""+esc(s.name)+"\" onchange='renameStudent("+s.id+",this.value)'>"+
+      "<label class='sw' title='Listelerde görünsün'>"+
+        "<input type='checkbox' "+(on?"checked":"")+" onchange='setActive("+s.id+",this.checked)'>"+
+        "<span class='track'><span class='knob'></span></span>"+
+        "<span class='swlbl'>"+(on?"Listede":"Gizli")+"</span>"+
+      "</label>"+
+      "<button class='btn btn-red btn-sm' onclick='removeStudent("+s.id+")'>Sil</button></div>";
+  }).join("");
+}
+
+/* ================= AYARLAR ================= */
+function setSeasonWeeks(v){
+  var n = parseInt(v,10)||5;
+  CFG.seasonWeeks = n;
+  if(CFG.baseScore===undefined) {} else CFG.baseScore = n*100;   // taban puanı da ölçekle
+  put(K_CFG,CFG);
+  renderSettings(); renderWeek(); renderSeason(); renderReportTab();
+}
+function setSeasonStart(v){
+  if(!v) return;
+  var m = mondayOf(parse(v));
+  CFG.seasonStart = m; put(K_CFG,CFG);
+  document.getElementById("seasonStart").value = m;
+  viewWeek = null;
+  renderSettings(); renderWeek(); renderSeason(); dayInfo();
+}
+function setBase(v){
+  var n = parseInt(v,10); if(isNaN(n)) n = 100;
+  CFG.baseScore = n; put(K_CFG,CFG);
+  renderSettings(); renderWeek(); renderSeason(); renderReportTab();
+}
+function setHold(v){ CFG.holdMs = parseInt(v,10)||0; put(K_CFG,CFG); }
+function renderSettings(){
+  document.getElementById("seasonStart").value = CFG.seasonStart;
+  document.getElementById("baseIn").value = baseScore();
+  var sw=document.getElementById("seasonWeeksSel"); if(sw) sw.value = String(seasonWeeks());
+  document.getElementById("holdSel").value = String(holdMs());
+  var os2 = outsideSeason();
+  document.getElementById("seasonInfo").innerHTML =
+    "Sezon: <b>"+fmtShort(weekStart(0))+" – "+fmtShort(weekEnd(lastWeek()))+"</b> ("+seasonWeeks()+" hafta). "+
+    "Girdiğiniz tarih otomatik olarak o haftanın pazartesisine ayarlanır."+
+    (os2.days ? "<br><b style='color:var(--amber)'>Dikkat:</b> bu aralığın dışında "+os2.days+
+      " güne ait "+os2.marks+" işaret var; puanlara girmiyor."+
+      (os2.first ? " <a href='#' onclick=\"setSeasonStart('"+os2.first+"');return false;\">"+
+        fmtShort(os2.first)+" tarihinden başlat</a>" : "") : "");
+  var h = CATS.map(function(c,i){
+    return "<div class='cfg'><div class='cn'><input type='text' value=\""+esc(c.n)+"\" onchange='setCatName("+i+",this.value)' style='width:100%'></div>"+
+      "<input type='number' value='"+c.p+"' onchange='setCatPts("+i+",this.value)'><span class='unit'>puan</span>"+
+      "<input type='number' value='"+(c.max||5)+"' min='1' max='9' onchange='setCatMax("+i+",this.value)'><span class='unit'>maks. adet</span>"+
+      "<button class='btn btn-red btn-sm' onclick='delCat("+i+")'>Sil</button></div>";
+  }).join("");
+  document.getElementById("catList").innerHTML = h || "<div class='empty'>Madde yok.</div>";
+}
+function setCatName(i,v){ CATS[i].n=v.trim()||CATS[i].n; put(K_CAT,CATS); buildTable(); renderSettings(); }
+function setCatPts(i,v){ CATS[i].p=parseInt(v,10)||0; put(K_CAT,CATS); buildTable(); renderSettings(); }
+function setCatMax(i,v){ CATS[i].max=Math.max(1,parseInt(v,10)||1); put(K_CAT,CATS); buildTable(); }
+function delCat(i){
+  if(!confirm("\""+CATS[i].n+"\" maddesi silinsin mi? Geçmiş kayıtlardaki puanları da hesaplamadan çıkar.")) return;
+  if(!CFG.removedCats) CFG.removedCats=[];
+  if(CFG.removedCats.indexOf(CATS[i].id)===-1) CFG.removedCats.push(CATS[i].id);
+  put(K_CFG,CFG);
+  CATS.splice(i,1); put(K_CAT,CATS); buildTable(); renderSettings();
+}
+function addCat(){
+  var n=document.getElementById("newCatName").value.trim();
+  var p=parseInt(document.getElementById("newCatPts").value,10);
+  if(!n || isNaN(p)) { alert("Madde adı ve puan giriniz."); return; }
+  CATS.push({id:"c"+Date.now(), n:n, p:p, max:5});
+  put(K_CAT,CATS);
+  document.getElementById("newCatName").value="";
+  buildTable(); renderSettings();
+}
+
+/* ================= VERİ ================= */
+function download(name, content, type){
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([content],{type:type}));
+  a.download=name; a.click(); URL.revokeObjectURL(a.href);
+}
+function exportCSV(){
+  var csv="\uFEFFTarih;Hafta;Talebe;Madde;Adet;Puan\n";
+  Object.keys(DATA).sort().forEach(function(d){
+    var wi=weekIndexOf(d);
+    Object.keys(DATA[d]).forEach(function(sid){
+      Object.keys(DATA[d][sid]).forEach(function(cid){
+        var c=catById(cid); if(!c) return;
+        var n=DATA[d][sid][cid];
+        csv += d+";"+(wi>=0&&wi<seasonWeeks()?(wi+1)+". Hafta":"-")+";"+stuName(+sid)+";"+c.n+";"+n+";"+(n*c.p)+"\n";
+      });
+    });
+  });
+  download("puan-sistemi-"+today()+".csv", csv, "text/csv;charset=utf-8");
+}
+function backup(){
+  download("puan-sistemi-yedek-"+today()+".json",
+    JSON.stringify({data:DATA, students:STU, cats:CATS, config:CFG}), "application/json");
+}
+function restore(input){
+  var f=input.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var o=JSON.parse(r.result);
+      if(!o || typeof o!=="object") throw new Error("format");
+      if(!confirm("Yedek yüklensin mi? Mevcut veriler bu yedekle DEĞİŞTİRİLECEK.")) return;
+      DATA=o.data||{}; STU=o.students||[]; CATS=o.cats||DEFAULT_CATS; CFG=o.config||CFG;
+      put(K_DATA,DATA); put(K_STU,STU); put(K_CAT,CATS); put(K_CFG,CFG);
+      viewWeek=null; buildTable(); renderStudents(); renderSettings(); renderWeek(); renderSeason();
+      alert("Yedek yüklendi.");
+    }catch(e){ alert("Dosya okunamadı."); }
+    input.value="";
+  };
+  r.readAsText(f);
+}
+
+/* ================= TV MODU ================= */
+var tvIdx=0, tvTimer=null, tvPlaying=true, TV_MS=12000;
+
+function tvStart(){
+  var el=document.getElementById("tv");
+  el.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+  if(el.requestFullscreen) el.requestFullscreen().catch(function(){});
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  tvIdx=0; tvPlaying=true; tvSideIdx=0;
+  document.getElementById("tvPlay").textContent="⏸";
+  tvRender(); tvSchedule(); tvWatch();
+  tvSideRender(); tvSideSchedule();
+}
+function tvStop(){
+  clearTimeout(tvTimer); clearInterval(tvSideTimer);
+  if(tvWatchTimer){ clearInterval(tvWatchTimer); tvWatchTimer=null; }
+  if(mqAnim){ try{ mqAnim.cancel(); }catch(e){} mqAnim=null; }
+  document.getElementById("tv").classList.add("hidden");
+  document.body.style.overflow="";
+  if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function(){});
+}
+function tvSchedule(){ clearTimeout(tvTimer); if(tvPlaying) tvTimer=setTimeout(tvNext, TV_MS); }
+function tvNext(){
+  tvIdx=(tvIdx+1)%TV_SLIDES.length;
+  try{ tvRender(); }catch(e){ tvIdx=0; try{ tvRender(); }catch(e2){} }
+  tvSchedule(); tvWatch();
+}
+function tvPrev(){
+  tvIdx=(tvIdx-1+TV_SLIDES.length)%TV_SLIDES.length;
+  try{ tvRender(); }catch(e){}
+  tvSchedule(); tvWatch();
+}
+/* güvenlik: herhangi bir sebeple slayt takılırsa kendiliğinden devam etsin */
+var tvWatchTimer=null, tvLastIdx=-1, tvLastAt=0;
+function tvWatch(){
+  tvLastIdx = tvIdx; tvLastAt = Date.now();
+  if(tvWatchTimer) return;
+  tvWatchTimer = setInterval(function(){
+    if(document.getElementById("tv").classList.contains("hidden")) return;
+    if(!tvPlaying){ tvLastAt = Date.now(); return; }
+    if(tvIdx===tvLastIdx && Date.now()-tvLastAt > 90000) tvNext();   // 90 sn'dir aynı slayttaysa geç
+    if(tvIdx!==tvLastIdx){ tvLastIdx=tvIdx; tvLastAt=Date.now(); }
+  }, 5000);
+}
+function tvToggle(){
+  tvPlaying=!tvPlaying;
+  document.getElementById("tvPlay").textContent = tvPlaying?"⏸":"▶️";
+  if(mqAnim){ try{ tvPlaying ? mqAnim.play() : mqAnim.pause(); }catch(e){} }
+  if(mqAnim && tvPlaying) clearTimeout(tvTimer);   // kaydırma bitince geçecek
+  else tvSchedule();
+  tvSideSchedule();
+}
+document.addEventListener("keydown", function(e){
+  if(document.getElementById("tv").classList.contains("hidden")) return;
+  if(e.key==="Escape") tvStop();
+  if(e.key==="ArrowRight") tvNext();
+  if(e.key==="ArrowLeft") tvPrev();
+  if(e.key===" "){ e.preventDefault(); tvToggle(); }
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); tvSideNext(); tvSideSchedule(); }
+});
+document.addEventListener("fullscreenchange", function(){
+  /* tarayıcı tam ekrandan çıksa bile TV modu açık kalsın, slaytlar dönmeye devam etsin */
+  if(!document.fullscreenElement && !document.getElementById("tv").classList.contains("hidden")){
+    tvSchedule();
+  }
+});
+
+/* çok sayıda eşit talebeyi isim kutucuklarıyla göster */
+function tvChips(list, max){
+  max = max || 14;
+  var show = list.slice(0, max), rest = list.length - show.length;
+  return "<div class='tv-chips'>"+
+    show.map(function(x){ return "<span>"+esc(x.name)+"</span>"; }).join("")+
+    (rest>0 ? "<span class='more'>+"+rest+" talebe daha</span>" : "")+
+    "</div>";
+}
+
+function tvBoardRows(board, n, weekMode){
+  if(!board.length) return "<div class='tv-empty'>Kayıt yok.</div>";
+  var base = baseScore();
+  return "<div class='tv-list'>"+board.slice(0,n).map(function(b,i){
+    var rem = (b.rem===undefined? base+b.pts : b.rem);
+    var neg = weekMode ? b.pts<0 : rem<base*0.6;
+    return "<div class='tv-row "+(i===0?"gold":"")+"'><div class='r'>"+(medal(i)||(i+1))+"</div>"+
+      "<div class='n'>"+esc(b.name)+"</div>"+
+      "<div class='p "+(neg?"neg":"")+"'>"+(weekMode?fmtDelta(b.pts):rem)+
+        "<small style='font-size:.55em;opacity:.7;margin-left:.6vw'>"+(weekMode?"kalan "+rem+"/"+base:"/"+base)+"</small>"+
+      "</div></div>";
+  }).join("")+"</div>";
+}
+
+/* kayan işaret tablosu — gün, hafta veya sezon için */
+function marksTableSlide(title, subtitle, from, to){
+  var list = activeStudents();
+  if(!list.length) return "<div class='tv-title'>"+title+"</div><div class='tv-empty'>Talebe yok.</div>";
+  var nameW = 22, totW = 11, catW = (100-nameW-totW)/CATS.length;
+  var cols = "<colgroup><col style='width:"+nameW+"%'>"+
+    CATS.map(function(){ return "<col style='width:"+catW+"%'>"; }).join("")+
+    "<col style='width:"+totW+"%'></colgroup>";
+  var head = "<table class='tvt'>"+cols+"<thead><tr><th class='nmh'>Talebe</th>"+
+    CATS.map(function(c){
+      return "<th><span class='vl'>"+esc(c.n)+"</span><span class='vp "+(c.p<0?"neg":"pos")+"'>"+(c.p>0?"+":"")+c.p+"</span></th>";
+    }).join("")+
+    "<th class='toth'>Kalan<br>Puan</th></tr></thead></table>";
+  var rows = list.map(function(s){
+    var counts = catBreakdown(s.id, from, to);
+    var tds = CATS.map(function(c){
+      var n = counts[c.id]||0, p = n*c.p;
+      return "<td class='"+(n?(c.p<0?"neg":"pos"):"z")+"'>"+(n?((p>0?"+":"")+p):"0")+"</td>";
+    }).join("");
+    var rem = remaining(s.id, to), base = baseScore();
+    return "<tr><td class='nmc'>"+esc(s.name)+"</td>"+tds+
+      "<td class='totc "+(rem>=base?"pos":rem<base*0.6?"neg":"")+"'>"+rem+"</td></tr>";
+  }).join("");
+  var body = "<div class='mq-box' id='mqBox'><div id='mqInner'><table class='tvt'>"+cols+"<tbody>"+rows+"</tbody></table></div></div>";
+  return "<div class='tv-title'>"+title+"</div>"+
+    "<div class='tv-sub' style='margin-bottom:1.6vh'>"+subtitle+"</div>"+
+    "<div class='tvt-wrap'>"+head+body+"</div>";
+}
+
+var TV_SLIDES = [
+  /* 1 — Haftanın Talebesi */
+  function(){
+    var wi = weekIndexOf(today()); if(wi<0||wi>5) wi = 0;
+    var f=weekStart(wi), t=weekEnd(wi);
+    var b = weekBoard(wi);
+    if(!b.length || !hasRecords(f,t))
+      return "<div class='tv-kicker'>Haftanın Talebesi</div><div class='tv-empty' style='margin-top:4vh'>Bu haftaya ait kayıt yok.</div>";
+    var w = tieInfo(b);
+    var head = "<div class='tv-kicker'>"+(w.count>1?"Haftanın Talebeleri":"Haftanın Talebesi")+"</div>"+
+      "<div class='tv-sub'>"+(wi+1)+". Hafta · "+fmtShort(f)+" – "+fmtShort(t)+"</div>";
+    if(w.count>3){
+      return head+
+        "<div class='tv-hero' style='margin:1.5vh 0 1vh'><div class='cup'>🏆</div>"+
+        "<div class='name' style='font-size:7vh'>"+fmtDelta(w.pts)+" puan</div>"+
+        "<div class='pts'>"+w.count+" talebe zirvede"+(w.pts>0?" — puanını yükseltti":(w.pts===0?" — bu hafta hiç puan kaybetmedi":""))+"</div></div>"+
+        tvChips(w.tied);
+    }
+    return head+
+      "<div class='tv-hero'><div class='cup'>🏆</div>"+
+      "<div class='name' style='font-size:"+heroSize(w.text)+"'>"+esc(w.text)+"</div>"+
+      "<div class='pts'>Bu hafta "+fmtDelta(w.pts)+" puan"+(w.tied[0]?" · "+baseScore()+"'den kalan: "+w.tied[0].rem:"")+"</div></div>";
+  },
+  /* 2 — Haftalık sıralama */
+  function(){
+    var wi = weekIndexOf(today()); if(wi<0||wi>5) wi = 0;
+    return "<div class='tv-title'>"+(wi+1)+". Hafta Sıralaması</div>"+
+      "<div class='tv-sub' style='margin-bottom:2.4vh'>"+fmtShort(weekStart(wi))+" – "+fmtShort(weekEnd(wi))+"</div>"+
+      tvBoardRows(weekBoard(wi), 8, true);
+  },
+  /* 3 — Yazın Talebesi */
+  function(){
+    var b=seasonBoard(), f=weekStart(0), t=weekEnd(lastWeek()), done = today()>t;
+    if(!b.length || !hasRecords(f,t))
+      return "<div class='tv-kicker'>Yazın Talebesi</div><div class='tv-empty' style='margin-top:4vh'>Sezona ait kayıt yok.</div>";
+    var w = tieInfo(b);
+    var head = "<div class='tv-kicker'>"+(done?"Yazın Talebesi":"Yazın Talebesi Yarışı")+"</div>"+
+      "<div class='tv-sub'>6 Hafta · "+fmtShort(f)+" – "+fmtShort(t)+"</div>";
+    if(w.count>3){
+      return head+
+        "<div class='tv-hero' style='margin:1.5vh 0 1vh'><div class='cup'>"+(done?"🏆":"⭐")+"</div>"+
+        "<div class='name' style='font-size:7vh'>"+w.pts+" puan</div>"+
+        "<div class='pts'>"+w.count+" talebe zirvede"+(w.pts>baseScore()?" — puanını yükseltti":(w.pts===baseScore()?" — hiç puan kaybetmedi":""))+"</div></div>"+
+        tvChips(w.tied);
+    }
+    return head+
+      "<div class='tv-hero'><div class='cup'>"+(done?"🏆":"⭐")+"</div>"+
+      "<div class='name' style='font-size:"+heroSize(w.text)+"'>"+esc(w.text)+"</div>"+
+      "<div class='pts'>"+w.pts+" puan kaldı"+(w.delta?" ("+fmtDelta(w.delta)+")":"")+"</div></div>";
+  },
+  /* 4 — Genel sıralama */
+  function(){
+    return "<div class='tv-title'>Genel Sıralama</div>"+
+      "<div class='tv-sub' style='margin-bottom:2.4vh'>tüm sezonun toplamı</div>"+
+      tvBoardRows(seasonBoard(), 8);
+  },
+  /* 5 — Bugünün işaretleri (kayan liste) */
+  function(){ return marksTableSlide("Bugünün İşaretleri", fmtLong(today()), today(), today()); },
+  /* 6 — Bu haftanın işaretleri */
+  function(){
+    var wi = weekIndexOf(today()); if(wi<0||wi>5) wi=0;
+    return marksTableSlide((wi+1)+". Haftanın İşaretleri",
+      fmtShort(weekStart(wi))+" – "+fmtShort(weekEnd(wi)), weekStart(wi), weekEnd(wi));
+  },
+  /* 7 — Sezonun tüm işaretleri */
+  function(){
+    return marksTableSlide("Yaz Sezonunun Tüm İşaretleri",
+      "6 Hafta · "+fmtShort(weekStart(0))+" – "+fmtShort(weekEnd(lastWeek())), weekStart(0), weekEnd(lastWeek()));
+  },
+  /* 8 — Haftalık şampiyonlar */  function(){
+    var cards="";
+    for(var i=0;i<seasonWeeks();i++){
+      var f=weekStart(i), t=weekEnd(i), live=(weekIndexOf(today())===i);
+      var b=weekBoard(i), has=hasRecords(f,t);
+      cards += "<div class='tv-card "+(live?"live":"")+"'><div class='wk'>"+(i+1)+". Hafta</div>"+
+        "<div class='wn'>"+(has?esc(b[0].name):"—")+"</div>"+
+        "<div class='wp'>"+(has?(fmtDelta(b[0].pts)+" · kalan "+b[0].rem):(today()<f?"başlamadı":"kayıt yok"))+"</div></div>";
+    }
+    return "<div class='tv-title'>Haftalık Şampiyonlar</div>"+
+      "<div class='tv-sub' style='margin-bottom:2.4vh'>sezon</div>"+
+      "<div class='tv-grid'>"+cards+"</div>";
+  }
+];
+
+function tvRender(){
+  document.getElementById("tvBrand").textContent = "Talebe Puan Sistemi";
+  var body=document.getElementById("tvBody");
+  body.innerHTML = "<div class='fade'>"+TV_SLIDES[tvIdx]()+"</div>";
+  document.getElementById("tvDots").innerHTML =
+    TV_SLIDES.map(function(_,i){ return "<i class='"+(i===tvIdx?"on":"")+"'></i>"; }).join("");
+  requestAnimationFrame(mountMarquee);
+}
+/* liste ekrana sığmıyorsa bir kez baştan sona kaydır, bitince diğer slayta geç */
+var mqAnim = null;
+function mountMarquee(){
+  if(mqAnim){ try{ mqAnim.cancel(); }catch(e){} mqAnim = null; }
+  var box=document.getElementById("mqBox"), inner=document.getElementById("mqInner");
+  if(!box || !inner) return;
+  var dist = inner.scrollHeight - box.clientHeight;
+  if(dist <= 4) return;                       // liste zaten sığıyor, kaydırma yok
+  clearTimeout(tvTimer);                      // sabit süreli geçişi iptal et
+  var ms = Math.max(9000, dist/48*1000);      // uzun listede daha uzun süre
+  if(!inner.animate){                         // eski tarayıcı için yedek
+    tvTimer = setTimeout(tvNext, ms+2500);
+    return;
+  }
+  mqAnim = inner.animate(
+    [{transform:"translateY(0)"},
+     {transform:"translateY(-"+dist+"px)",offset:0.90},
+     {transform:"translateY(-"+dist+"px)"}],
+    {duration: ms+1200, easing:"linear", fill:"forwards"}
+  );
+  if(!tvPlaying) mqAnim.pause();
+  mqAnim.onfinish = function(){ if(tvPlaying) tvNext(); };
+}
+
+/* ---- sağ taraf: üstte yazlık, altta haftalık detay ---- */
+var tvSideIdx=0, tvSideTimer=null, TV_SIDE_MS=7000;
+
+function catBreakdown(sid, from, to){
+  var counts={};
+  for(var d in DATA){
+    if(d<from || d>to) continue;
+    var rec=(DATA[d]||{})[sid]||{};
+    for(var cid in rec) counts[cid]=(counts[cid]||0)+rec[cid];
+  }
+  return counts;
+}
+function detailHTML(s, opt){
+  var counts = catBreakdown(s.id, opt.from, opt.to);
+  var tot = rangePoints(s.id, opt.from, opt.to);
+  var rem = remaining(s.id, opt.to), base = baseScore();
+  var lines = CATS.filter(function(c){ return counts[c.id]; })
+    .sort(function(a,b){ return (counts[a.id]*a.p)-(counts[b.id]*b.p); })
+    .map(function(c){
+      var n=counts[c.id], p=n*c.p;
+      return "<div class='ln'><span class='l'>"+esc(c.n)+" ×"+n+"</span>"+
+             "<span class='r "+(p<0?"neg":"")+"'>"+(p>0?"+":"")+p+"</span></div>";
+    }).join("");
+  var seg = opt.segments.map(function(g){
+    var v = rangePoints(s.id, g.from, g.to);
+    return "<div class='dd'>"+g.label+"<b class='"+(v>0?"p":v<0?"n":"z")+"'>"+(v>0?"+":"")+v+"</b></div>";
+  }).join("");
+  var rank=0;
+  for(var i=0;i<opt.board.length;i++) if(opt.board[i].id===s.id) rank=i+1;
+
+  return "<div class='fade' style='display:flex;flex-direction:column;min-height:0'>"+
+    "<div class='sk'>"+opt.kicker+"</div>"+
+    "<div class='snm'>"+esc(s.name)+"</div>"+
+    "<div class='stt'><span>"+opt.totalLabel+(tot?" ("+fmtDelta(tot)+")":"")+"</span><b class='"+(rem<base*0.6?"neg":"")+"'>"+rem+"</b></div>"+
+    (lines || "<div class='none'>"+opt.emptyText+"</div>")+
+    "<div class='days'>"+seg+"</div>"+
+    "<div class='pos-of'>Sıralama: "+(rank||"-")+" / "+opt.board.length+" · "+(tvSideIdx+1)+". talebe</div>"+
+  "</div>";
+}
+function tvSideRender(){
+  var list = activeStudents();
+  var top = document.getElementById("tvSideTop"), bot = document.getElementById("tvSide");
+  top.classList.add("season");
+  if(!list.length){
+    top.innerHTML = bot.innerHTML = "<div class='none'>Talebe yok.</div>";
+    return;
+  }
+  if(tvSideIdx >= list.length) tvSideIdx = 0;
+  var s = list[tvSideIdx];
+
+  /* üst panel — yazlık (tüm sezon) */
+  var wsegs=[];
+  for(var i=0;i<seasonWeeks();i++) wsegs.push({label:(i+1)+".H", from:weekStart(i), to:weekEnd(i)});
+  top.innerHTML = detailHTML(s, {
+    kicker:"Yazlık Puan · Sezon",
+    totalLabel:"Kalan puan",
+    from:weekStart(0), to:weekEnd(lastWeek()),
+    segments:wsegs,
+    board:seasonBoard(),
+    emptyText:"Sezon boyunca hiç kaydı yok."
+  });
+
+  /* alt panel — bu hafta */
+  var wi = weekIndexOf(today()); if(wi<0||wi>5) wi=0;
+  var from=weekStart(wi), to=weekEnd(wi);
+  var DOWN=["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"], dsegs=[];
+  for(var k=0;k<7;k++){ var d=addDays(from,k); dsegs.push({label:DOWN[k], from:d, to:d}); }
+  bot.innerHTML = detailHTML(s, {
+    kicker:"Haftalık Detay · "+(wi+1)+". Hafta",
+    totalLabel:"Hafta sonu kalan",
+    from:from, to:to,
+    segments:dsegs,
+    board:weekBoard(wi),
+    emptyText:"Bu hafta hiç kaydı yok."
+  });
+}
+function tvSideNext(){
+  var list = activeStudents();
+  tvSideIdx = list.length ? (tvSideIdx+1)%list.length : 0;
+  tvSideRender();
+}
+function tvSideSchedule(){
+  clearInterval(tvSideTimer);
+  if(tvPlaying) tvSideTimer = setInterval(tvSideNext, TV_SIDE_MS);
+}
+
+/* ================= SEKMELER ================= */
+function tab(t){
+  ["track","week","season","report","students","settings"].forEach(function(x){
+    document.getElementById("v_"+x).classList.toggle("hidden", x!==t);
+    document.getElementById("t_"+x).classList.toggle("active", x===t);
+  });
+  if(t==="week") renderWeek();
+  if(t==="season") renderSeason();
+  if(t==="report") renderReportTab();
+  if(t==="students") renderStudents();
+  if(t==="settings") renderSettings();
+}
+
+
+/* sezonu 5 haftaya / 500 puana ayarla, bu hafta = 1. hafta */
+(function(){
+  if(CFG.seasonReset20260727c) return;   // yalnız bir kez
+  CFG.seasonWeeks = 5;
+  CFG.baseScore = 500;
+  CFG.seasonStart = mondayOf(new Date());   // bu hafta = 1. hafta
+  CFG.seasonReset20260727c = 1;
+  put(K_CFG,CFG);
+})();
+
+
+/* ================= BAŞLAT ================= */
+buildTable();
+renderStudents();
+renderSettings();
+cloudInit();
+</script>
+</body>
+</html>
