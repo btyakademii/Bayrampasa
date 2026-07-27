@@ -710,7 +710,7 @@ function put(k,v){
 /* ================= SUPABASE BULUT SENKRON ================= */
 var SB_URL = "https://zowvygqlbrtotkygszsg.supabase.co";
 var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpvd3Z5Z3FsYnJ0b3RreWdzenNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDIwOTAsImV4cCI6MjA5MTY3ODA5MH0.jUOcm2ZRL8VlAxLLWMj6unoDl7981lndSyQFji18w0A";
-var SYNC_KEYS = [K_DATA, K_STU, K_CAT, K_CFG, K_DD];   // buluta taşınacak anahtarlar
+var SYNC_KEYS = ["psData","psStudents","psCats","psConfig","psDDGroups"];   // buluta taşınacak anahtarlar
 var sb=null, cloudReady=false, applyingRemote=false, pushT={};
 
 function setSyncBadge(txt, color){
@@ -731,11 +731,11 @@ function applyRemote(k, v){
   if(SYNC_KEYS.indexOf(k)===-1) return;
   applyingRemote=true;
   localStorage.setItem(k, JSON.stringify(v));
-  if(k===K_DATA) DATA=v;
-  else if(k===K_STU) STU=v;
-  else if(k===K_CAT) CATS=v;
-  else if(k===K_CFG) CFG=v;
-  else if(k===K_DD)  DDG=v;
+  if(k==="psData") DATA=v;
+  else if(k==="psStudents") STU=v;
+  else if(k==="psCats") CATS=v;
+  else if(k==="psConfig") CFG=v;
+  else if(k==="psDDGroups") DDG=v;
   applyingRemote=false;
   refreshAll();
 }
@@ -772,6 +772,15 @@ function cloudInit(){
     }
     cloudReady=true;
     setSyncBadge("● bulutta", "#9ce0b4");
+    /* buluttan gelen ayar eski sezonu taşıyorsa, bu haftayı 2. hafta yap */
+    if(!CFG.seasonReset20260727b){
+      CFG.seasonWeeks = 5;
+      CFG.baseScore = 500;
+      CFG.seasonStart = addDays(mondayOf(new Date()), -7);
+      CFG.seasonReset20260727b = 1;
+      put(K_CFG, CFG);
+      refreshAll();
+    }
   });
   /* canlı dinleme: diğer cihaz yazınca anında uygula */
   sb.channel("kv-live")
@@ -2323,13 +2332,14 @@ function tab(t){
   CFG.noDdNeg = 1; put(K_CFG,CFG);
 })();
 
-/* sezonu 5 haftaya / 500 puana ayarla, bu haftayı 1. hafta yap */
+/* sezonu 5 haftaya / 500 puana ayarla, bu hafta = 2. hafta (bir hafta önce başlar) */
 (function(){
-  if(CFG.season5b) return;
+  if(CFG.seasonReset20260727b) return;   // yalnız bir kez
   CFG.seasonWeeks = 5;
   CFG.baseScore = 500;
-  CFG.seasonStart = mondayOf(new Date());   // bu hafta = 1. hafta
-  CFG.season5b = 1; put(K_CFG,CFG);
+  CFG.seasonStart = addDays(mondayOf(new Date()), -7);   // bu hafta 2. hafta olsun
+  CFG.seasonReset20260727b = 1;
+  put(K_CFG,CFG);
 })();
 
 /* eski çelişkili kayıtları temizle: hem +1/+2 hem -4 varsa, hocanın -4'ü geçerli sayılır */
