@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.01-3">
+<meta name="otk-surum" content="2026.10.09-2">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -9194,6 +9194,17 @@ function kesSayfa(cv){
       sutun = [[0, ax-Math.round(10*f)], [ax+Math.round(10*f), W]];
     }
   }
+  /* Ortada çizgi yoksa iki sütunu aradaki beyaz oluktan bul (sol ve sağ soru birleşmesin) */
+  if(sutun.length===1){
+    const satirDolu = new Uint8Array(H); let icerik = 0, sol = 0, sag = 0;
+    for(let y=0;y<H;y++){ for(let x=0;x<W;x++) if(koyu[y*W+x]){ satirDolu[y] = 1; break; } if(satirDolu[y]) icerik++; }
+    const bw = Math.max(3, Math.round(3*ppm)); let enAz = Infinity, ox = -1;
+    for(let x=Math.round(W*0.4); x<Math.round(W*0.6)-bw; x+=2){ let say = 0;
+      for(let y=0;y<H;y++){ if(!satirDolu[y]) continue; const r = y*W; for(let xx=x; xx<x+bw; xx++) if(koyu[r+xx]){ say++; break; } }
+      if(say<enAz){ enAz = say; ox = x+Math.round(bw/2); } }
+    if(ox>0){ for(let y=0;y<H;y++){ const r = y*W; for(let x=Math.round(W*0.05); x<ox-bw; x+=2) if(koyu[r+x]){ sol++; break; } for(let x=ox+bw; x<Math.round(W*0.95); x+=2) if(koyu[r+x]){ sag++; break; } } }
+    if(ox>0 && icerik && enAz < icerik*0.12 && sol > icerik*0.2 && sag > icerik*0.2){ ax = ox; sutun = [[0, ox], [ox, W]]; }
+  }
   const kutular = [], bos = 11*ppm, m = Math.round(2.5*ppm);
   sutun.forEach(([c0, c1])=>{
     const dolu = [];
@@ -9204,6 +9215,8 @@ function kesSayfa(cv){
       let xa = W, xb = 0;
       for(let x=c0; x<c1; x++){ let s = 0; for(let y=yA; y<=yB; y++) s += koyu[y*W+x]; if(s>1){ if(x<xa) xa = x; if(x>xb) xb = x; } }
       if(xb<=xa) return;
+      let ink = 0; for(let y=yA; y<=yB; y++){ const r = y*W; for(let x=xa; x<=xb; x++) ink += koyu[r+x]; }
+      if(kesGurultu([xa,yA,xb,yB], ink/((xb-xa+1)*(yB-yA+1)), W, H)) return;   // başlık, ders adı, "diğer sayfaya geçiniz", CamScanner…
       kutular.push([Math.max(0,xa-m), Math.max(0,yA-m), Math.min(W,xb+m), Math.min(H,yB+m)]);
     });
   });
@@ -9216,7 +9229,47 @@ function kesSayfa(cv){
     d[i*4] = 255-(255-r)*k; d[i*4+1] = 255-(255-gg)*k; d[i*4+2] = 255-(255-b)*k; d[i*4+3] = 255;
   }
   const temiz = document.createElement('canvas'); temiz.width = W; temiz.height = H; temiz.getContext('2d').putImageData(cik, 0, 0);
-  return {kutular, temiz};
+  return {kutular, temiz, ax, iki:sutun.length>1};
+}
+/* Soru olmayan yazılar: tek satırlık yazılar ("Diğer sayfaya geçiniz", "Bu testte 20 soru vardır", ders adı),
+   dolu başlık şeritleri, sayfanın en üstündeki kitapçık/deneme adı, en altındaki CamScanner / sayfa numarası, küçük parçalar.
+   k: mürekkebin sıkı sınırları (kenar payı eklenmemiş), dens: kutudaki mürekkep oranı */
+function kesGurultu(k, dens, W, H){
+  const ppm = W/210, w = (k[2]-k[0])/ppm, h = (k[3]-k[1])/ppm;
+  if(h < 7.5) return true;                          // tek satır yazı
+  if(h < 16 && dens > 0.33) return true;            // koyu zeminli ders / başlık şeridi
+  if(w < 28 && h < 22) return true;                 // küçük parça: sayfa no, logo, ok işareti, filigran
+  if(k[3] < H*0.12 && h < 24) return true;          // sayfa üstü: kitapçık türü, deneme adı
+  if(k[1] > H*0.88 && h < 24) return true;          // sayfa altı: CamScanner, "diğer sayfaya geçiniz"
+  return false;
+}
+/* Öneri kutusundan, seçilen bölge çıkarılınca kalan soruları bul (sol soru seçilince sağdaki ayrı soru olarak kalır) */
+function kesKalan(S, k, s){
+  const T = S.temiz, W = T.width, H = T.height, ppm = W/210;
+  const x0 = Math.max(0, Math.floor(k[0])), y0 = Math.max(0, Math.floor(k[1])), x1 = Math.min(W, Math.ceil(k[2])), y1 = Math.min(H, Math.ceil(k[3])), w = x1-x0, h = y1-y0;
+  if(w<4 || h<4) return [];
+  const d = T.getContext('2d').getImageData(x0, y0, w, h).data, ink = new Uint8Array(w*h);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){ const X = x+x0, Y = y+y0; if(X>=s[0] && X<=s[2] && Y>=s[1] && Y<=s[3]) continue;
+    const i = (y*w+x)*4; if(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2] < 165) ink[y*w+x] = 1; }
+  const kolon = new Int32Array(w); for(let y=0;y<h;y++) for(let x=0;x<w;x++) kolon[x] += ink[y*w+x];
+  // dikey boşluklarla sütunlara, yatay boşluklarla sorulara ayır
+  const seritler = [], gx = 5*ppm; let a = -1, son = -1;
+  for(let x=0;x<w;x++){ if(kolon[x]>1){ if(a<0) a = x; else if(x-son > gx){ seritler.push([a, son]); a = x; } son = x; } }
+  if(a>=0) seritler.push([a, son]);
+  const out = [], bos = 11*ppm, m = Math.round(2.5*ppm);
+  seritler.forEach(([ca, cb])=>{
+    const dolu = []; for(let y=0;y<h;y++){ let t = 0; for(let x=ca; x<=cb; x++) t += ink[y*w+x]; if(t>2) dolu.push(y); }
+    const grp = []; dolu.forEach((y,i)=>{ if(!i || y-dolu[i-1] > bos) grp.push([y,y]); else grp[grp.length-1][1] = y; });
+    grp.forEach(([yA, yB])=>{
+      let xa = w, xb = -1, t = 0;
+      for(let y=yA; y<=yB; y++) for(let x=ca; x<=cb; x++) if(ink[y*w+x]){ t++; if(x<xa) xa = x; if(x>xb) xb = x; }
+      if(xb<=xa) return;
+      const K = [xa+x0, yA+y0, xb+x0, yB+y0];
+      if(kesGurultu(K, t/((xb-xa+1)*(yB-yA+1)), W, H)) return;
+      out.push([Math.max(0,K[0]-m), Math.max(0,K[1]-m), Math.min(W,K[2]+m), Math.min(H,K[3]+m)]);
+    });
+  });
+  return out;
 }
 const kesBlob = cv => new Promise(r=>cv.toBlob(r, 'image/jpeg', 0.9));
 async function kesParca(temiz, [x0,y0,x1,y1]){
@@ -9248,7 +9301,7 @@ async function sfElleYukle(inp){
   try{
     const sayfalar = await kesSayfalar(fl, du); EK.sayfa = [];
     for(let i=0;i<sayfalar.length;i++){ du('⏳ Sayfa '+(i+1)+'/'+sayfalar.length+' temizleniyor…'); await new Promise(r=>setTimeout(r, 30));
-      const {kutular, temiz} = kesSayfa(sayfalar[i]); EK.sayfa.push({temiz, kutular}); }
+      const {kutular, temiz, ax, iki} = kesSayfa(sayfalar[i]); EK.sayfa.push({temiz, kutular, ax, iki}); }
     EK.p = 0; EK.secim = []; EK.on = true; EK.gor = 'tam'; du(''); ekAc();
   }catch(e){ du('❌ '+(e && e.message || e)); }
 }
@@ -9261,7 +9314,7 @@ function ekAc(){
       + '<div class="ek-orta"><div class="ek-alan" id="ek-alan"><canvas id="ek-cv"></canvas></div><div class="ek-yan" id="ek-yan"></div></div>'
       + '<button class="ek-zoom" id="ek-zoom" onclick="ekZoom(1)">🔍 Sığdır</button>'
       + '<div class="ek-alt-bar"><button onclick="ekSayfa(-1)" id="ek-onc" aria-label="Önceki sayfa">‹</button><button onclick="ekGeri()" id="ek-geri">↶ Geri</button>'
-      + '<button onclick="ekOneriHepsi()" id="ek-hepsi">✓ Hepsi</button><button onclick="ekSayfa(1)" id="ek-son" aria-label="Sonraki sayfa">›</button>'
+      + '<button onclick="ekOneriHepsi()" id="ek-hepsi">✓ Hepsi</button><button onclick="ekSiradakiSec()" id="ek-sira">➜ Sıradakini seç</button><button onclick="ekSayfa(1)" id="ek-son" aria-label="Sonraki sayfa">›</button>'
       + '<button class="ek-bitir" onclick="ekKapat(true)" id="ek-bitir">Bitir</button></div>';
     document.body.appendChild(ov);
     const cv = ov.querySelector('#ek-cv');
@@ -9322,8 +9375,14 @@ function ekCiz(){
   const lw = 2/o;
   if(EK.mod==='duz'){ ekDuzCiz(c, S, lw, o); return; }
   // öneriler (alınmamış olanlar)
-  if(EK.oneri) S.kutular.forEach(k=>{ if(ekAlinmis(k)) return; c.setLineDash([8/o, 6/o]); c.strokeStyle = 'rgba(80,90,110,.75)'; c.lineWidth = lw; c.strokeRect(k[0], k[1], k[2]-k[0], k[3]-k[1]); });
+  const aday = ekAdaylar(EK.p), ilk = aday[0];
+  if(EK.oneri) S.kutular.forEach(k=>{ if(ekAlinmis(k) || k===ilk) return; c.setLineDash([8/o, 6/o]);
+    c.strokeStyle = aday.indexOf(k)>-1 ? 'rgba(80,90,110,.75)' : 'rgba(80,90,110,.25)'; c.lineWidth = lw; c.strokeRect(k[0], k[1], k[2]-k[0], k[3]-k[1]); });
   c.setLineDash([]);
+  if(EK.oneri && ilk){   // sıradaki öneri: mavi, numaralı
+    c.setLineDash([10/o, 5/o]); c.strokeStyle = '#1040d0'; c.lineWidth = lw*1.6; c.strokeRect(ilk[0], ilk[1], ilk[2]-ilk[0], ilk[3]-ilk[1]); c.setLineDash([]);
+    const q = kesSira()[EK.secim.length], et = '➜ '+(q ? q.no : '?'), fs = 20/o; c.font = '800 '+fs+'px Outfit, Arial, sans-serif';
+    const tw = c.measureText(et).width + 12/o; c.fillStyle = '#1040d0'; c.fillRect(ilk[0], ilk[1], tw, fs*1.25); c.fillStyle = '#fff'; c.fillText(et, ilk[0]+6/o, ilk[1]+fs); }
   EK.secim.forEach((s,i)=>{ if(s.p!==EK.p) return; const [x0,y0,x1,y1] = s.k;
     c.fillStyle = 'rgba(31,138,76,.14)'; c.fillRect(x0,y0,x1-x0,y1-y0); c.strokeStyle = '#1f8a4c'; c.lineWidth = lw*1.3; c.strokeRect(x0,y0,x1-x0,y1-y0);
     const q = kesSira()[i], et = q ? String(q.no) : '?', fs = 22/o; c.font = '800 '+fs+'px Outfit, Arial, sans-serif';
@@ -9331,11 +9390,12 @@ function ekCiz(){
   if(EK.cizim){ const [x0,y0,x1,y1] = ekDuz(EK.cizim); c.strokeStyle = '#f7891f'; c.lineWidth = lw*1.3; c.strokeRect(x0,y0,x1-x0,y1-y0); c.fillStyle = 'rgba(247,137,31,.12)'; c.fillRect(x0,y0,x1-x0,y1-y0); }
   const sir = ekSiradaki();
   document.getElementById('ek-baslik').textContent = sir ? '👉 '+sir.replace(/soru$/,'soruyu')+' seçin' : '✅ Sorular bitti';
-  document.getElementById('ek-alt').textContent = 'Sayfa '+(EK.p+1)+'/'+EK.sayfa.length+' · '+EK.secim.length+' soru seçildi · kutu çizin ya da gri öneriye dokunun'+(innerWidth>=700 ? ' · Ctrl + tekerlek: büyüt/küçült' : '');
+  document.getElementById('ek-alt').textContent = 'Sayfa '+(EK.p+1)+'/'+EK.sayfa.length+' · '+EK.secim.length+' soru seçildi · kutu çizin, öneriye dokunun ya da mavi sıradakini seçin'+(innerWidth>=700 ? ' · Ctrl + tekerlek: büyüt/küçült' : '');
   ekAltBarAyarla();
   document.getElementById('ek-onc').disabled = EK.p===0; document.getElementById('ek-son').disabled = EK.p>=EK.sayfa.length-1;
   document.getElementById('ek-geri').disabled = !EK.secim.length; document.getElementById('ek-bitir').disabled = !EK.secim.length;
-  document.getElementById('ek-hepsi').disabled = !S.kutular.some(k=>!ekAlinmis(k));
+  document.getElementById('ek-hepsi').disabled = !aday.length;
+  document.getElementById('ek-sira').disabled = !sir || !EK.sayfa.some((_,p)=>p>=EK.p && ekAdaylar(p).length);
 }
 /* ══ ELLE DÜZELT (otomatik kesilen ya da seçilen sorular) ══
    Sağdaki listeden bir soru seçilir; sayfada yeni kutu çizilir ya da gri öneriye dokunulur → o sorunun kesimi değişir.
@@ -9343,6 +9403,7 @@ function ekCiz(){
 function ekAltBarAyarla(){
   const g = document.getElementById('ek-geri'), h = document.getElementById('ek-hepsi'), b = document.getElementById('ek-bitir');
   if(!g || !h || !b) return;
+  const sr = document.getElementById('ek-sira'); if(sr) sr.style.display = EK.mod==='duz' ? 'none' : '';
   if(EK.mod==='duz'){ g.textContent = '↺ Eskisi'; h.textContent = '➕ Ekle'; b.textContent = 'Uygula'; }
   else { g.textContent = '↶ Geri'; h.textContent = '✓ Hepsi'; b.textContent = 'Bitir'; }
 }
@@ -9404,8 +9465,8 @@ function ekDuzBirak(){
     if(icinde.length){ EK.duz.sec = icinde[0].j; ekYanCiz(); }
     else { const k = S.kutular.find(k=>x0>=k[0] && x0<=k[2] && y0>=k[1] && y0<=k[3]); if(k) ekDuzAta(k.slice()); }
   } else if((x1-x0) > 15 && (y1-y0) > 15){
-    const W = S.temiz.width, H = S.temiz.height;
-    ekDuzAta([Math.max(0,x0), Math.max(0,y0), Math.min(W,x1), Math.min(H,y1)]);
+    const W = S.temiz.width, H = S.temiz.height, k = [Math.max(0,x0), Math.max(0,y0), Math.min(W,x1), Math.min(H,y1)];
+    ekOneriBol(S, k); ekDuzAta(k);
   }
   ekCiz();
 }
@@ -9441,8 +9502,8 @@ function ekDuzKapat(bitir){
   })();
 }
 /* Öneri alınmış mı: bu sayfadaki bir seçimle büyük ölçüde örtüşüyorsa (elle çizilmiş olsa da) */
-function ekAlinmis(k){ const a = (k[2]-k[0])*(k[3]-k[1]);
-  return EK.secim.some(s=>{ if(s.p!==EK.p) return false; const w = Math.min(k[2],s.k[2])-Math.max(k[0],s.k[0]), h = Math.min(k[3],s.k[3])-Math.max(k[1],s.k[1]); return w>0 && h>0 && w*h > a*0.5; }); }
+function ekAlinmis(k, p){ const a = (k[2]-k[0])*(k[3]-k[1]); if(p===undefined) p = EK.p;
+  return EK.secim.some(s=>{ if(s.p!==p) return false; const w = Math.min(k[2],s.k[2])-Math.max(k[0],s.k[0]), h = Math.min(k[3],s.k[3])-Math.max(k[1],s.k[1]); return w>0 && h>0 && w*h > a*0.5; }); }
 const ekDuz = ([a,b,c,d]) => [Math.min(a,c), Math.min(b,d), Math.max(a,c), Math.max(b,d)];
 function ekNokta(e){ const r = e.target.getBoundingClientRect(); return [(EK.vx||0)+(e.clientX-r.left)/EK.olcek, (EK.vy||0)+(e.clientY-r.top)/EK.olcek]; }
 function ekBas(e){ e.preventDefault(); e.target.setPointerCapture(e.pointerId); const [x,y] = ekNokta(e); EK.cizim = [x,y,x,y]; }
@@ -9455,14 +9516,51 @@ function ekBirak(e){
     const k = S.kutular.find(k=>x0>=k[0] && x0<=k[2] && y0>=k[1] && y0<=k[3] && !ekAlinmis(k));
     if(k && EK.oneri) EK.secim.push({p:EK.p, k});
   } else if((x1-x0) > 15 && (y1-y0) > 15){
-    const W = S.temiz.width, H = S.temiz.height;
-    EK.secim.push({p:EK.p, k:[Math.max(0,x0), Math.max(0,y0), Math.min(W,x1), Math.min(H,y1)]});
+    const W = S.temiz.width, H = S.temiz.height, k = [Math.max(0,x0), Math.max(0,y0), Math.min(W,x1), Math.min(H,y1)];
+    const once = ekOneriBol(S, k);
+    EK.secim.push(once ? {p:EK.p, k, once} : {p:EK.p, k});
   }
   ekCiz();
 }
-function ekGeri(){ if(EK.mod==='duz'){ ekDuzEski(); return; } const s = EK.secim.pop(); if(s && s.p!==EK.p) EK.p = s.p; ekCiz(); }
+/* Elle çizilen kutu bir önerinin yalnız bir kısmını alıyorsa öneri yenilenir: kalan kısım ayrı soru(lar) olur */
+function ekOneriBol(S, s){
+  const yeni = []; let deg = false;
+  S.kutular.forEach(k=>{
+    const a = (k[2]-k[0])*(k[3]-k[1]), w = Math.min(k[2],s[2])-Math.max(k[0],s[0]), h = Math.min(k[3],s[3])-Math.max(k[1],s[1]);
+    const ort = w>0 && h>0 ? w*h/a : 0;
+    if(ort < 0.04 || ort > 0.9){ yeni.push(k); return; }
+    deg = true; kesKalan(S, k, s).forEach(x=>yeni.push(x));
+  });
+  if(!deg) return null;
+  const once = S.kutular; S.kutular = yeni; return once;
+}
+/* Okuma sırası: soldaki sütun yukarıdan aşağı, sonra sağdaki sütun */
+function ekSutun(S, k){ const ax = S.ax || S.temiz.width/2; return S.iki && (k[0]+k[2])/2 > ax ? 1 : 0; }
+/* Bu sayfada, son seçilen sorudan SONRA gelen alınmamış öneriler (okuma sırasıyla). Geride kalan boşluklar/başlıklar atlanır. */
+function ekAdaylar(p){
+  const S = EK.sayfa[p]; if(!S) return [];
+  const ppm = S.temiz.width/210;
+  const L = S.kutular.filter(k=>!ekAlinmis(k, p)).sort((a,b)=>ekSutun(S,a)-ekSutun(S,b) || a[1]-b[1]);
+  let son = null; for(let i=EK.secim.length-1; i>=0; i--) if(EK.secim[i].p===p){ son = EK.secim[i]; break; }
+  if(!son) return L;
+  const sc = ekSutun(S, son.k), sy = son.k[3] - 4*ppm;
+  return L.filter(k=>{ const c = ekSutun(S, k); return c>sc || (c===sc && (k[1]+k[3])/2 > sy); });
+}
+/* Sıradaki soruyu seç: bu sayfada son seçilenin devamı; sayfada kalmadıysa sonraki sayfanın ilk sorusu */
+function ekSiradakiSec(){
+  if(EK.mod==='duz') return;
+  if(!kesSira()[EK.secim.length]){ showN('✅','Sorular bitti','Bitir\'e basın'); return; }
+  for(let p=EK.p; p<EK.sayfa.length; p++){
+    const A = ekAdaylar(p);
+    if(A.length){ if(p!==EK.p){ EK.p = p; EK.zoom = 1; EK.gor = 'tam'; } EK.secim.push({p, k:A[0]}); ekCiz(); return; }
+  }
+  showN('ℹ️','Sıradaki soru bulunamadı','Soruyu kutu çizerek seçin');
+}
+function ekGeri(){ if(EK.mod==='duz'){ ekDuzEski(); return; } const s = EK.secim.pop(); if(s){ if(s.once) EK.sayfa[s.p].kutular = s.once; if(s.p!==EK.p) EK.p = s.p; } ekCiz(); }
 function ekSayfa(y){ EK.p = Math.max(0, Math.min(EK.sayfa.length-1, EK.p+y)); EK.zoom = 1; EK.gor = 'tam'; ekCiz(); }
-function ekOneriHepsi(){ if(EK.mod==='duz'){ ekDuzEkle(); return; } const S = EK.sayfa[EK.p]; S.kutular.forEach(k=>{ if(!ekAlinmis(k)) EK.secim.push({p:EK.p, k}); }); ekCiz(); }
+function ekOneriHepsi(){ if(EK.mod==='duz'){ ekDuzEkle(); return; }
+  const A = ekAdaylar(EK.p), kalan = kesSira().length - EK.secim.length;
+  A.slice(0, kalan>0 ? kalan : A.length).forEach(k=>EK.secim.push({p:EK.p, k})); ekCiz(); }
 
 async function sfKesYukle(inp){
   const fl = [...(inp.files||[])]; inp.value = ''; if(!fl.length) return;
@@ -9472,7 +9570,7 @@ async function sfKesYukle(inp){
     const sayfalar = await kesSayfalar(fl, du), parca = [], sy = [];
     for(let i=0;i<sayfalar.length;i++){
       du('⏳ Sayfa '+(i+1)+'/'+sayfalar.length+' kesiliyor…'); await new Promise(r=>setTimeout(r, 30));
-      const {kutular, temiz} = kesSayfa(sayfalar[i]); sy.push({temiz, kutular});
+      const {kutular, temiz, ax, iki} = kesSayfa(sayfalar[i]); sy.push({temiz, kutular, ax, iki});
       for(const k of kutular){ const pc = await kesParca(temiz, k); pc.kay = {p:i, k:k.slice()}; parca.push(pc); }
     }
     if(SF.kes) SF.kes.parca.forEach(p=>URL.revokeObjectURL(p.url));
@@ -14714,8 +14812,8 @@ function panoAc(){
   if(typeof menuKapat==='function') menuKapat();
   if(goPage('pagePano')===false) return;
   const f = document.getElementById('pano-cerceve');
-  if(!PANO_YUKLU){ PANO_YUKLU = true; f.addEventListener('load', ()=>{ try{ panoTalebeGonder(); }catch(e){} }); f.srcdoc = PANO_HTML; }
-  else { try{ panoTalebeGonder(); }catch(e){} }
+  if(!PANO_YUKLU){ PANO_YUKLU = true; f.addEventListener('load', ()=>{ try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} }); f.srcdoc = PANO_HTML; }
+  else { try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} }
   panoOlcekle(); requestAnimationFrame(panoOlcekle); try{ panoUyan(); }catch(e){}
 }
 function panoTamEkran(){
@@ -17188,7 +17286,154 @@ window.panoTalebeGonder = function(){
   try{ if(!PANO_YUKLU) return; const w = document.getElementById('pano-cerceve').contentWindow; if(w && w.panoTalebeYukle) w.panoTalebeYukle(panoTalebeVeri()); }catch(e){ console.error(e); }
 };
 setInterval(()=>{ if(!document.hidden && aktifSayfa()==='pagePano') panoTalebeGonder(); }, 10000);
+/* ══ PANO: YENİ KARTLAR (v30) ══ Çözülen soru sayısı · Öğretmen Puanları · Talebe işaretlemeleri · Kelime yarışması.
+   Veri bu cihazdaki eşitlenmiş kopyalardan hesaplanır; 30 sn'de bir panoya (panoVeriYukle) gönderilir. */
+function panoOkuJ(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function panoIso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+/* Okul takvimi: Talebe Takip ile aynı (psConfig.school; yoksa varsayılan) */
+function panoTakvim(){
+  const CFG = panoOkuJ('psConfig') || {}, D0 = {start:'2026-09-14', t1end:'2027-01-22', t2start:'2027-02-08', end:'2027-06-15'};
+  const c = {}; Object.keys(D0).forEach(k=>{ c[k] = (CFG.school||{})[k] || D0[k]; });
+  const par = s=>{ const a = s.split('-'); return new Date(+a[0], a[1]-1, +a[2]); };
+  const gunEkle = (s,n)=>{ const d = par(s); d.setDate(d.getDate()+n); return panoIso(d); };
+  const yilEkle = (s,n)=>{ const d = par(s); d.setFullYear(d.getFullYear()+n); return panoIso(d); };
+  const SY = off=>{ const o = {}; Object.keys(c).forEach(k=>{ o[k] = yilEkle(c[k], off); }); return o; };
+  return {par, gunEkle, SY};
+}
+function panoOkulOff(T, gun){ let off = 0, g = 0; while(gun > T.SY(off).end && g++ < 30) off++; while(gun <= T.SY(off-1).end && g++ < 60) off--; return off; }
+function panoDonemler(){
+  const T = panoTakvim(), bugun = new Date(), g = panoIso(bugun);
+  const pzt = new Date(bugun); pzt.setDate(bugun.getDate()-((bugun.getDay()+6)%7));
+  const hafta = [panoIso(pzt), T.gunEkle(panoIso(pzt), 6)];
+  const ay = [g.slice(0,8)+'01', panoIso(new Date(bugun.getFullYear(), bugun.getMonth()+1, 0))];
+  const off = panoOkulOff(T, g), Y = T.SY(off), Yp = T.SY(off-1), yBas = T.gunEkle(Yp.end, 1);
+  const yil = [yBas, Y.end];
+  const donem = g < Y.t2start ? [yBas, T.gunEkle(Y.t2start, -1)] : [Y.t2start, Y.end];
+  return {w:hafta, m:ay, d:donem, y:yil};
+}
+/* Çözülen soru = optikte okutulan kâğıtlardaki işaretli (boş olmayan) cevap sayısı: deneme + test + soru bankası, 5–8. sınıf */
+function panoSoruSay(){
+  const P = panoDonemler(), say = {}, K = ['w','m','d','y'];
+  [5,6,7,8].forEach(k=>{ say[k] = {w:0, m:0, d:0, y:0}; });
+  const ekle = (k, gun, n)=>{ const r = say[k]; if(!r || !n || !gun) return; K.forEach(c=>{ if(gun>=P[c][0] && gun<=P[c][1]) r[c] += n; }); };
+  DENEMELER.forEach(d=>{
+    if(!d || !say[d.kademe] || !d.tarih) return;                       // tarihsiz deneme bir döneme yerleştirilemez
+    Object.keys(d.cevaplar||{}).forEach(oid=>{
+      const c = d.cevaplar[oid] || {}; let n = 0;
+      Object.keys(c).forEach(ders=>{ const a = c[ders]; if(Array.isArray(a)) a.forEach(x=>{ if(x && x!=='X') n++; }); });
+      ekle(d.kademe, String(d.tarih).slice(0,10), n);
+    });
+  });
+  [5,6,7,8].forEach(k=>{
+    let ids = []; try{ ids = sbtListe(k) || []; }catch(e){}
+    ids.forEach(id=>{
+      let t = null; try{ t = sbtTest(k, id); }catch(e){}
+      ((t && t.results) || []).forEach(r=>{
+        if(!r || !r.at) return;
+        const n = (r.ans||[]).filter(x=>x && x!=='X').length;
+        ekle(k, panoIso(new Date(r.at)), n);
+      });
+    });
+  });
+  const top = {w:0, m:0, d:0, y:0};
+  [5,6,7,8].forEach(k=>K.forEach(c=>{ top[c] += say[k][c]; }));
+  return {sinif:say, toplam:top};
+}
+/* Öğretmen Puanları: sınıf düzeyi (5–8) ders ortalaması. Bu haftada not yoksa en son arşivlenen hafta kullanılır. */
+let PANO_OP_HAM = '', PANO_OP_P = null;
+function panoOpVeri(){
+  let ham = null; try{ ham = localStorage.getItem('op_veri'); }catch(e){}
+  if(!ham) return null;
+  if(ham !== PANO_OP_HAM){ PANO_OP_HAM = ham; try{ PANO_OP_P = JSON.parse(ham); }catch(e){ PANO_OP_P = null; } }
+  const p = PANO_OP_P; if(!p || !p.CLS) return null;
+  const sayi = v=>(v!==null && v!==undefined && v!=='' && v!=='G' && isFinite(+v)) ? +v : null;
+  const arc = (p.ARCHIVE||[])[0] || null;                                // arşiv en yeni başta
+  const DERS = [['ing','İngilizce','🌍'], ['mat','Matematik','📐'], ['fen','Fen Bilgisi','🔬'], ['tur','Türkçe','📖']];
+  const hesap = (k, kaynak)=>{
+    const t = {5:[], 6:[], 7:[], 8:[]};
+    Object.keys(p.CLS).forEach(cid=>{
+      const sinif = parseInt(cid, 10) || parseInt((p.CLS[cid]||{}).label, 10); if(!t[sinif]) return;
+      ((p.CLS[cid]||{}).students||[]).forEach(s=>{
+        const v = kaynak==='bu' ? sayi(((p.DATA||{})[cid]||{})[s.id] && p.DATA[cid][s.id][k])
+                                : sayi((((arc||{}).data||{})[cid]||{}).students && arc.data[cid].students[s.id] && (arc.data[cid].students[s.id].grades||{})[k]);
+        if(v!==null) t[sinif].push(v);
+      });
+    });
+    const o = {}; let var_ = false;
+    [5,6,7,8].forEach(s=>{ o[s] = t[s].length ? t[s].reduce((a,b)=>a+b,0)/t[s].length : null; if(o[s]!==null) var_ = true; });
+    return var_ ? o : null;
+  };
+  const dersler = [];
+  DERS.forEach(d=>{
+    let o = hesap(d[0], 'bu'), kay = 'Bu hafta';
+    if(!o){ o = hesap(d[0], 'arsiv'); kay = 'Geçen hafta'; }
+    if(o) dersler.push({k:d[0], ad:d[1], ikon:d[2], kaynak:kay, sinif:o});
+  });
+  return {dersler};
+}
+/* Talebe işaretlemeleri: Talebe Takip'te işaretlenen hafta / ay / dönem / yıl talebeleri (en yeni üstte) */
+function panoIsaretVeri(){
+  const DATA = panoOkuJ('psData') || {}, STU = panoOkuJ('psStudents') || [], CATS = panoOkuJ('psCats') || [], CFG = panoOkuJ('psConfig') || {}, ATT = panoOkuJ('psAtt') || {};
+  const T = panoTakvim(), P = panoDonemler();
+  const kat = {}; CATS.forEach(c=>{ if(!c.hidden) kat[c.id] = +c.p || 0; });
+  const VAK = ['sabah','ogle','ikindi','aksam','yatsi'];
+  const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  const kisa = s=>{ const d = T.par(s); return d.getDate()+' '+AY[d.getMonth()].slice(0,3); };
+  const puan = (sid, from, to)=>{
+    let dv = 0, nm = 0, pz = 0;
+    for(const d in DATA){ if(d<from || d>to) continue; const r = (DATA[d]||{})[sid]; if(!r) continue; for(const c in r){ if(c in kat) dv += (r[c]||0)*kat[c]; } }
+    for(const d in ATT){ if(d<from || d>to) continue; const a = ATT[d]||{};
+      if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][sid]==='y') nm++; });
+      if(a.yk && a.yk.pazar && a.yk.pazar[sid]==='v') pz++; }
+    return dv - nm + pz;
+  };
+  const out = {w:[], m:[], d:[], y:[]};
+  Object.keys(CFG.picks||{}).forEach(key=>{
+    const i = key.indexOf(':'), kind = key.slice(0,i), from = key.slice(i+1), sid = CFG.picks[key];
+    if(!out[kind]) return;
+    const o = STU.find(s=>s.id===sid); if(!o) return;
+    let to = from, etiket = from;
+    if(kind==='w'){ to = T.gunEkle(from, 6); etiket = kisa(from)+' – '+kisa(to); }
+    else if(kind==='m'){ const d = T.par(from); to = panoIso(new Date(d.getFullYear(), d.getMonth()+1, 0)); etiket = AY[d.getMonth()]+' '+d.getFullYear(); }
+    else { for(let off=-10; off<=10; off++){ const Y = T.SY(off), yil = Y.start.slice(0,4)+'–'+Y.end.slice(0,4);
+        if(kind==='y' && from===Y.start){ to = Y.end; etiket = yil+' Eğitim Yılı'; break; }
+        if(kind==='d' && from===Y.start){ to = Y.t1end; etiket = '1. Dönem · '+yil; break; }
+        if(kind==='d' && from===Y.t2start){ to = Y.end; etiket = '2. Dönem · '+yil; break; } } }
+    out[kind].push({ad:o.name, etiket, puan:puan(sid, from, to), from, guncel: from===P[kind][0] || (kind==='d' && from>=P.d[0] && from<=P.d[1])});
+  });
+  ['w','m','d','y'].forEach(k=>{ out[k].sort((a,b)=>a.from<b.from ? 1 : -1); });
+  return out;
+}
+/* Kelime yarışması: ünite sırasıyla (1. ünite 5-6-7-8, 2. ünite 5-6-7-8 …) her sınıfın ilk 10 talebesi */
+function panoKelimeVeri(){
+  const rs = panoOkuJ('ky_results'); if(!Array.isArray(rs)) return [];
+  const UA = {5:['Hello!','My Town','Games and Hobbies','My Daily Routine'], 6:['Life','Yummy Breakfast','Downtown','Weather and Emotions'],
+              7:['Appearance and Personality','Sports','Biographies','Wild Animals'], 8:['Friendship','Teen Life','In the Kitchen','On the Phone']};
+  const liste = [];
+  for(let u=1; u<=4; u++) [5,6,7,8].forEach(c=>{
+    const f = rs.filter(r=>r && +r.cls===c && +r.unit===u); if(!f.length) return;
+    const m = new Map();
+    f.forEach(r=>{ const o = m.get(r.name); if(!o || r.score>o.score || (r.score===o.score && (r.seconds||0)<(o.seconds||0))) m.set(r.name, r); });
+    const top = [...m.values()].sort((a,b)=>(b.score-a.score) || ((a.seconds||0)-(b.seconds||0))).slice(0,10);
+    liste.push({cls:c, unit:u, ad:(UA[c]||[])[u-1]||'', rows:top.map(r=>({ad:r.name, puan:r.score, dogru:r.correct, toplam:r.total}))});
+  });
+  return liste;
+}
+window.panoVeriGonder = function(){
+  try{
+    if(!PANO_YUKLU) return;
+    const w = document.getElementById('pano-cerceve').contentWindow; if(!w || !w.panoVeriYukle) return;
+    const v = {};
+    try{ v.soru = panoSoruSay(); }catch(e){ console.error('pano soru', e); }
+    try{ v.op = panoOpVeri(); }catch(e){ console.error('pano op', e); }
+    try{ v.isaret = panoIsaretVeri(); }catch(e){ console.error('pano isaret', e); }
+    try{ v.kelime = panoKelimeVeri(); }catch(e){ console.error('pano kelime', e); }
+    w.panoVeriYukle(v);
+  }catch(e){ console.error(e); }
+};
+setInterval(()=>{ if(!document.hidden && aktifSayfa()==='pagePano') panoVeriGonder(); }, 30000);
+
 </script>
-<script src="bolumler.js?v=29"></script>
+<script src="bolumler.js?v=30"></script>
 </body>
 </html>
