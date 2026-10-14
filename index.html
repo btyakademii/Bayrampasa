@@ -3013,6 +3013,14 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <div class="card-title">🔑 Hangi denemenin anahtarı?</div>
       <div class="fg" style="margin-bottom:0"><select id="ak-deneme-sel" aria-label="Deneme" onchange="anahtarDenemeSec(this)"></select></div>
     </div>
+    <div class="card" id="ak-toplu" style="border:1.5px solid #9fd3b0">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1"><div class="card-title" style="margin:0">📦 Toplu cevap anahtarı</div>
+        <div style="font-size:11.5px;color:var(--text2);line-height:1.5;margin-top:2px">Claude'un verdiği tek satırlık anahtarı yapıştırın: A ve B kitapçığı bütün dersleriyle bir anda dolar ve kaydedilir.</div></div>
+        <button class="bsec bsm" id="tpl-ac" onclick="tplAcKapa()">Aç</button>
+      </div>
+      <div id="tpl-icerik" style="display:none;margin-top:10px"></div>
+    </div>
     <div class="card" id="ak-claude" style="border:1.5px solid #c9b8f0">
       <div style="display:flex;align-items:center;gap:8px">
         <div style="flex:1"><div class="card-title" style="margin:0">🤖 Claude ile doldur</div>
@@ -6853,6 +6861,7 @@ function anahtarAc(id){
   });
   document.getElementById('ak-sub').textContent = dnmAd(d);
   { const ic = document.getElementById('akc-icerik'); if(ic){ ic.style.display = 'none'; document.getElementById('akc-ac').textContent = 'Aç'; } AKC_SONUC = null; }
+  { const tp = document.getElementById('tpl-icerik'); if(tp){ tp.style.display = 'none'; document.getElementById('tpl-ac').textContent = 'Aç'; } TPL_HAZIR = null; }
   { const aks = document.getElementById('ak-deneme-sel'); if(aks){ aks.innerHTML = denemeOpsiyonlari(); aks.value = id; } }
   anahtarSekmeCiz();
   goPage('pageAnahtar');
@@ -6928,6 +6937,80 @@ function akcAcKapa(){
   if(ac) akcCiz();
 }
 function akcDeneme(){ return DENEMELER.find(x=>x.id===AK_ID); }
+/* ═══════════════ 📦 TOPLU CEVAP ANAHTARI ═══════════════
+   Her zaman aynı komut: Claude, cevap anahtarı PDF'inden Türkçe → Sosyal → Din → İngilizce → Matematik → Fen sırasıyla
+   önce A kitapçığını, hemen ardından B kitapçığını boşluksuz tek satır verir. Satır buraya yapıştırılınca derslere
+   denemenin soru sayılarına göre bölünür; uzunluk tutarsa A ve B anahtarı doldurulup kaydedilir. İptal soru: X (ya da İ). */
+const TPL_KOMUT = 'Ekteki PDF bir deneme sınavının cevap anahtarı. Bana tek satırlık toplu cevap anahtarı hazırla.\n\n'
+  + 'DERS SIRASI (bozma): Türkçe, Sosyal Bilgiler / T.C. İnkılap Tarihi, Din Kültürü, İngilizce, Matematik, Fen Bilimleri.\n\n'
+  + 'KURALLAR:\n'
+  + '1. Önce A kitapçığının bütün derslerini bu sırayla yaz, hemen ardından B kitapçığının bütün derslerini aynı sırayla yaz.\n'
+  + '2. Yalnızca büyük harf şık kullan: A, B, C, D. İptal edilen soru için X yaz.\n'
+  + '3. Harflerin arasında boşluk, satır sonu, numara, ders adı, kitapçık adı ya da başka hiçbir işaret olmasın.\n'
+  + '4. PDF\'te B kitapçığı yoksa yalnızca A kitapçığını yaz.\n'
+  + '5. Göndermeden önce her dersin soru sayısını PDF\'teki ile karşılaştır; eksik ya da fazla harf olmasın.\n\n'
+  + 'ÇIKTI: Yalnızca tek bir kod bloğu ver, içinde tek satır harf olsun. Kod bloğunun dışında hiçbir şey yazma.';
+function tplAcKapa(){
+  const el = document.getElementById('tpl-icerik'), ac = el.style.display==='none';
+  el.style.display = ac ? '' : 'none';
+  document.getElementById('tpl-ac').textContent = ac ? 'Kapat' : 'Aç';
+  if(ac) tplCiz();
+}
+function tplCiz(){
+  const el = document.getElementById('tpl-icerik'), d = akcDeneme(); if(!el || !d) return;
+  const ab = kitapcikTuru(d)==='AB', dersler = DERSLER.filter(dr=>(d.counts[dr.id]||0)>0), N = dersler.reduce((a,dr)=>a+d.counts[dr.id],0);
+  el.innerHTML = '<div style="font-size:12px;line-height:1.6"><b>1.</b> Komutu kopyalayın → <b>2.</b> Claude\'da cevap anahtarı PDF\'ini ekleyip komutu gönderin → <b>3.</b> Claude\'un verdiği satırı aşağıya yapıştırın. Doğruysa kendiliğinden kaydedilir.</div>'
+    + '<div class="btn-row" style="margin-top:8px"><button class="bpri bsm" style="flex:1" onclick="tplKopyala()">📋 Komutu kopyala</button><button class="bsec bsm" onclick="var t=document.getElementById(\'tpl-komut\');t.style.display=t.style.display===\'none\'?\'\':\'none\'">👁 Göster</button></div>'
+    + '<textarea id="tpl-komut" readonly style="display:none;width:100%;height:170px;margin-top:6px;font:11px \'JetBrains Mono\',monospace;border:1px solid var(--border);border-radius:8px;padding:6px">'+esc(TPL_KOMUT)+'</textarea>'
+    + '<div style="font-size:11.5px;color:var(--text2);margin-top:10px">Bu deneme: '+dersler.map(dr=>esc(dr.ad)+' '+d.counts[dr.id]).join(' · ')+' = <b>'+N+'</b> soru'+(ab ? ' · A + B = <b>'+(2*N)+'</b> harf bekleniyor' : ' · tek kitapçık: <b>'+N+'</b> harf')+'</div>'
+    + '<textarea id="tpl-giris" placeholder="Claude\'un verdiği satırı buraya yapıştırın…" autocapitalize="characters" spellcheck="false" style="width:100%;height:90px;margin-top:6px;font:13px \'JetBrains Mono\',monospace;letter-spacing:.06em;border:1px solid var(--border);border-radius:8px;padding:8px" oninput="tplKontrol(false)" onpaste="setTimeout(()=>tplKontrol(true),0)"></textarea>'
+    + '<div id="tpl-sonuc" style="margin-top:8px"></div>';
+}
+function tplKopyala(){
+  const bitti = ()=>showN('📋','Komut kopyalandı','Claude\'da PDF\'i ekleyip yapıştırın');
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(TPL_KOMUT).then(bitti, ()=>tplElle()); else tplElle();
+}
+function tplElle(){ const t = document.getElementById('tpl-komut'); if(!t) return; t.style.display = ''; t.focus(); t.select(); try{ document.execCommand('copy'); showN('📋','Komut kopyalandı',''); }catch(e){} }
+let TPL_HAZIR = null;
+function tplCoz(metin){   // yalnız şık harfleri kalır; X / İ / I → iptal
+  let t = String(metin||'');
+  const kb = t.match(/```[a-z]*\s*([\s\S]*?)```/i); if(kb) t = kb[1];
+  return t.toLocaleUpperCase('tr-TR').replace(/İ/g,'I').replace(/X/g,'I').replace(/[^ABCDEI]/g,'');
+}
+function tplKontrol(yapistirma){
+  const d = akcDeneme(), out = document.getElementById('tpl-sonuc'); if(!d || !out) return;
+  const ab = kitapcikTuru(d)==='AB', harf = sikHarf(d).concat([IPTAL]);
+  const dersler = DERSLER.filter(dr=>(d.counts[dr.id]||0)>0), N = dersler.reduce((a,dr)=>a+d.counts[dr.id],0);
+  const t = tplCoz(document.getElementById('tpl-giris').value);
+  TPL_HAZIR = null;
+  if(!t){ out.innerHTML = ''; return; }
+  const gecersiz = [...t].map((c,i)=>harf.includes(c) ? 0 : i+1).filter(Boolean);
+  let bVar = false, hata = '';
+  if(t.length===N) bVar = false;
+  else if(ab && t.length===2*N) bVar = true;
+  else hata = t.length+' harf geldi; '+(ab ? N+' (yalnız A) ya da '+(2*N)+' (A + B)' : N)+' olmalı. '+(t.length<(ab?2*N:N) ? (ab?2*N:N)-t.length+' harf eksik.' : t.length-(ab?2*N:N)+' harf fazla.');
+  if(!hata && gecersiz.length) hata = 'Geçersiz şık: '+gecersiz.slice(0,8).join(', ')+'. harf (yalnız '+sikHarf(d).join(', ')+' ve iptal için X).';
+  // derslere böl
+  const A = {}, B = {}; let p = 0;
+  dersler.forEach(dr=>{ A[dr.id] = t.slice(p, p+d.counts[dr.id]); p += d.counts[dr.id]; });
+  if(bVar) dersler.forEach(dr=>{ B[dr.id] = t.slice(p, p+d.counts[dr.id]); p += d.counts[dr.id]; });
+  const satir = k => dersler.map(dr=>'<div style="display:flex;gap:8px;font-size:11.5px"><span style="width:92px;color:var(--text2)">'+esc(dr.kisa||dr.ad)+'</span><span class="mono" style="word-break:break-all">'+esc((k[dr.id]||'').replace(/I/g,'X'))+'</span></div>').join('');
+  out.innerHTML = (hata ? '<div style="color:var(--red);font-size:12px;font-weight:700">⚠️ '+esc(hata)+'</div>' : '<div style="color:var(--green);font-size:12px;font-weight:700">✓ '+(bVar ? 'A ve B kitapçığı' : (ab ? 'Yalnız A kitapçığı (B yok)' : 'Cevap anahtarı'))+' · '+t.length+' harf</div>')
+    + '<div style="margin-top:6px;padding:8px;border:1px solid var(--border);border-radius:8px"><b style="font-size:12px">📘 A kitapçığı</b>'+satir(A)+(bVar ? '<b style="font-size:12px;display:block;margin-top:6px">🅱️ B kitapçığı</b>'+satir(B) : '')+'</div>'
+    + (hata ? '' : '<button class="bpri" style="width:100%;margin-top:8px" onclick="tplAktar()">💾 Aktar ve kaydet</button>');
+  if(hata) return;
+  TPL_HAZIR = {A, B:bVar ? B : null};
+  if(yapistirma) tplAktar();   // doğru yapıştırma: hemen kaydedilir
+}
+function tplAktar(){
+  const d = akcDeneme(); if(!d || !TPL_HAZIR) return;
+  const ab = kitapcikTuru(d)==='AB';
+  Object.keys(TPL_HAZIR.A).forEach(id=>{ AK_TASLAK.A[id] = TPL_HAZIR.A[id]; });
+  if(ab && TPL_HAZIR.B) Object.keys(TPL_HAZIR.B).forEach(id=>{ AK_TASLAK.B[id] = TPL_HAZIR.B[id]; });
+  if(ab && !TPL_HAZIR.B){ AK_TAB = 'A'; anahtarSekmeCiz(); showN('📘','A anahtarı dolduruldu','B kitapçığı gelmedi: B anahtarını ya da B → A sırasını girip kaydedin'); return; }
+  TPL_HAZIR = null;
+  anahtarKaydet();
+}
 /* ===== Öğrenci Kayıt (Ayarlar): sınıf, şube ve öğrenci yönetiminin tek yeri ===== */
 let OGK_ID = null, OGK_K = null, OGK_S = null;
 function ogkFotoOku(){ try{ return JSON.parse(localStorage.getItem('otkOgrFoto')||'{}') || {}; }catch(e){ return {}; } }
