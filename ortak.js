@@ -1,3 +1,4 @@
+
 /* Bayrampaşa Öğrenci Yurdu · ortak dosyalar: QR üretme (qrcode-generator 1.4.4, MIT), QR okuma (jsQR 1.4.0, Apache-2.0), logolar */
 // Copyright (c) 2009 Kazuhiko Arase
 // Licensed under the MIT license:
