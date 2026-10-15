@@ -1499,7 +1499,70 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .gp-uyari{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--g-orange);color:var(--orange);font-size:13px;font-weight:700}
 .gp-uyari.acik{background:var(--g-green);color:var(--green)}
 .gp-uyari button{font:700 13px 'Outfit',sans-serif;padding:7px 12px;border-radius:9px;border:1px solid currentColor;background:#fff;color:inherit;cursor:pointer}
-.gp-satir{display:grid;grid-template-columns:auto auto minmax(120px,1fr) auto auto 34px;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--border)}
+.gp-satir{display:grid;grid-template-columns:auto minmax(110px,1fr) auto auto 34px;grid-template-areas:"zaman ad z1 z2 sil";column-gap:10px;row-gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--border)}
+.gp-satir .gp-zaman{grid-area:zaman}.gp-satir .gp-adk{grid-area:ad;min-width:0}.gp-satir .gp-zil.b{grid-area:z1}.gp-satir .gp-zil.s{grid-area:z2}.gp-satir .zl-sil{grid-area:sil}
+.gp-zil .zl-etk{font-size:12px}
+/* Bugün: koyu, açılır kapanır */
+.gp-koyu{background:linear-gradient(135deg,#0b1a33,#16305f);color:#fff;border:none}
+.gp-koyu > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px}
+.gp-koyu > summary::-webkit-details-marker{display:none}
+.gp-ozet-bas{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.gp-ozet-bas b{font-size:17px;font-weight:800}
+.gp-ozet-bas small{font-size:12px;opacity:.75;font-weight:600}
+.gp-ozet-durum{flex:1;min-width:0;text-align:right;font-size:13.5px;font-weight:700;color:#bcd3ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gp-ok{font-size:18px;opacity:.8;transition:transform .2s}
+.gp-koyu[open] .gp-ok{transform:rotate(180deg)}
+.gp-koyu[open] > summary{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.14)}
+.gp-koyu .gp-o .gp-saat{color:#e6edff}
+.gp-koyu .gp-o .gp-ad small,.gp-koyu .gp-o .gp-dr{color:#a9b8d6}
+.gp-koyu .gp-o.bitti{opacity:.4}
+.gp-koyu .gp-o.simdi{background:#2f6bff;color:#fff}
+.gp-koyu .gp-o.simdi .gp-dr{color:#fff}
+.gp-koyu .gp-o.siradaki{background:rgba(255,255,255,.1)}
+.gp-koyu .gp-o.siradaki .gp-dr{color:#8fd3ff}
+.gp-koyu .zl-bos{color:#c9d3ea}
+/* Program · Zil üst kartı: küçük */
+.zl-kart.zl-ust{padding:12px 14px;gap:8px 14px;grid-template-columns:1fr auto;align-items:center}
+.zl-ust .zl-zaman{font-size:30px;letter-spacing:-.01em}
+.zl-ust .zl-tarih{font-size:12px;margin-top:3px}
+.zl-ust .zl-durum{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px 10px;text-align:right}
+.zl-ust .zl-guc{padding:8px 14px;font-size:13.5px;border-radius:10px;box-shadow:none;order:2}
+.zl-ust .zl-sonraki{font-size:12.5px;max-width:none;flex-basis:100%;order:3}
+.zl-ust .zl-sonraki br,.zl-ust .zl-sonraki small{display:none}
+.zl-ust .zl-bulut{order:1;font-size:11px;padding:2px 8px}
+.zl-ust .zl-hop{order:1;font-size:12px}
+.zl-ust .zl-hop input{width:16px;height:16px}
+.zl-ust .zl-hop-durum{font-size:11.5px;padding:5px 10px;border-radius:8px}
+.zl-ust .zl-elle{padding-top:8px;gap:6px}
+.zl-ust .zl-elle button{padding:7px 12px;font-size:13px;border-radius:9px}
+.zl-ust .zl-elle small{display:none}
+@media (max-width:720px){
+  .zl-kart.zl-ust{grid-template-columns:auto 1fr}
+  .zl-ust .zl-durum{align-items:center;justify-content:flex-end;text-align:right}
+}
+/* program düzenleme kartı: koyu */
+.gp-duzen .zl-bas small{color:#a9b8d6}
+.gp-duzen .gp-satir{border-top-color:rgba(255,255,255,.1)}
+.gp-duzen .zl-etk{color:#a9b8d6}
+.gp-duzen .gp-zaman span{color:#a9b8d6}
+.zl .gp-duzen input.zl-saat,.zl .gp-duzen input.gp-adg{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff}
+.zl .gp-duzen input.zl-saat::placeholder,.zl .gp-duzen input.gp-adg::placeholder{color:rgba(255,255,255,.35)}
+.zl .gp-duzen input.zl-saat:focus,.zl .gp-duzen input.gp-adg:focus{border-color:#6f9bff;box-shadow:0 0 0 2px rgba(111,155,255,.3)}
+.gp-duzen .zl-sec{border-color:rgba(255,255,255,.18)}
+.gp-duzen .zl-sec button{background:rgba(255,255,255,.06);color:#cfd8ee}
+.gp-duzen .zl-sec button+button{border-left-color:rgba(255,255,255,.18)}
+.gp-duzen .zl-sec button.on[data-v="0"]{background:#68708a;color:#fff}
+.gp-duzen .zl-sil{background:rgba(255,255,255,.06);border-color:rgba(255,120,120,.35);color:#ff8f8f}
+.gp-duzen .zl-araclar,.gp-duzen .gp-aciklama,.gp-duzen .gp-yaz{border-top-color:rgba(255,255,255,.12)}
+.gp-duzen .bsec{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);color:#fff}
+.gp-duzen #gp-temizle{color:#ff9c9c!important}
+.gp-duzen .gp-aciklama summary,.gp-duzen .gp-aciklama ul,.gp-duzen .zl-not{color:#c3cfe6}
+.gp-duzen .gp-yaz summary{color:#8fb4ff}
+.gp-duzen .gp-yaz textarea{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff}
+.gp-duzen .zl-bos{color:#c9d3ea}
+.gp-aciklama{margin-top:12px;border-top:1px solid var(--border);padding-top:10px}
+.gp-aciklama summary{cursor:pointer;font-weight:800;font-size:13.5px;color:var(--text2)}
+.gp-aciklama ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--text2);line-height:1.55}
 .gp-satir:first-child{border-top:none}
 .gp-satir .gp-zaman{display:flex;align-items:center;gap:6px}
 .gp-satir .gp-zaman span{color:var(--text2);font-weight:700}
@@ -1516,12 +1579,24 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   .gp-o{grid-template-columns:92px 1fr;row-gap:2px}
   .gp-o .gp-dr{grid-column:2}
   .gp-o .gp-saat{font-size:13.5px}
-  .gp-satir{grid-template-columns:1fr 34px;grid-template-areas:"zaman sil" "ad ad" "z1 z1" "z2 z2";row-gap:8px}
-  .gp-satir .gp-zaman{grid-area:zaman}.gp-satir .gp-adk{grid-area:ad}.gp-satir .gp-zil.b{grid-area:z1}.gp-satir .gp-zil.s{grid-area:z2}.gp-satir .zl-sil{grid-area:sil}
-  .gp-zil .zl-etk{width:78px}
+  .gp-satir{column-gap:8px}
+  .gp-zil{gap:4px}
+  .gp-zil .zl-etk{width:auto;font-size:11px}
+  .zl input.zl-saat{width:64px;font-size:14px;padding:7px 4px}
+  .gp-satir .zl-sec button{padding:6px 8px;font-size:12.5px}
+}
+@media (max-width:560px){
+  .gp-satir{grid-template-columns:auto 1fr 34px;grid-template-areas:"zaman ad ad" "z1 z2 sil"}
+  .gp-satir .gp-zil.s{justify-self:end}
 }
 </style>
 <style>
+/* zil ↔ günlük program çakışması */
+.zl-cak{border:1.5px solid var(--orange);background:rgba(184,80,0,.06);border-radius:14px;padding:12px 14px;margin-bottom:12px;font-size:13px;line-height:1.5}
+.zl-cak b.bas{display:block;color:var(--orange);font-size:14px;margin-bottom:4px}
+.zl-cak ul{margin:6px 0 8px;padding-left:18px}
+.zl-cak li{margin:2px 0}
+.zl-cak .ym-arac{margin:6px 0 0}
 /* zil: hoparlör ve ses kilidi */
 .zl-hop{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;user-select:none}
 .zl-hop input{width:18px;height:18px;accent-color:var(--green)}
@@ -1836,7 +1911,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
     <button class="ph-back" title="Geri" aria-label="Geri" onclick="anaSayfayaGit()">‹</button>
-    <div><div class="ph-title">🔔 Zil Sistemi</div><div class="ph-sub" id="zl-sub">Sistem kapalı</div></div>
+    <div><div class="ph-title">🔔 Program · Zil</div><div class="ph-sub" id="zl-sub">Sistem kapalı</div></div>
   </div>
   <div class="pb"><div class="zl">
     <section class="zl-kart zl-ust" aria-label="Saat ve durum">
@@ -1851,7 +1926,6 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <label class="zl-hop"><input type="checkbox" id="zl-hop"> 🔊 Bu cihaz hoparlör</label>
       </div>
       <div class="zl-hop-durum" id="zl-hop-durum"></div>
-      <div class="zl-serit" id="zl-serit"></div>
       <div class="zl-elle">
         <button type="button" class="z1" id="zl-elle1">🔔 Zili çal</button>
         <button type="button" class="z2" id="zl-elle2">🌤️ Nehari zilini çal</button>
@@ -1860,17 +1934,39 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       </div>
     </section>
 
-    <div class="zl-gunler" id="zl-gunler" role="tablist" aria-label="Günler"></div>
+    <details class="zl-kart gp-koyu" id="gp-bugun-kart">
+      <summary class="gp-ozet"><span class="gp-ozet-bas"><b>📅 Bugün</b><small id="gp-tarih">—</small></span><span class="gp-ozet-durum" id="gp-ozet"></span><span class="gp-ok" aria-hidden="true">▾</span></summary>
+      <div class="gp-liste" id="gp-bugun"></div>
+    </details>
 
-    <section class="zl-kart">
-      <div class="zl-bas"><h2 id="zl-gun-baslik">Program</h2><small>Değişiklikler kendiliğinden kaydedilir</small></div>
-      <div id="zl-satirlar"></div>
+    <div class="zl-gunler" id="gp-gunler" role="tablist" aria-label="Günler"></div>
+
+    <section class="zl-kart gp-koyu gp-duzen">
+      <div class="zl-bas"><h2 id="gp-baslik">Program</h2><small>Değişiklikler kendiliğinden kaydedilir</small></div>
+      <div id="gp-satirlar"></div>
       <div class="zl-araclar">
-        <button type="button" class="bpri bsm" id="zl-ekle">+ Ders ekle</button>
-        <button type="button" class="bsec bsm" id="zl-kopya-hafta">Hafta içine kopyala (Pzt–Cum)</button>
-        <button type="button" class="bsec bsm" id="zl-kopya-tum">Bütün günlere kopyala</button>
+        <button type="button" class="bpri bsm" id="gp-ekle">+ Ekle</button>
+        <button type="button" class="bsec bsm" id="gp-kopya-hafta">Hafta içine kopyala (Pzt–Cum)</button>
+        <button type="button" class="bsec bsm" id="gp-kopya-tum">Bütün günlere kopyala</button>
+        <button type="button" class="bsec bsm" id="gp-temizle" style="color:var(--red)">🗑 Bu günü temizle</button>
       </div>
-      <div class="zl-not">Her gün kendi ders sayısına sahip olabilir. Saatleri klavyeyle 24 saat olarak yazın (ör. <b>0930</b> ya da <b>13:40</b>). Giriş ve çıkışta ders zili çalar; Nehari zili yalnız elle çalınır. Kapalı bir derste zil çalmaz.</div>
+      <details class="gp-aciklama"><summary>ℹ️ Açıklamalar</summary>
+        <ul>
+          <li>Dersler, etütler, namaz, yemek… günün bütün akışı tek listede.</li>
+          <li>Saatleri klavyeyle 24 saat olarak yazın (ör. <b>1830</b>). Bitiş saati boş bırakılabilir.</li>
+          <li>Her satırın sağında <b>Başta</b> ve <b>Sonda</b> zil çalıp çalmayacağını seçin. Nehari zili yalnız elle çalar.</li>
+          <li>🔔 işaretli saatlerde zil çalar (sistem açıkken). 🖥️ Dijital Pano da bu programı gösterir ve gece yarısı sonraki güne geçer.</li>
+          <li>Zil sesi yalnız <b>🔊 Bu cihaz hoparlör</b> işaretli cihazda (okuldaki bilgisayar) çıkar. Telefondan basılan zil, başlat/durdur ve program değişikliği o cihaza anında gider; bilgisayarda site açık kalmalıdır.</li>
+        </ul>
+      </details>
+      <details class="gp-yaz">
+        <summary>Listeyi yazarak gir</summary>
+        <textarea id="gp-metin" rows="7" spellcheck="false" placeholder="08:30-09:10 1. ders&#10;18:30-19:10 Etüt&#10;19:10 Akşam namazı&#10;19:30 Akşam yemeği&#10;20:00-20:40 Etüt"></textarea>
+        <div class="zl-araclar" style="border-top:none;margin-top:6px;padding-top:0">
+          <button type="button" class="bpri bsm" id="gp-metin-yaz">Bu günün programını yap</button>
+        </div>
+        <div class="zl-not">Her satıra bir kalem yazın: saat, varsa bitiş saati, sonra adı. Bitiş saati olanlara başta ve sonda zil konur, ötekilere konmaz; sonra tek tek değiştirebilirsiniz. Seçili günün programının yerine geçer.</div>
+      </details>
     </section>
 
     <section class="zl-kart">
@@ -1902,44 +1998,6 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   </div></div>
 </div>
 <div class="zl-calan" id="zl-calan" role="status" aria-live="assertive"><span id="zl-calan-yazi">🔔 Zil çalıyor</span><button type="button" id="zl-calan-dur">⏹ Durdur</button></div>
-
-<!-- ══════════ GÜNLÜK PROGRAM ══════════ -->
-<div class="page" id="pageGunluk">
-  <div class="ph">
-    <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" aria-label="Geri" onclick="anaSayfayaGit()">‹</button>
-    <div><div class="ph-title">🗓️ Günlük Program</div><div class="ph-sub" id="gp-sub">—</div></div>
-  </div>
-  <div class="pb"><div class="zl">
-    <section class="zl-kart">
-      <div class="zl-bas"><h2>Bugün</h2><small id="gp-tarih">—</small></div>
-      <div class="gp-liste" id="gp-bugun"></div>
-      <div class="gp-uyari" id="gp-uyari"></div>
-      <div class="zl-not">🖥️ Dijital Pano her gün o günün programını gösterir ve gece yarısı kendiliğinden sonraki güne geçer. Günleri birbirinden farklı yapmak için aşağıdaki gün sekmelerinden her günü ayrı düzenleyin.</div>
-    </section>
-
-    <div class="zl-gunler" id="gp-gunler" role="tablist" aria-label="Günler"></div>
-
-    <section class="zl-kart">
-      <div class="zl-bas"><h2 id="gp-baslik">Program</h2><small>Değişiklikler kendiliğinden kaydedilir</small></div>
-      <div id="gp-satirlar"></div>
-      <div class="zl-araclar">
-        <button type="button" class="bpri bsm" id="gp-ekle">+ Etkinlik ekle</button>
-        <button type="button" class="bsec bsm" id="gp-kopya-hafta">Hafta içine kopyala (Pzt–Cum)</button>
-        <button type="button" class="bsec bsm" id="gp-kopya-tum">Bütün günlere kopyala</button>
-      </div>
-      <div class="zl-not">Bitiş saati boş bırakılabilir (ör. namaz, yemek). Her etkinliğin başında ve sonunda çalacak zili seçin; "Yok" seçilirse zil çalmaz.</div>
-      <details class="gp-yaz">
-        <summary>Listeyi yazarak gir</summary>
-        <textarea id="gp-metin" rows="7" spellcheck="false" placeholder="18:30-19:10 Etüt&#10;19:10 Akşam namazı&#10;19:30 Akşam yemeği&#10;20:00-20:40 Etüt&#10;21:00-21:50 Etüt"></textarea>
-        <div class="zl-araclar" style="border-top:none;margin-top:6px;padding-top:0">
-          <button type="button" class="bpri bsm" id="gp-metin-yaz">Bu günün programını yap</button>
-        </div>
-        <div class="zl-not">Her satıra bir etkinlik yazın: saat, varsa bitiş saati, sonra adı. Bitiş saati olan etkinliklere başta ve sonda zil konur, ötekilere zil konmaz; sonra tek tek değiştirebilirsiniz. Seçili günün programının yerine geçer.</div>
-      </details>
-    </section>
-  </div></div>
-</div>
 
 <!-- ══════════ GÖREVLER ══════════ -->
 <div class="page" id="pageGorev">
@@ -2302,8 +2360,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     <button class="menu-oge menu-tek" data-yetki="etut" data-m="etut" onclick="etutAc()">📚 Etüt Performansı</button>
 
     <button class="menu-oge menu-tek" onclick="panoAc()">🖥️ Dijital Pano</button>
-    <button class="menu-oge menu-tek" data-m="zil" onclick="zilAc()">🔔 Zil Sistemi</button>
-    <button class="menu-oge menu-tek" data-m="gunluk" onclick="gunlukAc()">🗓️ Günlük Program</button>
+    <button class="menu-oge menu-tek" data-m="zil" onclick="zilAc()">🔔 Program · Zil</button>
     <button class="menu-oge menu-tek" data-m="gorev" onclick="gorevAc()">📌 Görevler</button>
     <button class="menu-oge menu-tek" data-m="yapilacak" onclick="yapAc()">✅ Yapılacaklar<span class="gv-rozet" id="gv-rozet-menu" aria-label="bekleyen iş sayısı"></span></button>
     <button class="menu-oge menu-tek" data-m="yemekci" onclick="yemekciAc()">🍽️ Yemekçi · Müezzin</button>
@@ -18548,7 +18605,8 @@ async function btYaz(tablo, anahtar, v, eskiT){
 const OP_SATIR = 'veri', OP_TABLO = 'ogretmen_puanlari';
 let OP_BT = 0, OP_ESIT = false, OP_MESGUL = null, OP_GT = null;
 function opBulutHazir(){ return typeof ttsBulutHazir==='function' && ttsBulutHazir(); }
-window.opBulutTamam = function(){ return OP_ESIT || !opBulutHazir(); };
+let OP_BULUT_HATA = false;   // bulut okunamıyorsa haftalık arşiv bu cihazda yine yapılır (sonra birleştirilir)
+window.opBulutTamam = function(){ return OP_ESIT || OP_BULUT_HATA || !opBulutHazir(); };
 function opKirli(){ try{ return +localStorage.getItem('opBulutKirli') || 0; }catch(e){ return 0; } }
 function opYerel(){ try{ const r = localStorage.getItem('op_veri'); return r ? JSON.parse(r) : null; }catch(e){ return null; } }
 function opTaban(){ try{ const r = localStorage.getItem('opTaban'); return r===null ? undefined : JSON.parse(r); }catch(e){ return undefined; } }
@@ -18609,8 +18667,8 @@ async function opEsitle(){
     OP_ESIT = true;
     try{ localStorage.setItem('opBulutGordu', '1'); }catch(e){}
   })();
-  try{ await OP_MESGUL; opRozet(); }
-  catch(e){ opRozet(e); }
+  try{ await OP_MESGUL; OP_BULUT_HATA = false; opRozet(); }
+  catch(e){ OP_BULUT_HATA = true; opRozet(e); }
   finally{ OP_MESGUL = null; }
 }
 function opRozet(hata){
@@ -19016,31 +19074,62 @@ document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) bkEsitl
 /* ══ PANO: HAFTANIN TALEBESİ ══ Talebe Takip verisinden (bu cihazdaki eşitlenmiş kopya) haftalık sıralama */
 function panoTalebeVeri(){
   const J = k=>{ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } };
-  const DATA = J('psData') || {}, STU = J('psStudents') || [], CATS = J('psCats') || [], CFG = J('psConfig') || {}, ATT = J('psAtt') || {};
+  let CATS = J('psCats');
+  if(!Array.isArray(CATS) || !CATS.length) CATS = [{id:'c11',n:'Kılık Kıyafet',p:-1},{id:'c8',n:'Takke',p:-1},{id:'c3',n:'Mescid',p:-1},{id:'c4',n:'Yatak',p:-1},
+    {id:'c12',n:'Kütüphane',p:-1},{id:'c13',n:'Vestiyer',p:-1},{id:'c14',n:'Geç Yatma',p:-1}];   // Talebe Takip hiç açılmadıysa varsayılan maddeler
+  const DATA = J('psData') || {}, STU = J('psStudents') || [], CFG = J('psConfig') || {}, ATT = J('psAtt') || {};
   const iso = d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   const bugun = new Date(); const pzt = new Date(bugun); pzt.setDate(bugun.getDate()-((bugun.getDay()+6)%7));
   const paz = new Date(pzt); paz.setDate(pzt.getDate()+6);
   const from = iso(pzt), to = iso(paz);
   const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   const aralik = pzt.getMonth()===paz.getMonth() ? pzt.getDate()+' – '+paz.getDate()+' '+AY[paz.getMonth()] : pzt.getDate()+' '+AY[pzt.getMonth()]+' – '+paz.getDate()+' '+AY[paz.getMonth()];
-  const kat = {}; CATS.forEach(c=>{ if(!c.hidden) kat[c.id] = +c.p || 0; });
+  const kat = {}, KAT = CATS.filter(c=>!c.hidden); KAT.forEach(c=>{ kat[c.id] = +c.p || 0; });
   const VAK = ['sabah','ogle','ikindi','aksam','yatsi'];
-  const satir = STU.filter(s=>s.active!==false).map(s=>{
-    let dv = 0, nm = 0, pz = 0;
-    for(const d in DATA){ if(d<from || d>to) continue; const r = (DATA[d]||{})[s.id]; if(!r) continue; for(const c in r){ if(c in kat) dv += (r[c]||0)*kat[c]; } }
-    for(const d in ATT){ if(d<from || d>to) continue; const a = ATT[d] || {};
-      if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][s.id]==='y') nm++; });
-      if(a.yk && a.yk.pazar && a.yk.pazar[s.id]==='v') pz++; }
-    return {id:s.id, ad:s.name, nm, dv, pz, toplam: dv - nm + pz};
-  }).sort((a,b)=>(b.toplam-a.toplam) || String(a.ad).localeCompare(String(b.ad),'tr'));
-  const say = {}; satir.forEach(x=>{ say[x.toplam] = (say[x.toplam]||0)+1; });
-  let sira = 0, onceki = null; const secId = (CFG.picks||{})['w:'+from] || null;
-  satir.forEach((x,i)=>{ if(x.toplam!==onceki){ sira = i+1; onceki = x.toplam; } x.sira = sira; x.esitSay = say[x.toplam]; x.secili = x.id===secId; });
+  const AKTIF = STU.filter(s=>s.active!==false);
+  /* Bir tarih aralığının puan tablosu. Eşit puanlılar isme göre dizilir; sıra numarası hiç tekrarlanmaz. */
+  function tablo(f, t){
+    const L = AKTIF.map(s=>{
+      let dv = 0, nm = 0, pz = 0, ye = 0; const ks = {};   // ks: davranış maddesi başına işaret sayısı
+      for(const d in DATA){ if(d<f || d>t) continue; const r = (DATA[d]||{})[s.id]; if(!r) continue; for(const c in r){ if(c in kat){ dv += (r[c]||0)*kat[c]; ks[c] = (ks[c]||0) + (r[c]||0); } } }
+      for(const d in ATT){ if(d<f || d>t) continue; const a = ATT[d] || {};
+        if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][s.id]==='y') nm++; });
+        if(a.yk && a.yk.pazar && a.yk.pazar[s.id]==='v') pz++;
+        if(a.yk && a.yk.yemek && a.yk.yemek[s.id]) ye++; }
+      return {id:s.id, ad:s.name, nm, dv, pz, ye, ks, toplam: dv - nm + pz};
+    }).sort((a,b)=>(b.toplam-a.toplam) || String(a.ad).localeCompare(String(b.ad),'tr'));
+    L.forEach((x,i)=>{ x.sira = i+1; });
+    return L;
+  }
+  const kisa = L => L.map(x=>({ad:x.ad, toplam:x.toplam}));
+  const secId = (CFG.picks||{})['w:'+from] || null;
+  const satir = tablo(from, to);
+  satir.forEach(x=>{ x.esitSay = 1; x.secili = x.id===secId; });
   const sec = satir.find(x=>x.secili) || null;
-  const lider = satir.length ? satir.filter(x=>x.sira===1) : [];
-  return {aralik, secilen: sec ? {ad:sec.ad, toplam:sec.toplam, nm:sec.nm, dv:sec.dv, pz:sec.pz} : null,
+  const lider = satir.length ? [satir[0]] : [];
+  // geçen hafta · bu ay · bu dönem
+  const gpzt = new Date(pzt); gpzt.setDate(pzt.getDate()-7); const gpaz = new Date(pzt); gpaz.setDate(pzt.getDate()-1);
+  const gf = iso(gpzt), gt = iso(gpaz), G = tablo(gf, gt);
+  const gAralik = gpzt.getMonth()===gpaz.getMonth() ? gpzt.getDate()+' – '+gpaz.getDate()+' '+AY[gpaz.getMonth()] : gpzt.getDate()+' '+AY[gpzt.getMonth()]+' – '+gpaz.getDate()+' '+AY[gpaz.getMonth()];
+  const af = iso(new Date(bugun.getFullYear(), bugun.getMonth(), 1)), at = iso(new Date(bugun.getFullYear(), bugun.getMonth()+1, 0));
+  const SD = {start:'2026-09-14', t1end:'2027-01-22', t2start:'2027-02-08', end:'2027-06-15'}, okul = Object.assign({}, SD, CFG.school||{});
+  const yil = k => { const y = +String(okul[k]).slice(0,4); return y; };
+  // ders yılını bugüne kaydır (Talebe Takip ile aynı mantık)
+  let off = 0; const kay = (k, n) => (yil(k)+n)+String(okul[k]).slice(4);
+  const bg = iso(bugun); let g = 0; while(bg > kay('end', off) && g++<30) off++; while(bg <= kay('end', off-1) && g++<60) off--;
+  const ikinci = bg >= kay('t2start', off);
+  const df = ikinci ? kay('t2start', off) : kay('start', off), dt = ikinci ? kay('end', off) : kay('t1end', off);
+  const son = bg < dt ? bg : dt;
+  const gun = bg < df ? 0 : Math.round((new Date(son+'T12:00') - new Date(df+'T12:00'))/864e5) + 1;
+  const D = tablo(df, dt), A = tablo(af, at);
+  const enKotu = G.slice().sort((a,b)=>(a.toplam-b.toplam) || String(a.ad).localeCompare(String(b.ad),'tr')).slice(0,10);
+  return {aralik, secilen: sec ? {ad:sec.ad, toplam:sec.toplam, nm:sec.nm, dv:sec.dv, pz:sec.pz, ye:sec.ye} : null,
           liderler: lider.map(x=>x.ad), liderPuan: lider.length ? lider[0].toplam : 0,
-          satirlar: satir.map(x=>({sira:x.sira, esitSay:x.esitSay, ad:x.ad, nm:x.nm, dv:x.dv, pz:x.pz, toplam:x.toplam, secili:x.secili}))};
+          kategoriler: KAT.map(c=>({id:c.id, ad:c.n})),
+          satirlar: satir.map(x=>({sira:x.sira, esitSay:1, ad:x.ad, nm:x.nm, dv:x.dv, pz:x.pz, ye:x.ye, ks:x.ks, toplam:x.toplam, secili:x.secili})),
+          ozet: {gecen:{aralik:gAralik, iyi:kisa(G.slice(0,10)), kotu:kisa(enKotu)},
+                 ay:{ad:AY[bugun.getMonth()], iyi:kisa(A.slice(0,10))},
+                 donem:{ad:(ikinci ? '2' : '1')+'. Dönem', gun, iyi:kisa(D.slice(0,10))}}};
 }
 window.panoTalebeGonder = function(){
   try{ if(!PANO_YUKLU) return; const w = document.getElementById('pano-cerceve').contentWindow; if(w && w.panoTalebeYukle) w.panoTalebeYukle(panoTalebeVeri()); }catch(e){ console.error(e); }
@@ -19076,9 +19165,11 @@ function panoSoruSay(){
   const P = panoDonemler(), say = {}, K = ['w','m','d','y'];
   [5,6,7,8].forEach(k=>{ say[k] = {w:0, m:0, d:0, y:0}; });
   const ekle = (k, gun, n)=>{ const r = say[k]; if(!r || !n || !gun) return; K.forEach(c=>{ if(gun>=P[c][0] && gun<=P[c][1]) r[c] += n; }); };
+  const test = id => String(id||'').startsWith('test_');   // Ayarlar'daki "test verisi" sayılmaz
   DENEMELER.forEach(d=>{
-    if(!d || !say[d.kademe] || !d.tarih) return;                       // tarihsiz deneme bir döneme yerleştirilemez
+    if(!d || !say[d.kademe] || !d.tarih || test(d.id)) return;          // tarihsiz deneme bir döneme yerleştirilemez
     Object.keys(d.cevaplar||{}).forEach(oid=>{
+      if(test(oid)) return;
       const c = d.cevaplar[oid] || {}; let n = 0;
       Object.keys(c).forEach(ders=>{ const a = c[ders]; if(Array.isArray(a)) a.forEach(x=>{ if(x && x!=='X') n++; }); });
       ekle(d.kademe, String(d.tarih).slice(0,10), n);
@@ -19087,10 +19178,11 @@ function panoSoruSay(){
   [5,6,7,8].forEach(k=>{
     let ids = []; try{ ids = sbtListe(k) || []; }catch(e){}
     ids.forEach(id=>{
+      if(test(id)) return;
       let t = null; try{ t = sbtTest(k, id); }catch(e){}
       if(t && t.exam && t.exam.cfg && t.exam.cfg.birlesik) return;   // birleşik form: sonuçlar bağlı testlerde zaten var
       ((t && t.results) || []).forEach(r=>{
-        if(!r || !r.at) return;
+        if(!r || !r.at || test(r.ogrId) || test(r.id)) return;
         const n = (r.ans||[]).filter(x=>x && x!=='X').length;
         ekle(k, panoIso(new Date(r.at)), n);
       });
@@ -20097,7 +20189,7 @@ setInterval(()=>{ if(hoparlor) hoparlorBildir(); }, 30000);
 
 /* ---------- ayarlar ---------- */
 let sonAyarDamga = '', buluttanUyguluyor = false, yazZaman = null;
-function ayarlar(){ return {schedule:program, gunluk:gunluk, ringDur:calmaSure, clipStart:kesBas, clipEnd:kesSon, rev:Date.now()}; }
+function ayarlar(){ return {schedule:program, gunluk:gunluk, birlesik:BIRLESIK, ringDur:calmaSure, clipStart:kesBas, clipEnd:kesSon, rev:Date.now()}; }
 function kaydet(){
   yaz('zil-schedule', program); yaz('zil-dur', calmaSure); yaz('zil-clip', {clipStart:kesBas, clipEnd:kesSon}); yaz('zil-gunluk', gunluk);
   try{ if(typeof panoGunlukGonder==='function') panoGunlukGonder(); }catch(e){}
@@ -20119,8 +20211,10 @@ function buluttanUygula(v){
     if(v.clipStart) kesBas = v.clipStart;
     if(v.clipEnd) kesSon = v.clipEnd;
     if(v.rev) yaz('zil-rev', v.rev);
-    kaydet(); alanlariDoldur(); satirlariCiz(); durumCiz();
-    if(gpBagli){ gpSatirlariCiz(); gpBugunCiz(); }
+    if(v.birlesik){ BIRLESIK = true; yaz('zil-birlesik', true); }
+    else { BIRLESIK = false; yaz('zil-birlesik', false); birlesikGoc(); }   // eski düzende kaydedilmiş ayar: dersler listeye taşınır
+    kaydet(); alanlariDoldur(); durumCiz();
+    if(gpBagli){ gpGunleriCiz(); gpSatirlariCiz(); gpBugunCiz(); }
   }catch(e){ console.warn('Zil: bulut ayarı uygulanamadı', e); }
   buluttanUyguluyor = false;
 }
@@ -20265,13 +20359,7 @@ function alanlariDoldur(){
   $('zl-sure').value = calmaSure;
   [1,2].forEach(w=>{ $('zl-bas'+w).value = kesBas[w]||0; $('zl-son'+w).value = kesSon[w]||0; });
 }
-function gunleriCiz(){
-  const bugun = gunNo(new Date().getDay());
-  $('zl-gunler').innerHTML = GUNLER.map((g,i)=>`<button type="button" role="tab" aria-selected="${i===gun}" data-gun="${i}" class="${i===gun?'on':''}${i===bugun?' bugun':''}">${g}</button>`).join('');
-  $('zl-gun-baslik').textContent = GUNLER[gun]+' programı';
-  const sec = $('zl-gunler').querySelector('.on'), kap = $('zl-gunler');
-  if(sec && kap.scrollWidth>kap.clientWidth) kap.scrollLeft = sec.offsetLeft - (kap.clientWidth-sec.offsetWidth)/2;
-}
+function gunleriCiz(){ try{ gpGunleriCiz(); }catch(e){} }   // gün sekmeleri artık tek listede (Program · Zil)
 /* Saat klavyeyle yazılır (24 saat): 930, 9.30, 09:30, 21 → 09:30 / 21:00. Geçersizse null */
 function saatCoz(t){
   t = String(t||'').trim().replace(/[.,;\s]/g, ':');
@@ -20287,53 +20375,15 @@ const saatKutu = (veri, deger, etiket) => `<input type="text" class="zl-saat" ${
 function hucre(ad, sinif, f, bf, r, i){
   return `<div class="zl-hucre ${sinif}"><span class="zl-etk">${ad}</span>${saatKutu('data-f="'+f+'"', r[f], (i+1)+'. ders '+ad.toLocaleLowerCase('tr')+' saati')}</div>`;
 }
-function satirlariCiz(){
-  const el = $('zl-satirlar'); if(!el || !program) return;
-  el.innerHTML = program[gun].map((r,i)=>`<div class="zl-satir${r.on?'':' kapali'}" data-i="${i}">
-    <div class="zl-ders">${i+1}. ders</div>
-    ${hucre('Giriş','giris','start','startBell',r,i)}
-    ${hucre('Çıkış','cikis','end','endBell',r,i)}
-    <label class="zl-anahtar"><input type="checkbox" data-f="on" ${r.on?'checked':''}><span aria-hidden="true"></span><em>${r.on?'Açık':'Kapalı'}</em></label>
-    <button type="button" class="zl-sil" data-sil="${i}" title="Bu dersi sil" aria-label="${i+1}. dersi sil">✕</button></div>`).join('');
-}
-/* Bugünün dersleri: şerit, şimdiki durum ve sıradaki zil */
-function bugunDersler(){
-  const d = gunNo(new Date().getDay());
-  return program[d].map((r,i)=>({...r, no:i+1})).filter(r=>r.on).sort((a,b)=>dk(a.start)-dk(b.start));
-}
+function satirlariCiz(){ try{ gpSatirlariCiz(); }catch(e){} }
 function durumCiz(){
-  if(!program) return;
-  const now = new Date(), su = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60;
-  const l = bugunDersler();
-  // sıradaki zil
-  let sir = null;
-  l.forEach(r=>[[r.start,r.startBell,'girişi'],[r.end,r.endBell,'çıkışı']].forEach(([t,z,ne])=>{
-    const m = dk(t); if(m > Math.floor(su) && (!sir || m < sir.m)) sir = {m, t, z, ne:r.no+'. ders '+ne};
-  }));
-  const gd = gunluk ? gunluk[gunNo(now.getDay())] : [];
-  (gd||[]).forEach(e=>[[e.bas,+e.zil,'başı'],[e.bit,+e.bitZil,'sonu']].forEach(([t,z,ne])=>{
-    if(!t || !z) return; const m = dk(t); if(m > Math.floor(su) && (!sir || m < sir.m)) sir = {m, t, z, ne:e.ad+' '+ne};
-  }));
-  const sirYazi = sir ? `Sıradaki zil <b>${sir.t}</b> · ${esc(sir.ne)} — ${sureYaz(sir.m-Math.floor(su))} sonra` : 'Bugün için başka zil yok';
-  $('zl-sonraki').innerHTML = acik ? sirYazi + (hoparlor ? '' : '<br><small>Ziller hoparlör cihazında çalar</small>') : 'Sistem kapalı · ziller çalmaz';
-  $('zl-sub').textContent = acik ? ('Açık · '+(sir ? 'sıradaki zil '+sir.t : 'bugün başka zil yok')) : 'Sistem kapalı';
+  if(!gunluk) return;
+  const sir = siradakiZil();
+  const sirYazi = sir ? `Sıradaki zil <b>${sir.t}</b> · ${esc(sir.ne)} — ${sureYaz(sir.kalan)} sonra` : 'Bugün için başka zil yok';
+  const so = $('zl-sonraki'); if(so) so.innerHTML = acik ? sirYazi + (hoparlor ? '' : '<br><small>Ziller hoparlör cihazında çalar</small>') : 'Sistem kapalı · ziller çalmaz';
+  const sb = $('zl-sub'); if(sb) sb.textContent = acik ? ('Açık · '+(sir ? 'sıradaki zil '+sir.t : 'bugün başka zil yok')) : 'Sistem kapalı';
   try{ widgetCiz(); }catch(e){}
-  // şerit
-  const s = $('zl-serit');
-  if(!l.length){ s.innerHTML = '<div class="zl-bos">Bugün için açık ders yok.</div>'; return; }
-  const ilk = dk(l[0].start), son = Math.max(...l.map(r=>dk(r.end))), top = Math.max(1, son-ilk);
-  let simdi;
-  const icinde = l.find(r=>su>=dk(r.start) && su<dk(r.end));
-  if(icinde) simdi = `${icinde.no}. derstesiniz <span>· bitmesine ${sureYaz(Math.ceil(dk(icinde.end)-su))}</span>`;
-  else if(su < ilk) simdi = `Dersler ${l[0].start}'da başlıyor <span>· ${sureYaz(Math.ceil(ilk-su))} sonra</span>`;
-  else if(su >= son) simdi = 'Bugünün dersleri bitti';
-  else { const ileri = l.find(r=>dk(r.start)>su); simdi = `Teneffüs <span>· ${ileri ? ileri.no+'. ders '+ileri.start+'\'da, '+sureYaz(Math.ceil(dk(ileri.start)-su))+' sonra' : ''}</span>`; }
-  const blok = l.map(r=>{
-    const a = dk(r.start), b = Math.max(a+1, dk(r.end)), d = su>=b ? ' gecti' : (su>=a ? ' simdi' : '');
-    return `<div class="zl-blok${d}" style="left:${(a-ilk)/top*100}%;width:${(b-a)/top*100}%" title="${r.no}. ders · ${r.start}–${r.end}">${r.no}</div>`;
-  }).join('');
-  const an = (su>=ilk && su<=son) ? `<div class="zl-an" style="left:${(su-ilk)/top*100}%"></div>` : '';
-  s.innerHTML = `<div class="zl-simdi">${simdi}</div><div class="zl-cizgi" aria-hidden="true">${blok}${an}</div><div class="zl-uclar"><span>${l[0].start}</span><span>${pad(Math.floor(son/60)%24)}:${pad(son%60)}</span></div>`;
+  try{ gpBugunCiz(); }catch(e){}
 }
 function gucCiz(){
   const b = $('zl-guc'); if(!b) return;
@@ -20341,7 +20391,7 @@ function gucCiz(){
   b.classList.toggle('acik', acik);
   b.setAttribute('aria-pressed', acik);
 }
-function hepsiniCiz(){ gunleriCiz(); satirlariCiz(); alanlariDoldur(); gucCiz(); durumCiz(); hopCiz(); if(bulutOk!==null) bulutRozet(bulutOk); }
+function hepsiniCiz(){ gpHepsi(); alanlariDoldur(); gucCiz(); durumCiz(); hopCiz(); if(bulutOk!==null) bulutRozet(bulutOk); }
 
 /* ---------- saat ---------- */
 function sayfaAcik(){ const p = $('pageZil'); return !!(p && p.classList.contains('active')); }
@@ -20359,14 +20409,15 @@ function tik(){
     for(let m = ilk; m <= dakNo; m++){
       const t = new Date(m*60000), d = gunNo(t.getDay()), hm = pad(t.getHours())+':'+pad(t.getMinutes());
       const z = [];   // bu dakikada çalacak ziller (aynı dakikaya düşen ders ve etkinlik zilleri bir kez çalar)
-      program[d].forEach(r=>{ if(!r.on) return; if(r.start===hm || r.end===hm) z.push(1); });   // ders zilleri hep Zil'dir; Nehari zili yalnız elle çalar
-      ((gunluk && gunluk[d]) || []).forEach(e=>{ if(e.bas===hm && +e.zil) z.push(1); if(e.bit && e.bit===hm && +e.bitZil) z.push(1); });
+      ((gunluk && gunluk[d]) || []).forEach(e=>{   // tek liste: her kalemin başında / sonunda seçilmişse zil (Nehari yalnız elle)
+        if(e.bas===hm && +e.zil) z.push(1);
+        if(e.bit && e.bit===hm && +e.bitZil) z.push(1); });
       const k = hm+'-'+t.toDateString();
       if(z.length && sonCalan!==k){ sonCalan = k; zilCal(z[0], calmaSure); }
     }
   }
   sonKontrolDk = dakNo;
-  if(gpSayfaAcik() && now.getSeconds()%15===0) gpBugunCiz();
+  if(sayfaAcik() && now.getSeconds()%15===0) gpBugunCiz();
   const m = now.getMinutes();
   if(sayfaAcik() && (m!==sonDakika || now.getSeconds()%15===0)){ sonDakika = m; durumCiz(); }
   else if(m!==sonDakika){ sonDakika = m; try{ durumCiz(); }catch(e){} }
@@ -20388,48 +20439,7 @@ function olaylariBagla(){
   sesKilidiCiz();
   document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('#zl-kilit')) sesKilidiAc(); });
   $('zl-calan-dur').onclick = ()=>sesiDurdur(true);
-  $('zl-gunler').addEventListener('click', e=>{ const b = e.target.closest('[data-gun]'); if(!b) return; gun = +b.dataset.gun; gunleriCiz(); satirlariCiz(); });
-  const satirlar = $('zl-satirlar');
-  satirlar.addEventListener('change', e=>{
-    const el = e.target, s = el.closest('.zl-satir'); if(!s) return;
-    const r = program[gun][+s.dataset.i], f = el.dataset.f;
-    if(f==='on'){ r.on = el.checked; s.classList.toggle('kapali', !r.on); s.querySelector('.zl-anahtar em').textContent = r.on ? 'Açık' : 'Kapalı'; }
-    else if(f==='start' || f==='end'){
-      const v = saatCoz(el.value);
-      if(!v){ el.value = r[f]; el.classList.add('hatali'); setTimeout(()=>el.classList.remove('hatali'), 1200); bildir('⚠️', 'Saat anlaşılamadı', 'Örnek: 0930, 9.30 ya da 09:30'); return; }
-      el.value = v; r[f] = v;
-    }
-    kaydet(); durumCiz();
-  });
-  satirlar.addEventListener('click', e=>{
-    const z = e.target.closest('[data-z]');
-    if(z){
-      const s = z.closest('.zl-satir'), r = program[gun][+s.dataset.i], v = +z.dataset.v;
-      r[z.dataset.z] = v;
-      z.parentNode.querySelectorAll('button').forEach(b=>{ const on = +b.dataset.v===v; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
-      kaydet(); durumCiz(); return;
-    }
-    const sil = e.target.closest('[data-sil]');
-    if(sil){
-      const i = +sil.dataset.sil;
-      if(program[gun].length<=1){ alert('En az bir ders kalmalı.'); return; }
-      if(!confirm((i+1)+'. ders silinsin mi?')) return;
-      program[gun].splice(i, 1); kaydet(); satirlariCiz(); durumCiz();
-    }
-  });
-  $('zl-ekle').onclick = ()=>{
-    const l = program[gun], s = l.length ? dk(l[l.length-1].end)+10 : 9*60, e = s+40;
-    const t = m => pad(Math.floor(m/60)%24)+':'+pad(m%60);
-    l.push({start:t(s), startBell:1, end:t(e), endBell:1, on:true});
-    kaydet(); satirlariCiz(); durumCiz();
-  };
-  const kopyala = (son, soru)=>{
-    if(!confirm(GUNLER[gun]+' programı '+soru+' kopyalansın mı?')) return;
-    for(let d=0; d<son; d++) if(d!==gun) program[d] = JSON.parse(JSON.stringify(program[gun]));
-    kaydet(); durumCiz(); if(typeof showN==='function') showN('✓', 'Kopyalandı', GUNLER[gun]+' programı '+soru+' kopyalandı'); else alert('Kopyalandı.');
-  };
-  $('zl-kopya-hafta').onclick = ()=>kopyala(5, 'hafta içi günlere (Pzt–Cum)');
-  $('zl-kopya-tum').onclick = ()=>kopyala(7, 'bütün günlere');
+  gpBagla();
   [1,2].forEach(w=>{
     $('zl-dosya'+w).addEventListener('change', async function(){ const f = this.files[0]; if(!f) return; ozelSesKoy(w, f, f.name); await sesKaydet(w, f); });
     $('zl-sifir'+w).onclick = async ()=>{ ozelSesKaldir(w); await sesSil(w); };
@@ -20451,7 +20461,8 @@ async function kur(){
   const c = oku('zil-clip'); if(c && c.clipStart && c.clipEnd){ kesBas = c.clipStart; kesSon = c.clipEnd; }
   const g = oku('zil-gunluk'); gunluk = (Array.isArray(g) && g.length===7) ? g : Array.from({length:7}, varsayilanGunluk);
   if(!(Array.isArray(g) && g.length===7)) yaz('zil-gunluk', gunluk);
-  gun = gunNo(new Date().getDay());
+  gun = gunNo(new Date().getDay()); gGun = gun;
+  birlesikGoc();
   olaylariBagla(); hepsiniCiz(); tik();
   setInterval(tik, 1000);
   if(acik && hoparlor) uyanikTut();
@@ -20476,13 +20487,12 @@ function gucDegistir(){
 function siradakiZil(){   // bugünün sıradaki zili {m, t, ne}
   const now = new Date(), su = Math.floor(now.getHours()*60 + now.getMinutes() + now.getSeconds()/60);
   let sir = null;
-  bugunDersler().forEach(r=>[[r.start,'girişi'],[r.end,'çıkışı']].forEach(([t,ne])=>{ const m = dk(t); if(m > su && (!sir || m < sir.m)) sir = {m, t, ne:r.no+'. ders '+ne}; }));
   ((gunluk && gunluk[gunNo(now.getDay())]) || []).forEach(e=>[[e.bas,+e.zil,'başı'],[e.bit,+e.bitZil,'sonu']].forEach(([t,z,ne])=>{ if(!t || !z) return; const m = dk(t); if(m > su && (!sir || m < sir.m)) sir = {m, t, ne:e.ad+' '+ne}; }));
   if(sir) sir.kalan = sir.m - su;
   return sir;
 }
 function widgetCiz(){
-  const w = $('gr-zil'), k = $('gr-zil-kucuk'); if(!w || !k || !program) return;
+  const w = $('gr-zil'), k = $('gr-zil-kucuk'); if(!w || !k || !gunluk) return;
   let yon = false, ogrMod = false;
   try{ const pp = aktifPersonel(); yon = !!(pp && pp.admin); ogrMod = typeof ogretmenModu==='function' && ogretmenModu(); }catch(e){}
   const sir = siradakiZil();
@@ -20501,6 +20511,30 @@ function widgetCiz(){
 window.zilGucDegistir = function(){ if(!hazir) kur(); gucDegistir(); };
 window.zilNehari = function(){ if(!hazir) kur(); elleCal(2, 'Nehari'); };
 window.zilWidgetCiz = function(){ try{ widgetCiz(); }catch(e){} };
+/* ══════════ TEK LİSTEYE GEÇİŞ (bir kez) ══════════
+   Eskiden dersler (Zil Sistemi) ve etkinlikler (Günlük Program) ayrı tutuluyordu. Şimdi hepsi tek listede (gunluk).
+   Elle düzenlenmiş eski ders saatleri listeye eklenir; aynı saatte (±5 dk) başlayan etkinlik varsa onunla birleşir
+   (etkinliğin adı kalır, saatler ve ziller dersten gelir). Varsayılan, hiç düzenlenmemiş ders programı taşınmaz. */
+let BIRLESIK = !!oku('zil-birlesik');
+function birlesikGoc(){
+  if(BIRLESIK || !gunluk) return false;
+  BIRLESIK = true; yaz('zil-birlesik', true);
+  const varsayilan = JSON.stringify(Array.from({length:7}, varsayilanGun));
+  if(!Array.isArray(program) || program.length!==7 || JSON.stringify(program)===varsayilan) return false;
+  let n = 0;
+  for(let d=0; d<7; d++){
+    const L = gunluk[d] = gunluk[d] || [];
+    (program[d]||[]).filter(r=>r && r.on && r.start).sort((a,b)=>dk(a.start)-dk(b.start)).forEach((r,i)=>{
+      const e = L.find(x=>Math.abs(dk(x.bas)-dk(r.start))<=5);
+      if(e){ e.bas = r.start; if(r.end) e.bit = r.end; e.zil = 1; e.bitZil = r.end ? 1 : 0; }
+      else { L.push({bas:r.start, bit:r.end||'', ad:(i+1)+'. ders', zil:1, bitZil:r.end?1:0}); n++; }
+    });
+    gSirala(L);
+  }
+  setTimeout(()=>{ try{ kaydet(); gpHepsi(); durumCiz(); }catch(e){} bildir('🔔', 'Program ve zil birleşti', n ? n+' ders saati programa eklendi' : 'Ders saatleri etkinliklerle birleştirildi'); }, 0);
+  return true;
+}
+
 /* ══════════ GÜNLÜK PROGRAM ══════════
    Akşam etütleri, namaz, yemek gibi günlük akış. Her etkinliğin başında/sonunda isteğe bağlı zil çalar
    (Zil Sistemi açıkken). Zil programıyla birlikte saklanır ve buluta gider. */
@@ -20513,16 +20547,17 @@ function varsayilanGunluk(){ return [
   {bas:'21:00', bit:'21:50', ad:'Etüt', zil:1, bitZil:1}
 ]; }
 const gSirala = l => l.sort((a,b)=>dk(a.bas)-dk(b.bas));
-function gpSayfaAcik(){ const p = $('pageGunluk'); return !!(p && p.classList.contains('active')); }
+function gpSayfaAcik(){ return sayfaAcik(); }
 function gpBugunCiz(){
   if(!gunluk || !$('gp-bugun')) return;
   const now = new Date(), su = now.getHours()*60 + now.getMinutes() + now.getSeconds()/60, d = gunNo(now.getDay());
   const l = gSirala(gunluk[d].slice());
   $('gp-tarih').textContent = now.toLocaleDateString('tr-TR', {weekday:'long', day:'numeric', month:'long'});
-  if(!l.length){ $('gp-bugun').innerHTML = '<div class="zl-bos">Bugün için program yok. Aşağıdan ekleyebilirsiniz.</div>'; }
+  const oz = $('gp-ozet');
+  if(!l.length){ $('gp-bugun').innerHTML = '<div class="zl-bos">Bugün için program yok. Aşağıdan ekleyebilirsiniz.</div>'; if(oz) oz.textContent = 'Program yok'; }
   else {
     const son = e => e.bit ? dk(e.bit) : null;
-    let siradakiVar = false, simdiAd = '';
+    let siradakiVar = false, simdiAd = '', sirYazi = '';
     $('gp-bugun').innerHTML = l.map((e,i)=>{
       const a = dk(e.bas), b = son(e), sonraki = l[i+1] ? dk(l[i+1].bas) : null;
       const bitis = b!==null ? b : (sonraki!==null ? Math.min(a+30, sonraki) : a+30);   // bitişi olmayanlar kısa süre "şimdi" sayılır
@@ -20531,15 +20566,11 @@ function gpBugunCiz(){
       else if(su >= a){ cls = 'simdi'; simdiAd = e.ad; dr = b!==null ? 'Şimdi · '+sureYaz(Math.ceil(b-su))+' kaldı' : 'Şimdi'; }
       else if(!siradakiVar){ siradakiVar = true; cls = 'siradaki'; dr = sureYaz(Math.ceil(a-su))+' sonra'; }
       const ziller = [e.zil ? '🔔' : '', e.bit && e.bitZil ? '🔔' : ''].filter(Boolean).join(' ');
+      if(cls==='siradaki') sirYazi = 'Sıradaki: '+e.bas+' '+e.ad+' · '+dr;
       return `<div class="gp-o ${cls}"><div class="gp-saat">${esc(e.bas)}${e.bit ? '–'+esc(e.bit) : ''}</div><div class="gp-ad">${esc(e.ad)}${ziller ? '<small>'+ziller+'</small>' : ''}</div><div class="gp-dr">${dr}</div></div>`;
     }).join('');
-    const sir = l.find(e=>dk(e.bas) > su);
-    $('gp-sub').textContent = simdiAd ? 'Şimdi: '+simdiAd : (sir ? 'Sıradaki: '+sir.bas+' '+sir.ad : 'Bugünün programı bitti');
+    if(oz){ const t = simdiAd ? 'Şimdi: '+simdiAd+(sirYazi ? ' · '+sirYazi.replace('Sıradaki: ','sonra ') : '') : (sirYazi || 'Bugünün programı bitti'); if(oz.textContent!==t) oz.textContent = t; }
   }
-  const u = $('gp-uyari');
-  u.className = 'gp-uyari' + (acik ? ' acik' : '');
-  u.innerHTML = acik ? '<span>🔔 Zil Sistemi açık · seçilen ziller çalacak</span>'
-                     : '<span>Ziller yalnız Zil Sistemi açıkken çalar.</span><button type="button" onclick="zilAc()">Zil Sistemine git</button>';
 }
 function gpGunleriCiz(){
   const bugun = gunNo(new Date().getDay()), kap = $('gp-gunler');
@@ -20555,10 +20586,10 @@ function gpSec(f, deger, pasif){
 function gpSatirlariCiz(){
   const el = $('gp-satirlar'); if(!el || !gunluk) return;
   const l = gSirala(gunluk[gGun]);
-  if(!l.length){ el.innerHTML = '<div class="zl-bos">Bu gün için etkinlik yok. "+ Etkinlik ekle" ile başlayın.</div>'; return; }
+  if(!l.length){ el.innerHTML = '<div class="zl-bos">Bu gün için program yok. "+ Ekle" ile başlayın.</div>'; return; }
   el.innerHTML = l.map((e,i)=>`<div class="gp-satir" data-i="${i}">
     <div class="gp-zaman">${saatKutu('data-g="bas"', e.bas, 'Başlangıç saati')}<span>–</span>${saatKutu('data-g="bit"', e.bit, 'Bitiş saati (isteğe bağlı)')}</div>
-    <div class="gp-adk"><input type="text" class="gp-adg" data-g="ad" value="${esc(e.ad)}" maxlength="60" aria-label="Etkinlik adı" placeholder="Etkinlik adı"></div>
+    <div class="gp-adk"><input type="text" class="gp-adg" data-g="ad" value="${esc(e.ad)}" maxlength="60" aria-label="Adı" placeholder="Ders, etüt, namaz…"></div>
     <div class="gp-zil b"><span class="zl-etk">Başta</span>${gpSec('zil', +e.zil||0, false)}</div>
     <div class="gp-zil s"><span class="zl-etk">Sonda</span>${gpSec('bitZil', +e.bitZil||0, !e.bit)}</div>
     <button type="button" class="zl-sil" data-gsil="${i}" title="Sil" aria-label="${esc(e.ad)} etkinliğini sil">✕</button></div>`).join('');
@@ -20620,6 +20651,12 @@ function gpBagla(){
   };
   $('gp-kopya-hafta').onclick = ()=>kopyala(5, 'hafta içi günlere (Pzt–Cum)');
   $('gp-kopya-tum').onclick = ()=>kopyala(7, 'bütün günlere');
+  $('gp-temizle').onclick = ()=>{
+    if(!gunluk[gGun].length) return;
+    if(!confirm(GUNLER[gGun]+' programındaki '+gunluk[gGun].length+' kalem silinsin mi? O gün zil çalmaz.')) return;
+    gunluk[gGun] = []; kaydet(); gpSatirlariCiz(); gpBugunCiz(); durumCiz();
+  };
+  { const bk = $('gp-bugun-kart'); if(bk) bk.open = false; }   // Bugün kartı kapalı açılır; isteyen dokunup açar
   $('gp-metin-yaz').onclick = ()=>{
     const l = gpMetinCoz($('gp-metin').value);
     if(!l.length){ alert('Okunabilen satır yok. Örnek: 18:30-19:10 Etüt'); return; }
@@ -20628,15 +20665,7 @@ function gpBagla(){
     $('gp-metin').value = '';
   };
 }
-window.gunlukAc = function(){
-  if(typeof menuKapat==='function') menuKapat();
-  if(goPage('pageGunluk')===false) return;
-  if(!hazir) kur();
-  gGun = gunNo(new Date().getDay());
-  gpBagla(); gpHepsi();
-  const pb = document.querySelector('#pageGunluk .pb'); if(pb) pb.scrollTop = 0;
-};
-try{ MENU_SAYFA.pageGunluk = 'gunluk'; }catch(e){}
+window.gunlukAc = function(){ zilAc(); };   // eski bağlantılar: Günlük Program artık Program · Zil içinde
 /* Panoyu gösteren cihazda Zil / Günlük Program hiç açılmamış olabilir: günlük program dakikada bir buluttan alınır */
 let gpBulutZaman = 0;
 window.zilGunlukTazele = async function(){
@@ -20650,7 +20679,8 @@ window.zilGunlukTazele = async function(){
 window.zilAc = function(){
   if(typeof menuKapat==='function') menuKapat();
   if(goPage('pageZil')===false) return;
-  if(!hazir) kur(); else { gun = gunNo(new Date().getDay()); hepsiniCiz(); tik(); }
+  if(!hazir) kur(); else { gun = gunNo(new Date().getDay()); gGun = gun; hepsiniCiz(); tik(); }
+  { const bk = $('gp-bugun-kart'); if(bk) bk.open = false; }   // her girişte kapalı
   const pb = document.querySelector('#pageZil .pb'); if(pb) pb.scrollTop = 0;
 };
 try{ MENU_SAYFA.pageZil = 'zil'; }catch(e){}
@@ -21415,6 +21445,7 @@ window.ymPanoVeri = function(){
   o.yemek = gi>=0 ? D.y.gruplar[gi].uyeler.map(adOf) : [];
   o.yemekNot = !D.y.gruplar.length ? '— Atanmadı —' : (gi<0 ? 'Pazar · yemekçi yok' : '— Grupta talebe yok —');
   if(mg){ o.muezzinGun = adOf(mg.Müezzin); o.muezzin = {Müezzin:o.muezzinGun}; }
+  { const g = (tarihD(t).getDay()+6)%7+1; o.nobetci = KN_GUN[g] ? knListe(haftaBas(t), g).map(adOf) : []; }   // günün kapı nöbetçisi
   o.muezzinNot = !D.m.sira.length ? '— Atanmadı —' : (mg ? '—' : 'Hafta sonu');
   return o;
 };
