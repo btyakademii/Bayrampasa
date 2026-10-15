@@ -185,7 +185,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 .yk-kural.ara{background:#eef4ff;border:1px solid rgba(16,64,208,.2);color:#1b2a4a}
 .yk-kural b{color:var(--text)}
 body.yon-kilit .menu-ic > :not(.yon-acik){display:none !important}
-body.yon-kilit .gr-kart:not(#gr-giris-kart):not(#gr-ogr-kart):not(#gr-veli-kart){display:none !important}
+body.yon-kilit .gr-kart:not(#gr-giris-kart):not(#gr-ogr-kart):not(#gr-veli-kart):not(#gr-yar-kart){display:none !important}
 body:not(.yon-kilit) #gr-giris-kart, body:not(.yon-kilit) #gr-ogr-kart, body:not(.yon-kilit) #gr-veli-kart{display:none !important}
 body.yon-admin #gr-dnm-kart{display:none !important}
 .gr-kart .puan-ikon{display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
@@ -1531,6 +1531,8 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .ak-satir input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px var(--g-blue);background:#fff}
 .ak-bk{font-size:11.5px;line-height:1.45}
 @media (max-width:560px){ .ak-iki{grid-template-columns:1fr} }
+.gr-kart.ike-yar{background:linear-gradient(135deg,#0f5a3c,#1d9a68)}
+.gr-kart.ike-yar .bas small{display:block;font-size:12.5px;font-weight:600;opacity:.85;margin-top:2px}
 /* Program · Zil üst kartı: küçük */
 .zl-kart.zl-ust{padding:12px 14px;gap:8px 14px;grid-template-columns:1fr auto;align-items:center}
 .zl-ust .zl-zaman{font-size:30px;letter-spacing:-.01em}
@@ -1887,6 +1889,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <button class="gr-kart bos ogp" data-yetki="op_puan|op_rapor|op_yonetim" style="cursor:pointer" onclick="opAc()"><div class="ikon">🔢</div><div class="bas">Öğretmen Puanları</div><span class="ok">›</span></button>
       <button class="gr-kart bos tts" data-yetki="tts" style="cursor:pointer" onclick="ttsAc()"><div class="ikon">🏅</div><div class="bas">Talebe Takip Sistemi</div><span class="ok">›</span></button>
       <button class="gr-kart bos ike" data-yetki="ke" style="cursor:pointer" onclick="keAc()"><div class="ikon">🔤</div><div class="bas">İngilizce Kelime Ezberi</div><span class="ok">›</span></button>
+      <button class="gr-kart bos ike-yar" id="gr-yar-kart" style="cursor:pointer" onclick="keOgrenciAc()"><div class="ikon">🏁</div><div class="bas">Kelime Yarışması<small>Talebeler için · şifresiz</small></div><span class="ok">›</span></button>
       <button class="gr-kart bos neh" data-yetki="nehari" style="cursor:pointer;background:linear-gradient(135deg,#0d5563,#2ba3b8)" onclick="neAc()"><div class="ikon">🌤️</div><div class="bas">Nehari</div><span class="ok">›</span></button>
       <button class="gr-kart bos" id="gr-giris-kart" style="cursor:pointer;background:linear-gradient(135deg,#1b2a4a,#3a4f7a)" onclick="yonGirisAc(null)"><div class="ikon">👤</div><div class="bas">Personel girişi</div><span class="ok">›</span></button>
       <button class="gr-kart bos" id="gr-ogr-kart" style="cursor:pointer;background:linear-gradient(135deg,#0f4d33,#1f8a5c)" onclick="ogretmenGirisAc()"><div class="ikon">📝</div><div class="bas">Öğretmen girişi</div><span class="ok">›</span></button>
@@ -2932,7 +2935,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 <div class="page" id="pageDnmOlustur">
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" onclick="dnmSecimAc()">‹</button>
+    <button class="ph-back" title="Geri" onclick="dnmGeri()">‹</button>
     <div>
       <div class="ph-title">➕ Deneme Oluştur</div>
       <div class="ph-sub" id="dol-sub">—</div>
@@ -2948,7 +2951,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 <div class="page" id="pageOptik">
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" onclick="dnmSecimAc()">‹</button>
+    <button class="ph-back" title="Geri" onclick="dnmGeri()">‹</button>
     <div>
       <div class="ph-title" id="otk-baslik">📝 8. Sınıf · Deneme</div>
       <div class="ph-sub" id="otk-sub">—</div>
@@ -3068,7 +3071,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 <div class="page" id="pageAnahtar">
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" onclick="dnmSecimAc()">‹</button>
+    <button class="ph-back" title="Geri" onclick="dnmGeri()">‹</button>
     <div>
       <div class="ph-title">🔑 Cevap Anahtarı</div>
       <div class="ph-sub" id="ak-sub">—</div>
@@ -3136,7 +3139,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 <div class="page" id="pageDeneme">
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" onclick="dnmSecimAc()">‹</button>
+    <button class="ph-back" title="Geri" onclick="dnmGeri()">‹</button>
     <div>
       <div class="ph-title">📝 Deneme ve Form</div>
       <div class="ph-sub" id="dnm-sub">—</div>
@@ -3295,7 +3298,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 <div class="page" id="pageHzSonuc">
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" onclick="dnmSecimAc()">‹</button>
+    <button class="ph-back" title="Geri" onclick="dnmGeri()">‹</button>
     <div>
       <div class="ph-title">📊 Deneme Sonuçları</div>
       <div class="ph-sub" id="hz-sonuc-sub">—</div>
@@ -3311,7 +3314,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 <div class="page" id="pageHzAnahtar">
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
-    <button class="ph-back" title="Geri" onclick="dnmSecimAc()">‹</button>
+    <button class="ph-back" title="Geri" onclick="dnmGeri()">‹</button>
     <div>
       <div class="ph-title">🔑 Cevap Anahtarları</div>
       <div class="ph-sub" id="hz-ak-sub">—</div>
@@ -3691,7 +3694,8 @@ const SAYFA_YETKI = {
   pageOgrKayit:'ogrenci_kayit', pageSinif:'ogrenci_kayit', pageAyarlar:'ayarlar', pagePersonel:'admin', pageDenetim:'admin',
   pageTTS:'tts', pageNE:'nehari', pageRehberlik:'rehberlik', pageEtut:'etut', pageUnsur:'unsur', pageKE:'ke', pageOP:'op_puan|op_rapor|op_yonetim'
 };
-function sayfaIzin(id){ if(id==='pageGiris') return true; const y = SAYFA_YETKI[id]; return y ? yetkiHerhangi(y) : !!YON_GIRIS; }
+let KE_OGR_GIRIS = false;   // ana sayfadaki "Kelime Yarışması": talebe şifresiz girer (yalnız yarışma)
+function sayfaIzin(id){ if(id==='pageGiris') return true; if(id==='pageKE' && KE_OGR_GIRIS) return true; const y = SAYFA_YETKI[id]; return y ? yetkiHerhangi(y) : !!YON_GIRIS; }
 function yetkiYok(ne){ showN('🔒', (ne || 'Bu bölüm')+' için yetkiniz yok', (aktifPersonel()||{}).ad || ''); }
 /* Menü ve ana sayfadaki öğeler yetkiye göre gizlenir */
 function yetkiUygula(){
@@ -4111,6 +4115,11 @@ window.addEventListener('popstate', ()=>{
   if(soruAcik){ const v = dgm.querySelector('[data-dg="vazgec"]'); if(v) v.click(); return; }   // açık soru: "Vazgeç"
   if(menuAcik){ menuKapat(); return; }                                                            // açık menü kapanır
   if(simdi==='pageOgrKayit'){ ogkGeri(); return; }   // Öğrenci Kayıt: sınıf → şube → öğrenci → form adımlarında bir geri
+  if(simdi==='pageKE'){   // Kelime Ezberi / Yarışma: bir üst adım, giriş ekranındaysa ana sayfa
+    let r = null; try{ const w = document.getElementById('ke-cerceve').contentWindow; if(w && w.keUstGeri) r = w.keUstGeri(); }catch(e){}
+    if(r===true) return;
+    if(r===false){ KE_OGR_GIRIS = false; anaSayfayaGit(); return; }
+  }
   if(simdi==='pageOP'){   // Öğretmen Puanları: ders → ders seçimi → ana sayfa
     try{ const w = document.getElementById('op-cerceve').contentWindow; if(w && w.opUstGeri && w.opUstGeri()) return; }catch(e){}
     anaSayfayaGit(); return;
@@ -9748,6 +9757,7 @@ function menuGit(h){
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') menuKapat(); });
 function girisAc(bolum){
+  KE_OGR_GIRIS = false;
   if(bolum==='deneme'){ kademeSayfasi(); return; }
   if(bolum==='banka'){ kademeSayfasi('banka'); return; }
   if(bolum==='ayarlar'){ ayarlarAc(); return; }
@@ -9787,7 +9797,15 @@ function kademeSayfasi(bolum){
 }
 /* Geri: tek sınıfa yetkili personel sınıf seçme ekranını görmez, ana sayfaya döner */
 function kademeGeri(bolum){ if(izinliKademeler().length===1) anaSayfayaGit(); else kademeSayfasi(bolum); }
+/* Deneme bölümlerinden geri: "Deneme Düzenle" / "Deneme Oluştur" menüsünden sınıf seçilerek girildiyse
+   geri tuşu o menünün sınıf seçme ekranına döner; Deneme menüsünden girildiyse Deneme menüsüne. */
+let DNM_GIRIS = '';
+function dnmGeri(){
+  if(DNM_GIRIS==='duzenle' || DNM_GIRIS==='olustur'){ const b = DNM_GIRIS; kademeGeri(b); return; }
+  dnmSecimAc();
+}
 function kademeGir(k, bolum){
+  DNM_GIRIS = (bolum==='duzenle' || bolum==='olustur') ? bolum : '';
   if(bolum==='banka'){
     try{ localStorage.setItem('otkSbKademe', String(k)); }catch(e){}
     goPage('pageBanka');
@@ -18773,6 +18791,8 @@ function keCerceve(){
 }
 async function keAc(eylem){
   if(typeof menuKapat==='function') menuKapat();
+  KE_OGR_GIRIS = false;   // tam Kelime Ezberi personel yetkisi ister
+  if(!sayfaIzin('pageKE')){ if(!YON_GIRIS) yonGirisAc('pageKE'); else yetkiYok(); return; }
   if(!eylem && aktifSayfa()!=='pageKE') eylem = 'ana';   // dışarıdan girişte kalınan quiz değil, sınıf seçimi açılır
   if(aktifSayfa()!=='pageKE' && goPage('pageKE')===false) return;
   const f = keCerceve();
@@ -18780,7 +18800,20 @@ async function keAc(eylem){
   keListeGonder(true);
   try{ f.contentWindow.keIzinUygula(kademeKisitli() ? izinliKademeler() : null); }catch(e){}
   keEsitle().catch(()=>{});
+  try{ f.contentWindow.keOgrenciModu(false); }catch(e){}
   if(eylem){ try{ await new Promise(r=>setTimeout(r, 50)); f.contentWindow.keAnaMenu(eylem); }catch(e){ console.error(e); } }
+}
+/* Talebe girişi: şifre sormaz, yalnız yarışma bölümü açılır */
+async function keOgrenciAc(){
+  if(typeof menuKapat==='function') menuKapat();
+  KE_OGR_GIRIS = true;
+  if(aktifSayfa()!=='pageKE' && goPage('pageKE')===false){ KE_OGR_GIRIS = false; return; }
+  const f = keCerceve();
+  try{ await KE_HAZIR; }catch(e){}
+  keListeGonder(true);
+  try{ f.contentWindow.keIzinUygula(null); }catch(e){}
+  keEsitle().catch(()=>{});
+  try{ f.contentWindow.keOgrenciModu(true); }catch(e){ console.error(e); }
 }
 /* ── İngilizce Kelime Ezberi bulutu: "ingilizce_kelime" tablosu; üç satır: words (kelimeler), students (talebeler),
    results (yarışma ve quiz sonuçları). Uygulama her kayıtta keDegisti() ile haber verir; burada buluta yüklenir.
