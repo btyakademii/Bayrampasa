@@ -1521,6 +1521,16 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .gp-koyu .gp-o.siradaki{background:rgba(255,255,255,.1)}
 .gp-koyu .gp-o.siradaki .gp-dr{color:#8fd3ff}
 .gp-koyu .zl-bos{color:#c9d3ea}
+.ak-iki{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;align-items:start}
+.ak-kol{display:flex;flex-direction:column;gap:8px;min-width:0}
+.ak-kol-bas{font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;padding-bottom:4px;border-bottom:2px solid var(--border)}
+.ak-satir{display:flex;flex-direction:column;gap:3px}
+.ak-satir label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;margin:0}
+.ak-satir label span{font:700 11.5px 'JetBrains Mono',monospace;color:var(--text2)}
+.ak-satir input{width:100%;font:600 15px 'JetBrains Mono',monospace;letter-spacing:.12em;padding:8px 10px;border-radius:9px;border:1px solid var(--border);background:var(--navy);text-transform:uppercase}
+.ak-satir input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px var(--g-blue);background:#fff}
+.ak-bk{font-size:11.5px;line-height:1.45}
+@media (max-width:560px){ .ak-iki{grid-template-columns:1fr} }
 /* Program · Zil üst kartı: küçük */
 .zl-kart.zl-ust{padding:12px 14px;gap:8px 14px;grid-template-columns:1fr auto;align-items:center}
 .zl-ust .zl-zaman{font-size:30px;letter-spacing:-.01em}
@@ -6705,7 +6715,7 @@ function renderDeneme(){
       + '<div style="font-size:11px;color:var(--text2);line-height:1.6">'
       + (tarihGecerli(d.tarih) ? '📅 '+tarihGoster(d.tarih) : '<span style="color:var(--orange)">📅 Tarih girilmedi</span>')+'<br>'
       + denemeToplamHesapla(d)+' soru · '+dagilim+'<br>📘 '+KITAPCIK_TURLERI[kitapcikTuru(d)]+' · 🧮 '+NET_KURALLARI[netKurali(d)]+(oturumlu(d) ? '<br>📄 İki oturum · Sözel '+oturumSoru(d,'soz')+' · Sayısal '+oturumSoru(d,'say')+' soru' : '')+'<br>'+Object.keys(d.cevaplar||{}).length+' öğrenci okundu'+(yarimSayisi(d) ? ' · ⏳ '+yarimSayisi(d)+' yarım' : '')+'<br>'
-      + (d.anahtarOk ? '🔑 Cevap anahtarı girildi'+(iptalSayisi(d) ? ' · 🚫 '+iptalSayisi(d)+' iptal ('+(iptalKurali(d)==='disari' ? 'sayılmıyor' : 'herkese doğru')+')' : '')+(islenmemisSayisi(d) ? ' · 📚 '+islenmemisSayisi(d)+' işlenmemiş konu sorusu (herkese doğru)' : '')+((d.bSiraEksik && Object.keys(d.bSiraEksik).length) ? ' · <span style="color:var(--orange)">🔀 B → A sırası eksik</span>' : '') : '<span style="color:var(--orange)">⚠️ Cevap anahtarı girilmedi (netler örnek)</span>')
+      + (d.anahtarOk ? '🔑 Cevap anahtarı girildi'+(iptalSayisi(d) ? ' · 🚫 '+iptalSayisi(d)+' iptal ('+(iptalKurali(d)==='disari' ? 'sayılmıyor' : 'herkese doğru')+')' : '')+(islenmemisSayisi(d) ? ' · 📚 '+islenmemisSayisi(d)+' işlenmemiş konu sorusu (herkese doğru)' : '')+((d.bSiraEksik && Object.keys(d.bSiraEksik).length && +d.kademe===8) ? ' · <span style="color:var(--orange)">🔀 B → A sırası eksik</span>' : '') : '<span style="color:var(--orange)">⚠️ Cevap anahtarı girilmedi (netler örnek)</span>')
       + (()=>{ if(!konuluMu(d.kademe)) return ''; const k = konuSayisi(d); return '<br>🏷️ Konular: '+k.g+'/'+k.t; })() + '</div>'
       + (SILINEN_KAGITLAR && SILINEN_KAGITLAR.dId===d.id
           ? '<div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px"><span style="flex:1;color:var(--text2)">🗑️ '+Object.keys(SILINEN_KAGITLAR.cevaplar||{}).length+' kâğıt silindi</span>'
@@ -6927,27 +6937,31 @@ function anahtarSekmeSec(kk){ AK_TAB = kk; anahtarSekmeCiz(); }
 function anahtarSekmeCiz(){
   const d = DENEMELER.find(x=>x.id===AK_ID);
   const ab = kitapcikTuru(d)==='AB', kn = konuluMu(d.kademe);
+  const siraVar = ab && +d.kademe===8;   // "A'daki soru B'de kaça denk geliyor" yalnız 8. sınıfta (5–7'de B anahtarı girilir)
   if(!ab && (AK_TAB==='S' || AK_TAB==='B')) AK_TAB = 'A';
+  if(!siraVar && AK_TAB==='S') AK_TAB = 'A';
   if(!kn && (AK_TAB==='K' || AK_TAB==='I')) AK_TAB = 'A';   // konu sekmeleri yalnız konulu sınıflarda
   const cy = document.getElementById('ak-claude-yazi');
   if(cy) cy.textContent = kn ? "Cevap anahtarı PDF'ini ve A/B kitapçıklarını Claude'a okutun; anahtar, B sırası ve konular tek seferde dolsun." : (ab ? "Cevap anahtarı PDF'ini ve A/B kitapçıklarını Claude'a okutun; anahtar ve B sırası tek seferde dolsun." : "Cevap anahtarı PDF'ini Claude'a okutun; anahtar tek seferde dolsun.");
   const dersler = DERSLER.filter(dr=>(d.counts[dr.id]||0)>0);
   document.getElementById('ak-kopya').style.display = (ab && AK_TAB==='S') ? '' : 'none';
-  document.getElementById('ak-kaydet').textContent = AK_TAB==='K' ? '💾 Anahtarı Kaydet (konular zaten kaydedildi)' : AK_TAB==='I' ? '💾 Anahtarı Kaydet (işlenmemiş seçimi zaten kaydedildi)' : ab ? '💾 Kaydet (A anahtarı + B anahtarı/sırası)' : '💾 Anahtarı Kaydet';
-  const sekmeler = ab ? [['A','📘 A anahtarı'],['S','🔀 B → A'],['B','🅱️ B anahtarı'],['K','🏷️ Konular'],['I','📚 İşlenmemiş']] : [['A','📘 Anahtar'],['K','🏷️ Konular'],['I','📚 İşlenmemiş konular']];
-  if(!kn) sekmeler.splice(sekmeler.findIndex(x=>x[0]==='K'));   // 4–7: Konular ve İşlenmemiş yok
+  document.getElementById('ak-kaydet').textContent = AK_TAB==='K' ? '💾 Anahtarı Kaydet (konular zaten kaydedildi)' : AK_TAB==='I' ? '💾 Anahtarı Kaydet (işlenmemiş seçimi zaten kaydedildi)' : ab ? (siraVar ? '💾 Kaydet (A anahtarı + B anahtarı/sırası)' : '💾 Kaydet (A ve B anahtarı)') : '💾 Anahtarı Kaydet';
+  const sekmeler = ab ? (siraVar ? [['A','📘 A anahtarı'],['S','🔀 B → A'],['B','🅱️ B anahtarı'],['K','🏷️ Konular'],['I','📚 İşlenmemiş']] : [['A','📘 A anahtarı'],['B','🅱️ B anahtarı']]) : [['A','📘 Anahtar'],['K','🏷️ Konular'],['I','📚 İşlenmemiş konular']];
+  if(!kn && sekmeler.findIndex(x=>x[0]==='K')>-1) sekmeler.splice(sekmeler.findIndex(x=>x[0]==='K'));   // 4–7: Konular ve İşlenmemiş yok
   document.getElementById('ak-tabs').innerHTML = sekmeler.map(([k,l])=>
     '<button class="bsec" style="flex:1'+(AK_TAB===k?';background:var(--blue);color:#fff;border-color:var(--blue)':'')+'" onclick="anahtarSekmeSec(\''+k+'\')">'+l+'</button>'
   ).join('');
 
   const bilgi = document.getElementById('ak-bilgi');
   if(AK_TAB==='A'){
-    bilgi.innerHTML = (ab ? '<b>A kitapçığının</b> doğru cevaplarını ' : 'Doğru cevapları ')
-      + 'harf harf yazın ya da yapıştırın (örn. '+(denemeSik(d)===5?'ACEBDABE…':'ACBDABCD…')+'). '+sikHarf(d).join(', ')+' kabul edilir; <b>iptal edilen soru için İ</b> yazın.'
-      + ' İptal edilen soru '+(iptalKurali(d)==='disari' ? '<b>değerlendirme dışı</b> tutulur' : '<b>herkese doğru</b> sayılır')+' (Denemeyi Düzenle\'den değiştirilebilir).'
-      + (ab ? '<br>B anahtarını ayrıca girmenize gerek yok; B → A sırasından otomatik oluşur. İsterseniz <b>🅱️ B anahtarı</b> sekmesinden PDF\'teki B anahtarını girip sırayı doğrulayabilirsiniz.' : '');
-    bilgi.innerHTML += '<br>⭕ <b>Optik gibi kodlayarak</b> seçerseniz her sorunun şıkkına dokunun; aynı şıkka tekrar dokunmak siler.';
-    document.getElementById('ak-liste').innerHTML = kodModHtml('anahtarSekmeCiz') + dersler.map(dr=>{
+    bilgi.innerHTML = (ab ? '<b>A kitapçığı</b> · ' : '')+'Harfleri yazın ya da yapıştırın ('+sikHarf(d).join(', ')+') · iptal soru: <b>İ</b> ('+(iptalKurali(d)==='disari' ? 'sayılmaz' : 'herkese doğru')+')'
+      + (ab ? (siraVar ? ' · B anahtarı B → A sırasından oluşur.' : ' · B kitapçığını <b>🅱️ B anahtarı</b> sekmesine yazın.') : '');
+    document.getElementById('ak-liste').innerHTML = akIkiSutun(dersler, dr=>{
+      const n = d.counts[dr.id], val = AK_TASLAK.A[dr.id] || '';
+      return '<div class="ak-satir"><label for="ak-i-'+dr.id+'"><b>'+esc(dr.ad)+'</b><span id="ak-n-'+dr.id+'">'+val.replace(/-/g,'').length+'/'+n+'</span></label>'
+        + '<input id="ak-i-'+dr.id+'" value="'+esc(val)+'" autocapitalize="characters" autocomplete="off" spellcheck="false" oninput="anahtarGir(\''+dr.id+'\','+n+')" maxlength="'+(n+10)+'"></div>';
+    });
+    if(false) document.getElementById('ak-liste').innerHTML = dersler.map(dr=>{
       const n = d.counts[dr.id], val = AK_TASLAK.A[dr.id] || '';
       return '<div class="card"><div class="fg" style="margin-bottom:0"><label>'+dr.ad+' · '+n+' soru <span id="ak-n-'+dr.id+'" style="float:right">'+val.replace(/-/g,'').length+'/'+n+'</span></label>'
         + '<input id="ak-i-'+dr.id+'" value="'+esc(val)+'" autocapitalize="characters" autocomplete="off" spellcheck="false" oninput="anahtarGir(\''+dr.id+'\','+n+')" style="font-family:\'JetBrains Mono\',monospace;letter-spacing:.08em"></div>' + (KOD_MOD==='kod' ? '<div id="ak-kod-'+dr.id+'"></div>' : '<div class="kod-on" id="ak-on-'+dr.id+'">'+kodOnizle(val, n, IPTAL)+'</div>') + '</div>';
@@ -7758,10 +7772,10 @@ function hsCiz(){
   });
 }
 function hsSec(j){ try{ localStorage.setItem('otkHassasiyet', j); }catch(e){} hsCiz(); }
-let KOD_MOD = (()=>{ try{ return localStorage.getItem('otkKodMod')||'yaz'; }catch(e){ return 'yaz'; } })();
+let KOD_MOD = 'yaz';   // "optik gibi kodlayarak" seçeneği kaldırıldı: her yerde yazarak girilir
 function kodModSec(m, yenile){ KOD_MOD = m; try{ localStorage.setItem('otkKodMod', m); }catch(e){} if(yenile) yenile(); }
 function kodModHtml(yenileFn){
-  return '<div class="kod-mod"><button type="button" class="'+(KOD_MOD==='yaz'?'on':'')+'" onclick="kodModSec(\'yaz\','+yenileFn+')">⌨️ Yazarak</button>'
+  return ''; /* eski seçim düğmeleri: */ void '<div class="kod-mod"><button type="button" class="'+(KOD_MOD==='yaz'?'on':'')+'" onclick="kodModSec(\'yaz\','+yenileFn+')">⌨️ Yazarak</button>'
     + '<button type="button" class="'+(KOD_MOD==='kod'?'on':'')+'" onclick="kodModSec(\'kod\','+yenileFn+')">⭕ Optik gibi kodlayarak</button></div>';
 }
 /* Deneme anahtarında baloncuğa dokunma */
@@ -7874,16 +7888,38 @@ function bAnahtarFarklar(g, hesap, n){
   return f;
 }
 function bAnahtarSekmeCiz(d, dersler, bilgi){
+  if(+d.kademe!==8){   // 5–7: B anahtarı doğrudan girilir, sıra eşlemesi yok
+    bilgi.innerHTML = '<b>B kitapçığı</b> · Harfleri yazın ya da yapıştırın ('+sikHarf(d).join(', ')+') · iptal soru: <b>İ</b>';
+    document.getElementById('ak-liste').innerHTML = akIkiSutun(dersler, dr=>{
+      const n = d.counts[dr.id], val = AK_TASLAK.B[dr.id] || '';
+      return '<div class="ak-satir"><label for="ak-bi-'+dr.id+'"><b>'+esc(dr.ad)+'</b><span id="ak-bn-'+dr.id+'"></span></label>'
+        + '<input id="ak-bi-'+dr.id+'" value="'+esc(val)+'" autocapitalize="characters" autocomplete="off" spellcheck="false" oninput="bAnahtarGir(\''+dr.id+'\','+n+')"><div id="ak-bk-'+dr.id+'" hidden></div></div>';
+    });
+    dersler.forEach(dr=>bAnahtarKontrol(dr.id));
+    return;
+  }
   bilgi.innerHTML = 'Cevap anahtarı PDF\'indeki <b>B kitapçığının</b> anahtarını B1, B2, B3… sırasıyla harf harf yazın ya da yapıştırın. İptal edilen soru için <b>İ</b> yazın.'
     + '<br>B → A sırası <b>boşsa</b> bu anahtar doğrudan B kitapçığının cevap anahtarı olur: kaydedip optikleri okutabilirsiniz, sırayı sonra eklersiniz. Sıra da girilmişse program iki anahtarı karşılaştırır; uyuşmayan soru, o sorunun B → A eşlemesinin yanlış olabileceğini gösterir.'
     + '<br>Sıra girilene kadar B kitapçıklı öğrencilerin konu ve soru analizleri dışarıda kalır; netleri etkilenmez.';
-  document.getElementById('ak-liste').innerHTML = dersler.map(dr=>{
+  document.getElementById('ak-liste').innerHTML = akIkiSutun(dersler, dr=>{
+    const n = d.counts[dr.id], val = AK_TASLAK.B[dr.id] || '';
+    return '<div class="ak-satir"><label for="ak-bi-'+dr.id+'"><b>'+esc(dr.ad)+'</b><span id="ak-bn-'+dr.id+'"></span></label>'
+      + '<input id="ak-bi-'+dr.id+'" value="'+esc(val)+'" autocapitalize="characters" autocomplete="off" spellcheck="false" oninput="bAnahtarGir(\''+dr.id+'\','+n+')">'
+      + '<div id="ak-bk-'+dr.id+'" class="ak-bk"></div></div>';
+  });
+  if(false) document.getElementById('ak-liste').innerHTML = dersler.map(dr=>{
     const n = d.counts[dr.id], val = AK_TASLAK.B[dr.id] || '';
     return '<div class="card"><div class="fg" style="margin-bottom:0"><label>'+dr.ad+' · B kitapçığı · '+n+' soru <span id="ak-bn-'+dr.id+'" style="float:right"></span></label>'
       + '<input id="ak-bi-'+dr.id+'" value="'+esc(val)+'" autocapitalize="characters" autocomplete="off" spellcheck="false" oninput="bAnahtarGir(\''+dr.id+'\','+n+')" style="font-family:\'JetBrains Mono\',monospace;letter-spacing:.08em"></div>'
       + '<div id="ak-bk-'+dr.id+'" style="margin-top:8px;font-size:12px;line-height:1.55"></div></div>';
   }).join('');
   dersler.forEach(dr=>bAnahtarKontrol(dr.id));
+}
+/* Cevap anahtarı: dersler tek ekranda, sözel solda · sayısal sağda */
+function akIkiSutun(dersler, satir){
+  const say = ['mat','fen'], soz = dersler.filter(dr=>!say.includes(dr.id)), sy = dersler.filter(dr=>say.includes(dr.id));
+  const kol = (bas, L) => L.length ? '<div class="ak-kol"><div class="ak-kol-bas">'+bas+'</div>'+L.map(satir).join('')+'</div>' : '';
+  return '<div class="card ak-iki">'+kol('📖 Sözel', soz)+kol('🔢 Sayısal', sy)+'</div>';
 }
 function bAnahtarGir(id, n){
   const d = DENEMELER.find(x=>x.id===AK_ID), el = document.getElementById('ak-bi-'+id); if(!d || !el) return;
@@ -7944,7 +7980,7 @@ function anahtarKaydet(){
         AK_TAB = 'S'; anahtarSekmeCiz(); return;
       }
       if(!bg.every(Boolean)){
-        showN('⚠️', dr.ad+' · B kitapçığı', 'B anahtarını girin ya da B → A sırasını tamamlayın ('+(n-dur.bos)+'/'+n+' sıra, '+bg.filter(Boolean).length+'/'+n+' B cevabı)');
+        showN('⚠️', dr.ad+' · B kitapçığı', +d.kademe!==8 ? 'B anahtarını eksiksiz girin ('+bg.filter(Boolean).length+'/'+n+')' : 'B anahtarını girin ya da B → A sırasını tamamlayın ('+(n-dur.bos)+'/'+n+' sıra, '+bg.filter(Boolean).length+'/'+n+' B cevabı)');
         AK_TAB = 'B'; anahtarSekmeCiz(); return;
       }
       yeni.B[dr.id] = bg;
@@ -7969,7 +8005,7 @@ function anahtarKaydet(){
   { const bg = {};
     if(ab) DERSLER.forEach(dr=>{ const n = d.counts[dr.id]||0, g = kodDizi(AK_TASLAK.B && AK_TASLAK.B[dr.id], n); if(n && g.every(Boolean)) bg[dr.id] = g; });
     if(Object.keys(bg).length) d.bGirilen = bg; else delete d.bGirilen; }
-  lsSave(); showN('🔑', ab ? (Object.keys(eksikSira).length ? 'Anahtar kaydedildi · B → A sırasını sonra ekleyebilirsiniz' : (d.bGirilen ? 'A anahtarı, B sırası ve B anahtarı kaydedildi' : 'A anahtarı ve B sırası kaydedildi')) : 'Anahtar kaydedildi', d.ad);
+  lsSave(); showN('🔑', ab ? (Object.keys(eksikSira).length ? (+d.kademe===8 ? 'Anahtar kaydedildi · B → A sırasını sonra ekleyebilirsiniz' : 'A ve B anahtarı kaydedildi') : (d.bGirilen ? 'A anahtarı, B sırası ve B anahtarı kaydedildi' : 'A anahtarı ve B sırası kaydedildi')) : 'Anahtar kaydedildi', d.ad);
   if(typeof dgAnahtarTemiz==='function') dgAnahtarTemiz();   // kaydedildi: çıkarken uyarı gösterilmez
   goPage('pageDeneme'); renderDeneme();
 }
