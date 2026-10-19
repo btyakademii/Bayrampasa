@@ -1793,6 +1793,20 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .zl-elle .z2{background:var(--blue)}
 .zl-elle .zl-dur{background:#fff;color:var(--text2);border:1px solid var(--border)}
 .zl-elle small{flex-basis:100%;font-size:12px;color:var(--text2)}
+.zl-elle .zl-canli{background:#c62828;display:inline-flex;align-items:center;gap:6px}
+.zl-elle .zl-canli em{font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:rgba(255,255,255,.22);padding:2px 6px;border-radius:6px}
+.zl-elle .zl-canli.acik{background:#1b2a4a}
+.zl-canli-panel{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(170%);z-index:320;display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px);padding:10px 10px 10px 16px;border-radius:16px;background:#1b2a4a;color:#fff;font:800 15px 'Outfit',sans-serif;box-shadow:0 12px 30px rgba(0,0,0,.3);transition:transform .25s ease}
+.zl-canli-panel.acik{transform:translateY(0)}
+.zl-canli-panel .nokta{width:12px;height:12px;border-radius:50%;background:#9aa4b2;flex:none}
+.zl-canli-panel.canli,.zl-canli-panel.dinle{background:#c62828}
+.zl-canli-panel.canli .nokta,.zl-canli-panel.dinle .nokta{background:#fff;animation:zlCanli 1s ease-in-out infinite}
+.zl-canli-panel.baglan .nokta{animation:zlCanli 1.2s ease-in-out infinite}
+#zl-canli-yazi{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#zl-canli-sure{font-variant-numeric:tabular-nums;opacity:.9}
+#zl-canli-bitir{flex:none;font:800 13.5px 'Outfit',sans-serif;padding:8px 12px;border-radius:10px;border:none;background:rgba(255,255,255,.2);color:#fff;cursor:pointer}
+@keyframes zlCanli{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.zl-canli-panel{transition:none}.zl-canli-panel .nokta{animation:none!important}}
 /* günler */
 .zl-gunler{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;margin-bottom:6px;scrollbar-width:none}
 .zl-gunler::-webkit-scrollbar{display:none}
@@ -2355,6 +2369,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button type="button" class="z1" id="zl-elle1">🔔 Zili çal</button>
         <button type="button" class="z2" id="zl-elle2">🌤️ Nehari zilini çal</button>
         <button type="button" class="zl-dur" id="zl-durdur">⏹ Sesi durdur</button>
+        <button type="button" class="zl-canli" id="zl-canli">🎙️ Canlı anons <em>deneme</em></button>
         <small>Zil sesi yalnız <b>hoparlör</b> işaretli cihazda (okuldaki bilgisayar) çıkar. Telefondan basılan zil, başlat/durdur ve program değişikliği o cihaza anında gider; bilgisayarda site açık kalmalıdır.</small>
       </div>
     </section>
@@ -22045,10 +22060,119 @@ function mesajAl(v){
   if(v.tur==='komut') komutUygula(v);
   else if(v.tur==='durum') durumUygula(v);
   else if(v.tur==='ayar'){ if(String(v.rev)!==sonAyarDamga) bulutTur(true); }
+  else if(v.tur==='canli') canliAl(v);
   else if(v.tur==='hoparlor'){ hopGorulme = Date.now(); hopAd = v.ad || ''; hopCiz(); }
   else if(v.tur==='calindi' && bekleyenKomut[v.id]){ clearTimeout(bekleyenKomut[v.id]); delete bekleyenKomut[v.id]; hopGorulme = Date.now(); hopCiz(); bildir('✓', v.komut==='dur' ? 'Ses durduruldu' : 'Zil çaldı', 'Hoparlör cihazı komutu aldı'); }
 }
 function bildir(i, b, a){ try{ if(typeof showN==='function') showN(i, b, a); }catch(e){} }
+
+/* ---------- 🎙️ CANLI ANONS (deneme) ----------
+   Telefondan konuşulan ses hoparlör bilgisayarına doğrudan (WebRTC, tarayıcıdan tarayıcıya) gider.
+   Zil kanalı (bayrampasa-zil) yalnız iki cihazın tanışması için kullanılır: teklif → cevap → bitti.
+   Aynı Wi-Fi'deyse doğrudan bağlanır; farklı ağdaysa Google/Twilio STUN ile denenir, bazı ağlar engelleyebilir.
+   Beğenilmezse: bu bölüm, mesajAl içindeki 'canli' satırı, olaylariBagla içindeki zl-canli satırı,
+   zl-elle içindeki düğme ve .zl-canli CSS'i silinir. */
+const CANLI_ICE = [{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}, {urls:'stun:global.stun.twilio.com:3478'}];
+const CANLI_MAKS = 180;   // saniye: en uzun anons
+const cn = {pc:null, akis:null, oturum:null, rol:null, ses:null, zaman:null, bas:0, ad:'', cevapBekle:null, kopma:null};
+function canliIceBekle(pc){
+  return new Promise(ok=>{ if(pc.iceGatheringState==='complete') return ok(); const t = setTimeout(ok, 2500);
+    pc.addEventListener('icegatheringstatechange', ()=>{ if(pc.iceGatheringState==='complete'){ clearTimeout(t); ok(); } }); });
+}
+function canliPanel(durum, yazi){
+  let p = $('zl-canli-panel');
+  if(!p){ p = document.createElement('div'); p.id = 'zl-canli-panel'; p.className = 'zl-canli-panel'; p.setAttribute('role','status'); p.setAttribute('aria-live','polite');
+    p.innerHTML = '<span class="nokta" aria-hidden="true"></span><span id="zl-canli-yazi"></span><span id="zl-canli-sure"></span><button type="button" id="zl-canli-bitir">⏹ Bitir</button>';
+    document.body.appendChild(p); $('zl-canli-bitir').onclick = ()=>canliKapat(true); }
+  clearInterval(cn.zaman);
+  if(!durum){ p.classList.remove('acik'); return; }
+  p.className = 'zl-canli-panel acik '+durum; $('zl-canli-yazi').textContent = yazi; $('zl-canli-sure').textContent = '';
+  if(durum==='canli' || durum==='dinle'){
+    const bas = Date.now();
+    cn.zaman = setInterval(()=>{ const s = Math.floor((Date.now()-bas)/1000); $('zl-canli-sure').textContent = String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+      if(cn.rol==='gonderen' && s>=CANLI_MAKS){ canliKapat(true); bildir('⏱','Canlı anons bitti', CANLI_MAKS/60+' dakika sınırı'); } }, 500);
+  }
+}
+function canliDugme(){
+  const b = $('zl-canli'); if(!b) return;
+  b.classList.toggle('acik', !!(cn.pc && cn.rol==='gonderen'));
+  b.innerHTML = cn.pc && cn.rol==='gonderen' ? '⏹ Anonsu bitir' : '🎙️ Canlı anons <em>deneme</em>';
+}
+function canliZil(){   // hoparlörde anons öncesi "ding-dong"
+  return new Promise(ok=>{ try{ const c = sesHazir(), t0 = c.currentTime+.05;
+    [[659.25,0],[523.25,.45]].forEach(([f,d])=>{ const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t0+d); g.gain.exponentialRampToValueAtTime(0.5, t0+d+.02); g.gain.exponentialRampToValueAtTime(0.0001, t0+d+.9);
+      o.connect(g); g.connect(c.destination); o.start(t0+d); o.stop(t0+d+.95); });
+    setTimeout(ok, 1300); }catch(e){ ok(); } });
+}
+function canliKapat(gonder){
+  if(gonder && cn.oturum) yayinla({tur:'canli', alt:'bitti', oturum:cn.oturum});
+  clearTimeout(cn.cevapBekle); clearTimeout(cn.kopma); clearInterval(cn.zaman);
+  if(cn.pc){ try{ cn.pc.close(); }catch(e){} }
+  if(cn.akis) cn.akis.getTracks().forEach(t=>{ try{ t.stop(); }catch(e){} });
+  if(cn.ses){ try{ cn.ses.pause(); cn.ses.srcObject = null; }catch(e){} }
+  Object.assign(cn, {pc:null, akis:null, oturum:null, rol:null, bas:0, ad:''});
+  canliPanel(null); canliDugme();
+}
+function canliDurum(pc){
+  if(cn.pc!==pc) return; const s = pc.connectionState;
+  if(s==='connected'){ clearTimeout(cn.kopma);
+    if(cn.rol==='gonderen'){ if(!cn.bas){ cn.bas = Date.now(); canliPanel('canli', 'CANLI · Konuşun'); try{ navigator.vibrate && navigator.vibrate(60); }catch(e){} } }
+    else canliPanel('dinle', '🎙️ Canlı anons'+(cn.ad ? ' · '+cn.ad : '')); }
+  else if(s==='failed'){ const gonderen = cn.rol==='gonderen'; canliKapat(true);
+    if(gonderen) bildir('⚠️', 'Canlı bağlantı kurulamadı', 'Ağ doğrudan bağlantıya izin vermiyor olabilir. Telefonu yurdun Wi-Fi\'sine bağlayıp yeniden deneyin.'); }
+  else if(s==='disconnected'){ clearTimeout(cn.kopma); cn.kopma = setTimeout(()=>{ if(cn.pc===pc && pc.connectionState!=='connected') canliKapat(true); }, 6000); }
+}
+async function canliBasla(){
+  if(cn.pc){ canliKapat(true); return; }   // ikinci basış: bitir
+  if(hoparlor){ bildir('ℹ️', 'Bu cihaz hoparlör', 'Canlı anonsu telefondan başlatın; ses bu cihazdan çıkar.'); return; }
+  if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || !window.RTCPeerConnection){ bildir('⚠️', 'Bu tarayıcı canlı anonsu desteklemiyor', 'Chrome ya da Safari\'nin güncel sürümünü kullanın.'); return; }
+  if(!rt.bagli){ rtBaglan(); bildir('⚠️', 'Canlı kanal henüz bağlı değil', 'Birkaç saniye sonra yeniden deneyin.'); return; }
+  cn.rol = 'gonderen'; cn.oturum = CIHAZ+'-'+Date.now().toString(36); canliDugme();
+  canliPanel('baglan', 'Mikrofon açılıyor…');
+  try{ cn.akis = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}}); }
+  catch(e){ canliKapat(false); bildir('🎙️', 'Mikrofon izni verilmedi', 'Tarayıcı ayarlarından bu siteye mikrofon izni verin.'); return; }
+  if(!cn.oturum) { if(cn.akis) cn.akis.getTracks().forEach(t=>t.stop()); return; }   // bu arada vazgeçildi
+  const pc = cn.pc = new RTCPeerConnection({iceServers:CANLI_ICE}); canliDugme();
+  cn.akis.getTracks().forEach(t=>pc.addTrack(t, cn.akis));
+  pc.onconnectionstatechange = ()=>canliDurum(pc);
+  canliPanel('baglan', 'Hoparlöre bağlanıyor…');
+  try{ await pc.setLocalDescription(await pc.createOffer()); await canliIceBekle(pc); }catch(e){ canliKapat(false); bildir('⚠️', 'Canlı anons başlatılamadı', ''); return; }
+  if(cn.pc!==pc) return;
+  let ad = ''; try{ const p = aktifPersonel(); ad = (p && p.ad) || ''; }catch(e){}
+  yayinla({tur:'canli', alt:'teklif', oturum:cn.oturum, sdp:pc.localDescription.sdp, ad});
+  cn.cevapBekle = setTimeout(()=>{ if(cn.pc===pc && !pc.remoteDescription){ canliKapat(true); bildir('⚠️', 'Hoparlör bilgisayarı yanıt vermedi', 'Bilgisayarda site açık ve "Bu cihaz hoparlör" işaretli olmalı.'); } }, 9000);
+}
+async function canliTeklifAl(v){
+  if(!hoparlor || !window.RTCPeerConnection) return;
+  if(cn.pc){ yayinla({tur:'canli', alt:'mesgul', oturum:v.oturum}); return; }
+  cn.rol = 'hoparlor'; cn.oturum = v.oturum; cn.ad = v.ad || '';
+  const pc = cn.pc = new RTCPeerConnection({iceServers:CANLI_ICE});
+  pc.onconnectionstatechange = ()=>canliDurum(pc);
+  pc.ontrack = e=>{
+    const a = cn.ses = cn.ses || new Audio(); a.autoplay = true; a.muted = true;
+    a.srcObject = (e.streams && e.streams[0]) || new MediaStream([e.track]);
+    a.play().catch(()=>{});
+    canliZil().then(()=>{ if(cn.pc!==pc) return; a.muted = false; a.play().catch(()=>bildir('🔈', 'Ses için ekrana bir kez dokunun', 'Tarayıcı sesi engelledi')); });
+  };
+  canliPanel('baglan', '🎙️ Canlı anons geliyor'+(cn.ad ? ' · '+cn.ad : '')+'…');
+  await pc.setRemoteDescription({type:'offer', sdp:v.sdp});
+  await pc.setLocalDescription(await pc.createAnswer()); await canliIceBekle(pc);
+  if(cn.pc!==pc) return;
+  yayinla({tur:'canli', alt:'cevap', oturum:v.oturum, sdp:pc.localDescription.sdp});
+  cn.kopma = setTimeout(()=>{ if(cn.pc===pc && pc.connectionState!=='connected') canliKapat(true); }, 15000);
+}
+function canliAl(v){
+  if(v.alt==='teklif'){ canliTeklifAl(v).catch(()=>canliKapat(true)); return; }
+  if(!v.oturum || v.oturum!==cn.oturum) return;
+  if(v.alt==='cevap' && cn.rol==='gonderen' && cn.pc && !cn.pc.remoteDescription){
+    clearTimeout(cn.cevapBekle); canliPanel('baglan', 'Bağlantı kuruluyor…');
+    cn.pc.setRemoteDescription({type:'answer', sdp:v.sdp}).catch(()=>{ canliKapat(true); bildir('⚠️', 'Canlı bağlantı kurulamadı', ''); });
+  }
+  else if(v.alt==='mesgul' && cn.rol==='gonderen'){ canliKapat(false); bildir('⏳', 'Hoparlör şu an başka bir canlı anonsta', 'Biraz sonra yeniden deneyin.'); }
+  else if(v.alt==='bitti') canliKapat(false);
+}
+window.addEventListener('pagehide', ()=>{ if(cn.pc) canliKapat(true); });
 
 /* ---------- giden: komut ve durum ---------- */
 const bekleyenKomut = {};
@@ -22326,6 +22450,7 @@ function olaylariBagla(){
   $('zl-elle2').onclick = ()=>elleCal(2, 'Nehari');
   $('zl-hop').onchange = function(){ hoparlorYap(this.checked); durumCiz(); };
   $('zl-durdur').onclick = ()=>sesiDurdur(true);
+  $('zl-canli').onclick = ()=>canliBasla();
   sesKilidiCiz();
   document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('#zl-kilit')) sesKilidiAc(); });
   $('zl-calan-dur').onclick = ()=>sesiDurdur(true);
