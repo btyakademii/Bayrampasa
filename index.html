@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-11">
+<meta name="otk-surum" content="2026.10.20-16">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -75,6 +75,7 @@ html,body{height:100%;overflow:hidden;font-family:'Outfit',sans-serif;background
 .gr-hero{text-align:center;margin:10px 0 26px}
 .gr-logo{display:block;width:170px;height:170px;margin:0 auto 12px;object-fit:contain}
 .gr-logo:not([src]){display:none}
+.gr-kisa{white-space:nowrap}
 .oku-kam{position:relative;border-radius:12px;overflow:hidden;background:#000;min-height:220px}
 .oku-kam video{display:block;width:100%;max-height:64vh;object-fit:contain;background:#000}
 .oku-kam .oku-cerceve{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);height:78%;aspect-ratio:210/297;max-width:88%;pointer-events:none}
@@ -995,6 +996,8 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dha-hg.on{border-style:solid;border-color:#c9d7f5;background:#eef3ff;color:var(--blue)}
 .dha-hg.on small{display:block;font-size:10.5px;font-weight:600;color:var(--text2)}
 .dh-gizli{display:none !important}
+.ym-kn-not{font-size:12px;line-height:1.4;color:#5a6a62;background:#f3f7ff;border-radius:8px;padding:6px 9px;margin:-2px 0 6px}
+.ym-kn-not.uyari{background:#fff4e5;color:#8a4b00}
 .dha-sev{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
 .dha-sev button{padding:9px 6px;border:1.5px solid var(--border);border-radius:11px;background:#fff;font:800 14px 'Outfit',sans-serif;color:var(--text);cursor:pointer}
 .dha-sev button small{display:block;font-size:11px;font-weight:600;color:var(--text2)}
@@ -2239,6 +2242,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 /* ══════════ GÖREVLER · YAPILACAKLAR ══════════ */
 .gv-rozet{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font:800 11px 'Outfit',sans-serif;line-height:1;position:relative;top:-8px;margin-left:2px}
 .gv-rozet:empty{display:none}
+#gv-rapor-on img{width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(18,41,94,.15);display:block;margin-top:12px}
 .gv-profil{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:10px;border:1px solid var(--border);background:#fff;font:700 13px 'Outfit',sans-serif;color:var(--text);cursor:pointer}
 .gv-profil b{min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center}
 .gv-profil[hidden]{display:none}
@@ -2329,8 +2333,8 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     </div>
     <div class="gr-zil-kucuk" id="gr-zil-kucuk" hidden></div>
     <div class="gr-hero">
-      <img class="gr-logo" id="gr-logo" alt="Bayrampaşa Öğrenci Yurdu">
-      <h1>Bayrampaşa Öğrenci Yurdu</h1>
+      <img class="gr-logo" id="gr-logo" alt="Bayrampaşa Eğitim Sistemi">
+      <h1>Bayrampaşa Eğitim Sistemi <span class="gr-kisa">(B.E.S)</span></h1>
     </div>
     <div class="gr-kartlar">
       <button class="gr-kart oku tek" data-yetki="optik" onclick="okuAc()">
@@ -2488,6 +2492,11 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <div class="gv-ilerleme" aria-hidden="true"><i id="gv-cubuk" style="width:0"></i></div>
       <div class="gv-liste" id="gv-liste"></div>
     </section>
+    <section class="zl-kart" id="gv-rapor">
+      <div class="zl-bas"><h2>📤 Haftalık rapor görseli</h2><small id="gv-rapor-not">Yapılanlar · yapılmayanlar</small></div>
+      <div class="ym-arac" style="margin:4px 0 0"><button type="button" class="bpri" id="gv-rapor-btn">🖼️ Görsel oluştur · grupta paylaş</button></div>
+      <div id="gv-rapor-on"></div>
+    </section>
     <div class="gv-izin" id="gv-izin" hidden>🔒 Görev eklemek ve silmek yöneticiye açıktır. Size (ya da herkese) verilen görevlere dokunarak tamamlandı olarak işaretleyebilirsiniz.</div>
     <section class="zl-kart" id="gv-ekle-kart">
       <div class="zl-bas"><h2>Görev ekle</h2><small id="gv-ekle-not"></small></div>
@@ -2513,7 +2522,9 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     <div class="gv-sekme" role="tablist">
       <button type="button" data-yg="ben" id="yp-s-ben">👤 Benim <b id="yp-s-ben-say">0</b></button>
       <button type="button" data-yg="tum" id="yp-s-tum">👥 Herkesin <b id="yp-s-tum-say">0</b></button>
+      <button type="button" data-yg="teknik" id="yp-s-teknik">🔧 Teknik <b id="yp-s-teknik-say">0</b></button>
     </div>
+    <div class="gv-izin" id="yp-teknik-not" hidden>🔧 Kurstaki eksikler. Kimseye yönlendirilmez; eksiği gideren personel tik atar, üzeri çizilir ve kimin yaptığı yazılır.</div>
     <div class="gv-izin" id="yp-izin" hidden>🔒 Yapılacak iş eklemek ve silmek yöneticiye açıktır. Size (ya da herkese) verilen işlere tik atarak tamamlayabilirsiniz.</div>
     <section class="zl-kart" id="yp-ekle-kart">
       <div class="gv-ekle">
@@ -2526,6 +2537,37 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     <section class="zl-kart">
       <div id="yp-liste"></div>
       <details class="gv-tamam" id="yp-tamam-kutu"><summary id="yp-tamam-bas">Tamamlananlar</summary><div class="gv-liste" id="yp-tamam"></div></details>
+    </section>
+  </div></div>
+</div>
+
+<!-- ══════════ VELİ BİLGİLENDİRME TAKİBİ (yalnız yönetici) ══════════ -->
+<div class="page" id="pageVeliTakip">
+  <div class="ph">
+    <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
+    <button class="ph-back" title="Geri" aria-label="Geri" onclick="anaSayfayaGit()">‹</button>
+    <div><div class="ph-title">📋 Veli Bilgilendirme Takibi</div><div class="ph-sub" id="vt-sub">—</div></div>
+  </div>
+  <div class="pb"><div class="zl">
+    <div class="gv-hafta">
+      <button type="button" id="vt-onceki" aria-label="Önceki hafta">‹ Önceki</button>
+      <b id="vt-hafta-ad">Bu hafta</b>
+      <button type="button" id="vt-bugune">Bu hafta</button>
+      <button type="button" id="vt-sonraki" aria-label="Sonraki hafta">Sonraki ›</button>
+    </div>
+    <section class="zl-kart">
+      <div class="zl-bas"><h2>Bu hafta yapılacaklar</h2><small id="vt-ozet"></small></div>
+      <div class="gv-ilerleme" aria-hidden="true"><i id="vt-cubuk" style="width:0"></i></div>
+      <div class="gv-liste" id="vt-liste"></div>
+      <div class="gv-tamam" id="vt-tamam-kutu"><div class="zl-bas" style="margin-bottom:0"><h2 style="font-size:14px;color:var(--text2)" id="vt-tamam-bas">Yapılanlar</h2></div><div class="gv-liste" id="vt-tamam"></div></div>
+    </section>
+    <section class="zl-kart">
+      <div class="zl-bas"><h2>Maddeyi ekle</h2><small>Her hafta tekrar gelir</small></div>
+      <div class="gv-ekle" style="grid-template-columns:1fr auto">
+        <input type="text" id="vt-yeni" maxlength="140" placeholder="Ör. 5. sınıf velilerine deneme sonucu" aria-label="Veli bilgilendirme maddesi">
+        <button type="button" class="bpri" id="vt-ekle-btn">+ Ekle</button>
+      </div>
+      <div class="zl-not">Yaptığınız maddeye tik atın: üzeri çizilir ve aşağıya "Yapılanlar"a iner. Yeni haftada bütün maddeler yeniden yapılacaklar listesine gelir. ✕ ile maddeyi listeden tamamen çıkarırsınız. Bu bölümü yalnız yönetici görür.</div>
     </section>
   </div></div>
 </div>
@@ -2641,7 +2683,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
     <button class="ph-back" title="Geri" aria-label="Geri" onclick="anaSayfayaGit()">‹</button>
-    <div><div class="ph-title">📢 Duyurular</div><div class="ph-sub" id="dyr-sub">Toplu sohbet</div></div>
+    <div><div class="ph-title">📢 Duyurular</div><div class="ph-sub" id="dyr-sub">Duyurular</div></div>
   </div>
   <div class="syh-kap" id="dyr-govde"></div>
   <div class="dyr-modal" id="dyr-modal" hidden onclick="if(event.target===this)this.hidden=true"></div>
@@ -2696,6 +2738,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     <!-- Kim girdi + çıkış -->
     <div class="menu-profil yon-acik">
       <div class="yetki-kisi" id="menu-kisi"></div>
+      <button type="button" class="gv-profil" id="gv-profil-gorev" hidden onclick="gorevAc()" aria-label="Bugünkü görevlerim">📌 <b>0</b></button>
       <button type="button" class="gv-profil" id="gv-profil" hidden onclick="yapAc('ben')" aria-label="Yapılacaklarım">✅ <b>0</b></button>
       <button class="menu-oge yon-btn" id="menu-yon-btn" onclick="yonMenu()">👤 Personel girişi</button>
     </div>
@@ -2809,9 +2852,10 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     </details>
 
     <div class="menu-bas">İŞ GÜÇ</div>
-    <button class="menu-oge menu-tek" data-m="duyuru" onclick="dyrAc()">📢 Duyurular<span class="gv-rozet" id="dyr-rozet-menu" aria-label="yeni duyuru ve mesaj"></span></button>
-    <button class="menu-oge menu-tek" data-m="gorev" onclick="gorevAc()">📌 Görevler</button>
+    <button class="menu-oge menu-tek" data-m="duyuru" onclick="dyrAc()">📢 Duyurular<span class="gv-rozet" id="dyr-rozet-menu" aria-label="okunmamış duyuru"></span></button>
+    <button class="menu-oge menu-tek" data-m="gorev" onclick="gorevAc()">📌 Görevler<span class="gv-rozet" id="gv-gorev-rozet-menu" aria-label="bugün bekleyen görev sayısı"></span></button>
     <button class="menu-oge menu-tek" data-m="yapilacak" onclick="yapAc()">✅ Yapılacaklar<span class="gv-rozet" id="gv-rozet-menu" aria-label="bekleyen iş sayısı"></span></button>
+    <button class="menu-oge menu-tek" data-m="velitakip" data-yetki="admin" onclick="veliTakipAc()">📋 Veli Bilgilendirme Takibi<span class="gv-rozet" id="vt-rozet-menu" aria-label="bu hafta kalan"></span></button>
     <button class="menu-oge menu-tek" data-m="yemekci" onclick="yemekciAc()">📋 Günün Görevlileri</button>
     <details class="menu-grup menu-ana" id="menu-ne" data-yetki="nehari">
       <summary>🌤️ Nehari</summary>
@@ -2917,7 +2961,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.17-3</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-16</div>
   </div>
 </aside>
 
@@ -17730,7 +17774,11 @@ function dahiliCiz(){
 })();
 </script>
 <script>
-/* ══════════════ 📢 DUYURULAR · TOPLU SOHBET ══════════════
+/* ══════════════ 📢 DUYURULAR ══════════════
+   GÜNCEL: Toplu sohbet (WhatsApp benzeri yazışma) kaldırıldı. Yalnız yönetici (ve "📢 Duyuru yazma" yetkisi olan) duyuru yazar;
+   diğer personel okur, yazamaz, yanıtlayamaz. Her duyurunun altında yazana "👁 okudu" sayısı görünür, dokununca
+   kimin okuduğu (saatiyle) ve kimin henüz okumadığı listelenir. Eski sohbet mesajları bulutta kalır ama gösterilmez.
+   (Aşağıdaki eski açıklama tarihçe içindir.)
    Tek ortak sohbet: giriş yapan herkes yazar, özel (kişiden kişiye) sohbet yoktur. Fotoğraf ve dosya gönderilmez.
    Yönetici (ve "📢 Duyuru yazma" yetkisi olan) yazdığında mesaj DUYURU olur: sohbette sarı duyuru baloncuğu,
    ana sayfalarda en üstte yanıp sönen şerit (2 gün kalır, kalan süre görünür). "📢 Duyuru" düğmesi kapatılırsa normal mesaj gider.
@@ -17877,11 +17925,10 @@ function iskelet(){
   const g = $('dyr-govde'); if(!g) return;
   const b = kisi();
   g.innerHTML = '<div class="syh-sabit" id="syh-sabit" hidden></div><div class="syh-akis" id="syh-akis"></div>'
-    + (b ? '<div class="syh-yanit" id="syh-yanit" hidden></div><div class="syh-yazar">'
-        + (yazar() ? '<button type="button" class="syh-mod" id="syh-mod" aria-pressed="'+D.duyuruMod+'" onclick="dyrModDegis()" title="Açıkken yazdığınız duyuru olur ve ana sayfalarda görünür">'+(D.duyuruMod ? '📢 Duyuru' : '💬 Mesaj')+'</button>' : '')
-        + '<textarea id="syh-yaz" rows="1" maxlength="1500" enterkeyhint="send" placeholder="'+(yazar() && D.duyuruMod ? 'Duyuru yazın' : 'Mesaj yazın')+'"></textarea>'
-        + '<button type="button" class="syh-gonder" id="syh-gonder" onclick="dyrGonder()" aria-label="Gönder">➤</button></div>'
-      : '<div class="syh-salt">Yazmak için kendi şifrenizle giriş yapın. Ortak öğretmen girişiyle yalnız okunur.</div>');
+    + (yazar() ? '<div class="syh-yazar">'
+        + '<textarea id="syh-yaz" rows="1" maxlength="1500" enterkeyhint="send" placeholder="📢 Duyuru yazın"></textarea>'
+        + '<button type="button" class="syh-gonder" id="syh-gonder" onclick="dyrGonder()" aria-label="Duyuruyu gönder">➤</button></div>'
+      : '<div class="syh-salt">📢 Duyuruları yalnız yönetici yazar.</div>');
   const y = $('syh-yaz');
   if(y){
     y.addEventListener('input', yazBoy);
@@ -17923,20 +17970,20 @@ function balonHtml(m, onceki){
 function akisCiz(){
   const K = $('syh-akis'); if(!K) return;
   const alta = K.scrollHeight - K.scrollTop - K.clientHeight < 90 || !K.dataset.cizildi;
-  const l = [...D.msj.values(), ...D.duyuru].sort((a,b)=>a.t-b.t).slice(-400);
+  const l = [...D.duyuru].sort((a,b)=>a.t-b.t).slice(-400);   // yalnız duyurular (sohbet kaldırıldı)
   const imza = l.map(m=>m.id+(m.bek ? '~' : '')).join(',')+'|'+(D.sabit ? D.sabit.id : '')+'|'+JSON.stringify(D.fis).length+'|'+Object.keys(okHarita()).join()+'|'+D.ilk+'|'+yazar();
   if(K.dataset.imza===imza && K.dataset.cizildi) return;
   K.dataset.imza = imza;
   K.innerHTML = l.length ? l.map((m,i)=>balonHtml(m, l[i-1])).join('')
-    : '<div class="syh-bos">'+(D.ilk || !hazir() ? '<div class="syh-bos-ik">💬</div><b>Henüz mesaj yok</b>Toplu sohbette herkes yazar; yöneticinin yazdıkları duyuru olarak ana sayfalarda da görünür.' : 'Yükleniyor…')+'</div>';
+    : '<div class="syh-bos">'+(D.ilk || !hazir() ? '<div class="syh-bos-ik">📢</div><b>Henüz duyuru yok</b>Yöneticinin yazdığı duyurular burada ve ana sayfalarda görünür.' : 'Yükleniyor…')+'</div>';
   K.dataset.cizildi = '1';
   if(alta) K.scrollTop = K.scrollHeight;
   const S = $('syh-sabit'), m = D.sabit ? bul(D.sabit.id) : null;
   if(S){ if(m){ S.hidden = false; S.innerHTML = '<span class="syh-pin">📌</span><div class="syh-sb"><b>Sabitlenen mesaj · '+E(m.ad||'—')+'</b><span>'+E(m.x.slice(0,160))+'</span></div>'+(yonetici() ? '<button type="button" class="syh-skal" data-sabitkaldir="1" aria-label="Sabitlemeyi kaldır">✕</button>' : ''); } else { S.hidden = true; S.innerHTML = ''; } }
-  const s = $('dyr-sub'); if(s){ const a = aktifler().length; s.textContent = 'Toplu sohbet'+(a ? ' · '+a+' duyuru yayında' : ''); }
+  const s = $('dyr-sub'); if(s){ const a = aktifler().length; s.textContent = (a ? a+' duyuru yayında' : 'Yayında duyuru yok'); }
 }
 function ciz(){
-  const n = girisli() ? yeniDuyurular().length + yeniMesaj() : 0;
+  const n = girisli() ? yeniDuyurular().length : 0;   // sohbet kaldırıldı: yalnız okunmamış duyurular
   const r = $('dyr-rozet-menu'); if(r) r.textContent = n ? (n>99 ? '99+' : n) : '';
   const k = $('gr-duyuru-kap'); if(k) k.innerHTML = bannerHtml();
   neGuncelle();
@@ -17953,7 +18000,7 @@ function okumaZamanla(){
 }
 
 /* ── yanıt, git, eylemler ── */
-function yanitla(id){ D.yanit = id; yanitCiz(); const y = $('syh-yaz'); if(y) y.focus(); }
+function yanitla(id){ return; }   // yanıtlama kaldırıldı (duyurular tek yönlü)
 function yanitIptal(){ D.yanit = null; yanitCiz(); }
 function yanitCiz(){
   const y = $('syh-yanit'); if(!y) return; const m = D.yanit ? bul(D.yanit) : null;
@@ -17971,11 +18018,10 @@ const modalKapat = () => { const k = $('dyr-modal'); if(k){ k.hidden = true; k.i
 function eylem(id){
   const m = bul(id); if(!m) return;
   const b = kisi(), benim = !!(b && m.g===b.id), dy = duyuruMu(m), l = [];
-  if(b) l.push(['yanit','↩️ Yanıtla']);
   l.push(['kopya','📋 Kopyala']);
   if(yonetici()) l.push(D.sabit && D.sabit.id===id ? ['sabitsiz','📌 Sabitlemeyi kaldır'] : ['sabit','📌 Sabitle']);
   if(dy && yazar()) l.push(['oku','👁 Kimler okudu']);
-  if(benim || yonetici()) l.push(['sil','🗑️ '+(dy ? 'Duyuruyu sil' : 'Sil')]);
+  if(yazar() && (benim || yonetici())) l.push(['sil','🗑️ Duyuruyu sil']);
   const k = modal('<div class="syh-eylem"><div class="syh-e-on">'+E(m.x.slice(0,90))+'</div>'+l.map(([a,t])=>'<button type="button" data-e="'+a+'"'+(a==='sil' ? ' class="kirmizi"' : '')+'>'+t+'</button>').join('')+'<button type="button" data-e="iptal" class="iptal">Vazgeç</button></div>');
   k.querySelector('.syh-eylem').onclick = e=>{
     const x = e.target.closest('[data-e]'); if(!x) return; const a = x.dataset.e; modalKapat();
@@ -18067,7 +18113,8 @@ window.dyrGonder = async function(){
   if(!x || D.gonderiyor) return;
   if(!b){ showN('🔒','Yazmak için kendi şifrenizle girin',''); return; }
   if(!hazir()){ showN('☁','Bulut bağlantısı yok','Mesaj için internet gerekir'); return; }
-  const dy = yazar() && D.duyuruMod;
+  if(!yazar()){ showN('🔒','Duyuruyu yalnız yönetici yazar',''); return; }
+  const dy = true;   // her gönderi duyurudur
   const m = {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), g:b.id, ad:b.ad||'Yönetim', t:Date.now(), x};
   const r = D.yanit ? bul(D.yanit) : null; if(r) m.r = {id:r.id, g:r.g, ad:r.ad};
   D.gonderiyor = true; const btn = $('syh-gonder'); if(btn) btn.disabled = true;
@@ -22957,16 +23004,19 @@ function kisiler(){
   const b = ben(); if(b && !l.some(x=>x.id===b.id)) l.unshift(b);
   return l.sort((a,c)=>a.ad.localeCompare(c.ad,'tr'));
 }
-const kisiAd = id => { const k = kisiler().find(x=>x.id===id); return k ? k.ad : (id ? 'Ayrılan personel' : ''); };
+const kisiAd = id => { if(id==='admin') return 'Yönetici'; if(id==='ogretmen') return 'Öğretmen'; const k = kisiler().find(x=>x.id===id); return k ? k.ad : (id ? 'Ayrılan personel' : ''); };
 function kaydet(it){ it.z = Date.now(); V[it.id] = it; B.s = B.s.filter(x=>x!==it.id); if(!B.y.includes(it.id)) B.y.push(it.id); yerelYaz(); degisti(); gonder(); }
 function sil(id){ delete V[id]; B.y = B.y.filter(x=>x!==id); if(!B.s.includes(id)) B.s.push(id); yerelYaz(); degisti(); gonder(); }
 const gorevler = () => Object.values(V).filter(x=>x && x.tur==='gorev');
 /* Yetki: görev / yapılacak eklemek ve silmek yalnız yöneticiye açık. Diğer personel bölümü görür,
    yalnız kendisine (ya da herkese) verilen işleri işaretleyebilir. */
 function yonetici(){ try{ const p = aktifPersonel(); return !!(p && p.admin); }catch(e){ return false; } }
-function benimIs(x){ const b = ben(); if(!b) return false; const k = x.tur==='gorev' ? x.sorumlu : x.kime; return k==='*' || k===b.id; }
+function benimIs(x){ const b = ben(); if(!b) return false; if(x.tur==='teknik') return true;   // teknik eksiği her personel kapatabilir
+  const k = x.tur==='gorev' ? x.sorumlu : x.kime; return k==='*' || k===b.id; }
 const isaretleyebilir = x => yonetici() || benimIs(x);
 const yapilacaklar = () => Object.values(V).filter(x=>x && x.tur==='yap');
+const teknikler = () => Object.values(V).filter(x=>x && x.tur==='teknik');
+const veliMaddeler = () => Object.values(V).filter(x=>x && x.tur==='veli').sort((a,b)=>(a.z0||0)-(b.z0||0));
 
 /* ---------- bulut ---------- */
 function bulutHazir(){ try{ return sbAktif() && sbGirisli() && !SIFIR_BEKLE; }catch(e){ return false; } }
@@ -23017,15 +23067,27 @@ function benimAcik(){
   const b = ben(); if(!b) return [];
   return yapilacaklar().filter(x=>!x.bitti && (x.kime===b.id || x.kime==='*'));
 }
-function rozet(){
-  const n = benimAcik().length;
-  const m = $('gv-rozet-menu'); if(m) m.textContent = n ? String(n) : '';
-  const p = $('gv-profil'); if(p){ p.hidden = !n || !ben(); const b = p.querySelector('b'); if(b) b.textContent = n; p.title = n+' yapılacak işiniz var'; }
+/* Görevler rozeti: bugün size (ya da herkese) verilen, henüz yapılmamış görev sayısı */
+function benimGorevim(){
+  const b = ben(); if(!b) return [];
+  const t = isoT(new Date());
+  return gununGorevleri(t).filter(x=>(x.sorumlu===b.id || x.sorumlu==='*') && !yapildi(x, t));
 }
+function rozet(){
+  const n = benimAcik().length, g = benimGorevim().length, s = v => v>99 ? '99+' : String(v);
+  const m = $('gv-rozet-menu'); if(m) m.textContent = n ? s(n) : '';
+  const p = $('gv-profil'); if(p){ p.hidden = !n || !ben(); const b = p.querySelector('b'); if(b) b.textContent = n; p.title = n+' yapılacak işiniz var'; }
+  const mg = $('gv-gorev-rozet-menu'); if(mg) mg.textContent = g ? s(g) : '';
+  const vk = yonetici() ? veliMaddeler().filter(x=>!(x.bitti||{})[vtHaftaKey(0)]).length : 0;
+  const mv = $('vt-rozet-menu'); if(mv) mv.textContent = vk ? s(vk) : '';
+  const pg = $('gv-profil-gorev'); if(pg){ pg.hidden = !g || !ben(); const b = pg.querySelector('b'); if(b) b.textContent = g; pg.title = 'Bugün '+g+' göreviniz var'; }
+}
+setInterval(()=>{ try{ rozet(); }catch(e){} }, 60000);   // gün değişince bugünün görevleri
 function degisti(){
   rozet();
   if(sayfa('pageGorev')) gorevCiz();
   if(sayfa('pageYapilacak')) yapCiz();
+  if(sayfa('pageVeliTakip')) veliCiz();
 }
 const sayfa = id => { const p = $(id); return !!(p && p.classList.contains('active')); };
 
@@ -23072,8 +23134,95 @@ function gorevCiz(){
   $('gv-ekle-not').textContent = GUNLER[secGun]+' gününe eklenir';
   const kap = $('gv-gunler'), on = kap.querySelector('.on');
   if(on && kap.scrollWidth>kap.clientWidth) kap.scrollLeft = on.offsetLeft-(kap.clientWidth-on.offsetWidth)/2;
+  raporGoster();
+}
+/* ---------- haftalık rapor görseli (hafta sonu gruba): yapılanlar üstte (üzeri çizili + yapan), yapılmayanlar altta (+ sorumlu) ---------- */
+let RP = null;   // {hafta, blob, url, ad}
+function haftaRapor(){
+  const bugun = isoT(new Date()), yap = [], yok = [];
+  for(let i=0;i<7;i++){ const t = gunTarih(i);
+    gununGorevleri(t).forEach(x=>{
+      if(yapildi(x, t)) yap.push({x, t, i, kim:x.bitti[t].ad || ''});
+      else if(t<=bugun) yok.push({x, t, i, kim:x.sorumlu ? (x.sorumlu==='*' ? 'Herkes' : kisiAd(x.sorumlu)) : ''});   // gelecek günler sayılmaz
+    }); }
+  return {yap, yok};
+}
+function raporCiz(){
+  const R = haftaRapor(), W = 1200, TX = 50, TW = W-100, SH = 64;
+  const NAVY = '#12295e', YESIL = '#1f8a4c', KIRMIZI = '#c0283f', GRI = '#8a94a8';
+  const kartH = n => 58 + 18 + Math.max(1, n)*SH + 14;
+  const H = 300 + 96 + kartH(R.yap.length) + 26 + kartH(R.yok.length) + 40 + 120;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const {rr, yaz, sigdir} = dnmAraclar(c), G = window.kbGorselAraclar || {};
+  if(G.gZeminBoya) G.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
+  const a = tarihD(gunTarih(0)), b = tarihD(gunTarih(6)), ay = d => d.toLocaleDateString('tr-TR', {month:'long'});
+  const aralik = (a.getMonth()===b.getMonth() ? a.getDate()+' – '+b.getDate()+' '+ay(b) : a.getDate()+' '+ay(a)+' – '+b.getDate()+' '+ay(b))+' '+b.getFullYear();
+  if(G.gBaslik) G.gBaslik(c, W, 'HAFTALIK GÖREV RAPORU', aralik.toLocaleUpperCase('tr-TR'));
+  // özet ve ilerleme çubuğu
+  const top = R.yap.length + R.yok.length, oran = top ? R.yap.length/top : 0;
+  yaz(top ? R.yap.length+' / '+top+' görev yapıldı' : 'Bu hafta görev yok', W/2, 262, dnmF(800,32), NAVY);
+  rr(TX+120, 286, TW-240, 18, 9); c.fillStyle = 'rgba(18,41,94,.10)'; c.fill();
+  if(oran){ rr(TX+120, 286, Math.max(18, (TW-240)*oran), 18, 9); c.fillStyle = YESIL; c.fill(); }
+  let y = 340;
+  const kart = (baslik, renk, L, yapilan) => {
+    const h = kartH(L.length);
+    c.save(); c.shadowColor = 'rgba(18,41,94,.12)'; c.shadowBlur = 16; c.shadowOffsetY = 5; rr(TX, y, TW, h, 20); c.fillStyle = '#fff'; c.fill(); c.restore();
+    c.save(); rr(TX, y, TW, h, 20); c.clip(); c.fillStyle = renk; c.fillRect(TX, y, TW, 58); c.restore();
+    yaz(baslik+' ('+L.length+')', TX+30, y+39, dnmF(800,26), '#fff', 'left');
+    if(!L.length) yaz(yapilan ? 'Yapılan görev yok' : 'Yapılmayan görev yok 👏', TX+30, y+58+18+40, dnmF(700,28), GRI, 'left');
+    L.forEach((r, i)=>{
+      const yy = y+58+18+i*SH, orta = yy+SH/2;
+      if(i) { c.fillStyle = 'rgba(18,41,94,.07)'; c.fillRect(TX+24, yy, TW-48, 1.5); }
+      // gün çipi
+      rr(TX+24, orta-18, 74, 36, 10); c.fillStyle = yapilan ? '#e7f5ec' : '#fdecef'; c.fill();
+      yaz(KISA[r.i].toLocaleUpperCase('tr-TR'), TX+61, orta+8, dnmF(800,19), renk);
+      // sağda kişi
+      const kim = r.kim ? (yapilan ? '✓ ' : '👤 ')+r.kim : '';
+      let kw = 0; if(kim){ const kb = sigdir(kim, 330, 24, 15, 700); c.font = dnmF(700,kb); kw = c.measureText(kim).width; yaz(kim, TX+TW-28, orta+8, dnmF(700,kb), yapilan ? YESIL : KIRMIZI, 'right'); }
+      // görev adı (yapıldıysa üzeri çizili)
+      const mx = TW-24-74-24-28-kw-24; let ad = r.x.ad, ab = sigdir(ad, mx, 30, 18, yapilan ? 600 : 800);
+      c.font = dnmF(yapilan ? 600 : 800, ab); while(ad.length>4 && c.measureText(ad).width>mx){ ad = ad.slice(0,-2)+'…'; }
+      const ax = TX+24+74+20; yaz(ad, ax, orta+ab*0.35, dnmF(yapilan ? 600 : 800, ab), yapilan ? '#6b7486' : NAVY, 'left');
+      if(yapilan){ const w = c.measureText(ad).width; c.strokeStyle = YESIL; c.lineWidth = 3; c.beginPath(); c.moveTo(ax-2, orta+1); c.lineTo(ax+w+2, orta+1); c.stroke(); }
+    });
+    y += h + 26;
+  };
+  kart('✅ YAPILANLAR', YESIL, R.yap, true);
+  kart('⏳ YAPILMAYANLAR', KIRMIZI, R.yok, false);
+  dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · Haftalık görev raporu · '+aralik);
+  return cv;
+}
+let rpMesgul = false;
+async function raporOlustur(){
+  if(rpMesgul) return; rpMesgul = true;
+  try{
+    try{ if(typeof dnmFontBekle==='function') await dnmFontBekle(); }catch(e){}
+    const cv = raporCiz(), blob = await new Promise(r=>cv.toBlob(r, 'image/png'));
+    if(RP && RP.url) try{ URL.revokeObjectURL(RP.url); }catch(e){}
+    RP = {hafta, blob, url:URL.createObjectURL(blob), ad:'Haftalik-gorev-raporu-'+gunTarih(0)+'.png'};
+    raporGoster();
+    setTimeout(()=>{ const e = $('gv-rapor-on'); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+  }catch(e){ console.error(e); try{ showN('❌','Görsel hazırlanamadı','Tekrar deneyin'); }catch(_){} }
+  rpMesgul = false;
+}
+function raporGoster(){
+  const k = $('gv-rapor-on'); if(!k) return;
+  k.innerHTML = RP && RP.hafta===hafta ? `<img src="${RP.url}" alt="Haftalık görev raporu görseli">
+    <div class="ym-arac" style="margin:10px 0 0"><button type="button" class="bpri" style="background:linear-gradient(135deg,#128c4a,#25d366)" id="gv-rapor-paylas">💬 WhatsApp grubunda paylaş</button><button type="button" class="bsec" id="gv-rapor-indir">⬇️ İndir</button></div>
+    <div class="zl-not">Paylaş menüsünde WhatsApp'ı ve grubu seçin. Menü açılmazsa görsel indirilir; gruba ekleyin.</div>` : '';
+  const ac = $('gv-rapor-not'); if(ac){ const R = haftaRapor(); ac.textContent = R.yap.length+' yapıldı · '+R.yok.length+' yapılmadı'; }
+}
+function raporIndir(){ if(!RP) return; const a = document.createElement('a'); a.href = RP.url; a.download = RP.ad; document.body.appendChild(a); a.click(); a.remove(); }
+async function raporPaylas(){
+  if(!RP) return;
+  try{ const f = new File([RP.blob], RP.ad, {type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], text:'📌 Haftalık görev raporu'}); return; } }
+  catch(e){ if(e && e.name==='AbortError') return; }
+  raporIndir(); try{ showN('⬇️','Görsel indirildi','WhatsApp grubuna ekleyin'); }catch(e){}
 }
 function gorevBagla(){
+  $('gv-rapor-btn').onclick = raporOlustur;
+  $('gv-rapor-on').addEventListener('click', e=>{ if(e.target.closest('#gv-rapor-paylas')) raporPaylas(); else if(e.target.closest('#gv-rapor-indir')) raporIndir(); });
   $('gv-gunler').addEventListener('click', e=>{ const b = e.target.closest('[data-g]'); if(!b) return; secGun = +b.dataset.g; gorevCiz(); });
   $('gv-onceki').onclick = ()=>{ hafta--; gorevCiz(); };
   $('gv-sonraki').onclick = ()=>{ hafta++; gorevCiz(); };
@@ -23125,10 +23274,37 @@ function yapSatir(x, tamam){
     ${tamam && izin ? '<button type="button" class="gv-geri" data-tik>Geri al</button>' : ''}
     ${silebilir ? `<button type="button" class="gv-sil" data-sil title="Sil" aria-label="${esc(x.ad)} sil">✕</button>` : ''}</div>`;
 }
+function teknikSatir(x, tamam){
+  const b = ben(), izin = !!b, geri = tamam && b && (yonetici() || x.biten===b.id);
+  const meta = [`<span class="gv-cip">🔧 Teknik</span>`, `<span>${x.olusturan ? esc(kisiAd(x.olusturan))+' yazdı · ' : ''}${once(x.z0||x.z)}</span>`,
+    tamam ? `<span>✓ <b>${esc(x.bitenAd||'')}</b> giderdi · ${once(x.bitti)}</span>` : ''].filter(Boolean).join('');
+  return `<div class="gv-is${tamam?' bitti':''}${izin?'':' kilitli'}" data-id="${esc(x.id)}">
+    <button type="button" class="gv-tik" ${izin && (!tamam || geri) ? 'data-tik' : 'disabled title="Personel girişi gerekir"'} aria-pressed="${!!tamam}" aria-label="${esc(x.ad)} ${tamam?'geri al':'giderildi'}">✓</button>
+    <div class="gv-govde"><span class="m">${esc(x.ad)}</span><span class="k">${meta}</span></div>
+    ${geri ? '<button type="button" class="gv-geri" data-tik>Geri al</button>' : ''}
+    ${yonetici() ? `<button type="button" class="gv-sil" data-sil title="Sil" aria-label="${esc(x.ad)} sil">✕</button>` : ''}</div>`;
+}
 const siraYap = (a,b)=> (a.son||'9999') < (b.son||'9999') ? -1 : (a.son||'9999') > (b.son||'9999') ? 1 : (a.z0||0)-(b.z0||0);
 function yapCiz(){
   const b = ben(), tum = yapilacaklar(), acik = tum.filter(x=>!x.bitti), mine = benimAcik();
   $('yp-s-ben-say').textContent = mine.length; $('yp-s-tum-say').textContent = acik.length;
+  const TK = teknikler(), tkAcik = TK.filter(x=>!x.bitti);
+  $('yp-s-teknik-say').textContent = tkAcik.length;
+  const tek = gorunum==='teknik';
+  $('yp-teknik-not').hidden = !tek; $('yp-kime').hidden = tek; $('yp-son').hidden = tek;
+  $('yp-yeni').placeholder = tek ? 'Kurstaki eksik (ör. 2. kat lavabo musluğu akıtıyor)' : 'Ne yapılacak?';
+  $('yp-ekle-kart').querySelector('.gv-ekle').style.gridTemplateColumns = tek ? '1fr auto' : '';
+  if(tek){
+    document.querySelectorAll('[data-yg]').forEach(x=>{ const on = x.dataset.yg===gorunum; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
+    $('yp-sub').textContent = 'Teknik · '+(tkAcik.length ? tkAcik.length+' eksik bekliyor' : 'bekleyen eksik yok');
+    const bitmis = TK.filter(x=>x.bitti).sort((a,c)=>c.bitti-a.bitti).slice(0,40);
+    $('yp-liste').innerHTML = (tkAcik.length ? '<div class="gv-liste">'+tkAcik.sort((a,c)=>(a.z0||0)-(c.z0||0)).map(x=>teknikSatir(x,false)).join('')+'</div>'
+        : '<div class="gv-bos"><b>🎉 Bekleyen eksik yok</b>'+(yonetici() ? 'Yukarıdan kurstaki eksikleri yazabilirsiniz.' : '')+'</div>')
+      + (bitmis.length ? '<div class="gv-tamam"><div class="gv-durum" style="font-weight:800;font-size:13px;margin-bottom:8px">✓ Giderilenler ('+bitmis.length+')</div><div class="gv-liste">'+bitmis.map(x=>teknikSatir(x,true)).join('')+'</div></div>' : '');
+    $('yp-ekle-kart').hidden = !yonetici(); $('yp-izin').hidden = true;
+    $('yp-tamam-kutu').hidden = true;
+    return;
+  }
   document.querySelectorAll('[data-yg]').forEach(x=>{ const on = x.dataset.yg===gorunum; x.classList.toggle('on', on); x.setAttribute('aria-selected', on); });
   $('yp-sub').textContent = b ? b.ad+' · '+(mine.length ? mine.length+' iş bekliyor' : 'bekleyen iş yok') : 'Personel girişi yapılmadı';
   let h = '';
@@ -23164,7 +23340,9 @@ function yapBagla(){
     if(e.target.closest('[data-sil]')){ if(yonetici() && confirm('"'+x.ad+'" silinsin mi?')) sil(x.id); return; }
     if(!e.target.closest('[data-tik]') && !e.target.closest('.gv-govde')) return;
     if(!isaretleyebilir(x)){ try{ showN('🔒', 'Bu iş size verilmedi', 'Yalnız işin sahibi işaretleyebilir'); }catch(err){} return; }
-    if(x.bitti){ if(!e.target.closest('[data-tik]')) return; delete x.bitti; delete x.biten; delete x.bitenAd; kaydet(x); return; }
+    if(x.bitti){ if(!e.target.closest('[data-tik]')) return;
+      if(x.tur==='teknik'){ const b0 = ben(); if(!yonetici() && !(b0 && x.biten===b0.id)) return; }
+      delete x.bitti; delete x.biten; delete x.bitenAd; kaydet(x); return; }
     // tik: üzeri çizilir, kısa süre sonra listeden düşer
     r.classList.add('gidiyor');
     const b = ben();
@@ -23176,16 +23354,72 @@ function yapBagla(){
     if(!yonetici()) return;
     const ad = $('yp-yeni').value.trim(); if(!ad){ $('yp-yeni').focus(); return; }
     const b = ben();
-    kaydet({tur:'yap', id:yeniId(), ad, kime:$('yp-kime').value || (b?b.id:'*'), son:$('yp-son').value||'', olusturan:b?b.id:'', z0:Date.now()});
+    if(gorunum==='teknik') kaydet({tur:'teknik', id:yeniId(), ad, olusturan:b?b.id:'', z0:Date.now()});
+    else kaydet({tur:'yap', id:yeniId(), ad, kime:$('yp-kime').value || (b?b.id:'*'), son:$('yp-son').value||'', olusturan:b?b.id:'', z0:Date.now()});
     $('yp-yeni').value = ''; $('yp-son').value = ''; $('yp-yeni').focus();
   };
   $('yp-ekle-btn').onclick = ekle;
   $('yp-yeni').addEventListener('keydown', e=>{ if(e.key==='Enter') ekle(); });
 }
 
+/* ══════════ VELİ BİLGİLENDİRME TAKİBİ (yalnız yönetici) ══════════
+   Kayıt: {tur:'veli', id, ad, z0, bitti:{"<haftanın pazartesisi>": {kim, ad, s, z}}} · her hafta yeniden yapılacak olur. */
+let vtHafta = 0;
+function vtHaftaKey(n){ const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()-gunNo(d)+n*7); return isoT(d); }
+function veliSatir(x, tamam, h){
+  const z = (x.bitti||{})[h];
+  const meta = tamam && z ? `<span>✓ ${esc(z.ad||'')}${z.g ? ' · '+esc(z.g) : ''}${z.s ? ' '+esc(z.s) : ''}</span>` : `<span>Her hafta</span>`;
+  return `<div class="gv-is${tamam?' bitti':''}" data-id="${esc(x.id)}">
+    <button type="button" class="gv-tik" data-tik aria-pressed="${!!tamam}" aria-label="${esc(x.ad)} ${tamam?'geri al':'yapıldı'}">✓</button>
+    <button type="button" class="gv-govde" data-tik><span class="m">${esc(x.ad)}</span><span class="k">${meta}</span></button>
+    ${tamam ? '<button type="button" class="gv-geri" data-tik>Geri al</button>' : ''}
+    <button type="button" class="gv-sil" data-sil title="Listeden çıkar" aria-label="${esc(x.ad)} listeden çıkar">✕</button></div>`;
+}
+function veliCiz(){
+  if(!yonetici()){ $('vt-liste').innerHTML = '<div class="gv-bos"><b>🔒 Yalnız yönetici</b>Bu bölümü yalnız yönetici görür.</div>'; $('vt-tamam-kutu').hidden = true; return; }
+  const h = vtHaftaKey(vtHafta), son = (()=>{ const d = tarihD(h); d.setDate(d.getDate()+6); return isoT(d); })();
+  const L = veliMaddeler(), kalan = L.filter(x=>!(x.bitti||{})[h]), yap = L.filter(x=>(x.bitti||{})[h]).sort((a,c)=>((a.bitti[h]||{}).z||0)-((c.bitti[h]||{}).z||0));
+  $('vt-hafta-ad').textContent = (vtHafta===0 ? 'Bu hafta · ' : vtHafta===-1 ? 'Geçen hafta · ' : '')+trTarih(h)+' – '+trTarih(son);
+  $('vt-bugune').hidden = vtHafta===0;
+  $('vt-ozet').textContent = L.length ? yap.length+' / '+L.length+' yapıldı' : '';
+  $('vt-cubuk').style.width = (L.length ? yap.length/L.length*100 : 0)+'%';
+  $('vt-sub').textContent = L.length ? (kalan.length ? kalan.length+' madde kaldı' : 'Bu haftanın hepsi tamam 🎉') : 'Henüz madde yok';
+  $('vt-liste').innerHTML = !L.length ? '<div class="gv-bos"><b>Liste boş</b>Aşağıdan her hafta yapılacak veli bilgilendirme maddelerini ekleyin.</div>'
+    : kalan.length ? kalan.map(x=>veliSatir(x, false, h)).join('') : '<div class="gv-bos"><b>🎉 Bu haftanın hepsi tamam</b>Yeni haftada maddeler yeniden gelir.</div>';
+  $('vt-tamam-kutu').hidden = !yap.length; $('vt-tamam-bas').textContent = '✓ Yapılanlar ('+yap.length+')';
+  $('vt-tamam').innerHTML = yap.map(x=>veliSatir(x, true, h)).join('');
+}
+function veliBagla(){
+  $('vt-onceki').onclick = ()=>{ vtHafta--; veliCiz(); };
+  $('vt-sonraki').onclick = ()=>{ vtHafta++; veliCiz(); };
+  $('vt-bugune').onclick = ()=>{ vtHafta = 0; veliCiz(); };
+  const tikla = e=>{
+    if(!yonetici()) return;
+    const r = e.target.closest('.gv-is'); if(!r) return; const x = V[r.dataset.id]; if(!x) return;
+    if(e.target.closest('[data-sil]')){ if(confirm('"'+x.ad+'" listeden çıkarılsın mı? Bütün haftalardan kalkar.')) sil(x.id); return; }
+    if(!e.target.closest('[data-tik]')) return;
+    const h = vtHaftaKey(vtHafta); x.bitti = x.bitti || {};
+    if(x.bitti[h]){ delete x.bitti[h]; kaydet(x); return; }
+    r.classList.add('gidiyor');
+    const b = ben(), n = new Date();
+    setTimeout(()=>{ x.bitti[h] = {kim:b?b.id:'', ad:b?b.ad:'', g:GUNLER[gunNo(n)], s:pad(n.getHours())+':'+pad(n.getMinutes()), z:Date.now()}; kaydet(x); }, 550);
+  };
+  $('vt-liste').addEventListener('click', tikla); $('vt-tamam').addEventListener('click', tikla);
+  const ekle = ()=>{ if(!yonetici()) return; const ad = $('vt-yeni').value.trim(); if(!ad){ $('vt-yeni').focus(); return; }
+    const b = ben(); kaydet({tur:'veli', id:yeniId(), ad, olusturan:b?b.id:'', z0:Date.now(), bitti:{}}); $('vt-yeni').value = ''; $('vt-yeni').focus(); };
+  $('vt-ekle-btn').onclick = ekle; $('vt-yeni').addEventListener('keydown', e=>{ if(e.key==='Enter') ekle(); });
+}
+window.veliTakipAc = function(){
+  if(typeof menuKapat==='function') menuKapat();
+  if(!yonetici()){ try{ showN('🔒','Yalnız yönetici','Veli Bilgilendirme Takibi yöneticiye açıktır'); }catch(e){} return; }
+  if(goPage('pageVeliTakip')===false) return;
+  bagla(); vtHafta = 0; veliCiz(); cek();
+  const pb = document.querySelector('#pageVeliTakip .pb'); if(pb) pb.scrollTop = 0;
+};
+
 /* ---------- giriş noktaları ---------- */
 let bagli = false;
-function bagla(){ if(bagli) return; bagli = true; gorevBagla(); yapBagla(); }
+function bagla(){ if(bagli) return; bagli = true; gorevBagla(); yapBagla(); veliBagla(); }
 window.gorevAc = function(){
   if(typeof menuKapat==='function') menuKapat();
   if(goPage('pageGorev')===false) return;
@@ -23198,14 +23432,14 @@ window.yapAc = function(g){
   bagla(); gorunum = g || (ben() ? 'ben' : 'tum'); yapCiz(); cek();
   const pb = document.querySelector('#pageYapilacak .pb'); if(pb) pb.scrollTop = 0;
 };
-try{ MENU_SAYFA.pageGorev = 'gorev'; MENU_SAYFA.pageYapilacak = 'yapilacak'; }catch(e){}
+try{ MENU_SAYFA.pageGorev = 'gorev'; MENU_SAYFA.pageYapilacak = 'yapilacak'; MENU_SAYFA.pageVeliTakip = 'velitakip'; }catch(e){}
 /* Personel girişi / çıkışı değişince rozet güncellenir */
-try{ const eski = yonUygula; yonUygula = function(){ const r = eski.apply(this, arguments); try{ rozet(); if(sayfa('pageYapilacak')) yapCiz(); if(sayfa('pageGorev')) gorevCiz(); }catch(e){} return r; }; }catch(e){}
+try{ const eski = yonUygula; yonUygula = function(){ const r = eski.apply(this, arguments); try{ rozet(); if(sayfa('pageYapilacak')) yapCiz(); if(sayfa('pageGorev')) gorevCiz(); if(sayfa('pageVeliTakip')) veliCiz(); }catch(e){} return r; }; }catch(e){}
 /* Eşitleme: bölüm açıkken 8 sn'de bir, değilken 45 sn'de bir (rozet için) */
 let sonCek = 0;
 setInterval(()=>{
   if(document.hidden) return;
-  const acik = sayfa('pageGorev') || sayfa('pageYapilacak');
+  const acik = sayfa('pageGorev') || sayfa('pageYapilacak') || sayfa('pageVeliTakip');
   if(Date.now()-sonCek >= (acik ? 8000 : 45000)){ sonCek = Date.now(); cek(); }
 }, 4000);
 window.addEventListener('online', ()=>{ gonder(); });
@@ -23418,11 +23652,33 @@ let knHafta = haftaBas(isoT(new Date()));
 function knListe(h, g, olustur){ const K = knVeri(); if(olustur){ K.hafta[h] = K.hafta[h] || {}; K.hafta[h][g] = K.hafta[h][g] || []; } return ((K.hafta[h]||{})[g]) || []; }
 const knUygun = (o, g) => o && KN_GUN[g].k.includes(o.k);
 function knSayac(haricHafta){ const say = {}; Object.keys(knVeri().hafta).forEach(w=>{ if(w===haricHafta) return; Object.values(knVeri().hafta[w]||{}).forEach(l=>(l||[]).forEach(id=>{ say[id] = (say[id]||0)+1; })); }); return say; }
-function knDoldur(h){   // bir haftayı kurala göre doldurur: her gün 1 kişi, en az nöbet tutmuş olan öne
+/* Kapı nöbeti esnektir: o gün YEMEKÇİ ya da MÜEZZİN olan talebenin nöbeti sıradakine geçer.
+   Kayıt değişmez; gösterimde (ekran, görsel, pano, WhatsApp listesi) yerine geçen yazılır.
+   Yerine geçen: o günün sınıflarından, o hafta nöbeti olmayan, o gün görevi olmayan, en az nöbet tutmuş talebe. */
+function knMesgul(id, t){
+  const gi = yemekIdx(t); if(gi>=0 && ((D.y.gruplar[gi]||{}).uyeler||[]).includes(id)) return 'yemekçi';
+  const mg = muezzinGun(t); if(mg && mg.Müezzin===id) return 'müezzin';
+  return '';
+}
+function knEtkin(h, g){
+  const t = gunEkle(h, g-1), L = knListe(h, g);
+  if(!L.some(id=>knMesgul(id, t))) return L.map(id=>({id}));
+  const hafta = new Set(); [1,2,3,4].forEach(gg=>knListe(h, gg).forEach(x=>hafta.add(x)));
+  const say = knSayac(), kul = new Set();
+  const aday = f => [...OG.values()].filter(o=>f(o) && !hafta.has(o.id) && !kul.has(o.id) && !knMesgul(o.id, t))
+    .sort((a,b)=>((say[a.id]||0)-(say[b.id]||0)) || String(a.ad).localeCompare(String(b.ad),'tr'));
+  return L.map(id=>{ const neden = knMesgul(id, t); if(!neden) return {id};
+    let l = aday(o=>knUygun(o, g)); if(!l.length) l = aday(uygun);   // o günün sınıfında kimse kalmadıysa 6–8'den
+    if(!l.length) return {id, neden, yok:true};
+    kul.add(l[0].id); return {id:l[0].id, asil:id, neden}; });
+}
+function knGun(t){ const g = (tarihD(t).getDay()+6)%7+1; return KN_GUN[g] ? knEtkin(haftaBas(t), g).map(x=>x.id) : []; }
+function knDoldur(h){   // bir haftayı kurala göre doldurur: her gün 1 kişi, en az nöbet tutmuş olan öne; o gün yemekçi/müezzin olan yazılmaz
   tazele();
   const K = knVeri(), say = knSayac(h), kullan = new Set(), yeni = {};
   KN_SIRA.forEach(g=>{
-    const havuz = [...OG.values()].filter(o=>knUygun(o, g) && !kullan.has(o.id)).map(o=>({id:o.id, n:say[o.id]||0, r:Math.random()})).sort((a,b)=>(a.n-b.n) || (a.r-b.r));
+    const gt = gunEkle(h, g-1);
+    const havuz = [...OG.values()].filter(o=>knUygun(o, g) && !kullan.has(o.id) && !knMesgul(o.id, gt)).map(o=>({id:o.id, n:say[o.id]||0, r:Math.random()})).sort((a,b)=>(a.n-b.n) || (a.r-b.r));
     yeni[g] = havuz.length ? [havuz[0].id] : []; if(havuz.length) kullan.add(havuz[0].id);
   });
   K.hafta[h] = yeni;
@@ -23444,11 +23700,14 @@ function kapiHtml(){
   [1,2,3,4].forEach(g=>{
     const t = gunEkle(h, g-1), L = knListe(h, g), bugunMu = t===bg;
     x += `<div class="ym-grup${bugunMu?' bugun':''}"><div class="ym-grup-bas"><b>${KN_GUN[g].ad} <small>${esc(tarihD(t).toLocaleDateString('tr-TR',{day:'numeric',month:'short'}))}</small></b>${bugunMu ? '<span class="ym-etk">Bugün</span>' : `<small>${KN_GUN[g].k.join(' ve ')}. sınıflar</small>`}</div>`
-      + (L.map((id,j)=>uyeSatir(id, 'n'+g, j, B_DEG+B_CIK)).join('') || '<div class="ym-silik">Nöbetçi yok</div>')
+      + (knEtkin(h, g).map((e,j)=>uyeSatir(e.id, 'n'+g, j, B_DEG+B_CIK)
+          + (e.asil ? `<div class="ym-kn-not">↪ Asıl nöbetçi <b>${esc(adOf(e.asil))}</b> bu gün ${e.neden}; nöbet sıradakine geçti.</div>`
+            : e.yok ? `<div class="ym-kn-not uyari">⚠️ ${esc(adOf(e.id))} bu gün ${e.neden}; yerine geçecek uygun talebe bulunamadı. ⇄ Değiştir ile seçin.</div>` : '')).join('')
+        || '<div class="ym-silik">Nöbetçi yok</div>')
       + (L.length ? '' : `<div class="ym-grup-alt"><button type="button" data-a="ekle" data-kap="n${g}">+ Nöbetçi seç</button></div>`) + '</div>';
   });
   const hazir = Object.keys(K.hafta).filter(w=>w>=bu && !knBos(w)).sort();
-  return x + `</div><div class="zl-not">Her gün 1 nöbetçi: Pazartesi 7. sınıflar, Salı 6 ve 7. sınıflar, Çarşamba 8. sınıflar, Perşembe 6. sınıflar. Doldurma bu kurala uyar ve en az nöbet tutmuş talebeyi öne alır. ${hazir.length ? 'Liste <b>'+esc(trGun(gunEkle(hazir[hazir.length-1], 3)))+'</b> tarihine kadar hazır.' : 'Henüz hazır hafta yok.'}</div>`;
+  return x + `</div><div class="zl-not">Her gün 1 nöbetçi: Pazartesi 7. sınıflar, Salı 6 ve 7. sınıflar, Çarşamba 8. sınıflar, Perşembe 6. sınıflar. Doldurma bu kurala uyar ve en az nöbet tutmuş talebeyi öne alır. O gün <b>yemekçi</b> ya da <b>müezzin</b> olan talebenin nöbeti kendiliğinden sıradakine geçer. Nöbetçiyi <b>⇄ Değiştir</b> ile istediğiniz 6–8. sınıf talebesiyle değiştirebilirsiniz. ${hazir.length ? 'Liste <b>'+esc(trGun(gunEkle(hazir[hazir.length-1], 3)))+'</b> tarihine kadar hazır.' : 'Henüz hazır hafta yok.'}</div>`;
 }
 
 /* ---------- ekran ---------- */
@@ -23533,7 +23792,7 @@ function secAc(baslik, adaylar, yer, cb, oncelikK){
   const l = sirala(adaylar), k = $('ym-kutu');
   k.innerHTML = `<div class="ym-kutu-bas"><b>${esc(baslik)}</b><button type="button" data-kapat aria-label="Kapat">✕</button></div>
     <input type="search" id="ym-ara" placeholder="İsim ara…" autocomplete="off">
-    <div class="ym-aday-liste">${l.map(o=>`<button type="button" class="ym-aday${oncelikK && o.k===oncelikK ? ' oncelik' : ''}" data-id="${esc(o.id)}" data-ara="${esc(o.ad.toLocaleLowerCase('tr'))}"><span class="ym-ad">${esc(o.ad)}</span>${cip(o.id)}<small>${esc(yer(o.id)||'')}</small></button>`).join('') || '<div class="ym-silik">Uygun talebe yok</div>'}</div>`;
+    <div class="ym-aday-liste">${l.map(o=>`<button type="button" class="ym-aday${oncelikK && (Array.isArray(oncelikK) ? oncelikK.includes(o.k) : o.k===oncelikK) ? ' oncelik' : ''}" data-id="${esc(o.id)}" data-ara="${esc(o.ad.toLocaleLowerCase('tr'))}"><span class="ym-ad">${esc(o.ad)}</span>${cip(o.id)}<small>${esc(yer(o.id)||'')}</small></button>`).join('') || '<div class="ym-silik">Uygun talebe yok</div>'}</div>`;
   if(oncelikK){ const lst = k.querySelector('.ym-aday-liste'); [...lst.querySelectorAll('.oncelik')].reverse().forEach(b=>lst.prepend(b)); }
   $('ym-modal').hidden = false;
   setTimeout(()=>{ const a = $('ym-ara'); if(a && !matchMedia('(pointer:coarse)').matches) a.focus(); }, 50);
@@ -23551,7 +23810,7 @@ function haftalikMetin(tur){
     if(tur==='yemek'){ const g = yemekIdx(t); if(g>=0) satir.push('*'+trGun(t)+'* · Grup '+(g+1)+'\n'+(D.y.gruplar[g].uyeler.map(adOf).join(', ') || '—')); }
     else if(tur==='muezzin'){ const m = muezzinGun(t); if(m) satir.push('*'+trGun(t)+'*: '+adOf(m.Müezzin)); }
     else if(tur==='takvim'){ const x = tkGun(t); if(x) satir.push('*'+trGun(t)+'*: '+adOf(x)); }
-    else if(tur==='kapi'){ const g = (tarihD(t).getDay()+6)%7+1; if(KN_GUN[g]) satir.push('*'+trGun(t)+'*: '+(knListe(haftaBas(t), g).map(adOf).join(', ') || '—')); }
+    else if(tur==='kapi'){ const g = (tarihD(t).getDay()+6)%7+1; if(KN_GUN[g]) satir.push('*'+trGun(t)+'*: '+(knGun(t).map(adOf).join(', ') || '—')); }
   }
   return (tur==='yemek' ? '🍽️ *Yemekçi Listesi*' : tur==='kapi' ? '🚪 *Kapı Nöbeti Listesi*' : tur==='takvim' ? '📅 *Takvim Okuyucu Listesi*' : '🕌 *Müezzin Listesi*')+'\nBayrampaşa Öğrenci Yurdu\n\n'+(satir.join('\n\n') || 'Liste boş');
 }
@@ -23572,7 +23831,7 @@ function gunGorevli(t){
   return {
     muezzin: mg ? adOf(mg.Müezzin) : '', muezzinNot: !D.m.sira.length ? 'Atanmadı' : 'Hafta sonu · müezzinlik yok',
     takvim: tkGun(t) ? adOf(tkGun(t)) : '', takvimNot: !tkV().sira.length ? 'Atanmadı' : 'Hafta sonu · takvim okuma yok',
-    kapi: KN_GUN[g] ? knListe(haftaBas(t), g).map(adOf) : [], kapiNot: KN_GUN[g] ? 'Nöbetçi yazılmadı' : 'Bugün kapı nöbeti yok',
+    kapi: knGun(t).map(adOf), kapiNot: KN_GUN[g] ? 'Nöbetçi yazılmadı' : 'Bugün kapı nöbeti yok',
     grup: gi>=0 ? gi+1 : 0, yemek: gi>=0 ? D.y.gruplar[gi].uyeler.map(adOf) : [], yemekNot: !D.y.gruplar.length ? 'Atanmadı' : (gi<0 ? 'Pazar · yemekçi yok' : 'Grupta talebe yok')
   };
 }
@@ -23696,15 +23955,16 @@ function tikla(e){
   }
   if(kap && kap[0]==='n'){   // kapı nöbeti: yalnız o günün sınıfları
     const g = +kap.slice(1); tazele();
-    const say = knSayac(), yer = oid => { for(const gg of [1,2,3,4]) if(knListe(knHafta, gg).includes(oid)) return 'Bu hafta '+KN_GUN[gg].ad; return (say[oid]||0)+' nöbet'; };
+    const say = knSayac(), gt = gunEkle(knHafta, g-1), yer = oid => { const m = knMesgul(oid, gt); if(m) return 'Bu gün '+m;
+      for(const gg of [1,2,3,4]) if(knListe(knHafta, gg).includes(oid)) return 'Bu hafta '+KN_GUN[gg].ad; return (say[oid]||0)+' nöbet'; };
     if(a==='cikar' && id){ L.splice(j, 1); kaydet(); return; }
     if(a==='ekle' || (a==='degistir' && id)){
-      const ad = [...OG.values()].filter(o=>knUygun(o, g) && !L.includes(o.id));
+      const ad = [...OG.values()].filter(o=>uygun(o) && !L.includes(o.id));   // kapı nöbeti esnek: bütün 6–8. sınıflar
       secAc(a==='ekle' ? KN_GUN[g].ad+' nöbetine ekle' : adOf(id)+' yerine', ad, yer, yeni=>{
         [1,2,3,4].forEach(gg=>{ const l = knListe(knHafta, gg); const k = l.indexOf(yeni); if(k>-1 && gg!==g){ if(a==='degistir' && knUygun(og(id), gg)) l[k] = id; else l.splice(k, 1); } });
         if(a==='ekle') L.push(yeni); else L[j] = yeni;
         kaydet(); bildir('🚪', adOf(yeni)+(a==='ekle' ? ' eklendi' : ' nöbete yazıldı'), KN_GUN[g].ad);
-      });
+      }, KN_GUN[g].k);
     }
     return;
   }
@@ -23855,7 +24115,7 @@ window.ymPanoVeri = function(){
   o.yemekNot = !D.y.gruplar.length ? '— Atanmadı —' : (gi<0 ? 'Pazar · yemekçi yok' : '— Grupta talebe yok —');
   if(mg){ o.muezzinGun = adOf(mg.Müezzin); o.muezzin = {Müezzin:o.muezzinGun}; }
   { const x = tkGun(t); o.takvim = x ? adOf(x) : ''; }   // günün takvim okuyucusu
-  { const g = (tarihD(t).getDay()+6)%7+1; o.nobetci = KN_GUN[g] ? knListe(haftaBas(t), g).map(adOf) : []; }   // günün kapı nöbetçisi
+  { const g = (tarihD(t).getDay()+6)%7+1; o.nobetci = knGun(t).map(adOf); }   // günün kapı nöbetçisi
   o.muezzinNot = !D.m.sira.length ? '— Atanmadı —' : (mg ? '—' : 'Hafta sonu');
   return o;
 };
