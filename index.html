@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-24">
+<meta name="otk-surum" content="2026.10.20-25">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -2965,7 +2965,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-24</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-25</div>
   </div>
 </aside>
 
@@ -3381,6 +3381,14 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <option value="10">10 dakika</option><option value="15">15 dakika</option><option value="30">30 dakika</option><option value="60">1 saat</option><option value="120">2 saat</option><option value="0">Kapalı (hiç kapanmasın)</option>
       </select></div>
       <div id="ot-cihaz" style="font-size:12px;font-weight:700;color:var(--text2)"></div>
+    </div>
+    <div class="card" id="yzd-kart">
+      <div class="card-title">🖨️ Uzaktan yazdırma (fotokopi makinesi)</div>
+      <div id="yzd-durum" style="font-size:12.5px;font-weight:700;margin:-4px 0 10px"></div>
+      <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px"><input type="checkbox" id="yzd-ist" style="width:20px;height:20px;flex:none;margin-top:1px" onchange="yzdAyar('ist', this.checked)"><span><b>Bu bilgisayar yazıcı istasyonu</b><br><small style="color:var(--text2)">Fotokopi makinesine bağlı ana bilgisayarda açın. Bu sayfa açık kaldıkça telefonlardan gelen çıktılar buradan basılır.</small></span></label>
+      <label id="yzd-gon-sat" style="display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px"><input type="checkbox" id="yzd-gon" style="width:20px;height:20px;flex:none;margin-top:1px" onchange="yzdAyar('gon', this.checked)"><span><b>Bu cihazda “Yazdır”a basınca ana bilgisayara gönder</b><br><small style="color:var(--text2)">Optik form, karne, veli raporu, yanlış kitapçığı, cevap anahtarı ve A4 görseller. Telefona “Yazdırılıyor / Yazdırıldı / Yazdırılamadı” bildirimi gelir. Ana bilgisayar kapalıysa bu cihazdan yazdırılır.</small></span></label>
+      <details style="font-size:12px;color:var(--text2);line-height:1.55"><summary style="cursor:pointer;font-weight:700">Ana bilgisayarda yazdırma penceresi çıkmadan basmak için</summary>
+        1) Fotokopi makinesini Windows'ta <b>varsayılan yazıcı</b> yapın.<br>2) Masaüstündeki Chrome kısayoluna sağ tıklayıp Özellikler → Hedef'in sonuna bir boşluk bırakıp <code>--kiosk-printing</code> ekleyin (Edge için de aynı).<br>3) Tarayıcıyı tamamen kapatıp bu kısayolla açın, sisteme girip bu kutuyu işaretleyin. Artık gelen çıktılar pencere sormadan basılır. Bu ayar yapılmazsa her çıktıda bilgisayarda yazdırma penceresi açılır ve “Yazdır”a basmak gerekir.</details>
     </div>
     <div class="card" id="bo-kart">
       <div class="card-title">☁️ Otomatik bulut bağlantısı</div>
@@ -5791,7 +5799,7 @@ function otkFormYazdir(hepsi, oturum){
     const ogr = OGRENCILER.find(o=>o.id===document.getElementById('otk-ogrenci-sel').value);
     liste = [ogr || null];
   }
-  const w = window.open('','_blank');
+  const w = yzdPencere('Optik form · '+liste.length+' sayfa');
   if(!w){ showN('❌','Popup engellendi','Tarayıcı ayarlarından izin verin'); return; }
   // İsimsiz formda öğrenci numarası kutusu (sığarsa)
   let BD = FD, BL = FL;
@@ -8739,7 +8747,7 @@ function renderKarne(){
 function karneYazdir(ids){
   const l = ids.map(id=>OGRENCILER.find(o=>o.id===id)).filter(Boolean);
   if(!l.length) return;
-  const w = window.open('','_blank');
+  const w = yzdPencere('Karne · '+l.length+' öğrenci');
   if(!w){ showN('❌','Popup engellendi','Tarayıcı ayarlarından izin verin'); return; }
   w.document.write('<html><head><meta charset="utf-8"><title>Karne</title><style>'+KARNE_CSS+'.krn-kit{display:none}@page{size:A4;margin:12mm}body{margin:0}.pg{break-after:page}.pg:last-child{break-after:auto}</style></head><body>'
     + l.map(o=>'<div class="pg">'+karneHtml(o, DENEME)+'</div>').join('')+'</body></html>');
@@ -9775,6 +9783,10 @@ const VR = (function(){
     if(!liste.length){ showN('⚠️','Öğrenci seçilmedi',''); return; }
     const alan = document.getElementById('vr-baski');
     alan.innerHTML = liste.map(o=>'<div class="vr-sayfa">'+raporHtml(o, d)+'</div>').join('');
+    if(yzdUzak()){   // ana bilgisayara gönder: sayfanın stilleriyle yalnız rapor sayfaları
+      yzdGonder('<html><head><meta charset="utf-8">'+[...document.querySelectorAll('style')].map(s=>s.outerHTML).join('')+'</head><body class="vr-basiliyor">'+alan.outerHTML+'</body></html>', 'Veli raporu · '+liste.length+' öğrenci');
+      return;
+    }
     document.body.classList.add('vr-basiliyor');
     const bitir = ()=>{ document.body.classList.remove('vr-basiliyor'); window.removeEventListener('afterprint', bitir); };
     window.addEventListener('afterprint', bitir);
@@ -10926,7 +10938,7 @@ async function ykYazdir(){
     + 'if(k){if(sr)sr.classList.remove("g");i.classList.add("kucuk");}else if(h>w)i.classList.add("uzun");'
     + '}if(i.complete)f();else i.addEventListener("load",f);});</scr'+'ipt>';
   const html = '<html><head><meta charset="utf-8"><title>Yanlış Kitapçığı</title><style>'+YK_CSS+ykResimCss+'@page{size:A4;margin:12mm}body{margin:0}.pg{break-after:page}.pg:last-child{break-after:auto}</style></head><body>'+govde+ykResimJs+'</body></html>';
-  const w = window.open('','_blank');
+  const w = yzdPencere('Yanlış kitapçığı');
   if(w){ w.document.write(html); w.document.close(); setTimeout(()=>{ w.print(); }, 600); return; }
   const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
   document.body.appendChild(f);
@@ -15961,7 +15973,7 @@ function akKesYazdir(){
     if(en){ en.style.display='grid'; en.style.fontSize = enFs+'mm'; }
   })();
 <\/script>`;
-  const w = window.open('','_blank');
+  const w = yzdPencere('Cevap anahtarı · '+ad);
   if(!w){ showN('❌','Açılır pencere engellendi','Tarayıcı ayarlarından izin verin'); return; }
   w.document.write('<html><head><meta charset="utf-8"><title>Cevap Anahtarı · '+ad+'</title><style>'+css+'</style></head><body>'
     + sayfa(20)+sayfa(15)+sayfa(10) + sigdir + '</body></html>');
@@ -20421,8 +20433,127 @@ function opListeGonder(zorla){
     OP_LISTE_IMZA = im; w.opAnaListeUygula(l);
   }catch(e){ console.error(e); }
 }
+/* ══════════════ 🖨️ UZAKTAN YAZDIRMA (telefon → ana bilgisayar → fotokopi makinesi) ══════════════
+   Telefon/tablette "yazdır"a basınca çıktı buluta iş olarak gider; "yazıcı istasyonu" yapılan ana bilgisayar
+   işi alır ve kendi yazıcısına (fotokopi makinesine) gönderir. Telefona durum bildirimi gelir:
+   gönderildi → yazdırılıyor → yazdırıldı / yazdırılamadı.
+   Bulut satırları (yd_veri): yzd_ist (istasyon sinyali), yzd_is_<id> (iş bilgisi), yzd_html_<id> (sayfa).
+   Ana bilgisayarda yazdırma penceresi çıkmadan basmak için Chrome/Edge --kiosk-printing ile açılır (Ayarlar'da anlatılır). */
+const YZD_IST_K = 'otkYzdIstasyon', YZD_GON_K = 'otkYzdGonder';
+const YZD = {istZ:0, istAd:'', mesgul:false, sonSinyal:0};
+function yzdIstasyonMu(){ try{ return localStorage.getItem(YZD_IST_K)==='1'; }catch(e){ return false; } }
+function yzdGonderAyar(){ try{ const v = localStorage.getItem(YZD_GON_K); return v===null ? !bilgisayarMi() : v==='1'; }catch(e){ return false; } }
+function yzdBulut(){ try{ return sbAktif() && sbGirisli(); }catch(e){ return false; } }
+function yzdUzak(){ return !yzdIstasyonMu() && yzdGonderAyar() && yzdBulut() && Date.now()-YZD.istZ < 90000; }
+async function yzdYaz(anahtar, icerik){
+  const r = await fetch(sbUrl()+'/rest/v1/yd_veri?on_conflict=sahip,anahtar', {method:'POST', headers:await sbBaslik({Prefer:'resolution=merge-duplicates,return=minimal'}),
+    body:JSON.stringify([{sahip:SB_OTURUM.uid, anahtar, icerik, guncelleme:new Date().toISOString()}])});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+}
+async function yzdSil(l){ try{ await fetch(sbUrl()+'/rest/v1/yd_veri?sahip=eq.'+encodeURIComponent(SB_OTURUM.uid)+'&anahtar=in.('+l.map(encodeURIComponent).join(',')+')', {method:'DELETE', headers:await sbBaslik()}); }catch(e){} }
+/* window.open yerine: uzak yazdırmada sahte pencere döner, yazılan sayfa ana bilgisayara gider */
+function yzdPencere(ad){
+  if(!yzdUzak()){
+    if(yzdGonderAyar() && !yzdIstasyonMu() && yzdBulut()) showN('⚠️','Ana bilgisayar kapalı','Bu cihazdan yazdırılıyor');
+    return window.open('','_blank');
+  }
+  let buf = '';
+  return {closed:false, focus(){}, print(){}, close(){}, document:{write(s){ buf += s; }, close(){ yzdGonder(buf, ad); }}};
+}
+async function yzdGonder(html, ad){
+  const id = Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  let kim = ''; try{ const p = aktifPersonel(); kim = p ? p.ad : ''; }catch(e){}
+  showN('🖨️','Yazıcıya gönderiliyor…', ad);
+  try{
+    await yzdYaz('yzd_html_'+id, {html});
+    await yzdYaz('yzd_is_'+id, {id, ad, kim, t:Date.now(), durum:'bekliyor'});
+  }catch(e){ showN('❌','Yazdırılamadı','Gönderilemedi: '+(e.message||e)); yzdSil(['yzd_html_'+id]); return; }
+  showN('📨','Ana bilgisayara gönderildi', ad+' · sırada');
+  let son = 'bekliyor';
+  const bas = Date.now(), dongu = async ()=>{
+    let d = null;
+    try{ const r = await sbSatirlar('icerik', 'anahtar=eq.yzd_is_'+id); d = r[0] && r[0].icerik; }catch(e){}
+    const durum = d ? d.durum : son;
+    if(durum!==son){
+      son = durum;
+      if(durum==='yazdiriliyor') showN('🖨️','Yazdırılıyor…', ad);
+      else if(durum==='tamam'){ showN('✅','Yazdırıldı', ad+(YZD.istAd ? ' · '+YZD.istAd : '')); yzdSil(['yzd_is_'+id]); return; }
+      else if(durum==='hata'){ showN('❌','Yazdırılamadı', d.hata || ad); yzdSil(['yzd_is_'+id, 'yzd_html_'+id]); return; }
+    }
+    if(Date.now()-bas > (son==='bekliyor' ? 120000 : 600000)){
+      showN('❌','Yazdırılamadı', son==='bekliyor' ? 'Ana bilgisayar yanıt vermedi' : 'Yazıcıdan yanıt gelmedi');
+      yzdSil(['yzd_is_'+id, 'yzd_html_'+id]); return;
+    }
+    setTimeout(dongu, 3000);
+  };
+  setTimeout(dongu, 2500);
+}
+/* Telefonlar: istasyon açık mı? (30 sn'de bir) */
+async function yzdSinyalOku(){
+  if(yzdIstasyonMu() || !yzdBulut()) return;
+  try{ const r = await sbSatirlar('icerik', 'anahtar=eq.yzd_ist'); const d = r[0] && r[0].icerik; YZD.istZ = d ? +d.z||0 : 0; YZD.istAd = d ? d.ad||'' : ''; }catch(e){}
+  yzdKartCiz();
+}
+/* İstasyon: sinyal gönder, bekleyen işleri sırayla yazdır */
+async function yzdIstasyonTur(){
+  if(!yzdIstasyonMu() || !yzdBulut() || YZD.mesgul) return;
+  if(Date.now()-YZD.sonSinyal > 20000){ YZD.sonSinyal = Date.now(); try{ await yzdYaz('yzd_ist', {z:Date.now(), ad:localStorage.getItem('otkYzdAd')||'Ana bilgisayar'}); }catch(e){} }
+  let isler = [];
+  try{ isler = (await sbSatirlar('anahtar,icerik', 'anahtar=like.yzd_is_*')).map(r=>r.icerik).filter(Boolean); }catch(e){ return; }
+  const eski = isler.filter(x=>x.durum!=='bekliyor' && Date.now()-(x.t||0) > 900000).map(x=>'yzd_is_'+x.id);
+  if(eski.length) yzdSil(eski);
+  const is = isler.filter(x=>x.durum==='bekliyor').sort((a,b)=>a.t-b.t)[0]; if(!is) return;
+  YZD.mesgul = true;
+  const durum = async (d, ek)=>{ try{ await yzdYaz('yzd_is_'+is.id, Object.assign({}, is, {durum:d}, ek||{})); }catch(e){} };
+  try{
+    await durum('yazdiriliyor');
+    const r = await sbSatirlar('icerik', 'anahtar=eq.yzd_html_'+is.id), html = r[0] && r[0].icerik && r[0].icerik.html;
+    if(!html) throw new Error('Sayfa bulunamadı');
+    await yzdBas(html);
+    await durum('tamam', {bitis:Date.now()});
+    showN('🖨️','Yazdırıldı', is.ad+(is.kim ? ' · '+is.kim : ''));
+  }catch(e){ await durum('hata', {hata:String(e.message||e)}); showN('❌','Yazdırılamadı', is.ad); }
+  yzdSil(['yzd_html_'+is.id]);
+  YZD.mesgul = false;
+  setTimeout(yzdIstasyonTur, 500);
+}
+function yzdBas(html){
+  return new Promise((ok, no)=>{
+    const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    document.body.appendChild(f);
+    try{ f.contentDocument.open(); f.contentDocument.write(html); f.contentDocument.close(); }catch(e){ f.remove(); no(e); return; }
+    const resimler = ()=>Promise.all([...f.contentDocument.images].map(i=>i.complete ? 1 : new Promise(r=>{ i.onload = i.onerror = r; setTimeout(r, 8000); })));
+    setTimeout(async ()=>{
+      try{ await resimler(); await new Promise(r=>setTimeout(r, 400)); f.contentWindow.focus(); f.contentWindow.print(); ok(); }
+      catch(e){ no(e); }
+      setTimeout(()=>f.remove(), 60000);
+    }, 700);
+  });
+}
+setInterval(()=>{ yzdIstasyonTur(); }, 4000);
+setInterval(()=>{ yzdSinyalOku(); }, 30000);
+setTimeout(()=>{ yzdSinyalOku(); yzdIstasyonTur(); yzdKartCiz(); }, 4000);
+setInterval(()=>{ try{ yzdKartCiz(); }catch(e){} }, 5000);
+/* Ayarlar kartı */
+function yzdKartCiz(){
+  const k = document.getElementById('yzd-kart'); if(!k) return;
+  const ist = yzdIstasyonMu(), gon = yzdGonderAyar(), bl = yzdBulut();
+  document.getElementById('yzd-ist').checked = ist;
+  document.getElementById('yzd-gon').checked = gon;
+  document.getElementById('yzd-gon-sat').style.display = ist ? 'none' : 'flex';
+  const d = document.getElementById('yzd-durum'), sn = Math.round((Date.now()-YZD.istZ)/1000);
+  d.textContent = !bl ? '⚠️ Bulut girişi yok: uzaktan yazdırma çalışmaz'
+    : ist ? '🟢 Bu cihaz yazıcı istasyonu: gelen çıktılar bu bilgisayarın yazıcısından basılır'
+    : YZD.istZ && sn < 90 ? '🟢 Ana bilgisayar açık ('+(YZD.istAd||'istasyon')+' · '+sn+' sn önce)' : '⚪ Ana bilgisayar (istasyon) şu an kapalı';
+}
+window.yzdAyar = function(ne, v){
+  try{ if(ne==='ist'){ localStorage.setItem(YZD_IST_K, v ? '1' : '0'); if(v){ YZD.sonSinyal = 0; yzdIstasyonTur(); showN('🖨️','Yazıcı istasyonu açık','Bu sayfa açık kaldıkça çıktılar buradan basılır'); } else yzdSil(['yzd_ist']); }
+       else if(ne==='gon') localStorage.setItem(YZD_GON_K, v ? '1' : '0'); }catch(e){}
+  yzdKartCiz(); yzdSinyalOku();
+};
 /* T.T.S → Haftanın/Ayın… Talebesi A4 çıktısı: çerçeve içinden yazdırma telefonlarda güvenilir olmadığı için ana sayfada yazdırılır */
 window.ttsA4Yazdir = function(url, ad){
+  if(yzdUzak()){ yzdGonder('<html><head><meta charset="utf-8"><style>@page{size:A4 portrait;margin:0}body{margin:0}img{width:210mm;height:297mm;object-fit:contain;display:block}</style></head><body><img src="'+url+'"></body></html>', String(ad||'A4 çıktı').replace(/\.png$/,'').replace(/-/g,' ')); return; }
   let k = document.getElementById('a4-yazdir');
   if(!k){ k = document.createElement('div'); k.id = 'a4-yazdir'; k.innerHTML = '<img alt="">'; document.body.appendChild(k);
     const st = document.createElement('style'); st.textContent = '#a4-yazdir{display:none}@media print{@page{size:A4 portrait;margin:0}body.a4-bas>*:not(#a4-yazdir){display:none !important}body.a4-bas #a4-yazdir{display:block !important}#a4-yazdir img{width:210mm;height:297mm;object-fit:contain;display:block}}'; document.head.appendChild(st); }
