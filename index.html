@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-25">
+<meta name="otk-surum" content="2026.10.20-27">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -1000,6 +1000,17 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dha-hg.on{border-style:solid;border-color:#c9d7f5;background:#eef3ff;color:var(--blue)}
 .dha-hg.on small{display:block;font-size:10.5px;font-weight:600;color:var(--text2)}
 .dh-gizli{display:none !important}
+.yzd-sec{position:fixed;inset:0;z-index:9999;background:rgba(10,20,40,.45);display:none;align-items:flex-end;justify-content:center;padding:16px}
+.yzd-sec.acik{display:flex}
+.yzd-sec-k{width:100%;max-width:420px;background:var(--card,#fff);border-radius:20px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);margin-bottom:env(safe-area-inset-bottom,0px)}
+.yzd-sec-bas{font-size:15px;margin:2px 4px 12px;color:var(--text)}
+.yzd-sec-b{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1.5px solid var(--border);background:var(--bg,#f6f8fc);border-radius:14px;padding:12px 14px;margin-bottom:8px;font:inherit;color:var(--text);cursor:pointer}
+.yzd-sec-b>span{font-size:24px}
+.yzd-sec-b b{display:block;font-size:15px}
+.yzd-sec-b small{font-size:12px;color:var(--text2)}
+.yzd-sec-b:disabled{opacity:.5;cursor:not-allowed}
+.yzd-sec-vz{width:100%;border:0;background:none;font:700 14px 'Outfit',sans-serif;color:var(--text2);padding:10px;cursor:pointer}
+@media print{.yzd-sec{display:none !important}}
 .ym-kn-not{font-size:12px;line-height:1.4;color:#5a6a62;background:#f3f7ff;border-radius:8px;padding:6px 9px;margin:-2px 0 6px}
 .ym-kn-not.uyari{background:#fff4e5;color:#8a4b00}
 .dha-sev{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
@@ -2965,7 +2976,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-25</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-27</div>
   </div>
 </aside>
 
@@ -3386,9 +3397,9 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <div class="card-title">🖨️ Uzaktan yazdırma (fotokopi makinesi)</div>
       <div id="yzd-durum" style="font-size:12.5px;font-weight:700;margin:-4px 0 10px"></div>
       <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px"><input type="checkbox" id="yzd-ist" style="width:20px;height:20px;flex:none;margin-top:1px" onchange="yzdAyar('ist', this.checked)"><span><b>Bu bilgisayar yazıcı istasyonu</b><br><small style="color:var(--text2)">Fotokopi makinesine bağlı ana bilgisayarda açın. Bu sayfa açık kaldıkça telefonlardan gelen çıktılar buradan basılır.</small></span></label>
-      <label id="yzd-gon-sat" style="display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px"><input type="checkbox" id="yzd-gon" style="width:20px;height:20px;flex:none;margin-top:1px" onchange="yzdAyar('gon', this.checked)"><span><b>Bu cihazda “Yazdır”a basınca ana bilgisayara gönder</b><br><small style="color:var(--text2)">Optik form, karne, veli raporu, yanlış kitapçığı, cevap anahtarı ve A4 görseller. Telefona “Yazdırılıyor / Yazdırıldı / Yazdırılamadı” bildirimi gelir. Ana bilgisayar kapalıysa bu cihazdan yazdırılır.</small></span></label>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5;margin:0 0 10px">Her “Yazdır” düğmesinde seçim çıkar: <b>Çıktı al</b> (bu cihazdan), <b>İndir</b> ya da <b>Ana bilgisayardan çıkar</b> (fotokopi makinesi). Ana bilgisayardan çıkarınca telefona “Yazdırılıyor / Yazdırıldı / Yazdırılamadı” bildirimi gelir.</div>
       <details style="font-size:12px;color:var(--text2);line-height:1.55"><summary style="cursor:pointer;font-weight:700">Ana bilgisayarda yazdırma penceresi çıkmadan basmak için</summary>
-        1) Fotokopi makinesini Windows'ta <b>varsayılan yazıcı</b> yapın.<br>2) Masaüstündeki Chrome kısayoluna sağ tıklayıp Özellikler → Hedef'in sonuna bir boşluk bırakıp <code>--kiosk-printing</code> ekleyin (Edge için de aynı).<br>3) Tarayıcıyı tamamen kapatıp bu kısayolla açın, sisteme girip bu kutuyu işaretleyin. Artık gelen çıktılar pencere sormadan basılır. Bu ayar yapılmazsa her çıktıda bilgisayarda yazdırma penceresi açılır ve “Yazdır”a basmak gerekir.</details>
+        1) Fotokopi makinesini Windows'ta <b>varsayılan yazıcı</b> yapın.<br>2) Masaüstündeki tarayıcı kısayoluna (Chrome, Edge ya da <b>Opera</b>) sağ tıklayıp Özellikler → Hedef'in sonuna bir boşluk bırakıp <code>--kiosk-printing --disable-background-timer-throttling</code> ekleyin.<br>3) Tarayıcıyı <b>tamamen</b> kapatın (Opera'da Ayarlar → Sistem → “Opera kapatıldığında arka plan uygulamalarını çalıştırmaya devam et” kapalı olmalı; görev çubuğunun sağındaki simge de kapanmalı), sonra yalnız bu kısayolla açın, sisteme girip bu kutuyu işaretleyin. Artık gelen çıktılar pencere sormadan basılır. Bu ayar yapılmazsa her çıktıda bilgisayarda yazdırma penceresi açılır ve “Yazdır”a basmak gerekir.</details>
     </div>
     <div class="card" id="bo-kart">
       <div class="card-title">☁️ Otomatik bulut bağlantısı</div>
@@ -9783,10 +9794,15 @@ const VR = (function(){
     if(!liste.length){ showN('⚠️','Öğrenci seçilmedi',''); return; }
     const alan = document.getElementById('vr-baski');
     alan.innerHTML = liste.map(o=>'<div class="vr-sayfa">'+raporHtml(o, d)+'</div>').join('');
-    if(yzdUzak()){   // ana bilgisayara gönder: sayfanın stilleriyle yalnız rapor sayfaları
-      yzdGonder('<html><head><meta charset="utf-8">'+[...document.querySelectorAll('style')].map(s=>s.outerHTML).join('')+'</head><body class="vr-basiliyor">'+alan.outerHTML+'</body></html>', 'Veli raporu · '+liste.length+' öğrenci');
+    if(!window.__yzdYerel){   // seçim: Çıktı al · İndir · Ana bilgisayardan çıkar
+      yzdSecim({ad:'Veli raporu · '+liste.length+' öğrenci',
+        html:'<html><head><meta charset="utf-8">'+[...document.querySelectorAll('style')].map(s=>s.outerHTML).join('')+'</head><body class="vr-basiliyor">'+alan.outerHTML+'</body></html>',
+        yerel:()=>{ window.__yzdYerel = true; try{ vrYerelBas(); }finally{ window.__yzdYerel = false; } }});
       return;
     }
+    vrYerelBas();
+  }
+  function vrYerelBas(){
     document.body.classList.add('vr-basiliyor');
     const bitir = ()=>{ document.body.classList.remove('vr-basiliyor'); window.removeEventListener('afterprint', bitir); };
     window.addEventListener('afterprint', bitir);
@@ -20452,14 +20468,59 @@ async function yzdYaz(anahtar, icerik){
 }
 async function yzdSil(l){ try{ await fetch(sbUrl()+'/rest/v1/yd_veri?sahip=eq.'+encodeURIComponent(SB_OTURUM.uid)+'&anahtar=in.('+l.map(encodeURIComponent).join(',')+')', {method:'DELETE', headers:await sbBaslik()}); }catch(e){} }
 /* window.open yerine: uzak yazdırmada sahte pencere döner, yazılan sayfa ana bilgisayara gider */
-function yzdPencere(ad){
-  if(!yzdUzak()){
-    if(yzdGonderAyar() && !yzdIstasyonMu() && yzdBulut()) showN('⚠️','Ana bilgisayar kapalı','Bu cihazdan yazdırılıyor');
-    return window.open('','_blank');
-  }
-  let buf = '';
-  return {closed:false, focus(){}, print(){}, close(){}, document:{write(s){ buf += s; }, close(){ yzdGonder(buf, ad); }}};
+function yzdPencere(ad){   // sayfa önce toplanır, sonra seçim ekranı: Çıktı al · İndir · Ana bilgisayardan çıkar
+  let buf = '', bitti = false;
+  const kapat = ()=>{ if(bitti) return; bitti = true; yzdSecim({ad, html:buf}); };
+  return {closed:false, focus(){}, print(){}, close(){}, document:{open(){}, write(s){ buf += s; }, close: kapat}};
 }
+/* ── Yazdır seçim ekranı ── o: {ad, html, yerel(), indir()} */
+const yzdOtoBaskiSil = h => String(h).replace(/<script>[^<]*window\.print[^<]*<\/script>/g, '');
+function yzdYerelBas(html){
+  const w = window.open('','_blank');
+  if(w){ w.document.open(); w.document.write(html); w.document.close();
+    if(!/window\.print/.test(html)) setTimeout(()=>{ try{ w.focus(); w.print(); }catch(e){} }, 600); return; }
+  yzdBas(html).catch(()=>showN('❌','Yazdırılamadı','Tarayıcı yazdırmaya izin vermedi'));
+}
+function yzdDosyaAdi(ad){ return String(ad||'cikti').replace(/[\\/:*?"<>|·]+/g,' ').replace(/\s+/g,' ').trim() || 'cikti'; }
+function yzdHtmlIndir(html, ad){
+  const b = new Blob([yzdOtoBaskiSil(html)], {type:'text/html;charset=utf-8'}), u = URL.createObjectURL(b), a = document.createElement('a');
+  a.href = u; a.download = yzdDosyaAdi(ad)+'.html'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u), 60000);
+  showN('⬇️','İndirildi', yzdDosyaAdi(ad)+'.html');
+}
+let YZD_SEC = null;
+function yzdSecim(o){
+  YZD_SEC = o;
+  let k = document.getElementById('yzd-sec');
+  if(!k){
+    k = document.createElement('div'); k.id = 'yzd-sec'; k.className = 'yzd-sec'; k.setAttribute('role','dialog'); k.setAttribute('aria-modal','true');
+    k.innerHTML = '<div class="yzd-sec-k"><div class="yzd-sec-bas">🖨️ <b id="yzd-sec-ad"></b></div>'
+      + '<button type="button" class="yzd-sec-b" data-y="bas"><span>🖨️</span><div><b>Çıktı al</b><small>Bu cihazdan yazdır</small></div></button>'
+      + '<button type="button" class="yzd-sec-b" data-y="indir"><span>⬇️</span><div><b>İndir</b><small>Dosya olarak kaydet</small></div></button>'
+      + '<button type="button" class="yzd-sec-b" data-y="uzak" id="yzd-sec-uzak"><span>🏢</span><div><b>Ana bilgisayardan çıkar</b><small id="yzd-sec-durum"></small></div></button>'
+      + '<button type="button" class="yzd-sec-vz" data-y="vazgec">Vazgeç</button></div>';
+    document.body.appendChild(k);
+    k.addEventListener('click', e=>{
+      const b = e.target.closest('[data-y]'); if(!b){ if(e.target===k) yzdSecKapat(); return; }
+      const y = b.dataset.y, s = YZD_SEC; if(!s) return;
+      if(y==='uzak' && b.disabled) return;
+      yzdSecKapat();
+      if(y==='bas'){ if(s.yerel) s.yerel(); else yzdYerelBas(s.html); }
+      else if(y==='indir'){ if(s.indir) s.indir(); else yzdHtmlIndir(s.html, s.ad); }
+      else if(y==='uzak') yzdGonder(s.html, s.ad);
+    });
+  }
+  document.getElementById('yzd-sec-ad').textContent = o.ad || 'Çıktı';
+  yzdSecDurum(); k.classList.add('acik');
+  yzdSinyalOku().then(yzdSecDurum);
+}
+function yzdSecDurum(){
+  const b = document.getElementById('yzd-sec-uzak'), d = document.getElementById('yzd-sec-durum'); if(!b) return;
+  const ist = yzdIstasyonMu(), bl = yzdBulut(), acik = Date.now()-YZD.istZ < 90000;
+  b.style.display = ist ? 'none' : '';
+  b.disabled = !bl || !acik;
+  d.textContent = !bl ? '⚠️ Bulut girişi yok' : acik ? '🟢 Ana bilgisayar açık · fotokopi makinesinden basılır' : '⚪ Ana bilgisayar şu an kapalı';
+}
+function yzdSecKapat(){ const k = document.getElementById('yzd-sec'); if(k) k.classList.remove('acik'); }
 async function yzdGonder(html, ad){
   const id = Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   let kim = ''; try{ const p = aktifPersonel(); kim = p ? p.ad : ''; }catch(e){}
@@ -20518,6 +20579,7 @@ async function yzdIstasyonTur(){
   setTimeout(yzdIstasyonTur, 500);
 }
 function yzdBas(html){
+  html = yzdOtoBaskiSil(html);
   return new Promise((ok, no)=>{
     const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
     document.body.appendChild(f);
@@ -20539,8 +20601,6 @@ function yzdKartCiz(){
   const k = document.getElementById('yzd-kart'); if(!k) return;
   const ist = yzdIstasyonMu(), gon = yzdGonderAyar(), bl = yzdBulut();
   document.getElementById('yzd-ist').checked = ist;
-  document.getElementById('yzd-gon').checked = gon;
-  document.getElementById('yzd-gon-sat').style.display = ist ? 'none' : 'flex';
   const d = document.getElementById('yzd-durum'), sn = Math.round((Date.now()-YZD.istZ)/1000);
   d.textContent = !bl ? '⚠️ Bulut girişi yok: uzaktan yazdırma çalışmaz'
     : ist ? '🟢 Bu cihaz yazıcı istasyonu: gelen çıktılar bu bilgisayarın yazıcısından basılır'
@@ -20553,7 +20613,13 @@ window.yzdAyar = function(ne, v){
 };
 /* T.T.S → Haftanın/Ayın… Talebesi A4 çıktısı: çerçeve içinden yazdırma telefonlarda güvenilir olmadığı için ana sayfada yazdırılır */
 window.ttsA4Yazdir = function(url, ad){
-  if(yzdUzak()){ yzdGonder('<html><head><meta charset="utf-8"><style>@page{size:A4 portrait;margin:0}body{margin:0}img{width:210mm;height:297mm;object-fit:contain;display:block}</style></head><body><img src="'+url+'"></body></html>', String(ad||'A4 çıktı').replace(/\.png$/,'').replace(/-/g,' ')); return; }
+  if(!window.__yzdYerel){
+    const adi = String(ad||'A4 çıktı').replace(/\.png$/,'').replace(/-/g,' ');
+    yzdSecim({ad:adi, html:'<html><head><meta charset="utf-8"><style>@page{size:A4 portrait;margin:0}body{margin:0}img{width:210mm;height:297mm;object-fit:contain;display:block}</style></head><body><img src="'+url+'"></body></html>',
+      yerel:()=>{ window.__yzdYerel = true; try{ window.ttsA4Yazdir(url, ad); }finally{ window.__yzdYerel = false; } },
+      indir:()=>{ const a = document.createElement('a'); a.href = url; a.download = yzdDosyaAdi(adi)+'.png'; document.body.appendChild(a); a.click(); a.remove(); showN('⬇️','İndirildi', yzdDosyaAdi(adi)+'.png'); }});
+    return;
+  }
   let k = document.getElementById('a4-yazdir');
   if(!k){ k = document.createElement('div'); k.id = 'a4-yazdir'; k.innerHTML = '<img alt="">'; document.body.appendChild(k);
     const st = document.createElement('style'); st.textContent = '#a4-yazdir{display:none}@media print{@page{size:A4 portrait;margin:0}body.a4-bas>*:not(#a4-yazdir){display:none !important}body.a4-bas #a4-yazdir{display:block !important}#a4-yazdir img{width:210mm;height:297mm;object-fit:contain;display:block}}'; document.head.appendChild(st); }
