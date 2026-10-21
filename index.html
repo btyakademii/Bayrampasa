@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-27">
+<meta name="otk-surum" content="2026.10.20-29">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -2976,7 +2976,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-27</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-29</div>
   </div>
 </aside>
 
@@ -9780,9 +9780,9 @@ const VR = (function(){
   }
   function kartIndir(){
     if(!KART) return;
-    const d = deneme(), o = OGRENCILER.find(x=>x.id===KART.id);
-    const a = document.createElement('a'); a.href = KART.url; a.download = dosyaAdi(o, d);
-    document.body.appendChild(a); a.click(); a.remove();
+    const d = deneme(), o = OGRENCILER.find(x=>x.id===KART.id), K = KART;
+    yzdGorselSec(K.url, dosyaAdi(o, d), ()=>{ const a = document.createElement('a'); a.href = K.url; a.download = dosyaAdi(o, d); document.body.appendChild(a); a.click(); a.remove(); });
+    return;
     showN('⬇️','Kart indirildi', dosyaAdi(o, d));
   }
 
@@ -13941,7 +13941,7 @@ $("printBtn").onclick=async()=>{
   try{await bekleyenKaydet();const mini=formBoyut()==="mini";
     const pdf=mini?await formPDF(miniSayfa(Array(8).fill(formSVGmini(cfg,{qr:qrMetin("")}))),null,true):await formPDF(formSVG(cfg,{qr:qrMetin("")}).svg);
     const fn=(cfg.title||"optik form").replace(/[^\wçğıöşüÇĞİÖŞÜ -]/g,"")+" optik form.pdf";
-    if(downloads)await downloads.save({filename:fn,data:pdf});else saveLocal(pdf,fn);
+    await yzdPdfCikti(pdf,fn,()=>downloads?downloads.save({filename:fn,data:pdf}):saveLocal(pdf,fn));
     m.textContent=mini?"PDF indirildi: A4 dik, 8 form. %100 (gerçek boyut) yazdırıp kesin.":"PDF indirildi. Açıp yazdırabilirsin.";
   }catch(e){m.textContent=e&&e.code==="declined"?"İndirme iptal edildi.":"PDF indirilemedi, tekrar dene."}
   b.disabled=false;
@@ -13959,7 +13959,7 @@ window.sboMiniPdf=async function(k,c,ogrIds,ilerle){
     sayfalar=[];for(let i=0;i<f.length;i+=8)sayfalar.push(miniSayfa(f.slice(i,i+8)))}
   const pdf=await formPDF(sayfalar,ilerle,true);
   const fn=(c.title||"optik form").replace(/[^\wçğıöşüÇĞİÖŞÜ -]/g,"")+(ogrIds&&ogrIds.length?" öğrenci formları":" boş form")+".pdf";
-  if(downloads)await downloads.save({filename:fn,data:pdf});else saveLocal(pdf,fn);
+  await yzdPdfCikti(pdf,fn,()=>downloads?downloads.save({filename:fn,data:pdf}):saveLocal(pdf,fn));
   return sayfalar.length;
 };
 window.sboMiniSayfa=ogrIds=>miniSayfa(ogrIds.map(id=>{const o=OGRENCILER.find(x=>x.id===id);return formSVGmini(cfg,{qr:qrMetin(id),ad:o?o.ad:"",sube:o?sbSubeAd(id):""})}));   // 8'li sayfa (dışarıdan önizleme/deneme için)
@@ -14026,7 +14026,7 @@ $("qrPdfBtn").onclick=async()=>{
     else svgs=l.map(o=>formSVG(cfg,{qr:qrMetin(o.id),ad:o.ad,sube:sbSubeAd(o.id)}).svg);
     const pdf=await formPDF(svgs,(i,n)=>{m.innerHTML=`<span class="spinner"></span> ${i}/${n} sayfa hazırlanıyor…`},mini);
     const fn=(cfg.title||"optik form").replace(/[^\wçğıöşüÇĞİÖŞÜ -]/g,"")+" "+SBK+". sınıf QR formlar.pdf";
-    if(downloads)await downloads.save({filename:fn,data:pdf});else saveLocal(pdf,fn);
+    await yzdPdfCikti(pdf,fn,()=>downloads?downloads.save({filename:fn,data:pdf}):saveLocal(pdf,fn));
     m.textContent=mini?`${l.length} öğrencinin formu ${svgs.length} sayfada indirildi (A4 dik, sayfada 8 form, %100). Yazdırıp kesin.`:`${l.length} öğrencinin formu indirildi. Açıp yazdırabilirsin (A4 yatay, %100).`;
   }catch(e){m.textContent=e&&e.code==="declined"?"İndirme iptal edildi.":"PDF hazırlanamadı, tekrar dene."}
   b.disabled=!ysSecililer().length;
@@ -14880,7 +14880,7 @@ function ksoGit(adim){const l=ksoListe();if(!l.length)return;const i=l.findIndex
 $("ksoOgr").onchange=ksoOlustur;
 $("ksoOnceki").onclick=()=>ksoGit(-1);$("ksoSonraki").onclick=()=>ksoGit(1);
 $("ksoPaylas").onclick=async()=>{if(!KSO)return;try{await navigator.share({files:[KSO.file]});showN("✅","Paylaşıldı","")}catch(e){if(e&&e.name!=="AbortError")showN("⚠️","Paylaşım açılamadı","İndir ile deneyin")}};
-$("ksoIndir").onclick=()=>{if(!KSO)return;const a=document.createElement("a");a.href=KSO.url;a.download=KSO.ad;document.body.appendChild(a);a.click();a.remove()};
+$("ksoIndir").onclick=()=>{if(!KSO)return;const K=KSO;yzdGorselSec(K.url,K.ad,()=>{const a=document.createElement("a");a.href=K.url;a.download=K.ad;document.body.appendChild(a);a.click();a.remove()})};
 $("ksoWa").onclick=async()=>{if(!KSO)return;const r=results.find(x=>x.id===KSO.id),o=r&&sbOgrenci(r.ogrId);
   try{await navigator.clipboard.write([new ClipboardItem({"image/png":KSO.blob})])}catch(e){showN("⚠️","Resim kopyalanamadı","İndir ile kaydedip sohbete ekleyin");return}
   const tel=o&&o.veliTel&&telGecerli(o.veliTel)?o.veliTel:"";
@@ -14894,7 +14894,7 @@ window.SBO_CIZ={optikKalemCiz,stbRenk,stbN1,stbLgsGun,stbLgsTarih,ksoBirikim};
 $("stbLgs").onchange=e=>{try{if(e.target.value)localStorage.setItem("otkLgsTarih",e.target.value);else localStorage.removeItem("otkLgsTarih")}catch(_){}if(!e.target.value)e.target.value=stbLgsTarih();if(STB)stbOlustur()};
 $("stbSube").onchange=()=>{if(STB)stbOlustur()};
 $("stbPaylas").onclick=async()=>{if(!STB)return;try{await navigator.share({files:[STB.file]})}catch(e){if(e&&e.name!=="AbortError")showN("⚠️","Paylaşım açılamadı","İndir ile deneyin")}};
-$("stbIndir").onclick=()=>{if(!STB)return;const a=document.createElement("a");a.href=STB.url;a.download=STB.ad;document.body.appendChild(a);a.click();a.remove()};
+$("stbIndir").onclick=()=>{if(!STB)return;const K=STB;yzdGorselSec(K.url,K.ad,()=>{const a=document.createElement("a");a.href=K.url;a.download=K.ad;document.body.appendChild(a);a.click();a.remove()})};
 $("stbKopya").onclick=async()=>{if(!STB)return;try{await navigator.clipboard.write([new ClipboardItem({"image/png":STB.blob})]);showN("📋","Görsel kopyalandı","Sohbete yapıştırın")}catch(e){showN("⚠️","Kopyalanamadı","İndir ile deneyin")}};
 
 let downloads=null;
@@ -15695,7 +15695,7 @@ async function dnmResimPaylas(R){
     if(R===DKSO && DKSO.id && DENEME && window.spKaydet) spKaydet(DENEME.id, [DKSO.id], 'paylaş');   // Denetim: kimin sonucu paylaşıldı
   }catch(e){ if(e && e.name!=='AbortError') showN('⚠️','Paylaşım açılamadı','İndir ile deneyin'); }
 }
-function dnmResimIndir(R){ if(!R) return; const a=document.createElement('a'); a.href=R.url; a.download=R.ad; document.body.appendChild(a); a.click(); a.remove(); }
+function dnmResimIndir(R){ if(!R) return; yzdGorselSec(R.url, R.ad, ()=>{ const a=document.createElement('a'); a.href=R.url; a.download=R.ad; document.body.appendChild(a); a.click(); a.remove(); }); }
 async function dnmResimKopyala(R){
   if(!R) return;
   try{ await navigator.clipboard.write([new ClipboardItem({'image/png':R.blob})]); showN('📋','Görsel kopyalandı','Sohbete yapıştırın'); }
@@ -16534,8 +16534,8 @@ window.srGorKopyala = async ()=>{
 };
 window.srGorIndir = ()=>{
   if(!GOR.url) return;
-  const a = document.createElement('a'); a.href = GOR.url; a.download = gorDosya();
-  document.body.appendChild(a); a.click(); a.remove(); showN('⬇️','Görsel indirildi', gorDosya());
+  const u = GOR.url, ad = gorDosya();
+  yzdGorselSec(u, ad, ()=>{ const a = document.createElement('a'); a.href = u; a.download = ad; document.body.appendChild(a); a.click(); a.remove(); showN('⬇️','Görsel indirildi', ad); });
 };
 window.soruRaporuAc = function(){ if(goPage('pageSoruRaporu')===false) return; ciz(); const pb = document.querySelector('#pageSoruRaporu .pb'); if(pb) pb.scrollTop = 0; };
 window.srKapsam = v=>{ KAPSAM = v; ciz(); const pb = document.querySelector('#pageSoruRaporu .pb'); if(pb) pb.scrollTop = 0; };
@@ -17353,7 +17353,7 @@ async function profilPaylas(){
   catch(e){ if(e && e.name==='AbortError') return; }
   profilIndir(); showN('⬇️','Görsel indirildi','WhatsApp\'tan gönderin');
 }
-function profilIndir(){ const g = PRF_GORSEL; if(!g) return; const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); }
+function profilIndir(){ const g = PRF_GORSEL; if(!g) return; yzdGorselSec(g.url, g.ad, ()=>{ const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); }); }
 function prfGorselCiz(o, foto){
   const sb = SINIFLAR.find(c=>c.id===o.sinif) || {}, bugun = prfIso(new Date()), pzt = prfPzt(bugun);
   const dn = prfDenemeler(o).filter(x=>x.det), tt = [0,1,2,3].map(i=>{ const p = prfEkle(pzt, -7*i); return {p, r:prfTts(o, p, prfEkle(p, 6))}; });
@@ -19711,7 +19711,7 @@ window.kb = {
     if(m) m.innerHTML = '⏳ PDF hazırlanıyor…';
     try{
       const n = await sboMiniPdf(KITAP.k, c, ids, (i,top)=>{ if(m) m.textContent = '⏳ '+i+'/'+top+' sayfa hazırlanıyor…'; });
-      showN('🖨️','PDF indirildi', ogrenci ? ids.length+' öğrenci · '+n+' sayfa' : '1 sayfa · 8 boş form');
+      if(m) m.textContent = '✓ Form hazır: '+(ogrenci ? ids.length+' öğrenci · '+n+' sayfa' : '1 sayfa · 8 boş form');
     }catch(e){ showN('❌','PDF hazırlanamadı', e && e.code==='declined' ? 'İndirme iptal edildi' : 'Tekrar deneyin'); }
     ciz();
   },
@@ -20506,7 +20506,7 @@ function yzdSecim(o){
       yzdSecKapat();
       if(y==='bas'){ if(s.yerel) s.yerel(); else yzdYerelBas(s.html); }
       else if(y==='indir'){ if(s.indir) s.indir(); else yzdHtmlIndir(s.html, s.ad); }
-      else if(y==='uzak') yzdGonder(s.html, s.ad);
+      else if(y==='uzak'){ if(s.uzak) s.uzak(); else yzdGonder(s.html, s.ad); }
     });
   }
   document.getElementById('yzd-sec-ad').textContent = o.ad || 'Çıktı';
@@ -20520,13 +20520,13 @@ function yzdSecDurum(){
   b.disabled = !bl || !acik;
   d.textContent = !bl ? '⚠️ Bulut girişi yok' : acik ? '🟢 Ana bilgisayar açık · fotokopi makinesinden basılır' : '⚪ Ana bilgisayar şu an kapalı';
 }
-function yzdSecKapat(){ const k = document.getElementById('yzd-sec'); if(k) k.classList.remove('acik'); }
-async function yzdGonder(html, ad){
+function yzdSecKapat(){ const k = document.getElementById('yzd-sec'); if(k) k.classList.remove('acik'); const s = YZD_SEC_SON; YZD_SEC_SON = null; if(s) setTimeout(s, 0); }
+async function yzdGonder(html, ad, ek){
   const id = Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   let kim = ''; try{ const p = aktifPersonel(); kim = p ? p.ad : ''; }catch(e){}
   showN('🖨️','Yazıcıya gönderiliyor…', ad);
   try{
-    await yzdYaz('yzd_html_'+id, {html});
+    await yzdYaz('yzd_html_'+id, Object.assign({html:html||''}, ek||{}));
     await yzdYaz('yzd_is_'+id, {id, ad, kim, t:Date.now(), durum:'bekliyor'});
   }catch(e){ showN('❌','Yazdırılamadı','Gönderilemedi: '+(e.message||e)); yzdSil(['yzd_html_'+id]); return; }
   showN('📨','Ana bilgisayara gönderildi', ad+' · sırada');
@@ -20568,9 +20568,9 @@ async function yzdIstasyonTur(){
   const durum = async (d, ek)=>{ try{ await yzdYaz('yzd_is_'+is.id, Object.assign({}, is, {durum:d}, ek||{})); }catch(e){} };
   try{
     await durum('yazdiriliyor');
-    const r = await sbSatirlar('icerik', 'anahtar=eq.yzd_html_'+is.id), html = r[0] && r[0].icerik && r[0].icerik.html;
-    if(!html) throw new Error('Sayfa bulunamadı');
-    await yzdBas(html);
+    const r = await sbSatirlar('icerik', 'anahtar=eq.yzd_html_'+is.id), ic = (r[0] && r[0].icerik) || {}, html = ic.html;
+    if(ic.pdf) await yzdPdfBas(ic.pdf);
+    else { if(!html) throw new Error('Sayfa bulunamadı'); await yzdBas(html); }
     await durum('tamam', {bitis:Date.now()});
     showN('🖨️','Yazdırıldı', is.ad+(is.kim ? ' · '+is.kim : ''));
   }catch(e){ await durum('hata', {hata:String(e.message||e)}); showN('❌','Yazdırılamadı', is.ad); }
@@ -20592,6 +20592,42 @@ function yzdBas(html){
     }, 700);
   });
 }
+/* PDF çıktılar (Test oluştur / soru bankası optik formları) */
+function yzdPdfIframeBas(url){
+  return new Promise((ok, no)=>{
+    const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0';
+    let bitti = false;
+    const bas = ()=>{ if(bitti) return; bitti = true; try{ f.contentWindow.focus(); f.contentWindow.print(); ok(); }catch(e){ no(e); } setTimeout(()=>f.remove(), 120000); };
+    f.onload = ()=>setTimeout(bas, 1200); setTimeout(bas, 8000);   // PDF görüntüleyici onload vermezse de basılır
+    f.src = url; document.body.appendChild(f);
+  });
+}
+function yzdPdfBas(b64){
+  const ikili = atob(b64), u8 = new Uint8Array(ikili.length); for(let i=0;i<ikili.length;i++) u8[i] = ikili.charCodeAt(i);
+  return yzdPdfIframeBas(URL.createObjectURL(new Blob([u8], {type:'application/pdf'})));
+}
+function yzdBlobB64(b){ return new Promise((ok, no)=>{ const r = new FileReader(); r.onload = ()=>ok(String(r.result).split(',')[1]); r.onerror = no; r.readAsDataURL(b); }); }
+window.yzdPdfCikti = function(blob, ad, indirFn){
+  return new Promise(son=>{
+    const url = URL.createObjectURL(blob instanceof Blob ? blob : new Blob([blob], {type:'application/pdf'})), adi = String(ad||'optik form').replace(/\.pdf$/i,'');
+    yzdSecim({ad:adi,
+      yerel:()=>{ if(bilgisayarMi()) yzdPdfIframeBas(url).catch(()=>window.open(url,'_blank')); else { const w = window.open(url,'_blank'); if(!w) location.href = url; } son(); },
+      indir:()=>{ Promise.resolve(indirFn ? indirFn() : null).then(()=>showN('⬇️','İndirildi', adi+'.pdf')).catch(()=>{}); son(); },
+      uzak:async ()=>{ try{ yzdGonder('', adi, {pdf:await yzdBlobB64(blob instanceof Blob ? blob : new Blob([blob]))}); }catch(e){ showN('❌','Yazdırılamadı','Dosya hazırlanamadı'); } son(); }});
+    YZD_SEC_SON = son;
+  });
+};
+let YZD_SEC_SON = null;
+/* Görseller (veli/sonuç/rapor kartları): İndir düğmesi de üç seçenek sunar. url: data:, blob: ya da dosya; indirFn: özel indirme */
+function yzdGorselHtml(src){ return '<html><head><meta charset="utf-8"><style>@page{size:A4;margin:8mm}html,body{margin:0}body{display:flex;justify-content:center}img{max-width:100%;max-height:281mm;object-fit:contain;display:block;margin:0 auto}</style></head><body><img src="'+src+'"></body></html>'; }
+function yzdDataUrl(url){ return /^data:/.test(url) ? Promise.resolve(url) : fetch(url).then(r=>r.blob()).then(b=>new Promise((ok,no)=>{ const f = new FileReader(); f.onload = ()=>ok(f.result); f.onerror = no; f.readAsDataURL(b); })); }
+window.yzdGorselSec = function(url, ad, indirFn){
+  if(!url) return;
+  const adi = yzdDosyaAdi(String(ad||'gorsel').replace(/\.(png|jpe?g)$/i,''));
+  yzdSecim({ad:adi, html:yzdGorselHtml(url),
+    indir:()=>{ if(indirFn){ indirFn(); return; } const a = document.createElement('a'); a.href = url; a.download = adi+'.png'; document.body.appendChild(a); a.click(); a.remove(); showN('⬇️','İndirildi', adi+'.png'); },
+    uzak:async ()=>{ try{ yzdGonder(yzdGorselHtml(await yzdDataUrl(url)), adi); }catch(e){ showN('❌','Yazdırılamadı','Görsel hazırlanamadı'); } }});
+};   // seçim penceresi "Vazgeç" ile kapanınca bekleyen PDF işi biter
 setInterval(()=>{ yzdIstasyonTur(); }, 4000);
 setInterval(()=>{ yzdSinyalOku(); }, 30000);
 setTimeout(()=>{ yzdSinyalOku(); yzdIstasyonTur(); yzdKartCiz(); }, 4000);
@@ -23473,7 +23509,7 @@ function raporGoster(){
     <div class="zl-not">Paylaş menüsünde WhatsApp'ı ve grubu seçin. Menü açılmazsa görsel indirilir; gruba ekleyin.</div>` : '';
   const ac = $('gv-rapor-not'); if(ac){ const R = haftaRapor(); ac.textContent = R.yap.length+' yapıldı · '+R.yok.length+' yapılmadı'; }
 }
-function raporIndir(){ if(!RP) return; const a = document.createElement('a'); a.href = RP.url; a.download = RP.ad; document.body.appendChild(a); a.click(); a.remove(); }
+function raporIndir(){ if(!RP) return; const g = RP; yzdGorselSec(g.url, g.ad, ()=>{ const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); }); }
 async function raporPaylas(){
   if(!RP) return;
   try{ const f = new File([RP.blob], RP.ad, {type:'image/png'});
@@ -24153,7 +24189,7 @@ async function gpOlustur(){
   }catch(e){ console.error(e); bildir('❌', 'Görsel hazırlanamadı', 'Tekrar deneyin'); }
   gpMesgul = false;
 }
-function gpIndir(){ if(!GP) return; const a = document.createElement('a'); a.href = GP.url; a.download = GP.ad; document.body.appendChild(a); a.click(); a.remove(); }
+function gpIndir(){ if(!GP) return; const g = GP; yzdGorselSec(g.url, g.ad, ()=>{ const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); }); }
 async function gpPaylas(){
   if(!GP) return;
   const v = gunGorevli(GP.t), metin = '📋 Günün görevlileri · '+trGun(GP.t)+'\n🕌 Müezzin: '+(v.muezzin || v.muezzinNot)+'\n📅 Takvim okuyucu: '+(v.takvim || v.takvimNot)+'\n🚪 Kapı nöbetçisi: '+(v.kapi.join(', ') || v.kapiNot)+'\n🍽️ Yemekçiler'+(v.grup ? ' (Grup '+v.grup+')' : '')+': '+(v.yemek.join(', ') || v.yemekNot);
@@ -25592,7 +25628,7 @@ window.etut = {
     }catch(e){ if(e && e.name==='AbortError') return; }
     this.indir(); try{ showN('⬇️','Görsel indirildi','WhatsApp grubuna ekleyin'); }catch(e){}
   },
-  indir(){ const g = S.gorsel; if(!g) return; const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); izYaz('i'); },
+  indir(){ const g = S.gorsel; if(!g) return; yzdGorselSec(g.url, g.ad, ()=>{ const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); izYaz('i'); }); },
   ayarSec(sb, pid){ S.ayar[sb] = pid; if(S.oneri) delete S.oneri[sb]; },
   ayarVazgec(){ S.ayar = null; S.oneri = null; ciz(); },
   ayarKaydet(){
@@ -25986,7 +26022,7 @@ window.dhPerf = {
     catch(e){ if(e && e.name==='AbortError') return; }
     this.indir(); try{ showN('⬇️','Görsel indirildi','WhatsApp\'tan gönderin'); }catch(e){}
   },
-  indir(){ const g = S.gorsel; if(!g) return; const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); izYaz('i', g.oid); },
+  indir(){ const g = S.gorsel; if(!g) return; yzdGorselSec(g.url, g.ad, ()=>{ const a = document.createElement('a'); a.href = g.url; a.download = g.ad; document.body.appendChild(a); a.click(); a.remove(); izYaz('i', g.oid); }); },
   kapat(){ eskit(); }
 };
 /* Denetim için iz: şube görseli r.iz, talebe görselleri r.izo[öğrenci]; g = oluşturuldu, p = paylaşıldı, i = indirildi → [zaman, kim] */
