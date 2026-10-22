@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-30">
+<meta name="otk-surum" content="2026.10.20-44">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -686,6 +686,12 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dhp-t th.dhp-secili{background:var(--blue,#1040d0) !important;color:#fff !important}
 .dhp-t th.dhp-secili small{display:block;font-size:9.5px;font-weight:600;opacity:.85}
 .dhp-t td.dhp-secili{background:#eef3ff}
+.dhp-t td.dhp-yaz{padding:3px;width:1%}
+.et-psec button.dhp-tumu{margin-left:10px;border-color:#9fd3b4;background:#e9f7ef;color:#1f8a4c;font-weight:800}
+/* puan kutuları "Rahatsızdı" yazısı kadar: dar ve alçak */
+.dhp-t td.dhp-yaz input.p,.dhp-t td.dhp-secili input.p{width:84px;min-width:0;height:30px;font-size:12.5px;padding:0 3px;text-align:center;border-radius:7px;box-sizing:border-box}
+.dhp-t td.dhp-yaz input.p{background:var(--card2,#f6f8fc);border:1px dashed var(--border)}
+.dhp-t td.dhp-secili{width:1%;padding:3px}
 .dhp-t td.dhp-ort{font-weight:800;color:var(--text);min-width:38px;text-align:center}
 .dhp-ad{flex:1;min-width:0;font-size:15px;padding:6px 8px}
 
@@ -1483,6 +1489,9 @@ body.yon-kilit #menu .menu-profil .menu-oge.yon-btn{padding:9px;font-size:14px}
 #menu .yon-not{font-size:11.5px;padding:2px 4px}
 #menu .menu-ic .menu-bas{font-size:10px;padding:9px 10px 2px}
 #menu .menu-ic>.menu-bas:first-child{padding-top:2px}
+#menu .menu-ic .menu-bas.menu-bas-bos{padding:0;margin:8px 10px 6px;height:1px;background:var(--border)}
+#menu .menu-ic>.menu-bas.menu-bas-bos:first-of-type{margin-top:4px}
+#menu .menu-ana .menu-grup>.menu-alt{margin:0 0 4px 10px;padding-left:6px;border-left:2px solid var(--border)}
 #menu .menu-oge,#menu .menu-grup>summary{padding:7px 10px;font-size:14px;border-radius:10px;gap:8px}
 #menu .menu-ana>summary,#menu .menu-oge.menu-tek{font-size:14.5px;font-weight:800;padding:7px 10px}
 #menu .menu-ana{margin-bottom:0}
@@ -1841,6 +1850,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .zl-elle .zl-canli-ayar b{display:none;min-width:48px;font-variant-numeric:tabular-nums}
 .zl-elle .zl-canli-ayar.hop input,.zl-elle .zl-canli-ayar.hop b{display:block}
 .zl-elle .zl-canli-ayar small{flex-basis:100%;font-weight:500}
+
 @media (max-width:520px){
   .zl-canli-panel{flex-wrap:wrap;width:calc(100% - 24px);box-sizing:border-box;gap:8px 10px;padding:10px 12px}
   #zl-canli-yazi{flex:1 0 auto;white-space:nowrap}.zl-canli-sv{width:40px}
@@ -1994,6 +2004,15 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .zl-ust .zl-elle{padding-top:8px;gap:6px}
 .zl-ust .zl-elle button{padding:7px 12px;font-size:13px;border-radius:9px}
 .zl-ust .zl-elle small{display:none}
+/* Canlı anons kaldırıldı · Zil / Nehari / Durdur düğmeleri büyük ve basınca içeri giriyor */
+.zl-elle .zl-canli,.zl-elle .zl-canli-ayar{display:none !important}
+.zl-elle,.zl-ust .zl-elle{gap:12px}
+.zl-elle .z1,.zl-elle .z2,.zl-elle .zl-dur,.zl-ust .zl-elle .z1,.zl-ust .zl-elle .z2,.zl-ust .zl-elle .zl-dur{font-size:16px;padding:22px 26px;min-width:150px;border-radius:14px;
+  box-shadow:0 5px 0 rgba(0,0,0,.22),0 8px 16px rgba(0,0,0,.12);transition:transform .08s ease,box-shadow .08s ease;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}
+.zl-elle .zl-dur{box-shadow:0 5px 0 #c9d2df,0 8px 16px rgba(0,0,0,.08)}
+.zl-elle .z1:active,.zl-elle .z2:active,.zl-elle .zl-dur:active,
+.zl-elle .z1.basili,.zl-elle .z2.basili,.zl-elle .zl-dur.basili{transform:translateY(5px) scale(.98);box-shadow:0 0 0 rgba(0,0,0,.22),inset 0 3px 8px rgba(0,0,0,.28)}
 @media (max-width:720px){
   .zl-kart.zl-ust{grid-template-columns:auto 1fr}
   .zl-ust .zl-durum{align-items:center;justify-content:flex-end;text-align:right}
@@ -2708,7 +2727,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   <div class="ph">
     <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
     <button class="ph-back" title="Geri" onclick="anaSayfayaGit()">‹</button>
-    <div><div class="ph-title">👤 Talebe Profili</div><div class="ph-sub" id="prf-alt">Talebe seçin</div></div>
+    <div><div class="ph-title">🎓 Talebe Karnesi</div><div class="ph-sub" id="prf-alt">Talebe seçin</div></div>
   </div>
   <div class="pb" id="prf-govde"></div>
 </div>
@@ -2759,37 +2778,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
     </div>
     <div class="yon-acik yon-not">Bölümler kendi şifrenizle personel girişi yapınca açılır.</div>
 
-    <div class="menu-bas">DENEME VE TEST</div>
-    <details class="menu-grup menu-ana" id="menu-deneme-ana" data-yetki="deneme_sonuc|cevap_anahtari|deneme_duzenle|optik|deneme_ayar|sonuc_tablo|sonuc_kisi">
-      <summary>📝 Deneme</summary>
-      <div class="menu-alt">
-        <div class="menu-cip">
-          <button class="menu-oge" data-yetki="deneme_sonuc|cevap_anahtari|deneme_duzenle" data-m="deneme" onclick="menuGit('deneme')">📋 Denemeler</button>
-          <button class="menu-oge" data-yetki="optik" data-m="oku" onclick="menuGit('oku')">📷 Optik Okut</button>
-          <button class="menu-oge" data-yetki="deneme_duzenle" data-m="d-duzenle" onclick="menuGit('d-duzenle')">✏️ Düzenle</button>
-          <button class="menu-oge" data-yetki="deneme_duzenle" data-m="d-olustur2" onclick="menuGit('d-olustur2')">➕ Oluştur</button>
-
-          <button class="menu-oge" data-yetki="sonuc_tablo|deneme_sonuc" onclick="sonucMenu('tablo')">🎨 Sonuç Tablosu</button>
-          <button class="menu-oge" data-yetki="sonuc_kisi|deneme_sonuc" onclick="sonucMenu('kisi')">👤 Kişiye Özel</button>
-        </div>
-        <div class="menu-alt-bas" data-yetki="deneme_ayar">ARAÇLAR</div>
-        <div class="menu-cip">
-          <button class="menu-oge" data-yetki="deneme_ayar" data-konulu="1" data-m="soru-rapor" onclick="menuGit('soru-rapor')">📊 Soru Raporu</button>
-          <button class="menu-oge" data-yetki="deneme_ayar" data-konulu="1" data-m="yanlis" onclick="menuGit('yanlis')">📕 Yanlış Kitapçığı</button>
-          <button class="menu-oge" data-yetki="deneme_ayar" data-konulu="1" data-m="kazanim" onclick="mufredatAc()">🎯 Kazanımlar</button>
-        </div>
-      </div>
-    </details>
-    <details class="menu-grup menu-ana" id="menu-sb-ana" data-yetki="soru_bankasi|test_olustur|deneme_ayar">
-      <summary>📖 Soru Bankası ve Test</summary>
-      <div class="menu-alt">
-        <button class="menu-oge" data-yetki="soru_bankasi" data-m="sbank" onclick="menuGit('sbank')">📖 Soru Bankası</button>
-        <button class="menu-oge" data-yetki="test_olustur" data-m="banka" onclick="menuGit('banka')">📚 Test Oluştur</button>
-        <button class="menu-oge" data-yetki="soru_bankasi|deneme_ayar" onclick="menuGit('kb-veli')">👪 Veli Raporu</button>
-      </div>
-    </details>
-
-    <div class="menu-bas">TAKİP</div>
+    <div class="menu-bas menu-bas-bos" data-ad="Takip" aria-hidden="true"></div>
     <details class="menu-grup menu-ana" id="menu-tts" data-yetki="tts">
       <summary>🏅 T.T.S</summary>
       <div class="menu-alt">
@@ -2808,7 +2797,6 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge" data-tts="settings" onclick="ttsAc('settings')">⚙️ Ayarlar</button>
       </div>
     </details>
-    <button class="menu-oge menu-tek" data-yetki="etut" data-m="etut" onclick="etutAc()">📚 Etüt</button>
     <details class="menu-grup menu-ana" id="menu-dahili">
       <summary>🏫 Dahili Ders</summary>
       <div class="menu-alt">
@@ -2817,7 +2805,6 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
           <div class="menu-cip">
             <button class="menu-oge" data-dh="1:performans" onclick="dahiliAc(1,'performans')">⭐ Performans Puanı</button>
             <button class="menu-oge" data-dh="1:program" onclick="dahiliAc(1,'program')">📅 Müfredat</button>
-            <button class="menu-oge" data-dh="1:ezber" onclick="dahiliAc(1,'ezber')">✅ Ezber Takibi</button>
           </div>
         </details>
         <button class="menu-oge" data-dh="2:performans" onclick="dahiliAc(2,'performans')">2️⃣ Seviye 2</button>
@@ -2825,53 +2812,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge" data-yetki="admin" data-dh="ayar" onclick="dahiliAc('ayar')">⚙️ Ayarlar · seviye grupları</button>
       </div>
     </details>
-    <details class="menu-grup menu-ana" id="menu-op" data-yetki="op_puan|op_rapor|op_yonetim">
-      <summary>🔢 Öğretmen Puanı</summary>
-      <div class="menu-alt">
-        <button class="menu-oge" data-yetki="op_puan|op_yonetim" onclick="opAc('ana')">📚 Ders Seçimi</button>
-                <button class="menu-oge" data-yetki="op_rapor|op_puan|op_yonetim" onclick="opAc('admin:grup')">📸 Sınıf Grubu Görseli</button>
-        <div class="menu-alt-bas" data-yetki="op_yonetim">YÖNETİM</div>
-        <button class="menu-oge" data-yetki="op_yonetim" onclick="opAc('admin:notlar')">📊 Notlar</button>
-      </div>
-    </details>
-    <details class="menu-grup menu-ana" id="menu-ke" data-yetki="ke">
-      <summary>🔤 İngilizce Kelime</summary>
-      <div class="menu-alt">
-        <div class="menu-cip menu-cip5"><button class="menu-oge" data-kademe="4" onclick="keAc('sinif:4')">4. sınıf</button><button class="menu-oge" data-kademe="5" onclick="keAc('sinif:5')">5. sınıf</button><button class="menu-oge" data-kademe="6" onclick="keAc('sinif:6')">6. sınıf</button><button class="menu-oge" data-kademe="7" onclick="keAc('sinif:7')">7. sınıf</button><button class="menu-oge" data-kademe="8" onclick="keAc('sinif:8')">8. sınıf</button></div>
-        <div class="menu-cip">
-          <button class="menu-oge" onclick="keAc('puan')">📊 Puan durumu</button>
-          <button class="menu-oge" onclick="keAc('vitrin')">🌟 Vitrin</button>
-          <button class="menu-oge" onclick="keAc('rekor')">🏆 Rekorlar</button>
-          <button class="menu-oge" onclick="keAc('slayt')">🖥️ Slayt</button>
-        </div>
-        <div class="menu-alt-bas">YÖNETİM</div>
-        <button class="menu-oge" onclick="keAc('yon:takip')">📋 Takip Çizelgesi</button>
-        <div class="menu-cip">
-          <button class="menu-oge" onclick="keAc('yon:ogrenci')">👤 Talebeler</button>
-          <button class="menu-oge" onclick="keAc('yon:kelime')">📖 Kelimeler</button>
-        </div>
-        <button class="menu-oge" onclick="keAc('yon:ayar')">⚙️ Ayarlar</button>
-      </div>
-    </details>
-    <button class="menu-oge menu-tek" data-m="yazili" onclick="yaziliAc()">📄 Yazılı Sonuçları</button>
-    <button class="menu-oge menu-tek" data-m="profil" onclick="profilAc()">👤 Talebe Profili</button>
-    <details class="menu-grup menu-ana" id="menu-unsur" data-yetki="unsur">
-      <summary>⭐ 5 Ana Unsur</summary>
-      <div class="menu-alt">
-        <div class="menu-alt-bas">🕌 Müezzinlik</div>
-        <div class="menu-cip">
-          <button class="menu-oge" data-m="unsur" onclick="unsurAc('puan','muezzin')">✍️ Puanlama</button>
-          <button class="menu-oge" onclick="unsurAc('rapor','muezzin')">📊 Rapor</button>
-        </div>
-      </div>
-    </details>
-
-    <div class="menu-bas">İŞ GÜÇ</div>
-    <button class="menu-oge menu-tek" data-m="duyuru" onclick="dyrAc()">📢 Duyurular<span class="gv-rozet" id="dyr-rozet-menu" aria-label="okunmamış duyuru"></span></button>
-    <button class="menu-oge menu-tek" data-m="gorev" onclick="gorevAc()">📌 Görevler<span class="gv-rozet" id="gv-gorev-rozet-menu" aria-label="bugün bekleyen görev sayısı"></span></button>
-    <button class="menu-oge menu-tek" data-m="yapilacak" onclick="yapAc()">✅ Yapılacaklar<span class="gv-rozet" id="gv-rozet-menu" aria-label="bekleyen iş sayısı"></span></button>
-    <button class="menu-oge menu-tek" data-m="velitakip" data-yetki="admin" onclick="veliTakipAc()">📋 Veli Bilgilendirme Takibi<span class="gv-rozet" id="vt-rozet-menu" aria-label="bu hafta kalan"></span></button>
-    <button class="menu-oge menu-tek" data-m="yemekci" onclick="yemekciAc()">📋 Günün Görevlileri</button>
+    <button class="menu-oge menu-tek" data-yetki="etut" data-m="etut" onclick="etutAc()">📚 Etüt</button>
     <details class="menu-grup menu-ana" id="menu-ne" data-yetki="nehari">
       <summary>🌤️ Nehari</summary>
       <div class="menu-alt">
@@ -2894,6 +2835,82 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         </div>
       </div>
     </details>
+    <button class="menu-oge menu-tek" data-m="duyuru" onclick="dyrAc()">📢 Duyurular<span class="gv-rozet" id="dyr-rozet-menu" aria-label="okunmamış duyuru"></span></button>
+
+    <div class="menu-bas">EĞİTİM</div>
+    <details class="menu-grup menu-ana" id="menu-testoptik" data-yetki="deneme_sonuc|cevap_anahtari|deneme_duzenle|optik|deneme_ayar|sonuc_tablo|sonuc_kisi|soru_bankasi|test_olustur">
+      <summary>🧾 Test · Optik</summary>
+      <div class="menu-alt">
+    <details class="menu-grup" id="menu-deneme-ana" data-yetki="deneme_sonuc|cevap_anahtari|deneme_duzenle|optik|deneme_ayar|sonuc_tablo|sonuc_kisi">
+      <summary>📝 Deneme</summary>
+      <div class="menu-alt">
+        <div class="menu-cip">
+          <button class="menu-oge" data-yetki="deneme_sonuc|cevap_anahtari|deneme_duzenle" data-m="deneme" onclick="menuGit('deneme')">📋 Denemeler</button>
+          <button class="menu-oge" data-yetki="optik" data-m="oku" onclick="menuGit('oku')">📷 Optik Okut</button>
+          <button class="menu-oge" data-yetki="deneme_duzenle" data-m="d-duzenle" onclick="menuGit('d-duzenle')">✏️ Düzenle</button>
+          <button class="menu-oge" data-yetki="deneme_duzenle" data-m="d-olustur2" onclick="menuGit('d-olustur2')">➕ Oluştur</button>
+
+          <button class="menu-oge" data-yetki="sonuc_tablo|deneme_sonuc" onclick="sonucMenu('tablo')">🎨 Sonuç Tablosu</button>
+          <button class="menu-oge" data-yetki="sonuc_kisi|deneme_sonuc" onclick="sonucMenu('kisi')">👤 Kişiye Özel</button>
+        </div>
+        <div class="menu-alt-bas" data-yetki="deneme_ayar">ARAÇLAR</div>
+        <div class="menu-cip">
+          <button class="menu-oge" data-yetki="deneme_ayar" data-konulu="1" data-m="soru-rapor" onclick="menuGit('soru-rapor')">📊 Soru Raporu</button>
+          <button class="menu-oge" data-yetki="deneme_ayar" data-konulu="1" data-m="yanlis" onclick="menuGit('yanlis')">📕 Yanlış Kitapçığı</button>
+          <button class="menu-oge" data-yetki="deneme_ayar" data-konulu="1" data-m="kazanim" onclick="mufredatAc()">🎯 Kazanımlar</button>
+        </div>
+      </div>
+    </details>
+    <details class="menu-grup" id="menu-sb-ana" data-yetki="soru_bankasi|deneme_ayar">
+      <summary>📖 Soru Bankası</summary>
+      <div class="menu-alt">
+        <button class="menu-oge" data-yetki="soru_bankasi" data-m="sbank" onclick="menuGit('sbank')">📖 Soru Bankası</button>
+        <button class="menu-oge" data-yetki="soru_bankasi|deneme_ayar" onclick="menuGit('kb-veli')">👪 Veli Raporu</button>
+      </div>
+    </details>
+    <details class="menu-grup" id="menu-to-ana" data-yetki="test_olustur">
+      <summary>📚 Test Oluştur</summary>
+      <div class="menu-alt">
+        <button class="menu-oge" data-yetki="test_olustur" data-m="banka" onclick="menuGit('banka')">📚 Test Oluştur</button>
+      </div>
+    </details>
+      </div>
+    </details>
+    <details class="menu-grup menu-ana" id="menu-op" data-yetki="op_puan|op_rapor|op_yonetim">
+      <summary>🔢 Öğretmen</summary>
+      <div class="menu-alt">
+        <button class="menu-oge" data-yetki="op_puan|op_yonetim" onclick="opAc('ana')">📚 Ders Seçimi</button>
+                <button class="menu-oge" data-yetki="op_rapor|op_puan|op_yonetim" onclick="opAc('admin:grup')">📸 Sınıf Grubu Görseli</button>
+        <div class="menu-alt-bas" data-yetki="op_yonetim">YÖNETİM</div>
+        <button class="menu-oge" data-yetki="op_yonetim" onclick="opAc('admin:notlar')">📊 Notlar</button>
+      </div>
+    </details>
+    <details class="menu-grup menu-ana" id="menu-ke" data-yetki="ke">
+      <summary>🔤 İngilizce</summary>
+      <div class="menu-alt">
+        <div class="menu-cip menu-cip5"><button class="menu-oge" data-kademe="4" onclick="keAc('sinif:4')">4. sınıf</button><button class="menu-oge" data-kademe="5" onclick="keAc('sinif:5')">5. sınıf</button><button class="menu-oge" data-kademe="6" onclick="keAc('sinif:6')">6. sınıf</button><button class="menu-oge" data-kademe="7" onclick="keAc('sinif:7')">7. sınıf</button><button class="menu-oge" data-kademe="8" onclick="keAc('sinif:8')">8. sınıf</button></div>
+        <div class="menu-cip">
+          <button class="menu-oge" onclick="keAc('puan')">📊 Puan durumu</button>
+          <button class="menu-oge" onclick="keAc('vitrin')">🌟 Vitrin</button>
+          <button class="menu-oge" onclick="keAc('rekor')">🏆 Rekorlar</button>
+          <button class="menu-oge" onclick="keAc('slayt')">🖥️ Slayt</button>
+        </div>
+        <div class="menu-alt-bas">YÖNETİM</div>
+        <button class="menu-oge" onclick="keAc('yon:takip')">📋 Takip Çizelgesi</button>
+        <div class="menu-cip">
+          <button class="menu-oge" onclick="keAc('yon:ogrenci')">👤 Talebeler</button>
+          <button class="menu-oge" onclick="keAc('yon:kelime')">📖 Kelimeler</button>
+        </div>
+        <button class="menu-oge" onclick="keAc('yon:ayar')">⚙️ Ayarlar</button>
+      </div>
+    </details>
+    <button class="menu-oge menu-tek" data-m="yazili" onclick="yaziliAc()">📄 Yazılı Sonuçları</button>
+
+    <div class="menu-bas">EĞİTİM MESULÜ</div>
+    <button class="menu-oge menu-tek" data-yetki="admin" data-m="denetim" onclick="menuKapat();denetimAc()">🔍 Denetim</button>
+    <button class="menu-oge menu-tek" data-m="gorev" onclick="gorevAc()">📌 Görevler<span class="gv-rozet" id="gv-gorev-rozet-menu" aria-label="bugün bekleyen görev sayısı"></span></button>
+    <button class="menu-oge menu-tek" data-m="velitakip" data-yetki="admin" onclick="veliTakipAc()">📋 Veli Bilgilendirme Takip<span class="gv-rozet" id="vt-rozet-menu" aria-label="bu hafta kalan"></span></button>
+    <button class="menu-oge menu-tek" data-m="ogrders" onclick="ogrDersAc()">👨‍🏫 Öğretmen Takip</button>
     <details class="menu-grup menu-ana" id="menu-rehberlik" data-yetki="rehberlik">
       <summary>🧭 Rehberlik</summary>
       <div class="menu-alt">
@@ -2907,13 +2924,28 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge" data-rh="rapor" onclick="rehberlikAc('rapor')">📈 Raporlar</button>
       </div>
     </details>
-    <button class="menu-oge menu-tek" data-m="ogrders" onclick="ogrDersAc()">👨‍🏫 Öğretmen Ders Takip</button>
+    <button class="menu-oge menu-tek" data-m="zil" onclick="zilAc()">🔔 Program · Zil</button>
+    <button class="menu-oge menu-tek" onclick="panoAc()">🖥️ Dijital Pano</button>
+
+    <div class="menu-bas">İŞ GÜÇ</div>
+    <button class="menu-oge menu-tek" data-m="yapilacak" onclick="yapAc()">✅ Yapılacaklar<span class="gv-rozet" id="gv-rozet-menu" aria-label="bekleyen iş sayısı"></span></button>
+    <button class="menu-oge menu-tek" data-m="yemekci" onclick="yemekciAc()">📋 Günün Görevlileri</button>
+
+    <div class="menu-bas menu-bas-bos" data-ad="Diğer" aria-hidden="true"></div>
+    <details class="menu-grup menu-ana" id="menu-unsur" data-yetki="unsur">
+      <summary>⭐ 5 Ana Unsur</summary>
+      <div class="menu-alt">
+        <div class="menu-alt-bas">🕌 Müezzinlik</div>
+        <div class="menu-cip">
+          <button class="menu-oge" data-m="unsur" onclick="unsurAc('puan','muezzin')">✍️ Puanlama</button>
+          <button class="menu-oge" onclick="unsurAc('rapor','muezzin')">📊 Rapor</button>
+        </div>
+      </div>
+    </details>
+    <button class="menu-oge menu-tek" data-m="profil" onclick="profilAc()">🎓 Talebe Karnesi</button>
 
     <div class="menu-bas">AYARLAR</div>
-    <button class="menu-oge menu-tek" onclick="panoAc()">🖥️ Dijital Pano</button>
-    <button class="menu-oge menu-tek" data-yetki="admin" data-m="denetim" onclick="menuKapat();denetimAc()">🔍 Denetim</button>
     <button class="menu-oge menu-tek" data-yetki="admin" onclick="menuKapat();personelAc()">👥 Personel Yetki Verme</button>
-    <button class="menu-oge menu-tek" data-m="zil" onclick="zilAc()">🔔 Program · Zil</button>
     <details class="menu-grup menu-ana" id="menu-genel-ana" data-yetki="ayarlar|ogrenci_kayit">
       <summary>⚙️ Ayarlar ve Yedek</summary>
       <div class="menu-alt">
@@ -2976,7 +3008,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-30</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-44</div>
   </div>
 </aside>
 
@@ -4068,8 +4100,8 @@ function menuAgaci(){
   if(!ic) return out;
   const oge = (x, req)=>({k:menuOgeAnahtar(x), ad:(x.tagName==='DETAILS' ? x.querySelector('summary').textContent : x.textContent).replace(/yakında$/i,'').replace(/\s+/g,' ').trim(), req:x.dataset.yetki || req || ''});
   [...ic.children].forEach(el=>{
-    if(el.classList.contains('menu-bas')){ bolum = {baslik:el.textContent.trim(), gruplar:[]}; out.push(bolum); return; }
-    if(!bolum) return;
+    if(el.classList.contains('menu-bas')){ bolum = {baslik:el.dataset.ad || el.textContent.trim(), gruplar:[]}; out.push(bolum); return; }
+    if(!bolum){ bolum = {baslik:'Takip', gruplar:[]}; out.push(bolum); }
     if(el.matches('details.menu-ana')){
       const g = {ad:el.querySelector('summary').textContent.trim(), ogeler:[]}, req = el.dataset.yetki || '';
       el.querySelectorAll('.menu-alt .menu-oge, .menu-alt details.menu-grup').forEach(x=>{
@@ -14517,7 +14549,16 @@ function stbLgsGun(){const t=stbLgsTarih();const m=/^(\d{4})-(\d{2})-(\d{2})$/.e
   const hedef=new Date(+m[1],+m[2]-1,+m[3]),bugun=new Date();bugun.setHours(0,0,0,0);
   const g=Math.round((hedef-bugun)/864e5);return g>=0?g:null}
 /* Optik form + kurşun kalem çizimi (sonuç görsellerinin başlığında) */
+/* Görsel başlıklarında optik form + kalem çizimi yerine yurdun logosu */
+const GORSEL_LOGO = (()=>{ try{ const i = new Image(); i.src = window.LOGO_URI || ''; return i; }catch(e){ return null; } })();
 function optikKalemCiz(c,cx0,cy0,k){
+  const LG = GORSEL_LOGO;
+  if(LG && LG.complete && LG.naturalWidth){
+    const s = 176*k, r = LG.naturalWidth/LG.naturalHeight, w = r>=1 ? s : s*r, h = r>=1 ? s/r : s;
+    c.save(); c.shadowColor = 'rgba(18,41,94,.18)'; c.shadowBlur = 14*k; c.shadowOffsetY = 4*k;
+    c.drawImage(LG, cx0-w/2+8*k, cy0-h/2+8*k, w, h); c.restore();
+    return;
+  }
   const INK="#C4263F",ORG="#f7891f";
   const F=(w,z)=>w+" "+z+"px Outfit, 'Segoe UI', Arial, sans-serif";
   const rr=(x,y,w,h,r)=>{c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()};
@@ -17699,9 +17740,9 @@ const DH2_MUF = {
   3: []
 };
 const DAHILI = {
-  1: [['performans','⭐','Performans Puanı'], ['program','📅','Müfredat'], ['ezber','✅','Ezber Takibi']],
-  2: [['performans','⭐','Performans Puanı'], ['program','📅','Müfredat'], ['ezber','✅','Ezber Takibi']],
-  3: [['performans','⭐','Performans Puanı'], ['program','📅','Müfredat'], ['ezber','✅','Ezber Takibi']]
+  1: [['performans','⭐','Performans Puanı'], ['program','📅','Müfredat']],
+  2: [['performans','⭐','Performans Puanı'], ['program','📅','Müfredat']],
+  3: [['performans','⭐','Performans Puanı'], ['program','📅','Müfredat']]
 };
 const DH2 = {h:null, grp:''};
 const dh2Iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -17739,7 +17780,6 @@ function dh2Bos(sev){ return '<div class="yakinda-bos"><div class="ic">📚</div
 function dh2Html(konu){
   const sev = DH_SEV, M = DH2_MUF[sev] || [], bugun = dh2Iso(new Date()), noBugun = dh2HaftaNo(bugun);
   let h = dh2GrpSec(sev);
-  if(konu==='ezber') return h + dh2EzberHtml(sev, M);
   if(!M.length) return h + dh2Bos(sev);
   if(konu==='program'){
     if(DH2.h==null) DH2.h = Math.max(1, Math.min(noBugun, M[M.length-1].no));
@@ -17789,8 +17829,8 @@ function dh2EzToggle(id, item){
 /* Performans → "Bu hafta işlenenler" programdan doldurulur (Kur'an-ı Kerim = Kıraat) */
 window.dh2HaftaKonu = function(pzt, sev){
   const hf = dh2Hafta(sev, dh2HaftaNo(pzt)); if(!hf) return null;
-  const s = {k:[], i:[], a:[]}; hf.gunler.forEach(gn=>gn.forEach(x=>{ if(s[x.t] && !s[x.t].includes(x.k)) s[x.t].push(x.k); }));
-  return {k:s.k.join(' · '), i:s.i.join(' · '), a:s.a.join(' · ')};
+  const s = {k:[], i:[], a:[]}; hf.gunler.forEach(gn=>gn.forEach(x=>{ const t = x.t==='t' ? 'k' : x.t; if(s[t] && !s[t].includes(x.k)) s[t].push(x.k); }));
+  return {k:s.k.join(' · '), i:s.i.join(' · '), a:s.a.join(' · '), e:(hf.ezber||[]).map(z=>z.ad).join(' · ')};
 };
 
 let DH_SEV = 1, DH_KONU = 'performans';
@@ -17799,7 +17839,7 @@ function dahiliAc(sev, konu){
   DH_SEV = sev==='ayar' ? 'ayar' : (DAHILI[sev] ? sev : 1);
   if(DH_SEV!=='ayar' && !dhSeviyeler().includes(DH_SEV)){ DH_SEV = dhSeviyeler()[0] || 1; }
   if(DH_SEV==='ayar' && !dhAdmin()) DH_SEV = dhSeviyeler()[0] || 1;
-  DH_KONU = konu || 'performans';   // ilk açılışta Performans Puanı açılır
+  DH_KONU = (konu && konu!=='ezber') ? konu : 'performans';   // ilk açılışta Performans Puanı açılır (Ezber Takibi kaldırıldı)
   if(goPage('pageDahili')===false) return;
   dahiliCiz();
 }
@@ -22025,7 +22065,6 @@ const DT_BOLUMLER = [
   ['dt-yar','🏁','Kelime Yarışması', ()=>dtYarHtml()],
   ['dt-et','📊','Etüt Performansı', g=>dtEtHtml(g)],
   ['dt-dh','⭐','Dahili Ders · Veli Bilgilendirme', g=>dtDhHtml(g)],
-  ['dt-muf','📅','Müfredat', g=>dtMufHtml(g)],
   ['dt-soru','📚','Çözülen Soru Dökümü', ()=>dtSoruHtml()],
   ['dt-kim','👥','Kim ne yaptı', g=>dtKimHtml(g)]
 ];
@@ -23304,12 +23343,15 @@ function kisiler(){
 const kisiAd = id => { if(id==='admin') return 'Yönetici'; if(id==='ogretmen') return 'Öğretmen'; const k = kisiler().find(x=>x.id===id); return k ? k.ad : (id ? 'Ayrılan personel' : ''); };
 function kaydet(it){ it.z = Date.now(); V[it.id] = it; B.s = B.s.filter(x=>x!==it.id); if(!B.y.includes(it.id)) B.y.push(it.id); yerelYaz(); degisti(); gonder(); }
 function sil(id){ delete V[id]; B.y = B.y.filter(x=>x!==id); if(!B.s.includes(id)) B.s.push(id); yerelYaz(); degisti(); gonder(); }
-const gorevler = () => Object.values(V).filter(x=>x && x.tur==='gorev');
+/* Görevler sayfası iki kipte çalışır: 'gorev' (📌 Görevler) ve 'veliGorev' (📋 Veli Bilgilendirme, yalnız yönetici) */
+let GMOD = 'gorev';
+const VELI_K = () => GMOD==='veliGorev';
+const gorevler = (tur) => Object.values(V).filter(x=>x && x.tur===(tur||GMOD));
 /* Yetki: görev / yapılacak eklemek ve silmek yalnız yöneticiye açık. Diğer personel bölümü görür,
    yalnız kendisine (ya da herkese) verilen işleri işaretleyebilir. */
 function yonetici(){ try{ const p = aktifPersonel(); return !!(p && p.admin); }catch(e){ return false; } }
 function benimIs(x){ const b = ben(); if(!b) return false; if(x.tur==='teknik') return true;   // teknik eksiği her personel kapatabilir
-  const k = x.tur==='gorev' ? x.sorumlu : x.kime; return k==='*' || k===b.id; }
+  const k = (x.tur==='gorev' || x.tur==='veliGorev') ? x.sorumlu : x.kime; return k==='*' || k===b.id; }
 const isaretleyebilir = x => yonetici() || benimIs(x);
 const yapilacaklar = () => Object.values(V).filter(x=>x && x.tur==='yap');
 const teknikler = () => Object.values(V).filter(x=>x && x.tur==='teknik');
@@ -23368,14 +23410,14 @@ function benimAcik(){
 function benimGorevim(){
   const b = ben(); if(!b) return [];
   const t = isoT(new Date());
-  return gununGorevleri(t).filter(x=>(x.sorumlu===b.id || x.sorumlu==='*') && !yapildi(x, t));
+  return gununGorevleri(t, 'gorev').filter(x=>(x.sorumlu===b.id || x.sorumlu==='*') && !yapildi(x, t));
 }
 function rozet(){
   const n = benimAcik().length, g = benimGorevim().length, s = v => v>99 ? '99+' : String(v);
   const m = $('gv-rozet-menu'); if(m) m.textContent = n ? s(n) : '';
   const p = $('gv-profil'); if(p){ p.hidden = !n || !ben(); const b = p.querySelector('b'); if(b) b.textContent = n; p.title = n+' yapılacak işiniz var'; }
   const mg = $('gv-gorev-rozet-menu'); if(mg) mg.textContent = g ? s(g) : '';
-  const vk = yonetici() ? veliMaddeler().filter(x=>!(x.bitti||{})[vtHaftaKey(0)]).length : 0;
+  const vk = yonetici() ? (()=>{ const t = isoT(new Date()); return gununGorevleri(t, 'veliGorev').filter(x=>!yapildi(x, t)).length; })() : 0;
   const mv = $('vt-rozet-menu'); if(mv) mv.textContent = vk ? s(vk) : '';
   const pg = $('gv-profil-gorev'); if(pg){ pg.hidden = !g || !ben(); const b = pg.querySelector('b'); if(b) b.textContent = g; pg.title = 'Bugün '+g+' göreviniz var'; }
 }
@@ -23392,13 +23434,18 @@ const sayfa = id => { const p = $(id); return !!(p && p.classList.contains('acti
 let hafta = 0, secGun = gunNo(new Date());
 function haftaBasi(){ const d = new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()-gunNo(d)+hafta*7); return d; }
 function gunTarih(i){ const d = haftaBasi(); d.setDate(d.getDate()+i); return isoT(d); }
-function gununGorevleri(tarih){
+function gununGorevleri(tarih, tur){
   const g = gunNo(tarihD(tarih));
-  return gorevler().filter(x=> x.tarih ? x.tarih===tarih : x.gun===g).sort((a,b)=>(a.sira||a.z0||0)-(b.sira||b.z0||0));
+  return gorevler(tur).filter(x=> x.tarih ? x.tarih===tarih : x.gun===g).sort((a,b)=>(a.sira||a.z0||0)-(b.sira||b.z0||0));
 }
 const yapildi = (x, t) => !!(x.bitti && x.bitti[t]);
 function gorevCiz(){
-  const bugun = isoT(new Date());
+  const bugun = isoT(new Date()), VK = VELI_K(), GK = VK ? 'madde' : 'görev';
+  const pt = document.querySelector('#pageGorev .ph-title'); if(pt) pt.textContent = VK ? '📋 Veli Bilgilendirme' : '📌 Görevler';
+  const eb = document.querySelector('#gv-ekle-kart .zl-bas h2'); if(eb) eb.textContent = VK ? 'Veli bilgilendirme maddesi ekle' : 'Görev ekle';
+  $('gv-yeni').placeholder = VK ? 'Madde (ör. 8-A velilerine deneme sonucu)' : 'Görev (ör. Etüt salonunu havalandır)';
+  const rb = document.querySelector('#gv-rapor .zl-bas h2'); if(rb) rb.textContent = VK ? '📤 Haftalık veli bilgilendirme raporu' : '📤 Haftalık rapor görseli';
+  if(VK && !yonetici()){ $('gv-liste').innerHTML = '<div class="gv-bos"><b>🔒 Yalnız yönetici</b>Bu bölümü yalnız yönetici görür.</div>'; $('gv-ekle-kart').hidden = true; return; }
   $('gv-hafta-ad').textContent = hafta===0 ? 'Bu hafta' : (hafta===-1 ? 'Geçen hafta' : (hafta===1 ? 'Gelecek hafta' : trTarih(gunTarih(0))+' haftası'));
   $('gv-gunler').innerHTML = GUNLER.map((g,i)=>{
     const t = gunTarih(i), l = gununGorevleri(t), y = l.filter(x=>yapildi(x,t)).length;
@@ -23410,7 +23457,7 @@ function gorevCiz(){
   $('gv-gun-baslik').textContent = GUNLER[secGun]+' · '+trTarih(t);
   $('gv-gun-ozet').textContent = l.length ? y+' / '+l.length+' tamamlandı' : '';
   $('gv-cubuk').style.width = (l.length ? y/l.length*100 : 0)+'%';
-  $('gv-sub').textContent = t===bugun ? 'Bugün · '+(l.length ? (l.length-y)+' görev kaldı' : 'görev yok') : GUNLER[secGun]+' '+trTarih(t);
+  $('gv-sub').textContent = t===bugun ? 'Bugün · '+(l.length ? (l.length-y)+' '+GK+' kaldı' : GK+' yok') : GUNLER[secGun]+' '+trTarih(t);
   $('gv-liste').innerHTML = l.length ? l.map(x=>{
     const ok = yapildi(x,t), kim = ok && x.bitti[t].ad ? x.bitti[t].ad : '';
     const meta = [x.sorumlu ? `<span class="gv-cip">👤 ${esc(x.sorumlu==='*' ? 'Herkes' : kisiAd(x.sorumlu))}</span>` : '',
@@ -23421,7 +23468,7 @@ function gorevCiz(){
       <button type="button" class="gv-tik" ${izin ? 'data-tik' : 'disabled title="Yalnız görevin sorumlusu işaretleyebilir"'} aria-pressed="${ok}" aria-label="${esc(x.ad)} ${ok?'yapılmadı olarak işaretle':'yapıldı olarak işaretle'}">✓</button>
       <button type="button" class="gv-govde" ${izin ? 'data-tik' : 'tabindex="-1"'}><span class="m">${esc(x.ad)}</span><span class="k">${meta}</span></button>
       ${yon ? `<button type="button" class="gv-sil" data-sil title="Görevi sil" aria-label="${esc(x.ad)} görevini sil">✕</button>` : ''}</div>`;
-  }).join('') : `<div class="gv-bos"><b>${GUNLER[secGun]} için görev yok</b>${yonetici() ? 'Aşağıdan ekleyebilirsiniz.' : ''}</div>`;
+  }).join('') : `<div class="gv-bos"><b>${GUNLER[secGun]} için ${GK} yok</b>${yonetici() ? 'Aşağıdan ekleyebilirsiniz.' : ''}</div>`;
   $('gv-ekle-kart').hidden = !yonetici(); $('gv-izin').hidden = yonetici();
   // ekleme formu: tekrar seçenekleri seçili güne göre
   $('gv-tekrar').innerHTML = `<option value="hafta">Her ${GUNLER[secGun].toLocaleLowerCase('tr')}</option><option value="tek">Yalnız ${trTarih(t)}</option>`;
@@ -23454,10 +23501,11 @@ function raporCiz(){
   if(G.gZeminBoya) G.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
   const a = tarihD(gunTarih(0)), b = tarihD(gunTarih(6)), ay = d => d.toLocaleDateString('tr-TR', {month:'long'});
   const aralik = (a.getMonth()===b.getMonth() ? a.getDate()+' – '+b.getDate()+' '+ay(b) : a.getDate()+' '+ay(a)+' – '+b.getDate()+' '+ay(b))+' '+b.getFullYear();
-  if(G.gBaslik) G.gBaslik(c, W, 'HAFTALIK GÖREV RAPORU', aralik.toLocaleUpperCase('tr-TR'));
+  if(G.gBaslik) G.gBaslik(c, W, VELI_K() ? 'VELİ BİLGİLENDİRME' : 'HAFTALIK GÖREV RAPORU', aralik.toLocaleUpperCase('tr-TR'));
   // özet ve ilerleme çubuğu
   const top = R.yap.length + R.yok.length, oran = top ? R.yap.length/top : 0;
-  yaz(top ? R.yap.length+' / '+top+' görev yapıldı' : 'Bu hafta görev yok', W/2, 262, dnmF(800,32), NAVY);
+  const GK2 = VELI_K() ? 'madde' : 'görev';
+  yaz(top ? R.yap.length+' / '+top+' '+GK2+' yapıldı' : 'Bu hafta '+GK2+' yok', W/2, 262, dnmF(800,32), NAVY);
   rr(TX+120, 286, TW-240, 18, 9); c.fillStyle = 'rgba(18,41,94,.10)'; c.fill();
   if(oran){ rr(TX+120, 286, Math.max(18, (TW-240)*oran), 18, 9); c.fillStyle = YESIL; c.fill(); }
   let y = 340;
@@ -23486,7 +23534,7 @@ function raporCiz(){
   };
   kart('✅ YAPILANLAR', YESIL, R.yap, true);
   kart('⏳ YAPILMAYANLAR', KIRMIZI, R.yok, false);
-  dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · Haftalık görev raporu · '+aralik);
+  dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · '+(VELI_K() ? 'Haftalık veli bilgilendirme raporu' : 'Haftalık görev raporu')+' · '+aralik);
   return cv;
 }
 let rpMesgul = false;
@@ -23496,7 +23544,7 @@ async function raporOlustur(){
     try{ if(typeof dnmFontBekle==='function') await dnmFontBekle(); }catch(e){}
     const cv = raporCiz(), blob = await new Promise(r=>cv.toBlob(r, 'image/png'));
     if(RP && RP.url) try{ URL.revokeObjectURL(RP.url); }catch(e){}
-    RP = {hafta, blob, url:URL.createObjectURL(blob), ad:'Haftalik-gorev-raporu-'+gunTarih(0)+'.png'};
+    RP = {hafta, blob, url:URL.createObjectURL(blob), ad:(VELI_K() ? 'Haftalik-veli-bilgilendirme-' : 'Haftalik-gorev-raporu-')+gunTarih(0)+'.png'};
     raporGoster();
     setTimeout(()=>{ const e = $('gv-rapor-on'); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
   }catch(e){ console.error(e); try{ showN('❌','Görsel hazırlanamadı','Tekrar deneyin'); }catch(_){} }
@@ -23545,7 +23593,7 @@ function gorevBagla(){
     if(!yonetici()) return;
     const ad = $('gv-yeni').value.trim(); if(!ad){ $('gv-yeni').focus(); return; }
     const b = ben(), tek = $('gv-tekrar').value==='tek';
-    const it = {tur:'gorev', id:yeniId(), ad, sorumlu:$('gv-sorumlu').value||'', olusturan:b?b.id:'', z0:Date.now(), bitti:{}};
+    const it = {tur:GMOD, id:yeniId(), ad, sorumlu:$('gv-sorumlu').value||'', olusturan:b?b.id:'', z0:Date.now(), bitti:{}};
     if(tek) it.tarih = gunTarih(secGun); else it.gun = secGun;
     kaydet(it); $('gv-yeni').value = ''; $('gv-yeni').focus();
   };
@@ -23708,10 +23756,14 @@ function veliBagla(){
 }
 window.veliTakipAc = function(){
   if(typeof menuKapat==='function') menuKapat();
-  if(!yonetici()){ try{ showN('🔒','Yalnız yönetici','Veli Bilgilendirme Takibi yöneticiye açıktır'); }catch(e){} return; }
-  if(goPage('pageVeliTakip')===false) return;
-  bagla(); vtHafta = 0; veliCiz(); cek();
-  const pb = document.querySelector('#pageVeliTakip .pb'); if(pb) pb.scrollTop = 0;
+  if(!yonetici()){ try{ showN('🔒','Yalnız yönetici','Veli Bilgilendirme yöneticiye açıktır'); }catch(e){} return; }
+  if(goPage('pageGorev')===false) return;
+  // eski haftalık liste maddeleri → Görevler biçimi (her pazartesi; işaretler pazartesi tarihinde duruyordu)
+  veliMaddeler().forEach(x=>{ const y = Object.assign({}, x, {tur:'veliGorev', gun:0}); kaydet(y); });
+  GMOD = 'veliGorev'; RP = null;
+  bagla(); hafta = 0; secGun = gunNo(new Date()); gorevCiz(); cek();
+  const pb = document.querySelector('#pageGorev .pb'); if(pb) pb.scrollTop = 0;
+  try{ document.querySelectorAll('#menu .menu-oge').forEach(b=>b.classList.toggle('aktif', b.dataset.m==='velitakip')); }catch(e){}
 };
 
 /* ---------- giriş noktaları ---------- */
@@ -23720,6 +23772,7 @@ function bagla(){ if(bagli) return; bagli = true; gorevBagla(); yapBagla(); veli
 window.gorevAc = function(){
   if(typeof menuKapat==='function') menuKapat();
   if(goPage('pageGorev')===false) return;
+  GMOD = 'gorev'; RP = null;
   bagla(); hafta = 0; secGun = gunNo(new Date()); gorevCiz(); cek();
   const pb = document.querySelector('#pageGorev .pb'); if(pb) pb.scrollTop = 0;
 };
@@ -25662,8 +25715,8 @@ try{ const eski = yonUygula; yonUygula = function(){ const r = eski.apply(this, 
 'use strict';
 const ON = 'dhperfh_', ESKI_ON = 'dhperf_', YEREL = 'dhPerfHVeri', BEKLEYEN = 'dhPerfHBekleyen', ESKI_YEREL = 'dhPerfVeri';
 const GUNLER = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma'], GK = ['Pzt','Sal','Çar','Per','Cum'];
-const ISLENEN = [['k',"Kur'an-ı Kerim"],['i','İlmihal'],['a','Adab-ı Muaşeret']];
-const PUAN_HIZLI = ['10','9','8','7','Gelmedi','İzinli','Rahatsızdı'];
+const ISLENEN = [['k',"Kur'an-ı Kerim"],['i','İlmihal'],['a','Adab-ı Muaşeret'],['e','Ezber']];
+const PUAN_HIZLI = ['10','9','8','7','Geldi','Gelmedi','İzinli','Rahatsızdı'];
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2,'0');
 const isoT = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
@@ -25821,18 +25874,19 @@ function html(){
   h += '<section class="zl-kart" style="padding:12px"><div class="zl-bas"><h2>Performans puanı</h2><small id="dhp-kayit" class="et-kayit">'+(B.y.includes(r.id)?'💾 Gönderilmeyi bekliyor':(r.yazan?'Son kaydeden: '+esc(r.yazan):''))+'</small></div>'
     + '<div class="dhv-gunler" role="tablist" aria-label="Gün">'+GK.map((g,j)=>{ const n = ogr.filter(o=>!bos(r.g[j][o.id])).length;
         return '<button type="button" role="tab" aria-selected="'+(j===c)+'" onclick="dhPerf.gun('+j+')">'+g+'<small>'+tarihD(gunEkle(S.pzt,j)).getDate()+(n ? ' · '+(n===ogr.length?'✓':n+'/'+ogr.length) : '')+'</small></button>'; }).join('')+'</div>'
-    + '<div class="et-sec et-psec" aria-label="Hızlı puan">'+PUAN_HIZLI.map(x=>'<button type="button" onpointerdown="event.preventDefault()" onclick="dhPerf.puanSec(\''+x+'\')">'+x+'</button>').join('')+'</div>'
+    + '<div class="et-sec et-psec" aria-label="Hızlı puan">'+PUAN_HIZLI.map(x=>'<button type="button" onpointerdown="event.preventDefault()" onclick="dhPerf.puanSec(\''+x+'\')">'+x+'</button>').join('')
+    + '<button type="button" class="dhp-tumu" onpointerdown="event.preventDefault()" onclick="dhPerf.tumuGeldi()" title="Son işaretlediğiniz günün (yoksa seçili günün) boş kutularına Geldi yazar">✓ Tümü geldi</button></div>'
     + '<div class="et-tw"><table class="et-t dhp-t"><thead><tr><th class="ad">Öğrenci</th>'+GK.map((g,j)=>j===c ? '<th class="dhp-secili">'+g+'<small>puan girin</small></th>' : '<th class="dhp-diger">'+g+'</th>').join('')+'<th>Ort.</th></tr></thead><tbody>'
     + ogr.map(o=>'<tr><td class="ad">'+esc(o.ad)+(o.sinifAd ? '<small class="dhp-sb">'+esc(o.sinifAd)+'</small>' : '')+'</td>'
-        + GK.map((g,j)=>j===c
-            ? '<td class="dhp-secili"><input class="p" data-o="'+esc(o.id)+'" value="'+esc(r.g[c][o.id]||'')+'" maxlength="12" autocomplete="off" onfocus="dhPerf.podak(this)" oninput="dhPerf.gir(this)" aria-label="'+esc(o.ad)+' '+GUNLER[c]+' puanı"></td>'
+        + GK.map((g,j)=>gunEkle(S.pzt,j)<=bugunT   // bugün ve önceki günler yazılabilir (gelecek günler kapalı)
+            ? '<td class="'+(j===c?'dhp-secili':'dhp-diger dhp-yaz')+'"><input class="p" data-o="'+esc(o.id)+'" data-g="'+j+'" value="'+esc(r.g[j][o.id]||'')+'" maxlength="12" autocomplete="off" onfocus="dhPerf.podak(this)" oninput="dhPerf.gir(this)" aria-label="'+esc(o.ad)+' '+GUNLER[j]+' puanı"></td>'
             : '<td class="dhp-diger">'+esc(r.g[j][o.id]||'')+'</td>').join('')
         + '<td class="dhp-ort" data-ort="'+esc(o.id)+'">'+ortYazi(ort(r, o.id))+'</td></tr>').join('')
     + '</tbody></table></div>'
-    + '<div class="zl-not">Günler Pazartesi\'den Cuma\'ya sıralı; puan, üstten seçtiğiniz günün (mavi sütun) kutularına girilir. Açılışta bugünün günü seçili gelir. Puan 1–10, gelmeyen için Gelmedi / İzinli / Rahatsızdı. Hızlı puan düğmesi puanı yazıp sıradaki talebeye geçer.</div></section>';
+    + '<div class="zl-not">Günler Pazartesi\'den Cuma\'ya sıralı. Bugünün ve geçmiş günlerin kutularına doğrudan yazabilirsiniz; üstten seçtiğiniz gün mavi sütunda büyük görünür. Açılışta bugünün günü seçili gelir. Puan 1–10; puan vermeden yalnız katıldığını belirtmek için Geldi, gelmeyen için Gelmedi / İzinli / Rahatsızdı. Hızlı puan düğmesi puanı yazıp sıradaki talebeye geçer.</div></section>';
   // İşlenenler ve ödev
   h += '<section class="zl-kart"><div class="zl-bas"><h2>Bu hafta işlenenler ve ödev</h2>'+(typeof window.dh2HaftaKonu==='function' && window.dh2HaftaKonu(S.pzt, sev()) ? '<button type="button" class="bsec bsm" onclick="dhPerf.programdan()">📅 Programdan doldur</button>' : '<small>görsellerde çıkar</small>')+'</div><div class="dhv-form">'
-    + ISLENEN.map(([k,ad])=>'<label>'+esc(ad)+'<textarea rows="2" data-w="'+k+'" oninput="dhPerf.haftalik(this)" placeholder="Bu hafta işlenen konu">'+esc(r.w[k]||'')+'</textarea></label>').join('')
+    + ISLENEN.map(([k,ad])=>'<label>'+esc(ad)+'<textarea rows="2" data-w="'+k+'" oninput="dhPerf.haftalik(this)" placeholder="'+(k==='e' ? 'Bu hafta ezberlenen dua, sure, ilmihal' : 'Bu hafta işlenen konu')+'">'+esc(r.w[k]||'')+'</textarea></label>').join('')
     + '<label>Haftalık istenenler / ödev<textarea rows="2" data-w="ho" oninput="dhPerf.haftalik(this)" placeholder="Örn: Fatiha suresini ezberle">'+esc(r.ho||'')+'</textarea></label></div></section>';
   // Talebe görselleri
   h += '<section class="zl-kart"><div class="zl-bas"><h2>Talebe görselleri</h2><small>'+ogr.length+' talebe · veliye özel</small></div>'
@@ -25867,18 +25921,43 @@ function kutuCiz(c, A, x, y, w, baslik, renk, satirlar, f, lh){
   satirlar.forEach((t,k)=>yaz(t, x+32, y+82+k*lh+lh*0.55, dnmF(600,f), '#1c2a4a', 'left'));
   return bh;
 }
+/* Bu hafta işlenenler: her ders ayrı kutu; solda renkli başlık kutucuğu (büyük yazı), sağında işlenen konu */
+const KONU_RENK = {k:'#1f8a4c', i:'#1040d0', a:'#b85000', e:'#7b3fb0'};
+function konuHazir(A0, r, w, f){
+  const tw = w - 270 - 50; A0.font = dnmF(600, f);
+  return ISLENEN.filter(([k])=>!bos(r.w[k])).map(([k,ad])=>{ const l = sar(A0, String(r.w[k]).trim(), tw); return {k, ad, l, f, h:Math.max(84, l.length*(f+10)+36)}; });
+}
+const konuYuk = L => L.reduce((s,x)=>s+x.h+16, 0);
+function konuCiz(c, A, x, y, w, L){
+  const {rr, yaz, sigdir} = A, cw = 270; let yy = y;
+  L.forEach(it=>{
+    const renk = KONU_RENK[it.k] || NAVY, h = it.h, f = it.f, lh = f+10;
+    c.save(); c.shadowColor = 'rgba(18,41,94,.10)'; c.shadowBlur = 12; c.shadowOffsetY = 4; rr(x, yy, w, h, 16); c.fillStyle = '#fff'; c.fill(); c.restore();
+    c.save(); rr(x, yy, w, h, 16); c.clip();
+    c.fillStyle = renk; c.fillRect(x, yy, 10, h);                                   // sol renk şeridi
+    c.globalAlpha = .12; c.fillRect(x+10, yy, cw-10, h); c.globalAlpha = 1;        // başlık kutucuğu
+    c.fillStyle = renk; c.globalAlpha = .35; c.fillRect(x+cw, yy+14, 2, h-28); c.globalAlpha = 1;
+    c.restore();
+    const bas = trUst(it.ad), bf = sigdir(bas, cw-40, 30, 16, 800);
+    yaz(bas, x+10+(cw-10)/2, yy+h/2+bf*0.36, dnmF(800, bf), renk);
+    const top = yy + h/2 - (it.l.length-1)*lh/2 + f*0.36;
+    it.l.forEach((s,k)=>yaz(s, x+cw+26, top+k*lh, dnmF(600, f), '#1c2a4a', 'left'));
+    yy += h+16;
+  });
+  return yy - y;
+}
 function puanYaz(A, v, x, y, w, buyuk){
   const {yaz, sigdir} = A, t = String(v||'').trim(), n = sayi(t);
   if(!t){ yaz('—', x, y, dnmF(700, buyuk?26:22), '#aab4c6'); return; }
   if(n!=null) yaz(t.replace('.',','), x, y+2, dnmF(800, buyuk?40:30), puanRenk(n));
-  else yaz(t, x, y, dnmF(700, sigdir(t, w-14, buyuk?24:18, 11, 700)), MUTED);
+  else yaz(t, x, y, dnmF(700, sigdir(t, w-14, buyuk?24:18, 11, 700)), /^geldi$/i.test(t) ? YESIL : MUTED);
 }
 function sinifGorsel(r, sb, ogr){
   const W = 1200, TX = 36, TW = W-72, TY = 292, H1 = 60, RH = 58, cG = 128, cO = 120, cAd = TW-5*cG-cO;
   const A0 = document.createElement('canvas').getContext('2d'); A0.font = dnmF(600,26);
-  const wl = [].concat(...islenenler(r).map(t=>sar(A0, t, TW-70))), hl = bos(r.ho) ? [] : sar(A0, r.ho, TW-70);
+  const hl = bos(r.ho) ? [] : sar(A0, r.ho, TW-70), KL = konuHazir(A0, r, TW, 25);
   const kutu = l => l.length ? 64+l.length*36+18+20 : 0, tH = H1+ogr.length*RH;
-  const H = TY + tH + 34 + kutu(wl) + kutu(hl) + 130;
+  const H = TY + tH + 34 + konuYuk(KL) + (KL.length ? 6 : 0) + kutu(hl) + 130;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
   const A = dnmAraclar(c), {rr, yaz, sigdir} = A, G = window.kbGorselAraclar || {};
   if(G.gZeminBoya) G.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
@@ -25904,17 +25983,17 @@ function sinifGorsel(r, sb, ogr){
   c.restore();
   c.strokeStyle = '#aebbd6'; c.lineWidth = 2.5; rr(TX, TY, TW, tH, 18); c.stroke();
   let y = TY+tH+34;
-  if(wl.length) y += kutuCiz(c, A, TX, y, TW, 'BU HAFTA İŞLENENLER', NAVY, wl, 26, 36) + 20;
+  if(KL.length) y += konuCiz(c, A, TX, y, TW, KL) + 6;
   if(hl.length) y += kutuCiz(c, A, TX, y, TW, 'HAFTALIK İSTENENLER', ORG, hl, 26, 36) + 20;
   dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · Dahili Ders Performansı · '+haftaYazi(r.pzt));
   return cv;
 }
 function ogrGorsel(r, sb, o){
   const W = 1200, TX = 50, TW = W-100, A0 = document.createElement('canvas').getContext('2d'); A0.font = dnmF(600,28);
-  const wl = [].concat(...islenenler(r).map(t=>sar(A0, t, TW-70))), hl = bos(r.ho) ? [] : sar(A0, r.ho, TW-70);
-  const nt = (r.not||{})[o.id], nl = bos(nt) ? [] : sar(A0, nt, TW-70);
+  const hl = bos(r.ho) ? [] : sar(A0, r.ho, TW-70);
+  const nt = (r.not||{})[o.id], nl = bos(nt) ? [] : sar(A0, nt, TW-70), KL = konuHazir(A0, r, TW, 27);
   const kutu = l => l.length ? 64+l.length*40+18+20 : 0, TY = 300, KH = 190;
-  const H = TY + 50 + KH + 40 + kutu(wl) + kutu(hl) + kutu(nl) + 130;
+  const H = TY + 50 + KH + 40 + konuYuk(KL) + (KL.length ? 6 : 0) + kutu(hl) + kutu(nl) + 130;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
   const A = dnmAraclar(c), {rr, yaz, sigdir} = A, G = window.kbGorselAraclar || {};
   if(G.gZeminBoya) G.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
@@ -25939,7 +26018,7 @@ function ogrGorsel(r, sb, o){
     else yaz('—', x+gw/2, gy+52+60, dnmF(700,34), '#aab4c6');
   });
   let y = gy+KH+40;
-  if(wl.length) y += kutuCiz(c, A, TX, y, TW, 'BU HAFTA İŞLENENLER', NAVY, wl, 28, 40) + 20;
+  if(KL.length) y += konuCiz(c, A, TX, y, TW, KL) + 6;
   if(hl.length) y += kutuCiz(c, A, TX, y, TW, 'HAFTALIK İSTENENLER', ORG, hl, 28, 40) + 20;
   if(nl.length) y += kutuCiz(c, A, TX, y, TW, 'ÖĞRETMEN NOTU', YESIL, nl, 28, 40) + 20;
   dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · Dahili Ders · Değerli velimize saygılarımızla');
@@ -25967,7 +26046,7 @@ async function waYazi(t){
 }
 
 /* ---------- eylemler ---------- */
-let PODAK = null;
+let PODAK = null, PODAK_G = null;   // PODAK_G: dokunulan kutunun günü (hızlı puan o güne yazar)
 const q = s => document.querySelector('#dhp-govde '+s);
 function ortGuncelle(r, oid){
   const a = ort(r, oid), t = q('[data-ort="'+oid+'"]'), k = q('[data-ortk="'+oid+'"]');
@@ -25977,26 +26056,38 @@ window.dhPerf = {
   sube(id){ S.sube = id; S.taslak = null; S.gorsel = null; try{ localStorage.setItem('dhPerfSonSube', id); }catch(e){} ciz(); },
   hafta(n){ S.pzt = gunEkle(S.pzt, 7*n); S.taslak = null; S.gorsel = null; ciz(); cek(); },
   buHafta(){ S.pzt = pztBul(bugunT); S.taslak = null; S.gorsel = null; ciz(); cek(); },
-  gun(j){ S.gun = j; PODAK = null; ciz(); },
-  gir(el){ const r = kayit(), o = el.dataset.o; r.g[S.gun][o] = el.value; eskit(); kaydet(r); ortGuncelle(r, o); },
-  podak(el){ PODAK = el.dataset.o; },
+  gun(j){ S.gun = j; PODAK = null; PODAK_G = null; ciz(); },
+  gir(el){ const r = kayit(), o = el.dataset.o, j = el.dataset.g!=null ? +el.dataset.g : S.gun; r.g[j][o] = el.value; eskit(); kaydet(r); ortGuncelle(r, o); },
+  podak(el){ PODAK = el.dataset.o; if(el.dataset.g!=null) PODAK_G = +el.dataset.g; },
   puanSec(v){
     const ogr = ogrenciler(S.sube); if(!ogr.length) return;
-    const r = kayit(), g = r.g[S.gun];
+    const r = kayit(), gj = PODAK_G!=null ? PODAK_G : S.gun, g = r.g[gj];
     let oid = PODAK && ogr.some(o=>o.id===PODAK) ? PODAK : null;
     if(!oid){ const o = ogr.find(o=>bos(g[o.id])); oid = o ? o.id : null; }
     if(!oid){ try{ showN('ℹ️','Önce talebenin puan kutusuna dokunun',''); }catch(e){} return; }
     g[oid] = v; eskit(); kaydet(r); ortGuncelle(r, oid);
-    const el = q('input[data-o="'+oid+'"]'); if(el) el.value = v;
+    const el = q('input[data-o="'+oid+'"][data-g="'+gj+'"]'); if(el) el.value = v;
     const i = ogr.findIndex(o=>o.id===oid), sonraki = ogr[i+1];
     PODAK = sonraki ? sonraki.id : null;
-    const se = sonraki && q('input[data-o="'+sonraki.id+'"]'); if(se) se.focus({preventScroll:false});
+    const se = sonraki && q('input[data-o="'+sonraki.id+'"][data-g="'+gj+'"]'); if(se) se.focus({preventScroll:false});
+  },
+  tumuGeldi(){   // son dokunulan günün (yoksa seçili günün) yalnız BOŞ kutularına "Geldi"
+    const ogr = ogrenciler(S.sube); if(!ogr.length) return;
+    const gj = PODAK_G!=null ? PODAK_G : S.gun;
+    if(gunEkle(S.pzt, gj) > bugunT){ try{ showN('ℹ️','Gelecek güne yazılamaz',''); }catch(e){} return; }
+    const r = kayit(), g = r.g[gj]; let n = 0;
+    ogr.forEach(o=>{ if(bos(g[o.id])){ g[o.id] = 'Geldi'; n++; const el = q('input[data-o="'+o.id+'"][data-g="'+gj+'"]'); if(el) el.value = 'Geldi'; } });
+    if(!n){ try{ showN('ℹ️','Boş kutu yok', GUNLER[gj]+' günü zaten dolu'); }catch(e){} return; }
+    eskit(); kaydet(r); ogr.forEach(o=>ortGuncelle(r, o.id));
+    try{ showN('✓', n+' talebeye Geldi yazıldı', GUNLER[gj]+' · '+tarihD(gunEkle(S.pzt,gj)).toLocaleDateString('tr-TR',{day:'numeric',month:'long'})); }catch(e){}
+    const gs = document.querySelectorAll('#dhp-govde .dhv-gunler button small');   // gün sekmesindeki sayaç
+    if(gs[gj]){ const dolu = ogr.filter(o=>!bos(r.g[gj][o.id])).length; gs[gj].textContent = tarihD(gunEkle(S.pzt,gj)).getDate()+(dolu ? ' · '+(dolu===ogr.length?'✓':dolu+'/'+ogr.length) : ''); }
   },
   haftalik(el){ const r = kayit(), k = el.dataset.w; if(k==='ho') r.ho = el.value; else r.w[k] = el.value; eskit(); kaydet(r); },
   not(el){ const r = kayit(); r.not = r.not || {}; r.not[el.dataset.o] = el.value; eskit(); kaydet(r); },
   programdan(){ const x = typeof window.dh2HaftaKonu==='function' ? window.dh2HaftaKonu(S.pzt, sev()) : null; if(!x) return;
-    const r = kayit(); if((r.w.k||r.w.i||r.w.a) && !confirm('İşlenenler kutuları bu haftanın programıyla değiştirilsin mi?')) return;
-    r.w = {k:x.k, i:x.i, a:x.a}; eskit(); kaydet(r); ciz(); try{ showN('📅','Programdan dolduruldu',''); }catch(e){} },
+    const r = kayit(); if((r.w.k||r.w.i||r.w.a||r.w.e) && !confirm('İşlenenler kutuları bu haftanın programıyla değiştirilsin mi?')) return;
+    r.w = {k:x.k, i:x.i, a:x.a, e:x.e || r.w.e || ''}; eskit(); kaydet(r); ciz(); try{ showN('📅','Programdan dolduruldu',''); }catch(e){} },
   async gorsel(oid){
     const sb = subeBul(S.sube); if(!sb || MESGUL) return;
     const r = kayit(), ogr = ogrenciler(S.sube), o = oid ? ogr.find(x=>x.id===oid) : null;
@@ -26277,6 +26368,11 @@ window.unsur = {
 };
 })();
 
+</script>
+<script>
+document.addEventListener('pointerdown', e=>{ const b = e.target.closest && e.target.closest('.zl-elle .z1, .zl-elle .z2, .zl-elle .zl-dur'); if(!b) return;
+  b.classList.add('basili'); const kalk = ()=>setTimeout(()=>b.classList.remove('basili'), 160);
+  b.addEventListener('pointerup', kalk, {once:true}); b.addEventListener('pointercancel', kalk, {once:true}); b.addEventListener('pointerleave', kalk, {once:true}); });
 </script>
 </body>
 </html>
