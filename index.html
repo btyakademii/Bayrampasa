@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-44">
+<meta name="otk-surum" content="2026.10.20-45">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -3008,7 +3008,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-44</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-45</div>
   </div>
 </aside>
 
@@ -14550,7 +14550,13 @@ function stbLgsGun(){const t=stbLgsTarih();const m=/^(\d{4})-(\d{2})-(\d{2})$/.e
   const g=Math.round((hedef-bugun)/864e5);return g>=0?g:null}
 /* Optik form + kurşun kalem çizimi (sonuç görsellerinin başlığında) */
 /* Görsel başlıklarında optik form + kalem çizimi yerine yurdun logosu */
-const GORSEL_LOGO = (()=>{ try{ const i = new Image(); i.src = window.LOGO_URI || ''; return i; }catch(e){ return null; } })();
+/* logo: önce saydam webp; tarayıcı webp açamazsa (eski iPhone vb.) jpeg ikon */
+const GORSEL_LOGO = (()=>{ try{ const i = new Image(); let yedek = false;
+  i.onerror = ()=>{ if(!yedek && window.LOGO_URI_IKON){ yedek = true; i.src = window.LOGO_URI_IKON; } };
+  i.src = window.LOGO_URI || window.LOGO_URI_IKON || ''; return i; }catch(e){ return null; } })();
+window.gorselLogoHazir = function(){ const i = GORSEL_LOGO; if(!i) return Promise.resolve();
+  if(i.complete && i.naturalWidth) return Promise.resolve();
+  return Promise.race([new Promise(r=>{ i.addEventListener('load', r, {once:true}); }), new Promise(r=>setTimeout(r, 2000))]); };
 function optikKalemCiz(c,cx0,cy0,k){
   const LG = GORSEL_LOGO;
   if(LG && LG.complete && LG.naturalWidth){
@@ -15608,6 +15614,7 @@ function dksoCiz(x){
 
 /* ── Oluşturma, paylaşma, indirme ── */
 async function dnmFontBekle(){
+  try{ if(window.gorselLogoHazir) await window.gorselLogoHazir(); }catch(e){}   // logo yüklenmeden görsel çizilmesin
   try{ if(document.fonts && document.fonts.load) await Promise.race([Promise.all([document.fonts.load('800 40px Outfit'),document.fonts.load('600 22px Outfit'),document.fonts.load('500 22px Outfit')]), new Promise(r=>setTimeout(r,1500))]); }catch(e){}
 }
 async function dnmResimYap(cv, ad, eski){
