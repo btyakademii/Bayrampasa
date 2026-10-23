@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-45">
+<meta name="otk-surum" content="2026.10.20-47">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -3008,7 +3008,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-45</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-47</div>
   </div>
 </aside>
 
@@ -3430,6 +3430,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <div id="yzd-durum" style="font-size:12.5px;font-weight:700;margin:-4px 0 10px"></div>
       <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-bottom:10px"><input type="checkbox" id="yzd-ist" style="width:20px;height:20px;flex:none;margin-top:1px" onchange="yzdAyar('ist', this.checked)"><span><b>Bu bilgisayar yazıcı istasyonu</b><br><small style="color:var(--text2)">Fotokopi makinesine bağlı ana bilgisayarda açın. Bu sayfa açık kaldıkça telefonlardan gelen çıktılar buradan basılır.</small></span></label>
       <div style="font-size:12px;color:var(--text2);line-height:1.5;margin:0 0 10px">Her “Yazdır” düğmesinde seçim çıkar: <b>Çıktı al</b> (bu cihazdan), <b>İndir</b> ya da <b>Ana bilgisayardan çıkar</b> (fotokopi makinesi). Ana bilgisayardan çıkarınca telefona “Yazdırılıyor / Yazdırıldı / Yazdırılamadı” bildirimi gelir.</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5;margin:0 0 10px">📺 Pano ve istasyonun sürekli açık kalması için <b>BES-Pano kurulum paketini</b> kullanın: pano TV'de ayrı bir pencerede açılır, kapatılırsa kendiliğinden geri gelir. Adreslere <code>#pano</code> (yalnız pano), <code>#istasyon</code> (yalnız istasyon) ya da <code>#pano-istasyon</code> (ikisi) eklenebilir.</div>
       <details style="font-size:12px;color:var(--text2);line-height:1.55"><summary style="cursor:pointer;font-weight:700">Ana bilgisayarda yazdırma penceresi çıkmadan basmak için</summary>
         1) Fotokopi makinesini Windows'ta <b>varsayılan yazıcı</b> yapın.<br>2) Masaüstündeki tarayıcı kısayoluna (Chrome, Edge ya da <b>Opera</b>) sağ tıklayıp Özellikler → Hedef'in sonuna bir boşluk bırakıp <code>--kiosk-printing --disable-background-timer-throttling</code> ekleyin.<br>3) Tarayıcıyı <b>tamamen</b> kapatın (Opera'da Ayarlar → Sistem → “Opera kapatıldığında arka plan uygulamalarını çalıştırmaya devam et” kapalı olmalı; görev çubuğunun sağındaki simge de kapanmalı), sonra yalnız bu kısayolla açın, sisteme girip bu kutuyu işaretleyin. Artık gelen çıktılar pencere sormadan basılır. Bu ayar yapılmazsa her çıktıda bilgisayarda yazdırma penceresi açılır ve “Yazdır”a basmak gerekir.</details>
     </div>
@@ -16895,6 +16896,26 @@ function panoAc(){
   else { try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} try{ panoGunlukGonder(); }catch(e){} try{ zilGunlukTazele(); }catch(e){} }
   panoOlcekle(); requestAnimationFrame(panoOlcekle); try{ panoUyan(); }catch(e){}
 }
+/* ══ Pano bilgisayarı (kiosk) ══ index.html#pano → doğrudan panoyu açar · #istasyon → yazıcı istasyonunu açar · #pano-istasyon → ikisi birden.
+   Pano açıkken ekran uyumaz, gece 03:00'te sayfa kendini yeniler (günlerce açık kalınca takılma olmasın). */
+function panoHashAc(){
+  const h = String(location.hash||'').toLowerCase();
+  if(h.indexOf('istasyon')>-1){ try{ if(localStorage.getItem('otkYzdIstasyon')!=='1' && typeof yzdAyar==='function') yzdAyar('ist', true); }catch(e){} }
+  if(h==='#pano' || h==='#pano-istasyon'){ try{ panoAc(); }catch(e){ console.error(e); } }
+}
+window.addEventListener('load', ()=>setTimeout(panoHashAc, 1500));
+window.addEventListener('hashchange', panoHashAc);
+let PANO_WL = null;
+async function panoUyanik(){ try{ if(navigator.wakeLock && !document.hidden && aktifSayfa()==='pagePano' && !PANO_WL){ PANO_WL = await navigator.wakeLock.request('screen'); PANO_WL.addEventListener('release', ()=>{ PANO_WL = null; }); } }catch(e){ PANO_WL = null; } }
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) panoUyanik(); });
+setInterval(()=>{ try{ panoUyanik(); }catch(e){} }, 20000);
+setInterval(()=>{ try{
+  const d = new Date();
+  if(aktifSayfa()==='pagePano' && d.getHours()===3 && d.getMinutes()<3){
+    const gun = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+    if(localStorage.getItem('otkPanoYenile')!==gun){ localStorage.setItem('otkPanoYenile', gun); location.reload(); }
+  }
+}catch(e){} }, 20000);
 function panoTamEkran(){
   const p = document.getElementById('pagePano');
   try{
@@ -17282,6 +17303,8 @@ function prfAramaHtml(){
     h += '<button type="button" onclick="profilAc(\''+prfEsc(o.id)+'\')">'+(typeof ogkAvatar==='function' ? ogkAvatar(o, 34) : '')+'<span>'+prfEsc(o.ad)+'</span><i>›</i></button>'; });
   return h + '</div>';
 }
+/* Pazar izin dönüşü yoklaması, ertesi pazartesiden başlayan haftanın puanına yazılır (geçen pazar gelmeyen bu hafta −1 alır) */
+function pzErtesi(d){ const x = new Date(d+'T12:00:00'); x.setDate(x.getDate()+1); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
 /* ── T.T.S puanı (Talebe Takip'teki hesapla aynı) ── */
 function prfTts(o, from, to){
   const STU = prfJ('psStudents', []), s = (Array.isArray(STU) ? STU : []).find(x=>String(x.ana)===String(o.id));
@@ -17292,10 +17315,11 @@ function prfTts(o, from, to){
   const r = {nm:0, dv:0, dvMarks:0, pz:0, pzy:0, ym:0, ymGun:0, cn:0, cnGun:0, total:0}, ymVar = s.okul==='Muharrem';
   Object.keys(DATA).forEach(d=>{ if(d<from || d>to) return; const rec = (DATA[d]||{})[sid]; if(!rec) return;
     Object.keys(rec).forEach(cid=>{ const c = cat(cid); if(!c || c.hidden) return; r.dvMarks += rec[cid]; r.dv += rec[cid]*c.p; }); });
-  Object.keys(ATT).forEach(d=>{ if(d<from || d>to) return; const a = ATT[d] || {};
+  Object.keys(ATT).forEach(d=>{ const a = ATT[d] || {};
+    const pzB = a.yk && a.yk.pazar;
+    if(pzB){ const dE = pzErtesi(d); if(dE>=from && dE<=to){ const pz = pzB[sid]; if(pz){ if(pz==='v') r.pz++; } else if(Object.keys(pzB).some(x=>!!pzB[x])) r.pzy++; } }
+    if(d<from || d>to) return;
     if(a.n) PR.forEach(p=>{ if(a.n[p] && a.n[p][sid]==='y') r.nm++; });
-    const pzB = a.yk && a.yk.pazar, pz = pzB && pzB[sid];
-    if(pz){ if(pz==='v') r.pz++; } else if(pzB && Object.keys(pzB).some(x=>!!pzB[x])) r.pzy++;
     const ym = a.yk && a.yk.yemek, cuma = new Date(d+'T12:00:00').getDay()===5;
     if(ymVar && ym && Object.keys(ym).some(x=>ym[x]==='v') && ym[sid]!=='i'){ if(cuma){ r.cnGun++; if(ym[sid]!=='v') r.cn++; } else { r.ymGun++; if(ym[sid]!=='v') r.ym++; } }   // İ (izinli) düşülmez
   });
@@ -21101,11 +21125,12 @@ function panoTalebeVeri(){
       let dv = 0, nm = 0, pz = 0, ye = 0, pzy = 0, ym = 0, cn = 0; const ks = {};   // ks: davranış maddesi başına işaret sayısı
       const ymVar = s.okul==='Muharrem';   // öğle yemeği / cuma namazı yalnız okulu Muharrem olanlara sayılır (Talebe Takip ile aynı)
       for(const d in DATA){ if(d<f || d>t) continue; const r = (DATA[d]||{})[s.id]; if(!r) continue; for(const c in r){ if(c in kat){ dv += (r[c]||0)*kat[c]; ks[c] = (ks[c]||0) + (r[c]||0); } } }
-      for(const d in ATT){ if(d<f || d>t) continue; const a = ATT[d] || {};
+      for(const d in ATT){ const a = ATT[d] || {};
+        const pzB = a.yk && a.yk.pazar;   // pazar dönüşü ertesi pazartesiden başlayan haftaya yazılır
+        if(pzB){ const dE = pzErtesi(d); if(dE>=f && dE<=t){ if(pzB[s.id]){ if(pzB[s.id]==='v') pz++; }
+          else if(Object.keys(pzB).some(x=>!!pzB[x])) pzy++; } }   // yoklaması alınan pazara gelmedi: −1
+        if(d<f || d>t) continue;
         if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][s.id]==='y') nm++; });
-        const pzB = a.yk && a.yk.pazar;
-        if(pzB && pzB[s.id]){ if(pzB[s.id]==='v') pz++; }
-        else if(pzB && Object.keys(pzB).some(x=>!!pzB[x])) pzy++;   // yoklaması alınan pazara gelmedi: −1
         const ymB = a.yk && a.yk.yemek;
         if(ymB && ymB[s.id]==='v') ye++;
         if(ymVar && ymB && Object.keys(ymB).some(x=>ymB[x]==='v') && ymB[s.id]!=='v' && ymB[s.id]!=='i'){ /* işaretsiz = gelmedi (−1), İ = izinli (düşülmez) */ if(new Date(d+'T12:00:00').getDay()===5) cn++; else ym++; } }
@@ -21336,12 +21361,14 @@ function panoIsaretVeri(){
   const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   const kisa = s=>{ const d = T.par(s); return d.getDate()+' '+AY[d.getMonth()].slice(0,3); };
   const puan = (sid, from, to)=>{
-    let dv = 0, nm = 0, pz = 0;
+    let dv = 0, nm = 0, pz = 0, pzy = 0;
     for(const d in DATA){ if(d<from || d>to) continue; const r = (DATA[d]||{})[sid]; if(!r) continue; for(const c in r){ if(c in kat) dv += (r[c]||0)*kat[c]; } }
-    for(const d in ATT){ if(d<from || d>to) continue; const a = ATT[d]||{};
-      if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][sid]==='y') nm++; });
-      if(a.yk && a.yk.pazar && a.yk.pazar[sid]==='v') pz++; }
-    return dv - nm + pz;
+    for(const d in ATT){ const a = ATT[d]||{};
+      const pB = a.yk && a.yk.pazar;
+      if(pB){ const dE = pzErtesi(d); if(dE>=from && dE<=to){ if(pB[sid]==='v') pz++; else if(!pB[sid] && Object.keys(pB).some(x=>!!pB[x])) pzy++; } }
+      if(d<from || d>to) continue;
+      if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][sid]==='y') nm++; }); }
+    return dv - nm + pz - pzy;
   };
   const out = {w:[], m:[], d:[], y:[]};
   Object.keys(CFG.picks||{}).forEach(key=>{
