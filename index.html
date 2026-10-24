@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.20-48">
+<meta name="otk-surum" content="2026.10.20-49">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -1006,6 +1006,13 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dha-hg.on{border-style:solid;border-color:#c9d7f5;background:#eef3ff;color:var(--blue)}
 .dha-hg.on small{display:block;font-size:10.5px;font-weight:600;color:var(--text2)}
 .dh-gizli{display:none !important}
+.otk-kit-uyari{margin-top:8px;border:2.5px solid var(--red);border-radius:12px;padding:10px 12px;background:rgba(192,40,63,.09)}
+.otk-kit-uyari .b{font-size:14px;font-weight:900;color:var(--red);letter-spacing:.3px}
+.otk-kit-uyari .a{font-size:12.5px;line-height:1.5;margin:4px 0 8px;color:var(--text)}
+.otk-kit-uyari .d{display:flex;gap:8px}
+.otk-kit-b{flex:1;padding:12px 8px !important;font-size:15px !important;font-weight:900 !important}
+.otk-kit-uyari.titre{animation:otkTitre .5s ease 2}
+@keyframes otkTitre{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .yzd-sec{position:fixed;inset:0;z-index:9999;background:rgba(10,20,40,.45);display:none;align-items:flex-end;justify-content:center;padding:16px}
 .yzd-sec.acik{display:flex}
 .yzd-sec-k{width:100%;max-width:420px;background:var(--card,#fff);border-radius:20px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.25);margin-bottom:env(safe-area-inset-bottom,0px)}
@@ -3008,7 +3015,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.20-48</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.20-49</div>
   </div>
 </aside>
 
@@ -4809,7 +4816,7 @@ function ogrKitapcigi(d, o){
   const k = d.kitapciklar && d.kitapciklar[o.id];
   if(k==='A' || k==='B') return k;
   if(kitIkili(k)) return oturumlu(d) ? k : k[0];
-  return o.kitapcik==='B' ? 'B' : 'A';
+  return 'A';   // öğrenci kaydında kitapçık tutulmaz: kâğıttan okunmamışsa geçici A (okutmada uyarı verilir)
 }
 /* Eski kayıtlar için bir kerelik: okunmuş her kâğıdın kitapçığını o anki haliyle dondur */
 /* Kitapçık kaydı yalnızca okunmuş kâğıdı olan öğrenci için tutulur; kâğıdı kalmayanınki silinir */
@@ -5504,8 +5511,8 @@ function otkOgrKitapcikGoster(){
   if(!el) return;
   const os = document.getElementById('otk-ogrenci-sel');
   const o = OGRENCILER.find(x=>x.id===os.value);
-  const k = formKitapcik(o, DENEME);
-  el.textContent = !o ? '' : (k ? '📘 Kitapçık: ' + k + (kitapcikTuru(DENEME)==='A' ? ' (tek kitapçık)' : '') : '📘 Bu denemede kitapçık yok');
+  const tur = kitapcikTuru(DENEME);
+  el.textContent = !o ? '' : (tur==='AB' ? '📘 Kitapçık: kâğıttaki A/B dairesinden okunur' : tur==='A' ? '📘 Kitapçık: A (tek kitapçık)' : '📘 Bu denemede kitapçık yok');
 }
 function otkOgrSecili(){
   if(document.getElementById('otk-ogrenci-sel').value) return true;
@@ -6121,7 +6128,7 @@ async function otkQrTara(canvas){
   const ogrAd = os.selectedIndex>=0 && os.value ? os.options[os.selectedIndex].text : '';
   b.style.borderColor = 'var(--green)';
   b.innerHTML = '✅ '+esc(dnmAd(d))+'<br>'
-    + (o ? '👤 <b>'+esc(o.ad)+'</b>'+(formKitapcik(o, d) ? ' · 📘 Kitapçık '+formKitapcik(o, d) : '') : '⚠️ Formda öğrenci yok'+(ogrAd ? ' — seçili öğrenci: <b>'+esc(ogrAd)+'</b>' : ''))
+    + (o ? '👤 <b>'+esc(o.ad)+'</b>'+(kitapcikTuru(d)==='AB' ? ' · 📘 Kitapçık kâğıttaki daireden okunur' : (formKitapcik(o, d) ? ' · 📘 Kitapçık '+formKitapcik(o, d) : '')) : '⚠️ Formda öğrenci yok'+(ogrAd ? ' — seçili öğrenci: <b>'+esc(ogrAd)+'</b>' : ''))
     + uyari;
 }
 
@@ -6407,6 +6414,8 @@ function otkSonucRenderla(detay){
   otkListeCiz();
   const ck = otkKitCakisma();
   if(ck) setTimeout(()=>showN('📘','Kitapçık farklı!', OTURUMLAR[ck.onOt]+' '+ck.onceki+', bu '+OTURUMLAR[OTK_OTURUM]+' kâğıdı '+ck.simdi+' kitapçığı. Kaydetmeden önce seçin.'), 400);
+  const okOgr = document.getElementById('otk-ogrenci-sel').value;
+  if(otkKitBelirsiz(okOgr)) setTimeout(()=>{ showN('⚠️','Kitapçık işaretlenmemiş!', 'Bu kâğıtta A/B dairesi boş. Sonuç ekranından kitapçığı seçin.'); otkKitUyariGoster(); }, 500);
 }
 /* Çift işaretli sorular boş sayılır; zayıf ve çift işaretliler ayrıca süzülerek gösterilir */
 let OTK_DETAY = [], OTK_KONTROL = new Set(), OTK_ELLE = new Set(), OTK_FILTRE = false;
@@ -6414,6 +6423,23 @@ function otkSorunlu(d){ return d.guven==='cift' || d.guven==='orta'; }
 function otkFiltre(v){ OTK_FILTRE = v; otkListeCiz(); }
 /* Bu kâğıt hangi kitapçıkla puanlanacak: kitapçık çakışmasında öğretmenin seçtiği, yoksa QR'daki ya da öğrencinin kitapçığı */
 let OTK_KIT_SECIM = null;   // {ogr, k}
+/* Kâğıtta kitapçık bilgisi YOK mu? (QR'da harf yok, A/B dairesi işaretli değil, öğretmen de seçmemiş)
+   İki kitapçıklı (A ve B) denemede, boş olmayan kâğıtta bu durumda uyarı verilir ve kitapçık seçilmeden kaydedilmez. */
+function otkKitBelirsiz(ogrId){
+  if(!DENEME || !ogrId || kitapcikTuru(DENEME)!=='AB') return false;
+  try{ if(OTK_KAYNAK!=='elle' && otkSonuclar && Object.keys(otkSonuclar).length && cevapBosMu(otkSonuclar)) return false; }catch(e){}   // boş kâğıt
+  try{ if(OTK_KAYNAK!=='elle' && (otkBosKagitGirmedi() || otkOturumGirmedi())) return false; }catch(e){}
+  if(OTK_KIT_SECIM && OTK_KIT_SECIM.ogr===ogrId) return false;
+  if(OTK_QR_KITAPCIK && OTK_QR_KITAPCIK.ogr===ogrId) return false;
+  if(OTK_KIT_ISARET && OTK_KIT_ISARET.ogr===ogrId && OTK_KIT_ISARET.k) return false;
+  return true;
+}
+/* Kitapçık uyarısını gösterip A/B düğmelerini yanıp söndürür */
+function otkKitUyariGoster(){
+  const e = document.getElementById('otk-kit-uyari'); if(!e) return;
+  try{ e.scrollIntoView({behavior:'smooth', block:'center'}); }catch(_){}
+  e.classList.remove('titre'); void e.offsetWidth; e.classList.add('titre');
+}
 /* Öbür oturum kâğıdının kitapçığı (iki oturumlu denemede, o kâğıt okunmuşsa) */
 function otkOncekiKit(ogrId){
   if(!OTK_OTURUM || !DENEME || kitapcikTuru(DENEME)!=='AB') return null;
@@ -6457,7 +6483,7 @@ function otkKitapcik(ogrId){
   } else if(!OTK_OTURUM){
     const on = otkOncekiKit(ogrId); if(on) return on.k;
   }
-  return ogr.kitapcik==='B' ? 'B' : 'A';
+  return 'A';   // hiçbir bilgi yok: geçici A; kitapçık işareti yoksa kaydetmeden önce A/B seçtirilir (otkKitBelirsiz)
 }
 /* Kâğıtta kitapçık yok, öbür oturumdan alındı mı? (ekranda bilgi olarak gösterilir) */
 function otkKitOtomatik(ogrId){
@@ -6709,7 +6735,7 @@ function otkHedefCiz(){
     + '<div style="font-size:11px;color:'+renk+';font-weight:700">'+kaynak+'</div>'
     + '<div style="font-weight:800;font-size:16px;margin:4px 0 2px">👤 '+(o ? esc(o.ad) : 'Öğrenci seçilmedi')+'</div>'
     + '<div style="font-size:12px;color:var(--text2)">'+(sAd ? esc(sAd)+' · ' : '')+esc(dnmAd(DENEME))
-    + (o && formKitapcik(o, DENEME) ? ' · 📘 '+otkKitapcik(o.id) : '')+'</div>'
+    + (o && formKitapcik(o, DENEME) ? (otkKitBelirsiz(o.id) ? ' · <b style="color:var(--red)">📘 ?</b>' : ' · 📘 '+otkKitapcik(o.id)) : '')+'</div>'
     + (()=>{ const ot = o && otkKitOtomatik(o.id); return ot ? '<div style="font-size:12px;color:var(--green);font-weight:700;margin-top:4px">📘 Kâğıtta kitapçık bilgisi yok: '+OTURUMLAR[ot.o]+' kâğıdı <b>'+ot.k+'</b> olduğu için <b>'+ot.k+' kitapçığı</b> kabul edildi.</div>' : ''; })()
     + (()=>{
         // Kâğıtta kitapçık işareti okunamadıysa: neyin kabul edildiğini söyle, öğretmen tek dokunuşla değiştirebilsin
@@ -6719,6 +6745,16 @@ function otkHedefCiz(){
         if(otkKitOtomatik(o.id)) return '';
         const k = otkKitapcik(o.id), elle = OTK_KIT_SECIM && OTK_KIT_SECIM.ogr===o.id, th = elle ? null : otkKitTahmin();
         const btn = x => '<button class="bsec" style="padding:4px 12px;margin-right:6px;'+(x===k?'background:var(--blue);color:#fff;border-color:var(--blue)':'')+'" onclick="otkKitSec(\''+x+'\')">'+x+'</button>';
+        if(otkKitBelirsiz(o.id)){
+          const isr0 = (OTK_KIT_ISARET && OTK_KIT_ISARET.ogr===o.id) ? OTK_KIT_ISARET : null;
+          const bt = x => '<button class="bsec otk-kit-b" onclick="otkKitSec(\''+x+'\')">'+x+' kitapçığı</button>';
+          return '<div id="otk-kit-uyari" class="otk-kit-uyari">'
+            + '<div class="b">⚠️ KİTAPÇIK İŞARETLENMEMİŞ</div>'
+            + '<div class="a">'+(isr0 && isr0.cift ? 'Kâğıtta <b>iki kitapçık dairesi de</b> işaretli.' : 'Kâğıttaki A/B kitapçık dairesi <b>boş</b> (ya da okunamadı).')
+            + (th ? ' Cevaplar <b>'+th.k+'</b> anahtarına açıkça daha çok uyuyor (A: '+th.a+' doğru · B: '+th.b+' doğru), ama işaret olmadan bu kesin sayılmaz.' : '')
+            + '<br>Sonuç şimdilik <b>geçici '+k+'</b> ile gösteriliyor. <b>Kâğıttaki kitapçığa bakıp seçin; seçmeden kaydedilmez.</b></div>'
+            + '<div class="d">'+bt('A')+bt('B')+'</div></div>';
+        }
         const isr = (!elle && OTK_KIT_ISARET && OTK_KIT_ISARET.ogr===o.id) ? OTK_KIT_ISARET : null;
         if(isr && isr.k){
           // Öğrenci işaretlemiş: o kitapçık alınır. Cevaplar öbür anahtara açıkça uyuyorsa öğretmen uyarılır.
@@ -6776,6 +6812,11 @@ function otkKaydet(sessiz){
   const ogrId = document.getElementById('otk-ogrenci-sel').value;
   const ogr = OGRENCILER.find(o=>o.id===ogrId);
   if(!ogr){ showN('⚠️','Öğrenci seçilmedi','Sonuç ekranının üstünden öğrenciyi seçin'); return false; }
+  if(otkKitBelirsiz(ogrId)){
+    showN('⚠️','Kitapçık işaretlenmemiş', ogr.ad+': kâğıtta A/B dairesi işaretli değil. Sonuç ekranından A ya da B seçin, sonra kaydedin.');
+    otkKitUyariGoster();
+    return false;
+  }
   const ck = otkKitCakisma();
   if(ck && !(OTK_KIT_SECIM && OTK_KIT_SECIM.ogr===ogrId)){
     showN('📘','Kitapçık seçin', OTURUMLAR[ck.onOt]+' '+ck.onceki+', bu kâğıt '+ck.simdi+': üstteki kutudan hangisiyle puanlanacağını seçin');
@@ -6883,6 +6924,7 @@ function otkKaydet(sessiz){
 function otkKaydetOnKontrol(){
   if(!document.getElementById('otk-ogrenci-sel').value){ showN('⚠️','Öğrenci seçilmedi','Önce öğrenciyi seçin'); return false; }
   const ck = otkKitCakisma(), ogrId = document.getElementById('otk-ogrenci-sel').value;
+  if(otkKitBelirsiz(ogrId)){ otkKaydet(true); return false; }   // kitapçık işaretlenmemişse uyarı verilir, kamera açılmaz
   if(ck && !(OTK_KIT_SECIM && OTK_KIT_SECIM.ogr===ogrId)){ otkKaydet(true); return false; }   // kitapçık seçilmeden kaydedilmez
   return true;   // çift işaret ve tekrar okunan kâğıt soru sorulmadan kaydedilir, kamera açılır
 }
@@ -7416,7 +7458,7 @@ function ogrEkle(sid){
   const kd = (SINIFLAR.find(x=>x.id===sid)||{}).kademe, c = ogrNoCakisan(no, null, kd);
   if(c && !confirm(no+' numarası '+c.ad+' öğrencisinde de var. Yine de eklensin mi?')) return;
   const say = OGRENCILER.filter(o=>o.sinif===sid).length;
-  OGRENCILER.push(Object.assign({id:yeniId('o'), ad, sinif:sid, kitapcik: say%2===0 ? 'A' : 'B'}, no ? {no} : {}));
+  OGRENCILER.push(Object.assign({id:yeniId('o'), ad, sinif:sid}, no ? {no} : {}));
   lsSave(); renderSinif();
   const yeni = document.getElementById('yo-'+sid); if(yeni) yeni.focus();
 }
@@ -7450,13 +7492,6 @@ function ogrTelefon(id){
   if(t) o.veliTel = t; else delete o.veliTel;
   lsSave(); renderSinif();
   if(document.getElementById('pageVeli').classList.contains('active')) VR.render();
-}
-function ogrKitapcikDegistir(id){
-  const o = OGRENCILER.find(x=>x.id===id);
-  if(!o) return;
-  o.kitapcik = (o.kitapcik==='B') ? 'A' : 'B';
-  lsSave(); renderSinif();
-  showN('📘', o.ad+': bundan sonra '+o.kitapcik+' kitapçığı', 'Okunmuş denemelerin sonuçları değişmez');
 }
 /* ── Düzenleme: ad düzeltme, şube adı değiştirme, öğrenciyi şubeye taşıma.
    Okunmuş kâğıtlar öğrenci kimliğine bağlı olduğu için hiçbiri kâğıt silmez. */
@@ -7518,7 +7553,6 @@ function renderSinif(){
       : '<div class="ogr-row"><span style="flex:1">'+(o.no ? '<span style="font-size:11px;font-weight:800;color:var(--blue);margin-right:6px">'+esc(o.no)+'</span>' : '')+esc(o.ad)
       + (o.veliTel ? '<span style="display:block;font-size:11px;color:var(--text2)">📞 '+esc(telGoster(o.veliTel))+'</span>' : '')+'</span>'
       + '<button class="ibtn" title="Veli telefonu" style="width:auto;padding:2px 7px;font-size:12px'+(o.veliTel?'':';opacity:.45')+'" onclick="ogrTelefon(\''+o.id+'\')">📞</button>'
-      + '<button class="ibtn" title="Kitapçık türünü değiştir" style="width:auto;padding:2px 9px;font-size:11px;font-weight:800;color:var(--blue);border:1px solid var(--blue)" onclick="ogrKitapcikDegistir(\''+o.id+'\')">'+(o.kitapcik||'A')+'</button>'
       + (CEVAPLAR[o.id] ? '<span style="font-size:11px;color:var(--green)">✓ okundu</span>' : girmediMi(DENEME, o.id) ? '<span style="font-size:11px;color:var(--red)">⛔ girmedi</span>' : '')
       + '<button class="ibtn" title="Adı / numarayı düzelt, şubeye taşı" style="color:var(--blue)" onclick="ogrDuzenAc(\''+o.id+'\')">✏️</button>'
       + '<button class="ibtn" onclick="ogrSil(\''+o.id+'\')">✕</button></div>').join('');
@@ -7824,7 +7858,7 @@ function ogkOgrEkle(){
   const kd = (SINIFLAR.find(x=>x.id===OGK_S)||{}).kademe, c = ogrNoCakisan(no, null, kd);
   if(c && !confirm(no+' numarası '+c.ad+' öğrencisinde de var. Yine de eklensin mi?')) return;
   const say = OGRENCILER.filter(o=>o.sinif===OGK_S).length;
-  OGRENCILER.push(Object.assign({id:yeniId('o'), ad, sinif:OGK_S, kitapcik: say%2===0 ? 'A' : 'B'}, no ? {no} : {}));
+  OGRENCILER.push(Object.assign({id:yeniId('o'), ad, sinif:OGK_S}, no ? {no} : {}));
   lsSave(); ogkCiz();
   const y = document.getElementById('ogk-yeni'); if(y) y.focus();
 }
@@ -7872,7 +7906,7 @@ function ogkCiz(){
       const l = OGRENCILER.filter(o=>o.sinif===s.id).sort((a,b)=>(parseInt(a.no)||9999)-(parseInt(b.no)||9999) || String(a.ad).localeCompare(String(b.ad),'tr'));
       h.innerHTML = '<div style="display:flex;gap:6px;margin-bottom:10px"><input id="ogk-yeni" placeholder="Yeni öğrenci: Adı soyadı (ya da 123 Adı Soyadı)" maxlength="70" onkeydown="if(event.key===\'Enter\')ogkOgrEkle()" style="flex:1;min-width:0;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:15px"><button onclick="ogkOgrEkle()" style="padding:10px 14px;border:0;border-radius:8px;background:#145a30;color:#fff;font-weight:700">Ekle</button></div>'
         + (l.length ? l.map(o=>'<div onclick="ogkAc(\''+o.id+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid #ececec;cursor:pointer">'+ogkAvatar(o,44)
-            +'<div style="flex:1;min-width:0"><div style="font-weight:700">'+esc(o.ad)+'</div><div style="font-size:12px;opacity:.6">'+(o.no?'No: '+esc(o.no)+' · ':'')+'Kitapçık '+esc(o.kitapcik||'A')+(o.veliTel?'':' · veli telefonu yok')+'</div></div><span style="opacity:.4">›</span></div>').join('')
+            +'<div style="flex:1;min-width:0"><div style="font-weight:700">'+esc(o.ad)+'</div><div style="font-size:12px;opacity:.6">'+(o.no?'No: '+esc(o.no):'')+(o.veliTel?'':(o.no?' · ':'')+'veli telefonu yok')+'</div></div><span style="opacity:.4">›</span></div>').join('')
           : '<div style="opacity:.6">Bu sınıfta öğrenci yok.</div>')
         + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">'+btn('✏️ Şube adı','ogkSubeAd()')+btn('➕ Yeni şube','ogkSubeEkleSor()')+btn('🗑️ Şubeyi sil','ogkSubeSil()',true)+'</div>'
         + ogkCop();
@@ -7904,7 +7938,6 @@ function ogkForm(o){
   const alan = (id, et, v, tip)=>'<label style="display:block;margin-top:10px;font-size:12px;font-weight:700;opacity:.75">'+et+'<input id="ogk-'+id+'" type="'+(tip||'text')+'"'+(tip==='tel'?' inputmode="tel"':'')+(tip==='tel'?' maxlength="20"':' maxlength="60"')+' value="'+esc(v||'')+'" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:16px;font-weight:400"></label>';
   const sec = (id, et, opts)=>'<label style="display:block;margin-top:10px;font-size:12px;font-weight:700;opacity:.75">'+et+'<select id="ogk-'+id+'" style="display:block;width:100%;margin-top:4px;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:16px">'+opts+'</select></label>';
   const siniflar = ogkSubeler(sn.kademe).map(x=>'<option value="'+esc(x.id)+'"'+(x.id===o.sinif?' selected':'')+'>'+esc(x.ad)+'</option>').join('');
-  const kit = ['A','B'].map(x=>'<option value="'+x+'"'+((o.kitapcik||'A')===x?' selected':'')+'>'+x+' kitapçığı</option>').join('');
   return '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:6px">'+ogkAvatar(o,96)
     +(ogkFotoYetki()
       ? '<div style="display:flex;gap:8px"><label style="padding:8px 12px;border-radius:8px;background:#145a30;color:#fff;font-weight:700;cursor:pointer">📷 '+(ogkFoto(o.id)?'Fotoğrafı değiştir':'Fotoğraf ekle')+'<input type="file" accept="image/*" style="display:none" onchange="ogkFotoSec(this)"></label>'
@@ -7917,7 +7950,6 @@ function ogkForm(o){
     + sec('okul','Okulu', (()=>{ const m = okulEsle(o.okul), l = OKULLAR.slice(); if(m && !l.includes(m)) l.push(m);
         return '<option value="">— Seçin —</option>'+l.map(x=>'<option value="'+esc(x)+'"'+(x===m?' selected':'')+'>'+esc(x)+'</option>').join(''); })())
     + alan('okulSube','Okuldaki şubesi (örn. 5-C)',o.okulSube)
-    + sec('kit','Kitapçık türü',kit)
     + alan('anneAd','Anne adı',o.anneAd) + alan('anneTel','Anne cep numarası',tel(anneT),'tel')
     + alan('babaAd','Baba adı',o.babaAd) + alan('babaTel','Baba cep numarası',tel(o.babaTel),'tel')
     + '<div style="font-size:11px;opacity:.6;margin-top:6px">Veli raporu (WhatsApp) önce anne, yoksa baba numarasına gider.</div>'
@@ -7935,7 +7967,7 @@ function ogkKaydet(){
   const cn = ogrNoCakisan(no, o.id, hedef.kademe);
   if(cn && !confirm(no+' numarası '+cn.ad+' öğrencisinde de var. Aynı numara iki öğrencide olursa formdan öğrenci bulunamaz.\n\nYine de kaydedilsin mi?')) return;
   if(OGRENCILER.some(x=>x.id!==o.id && x.sinif===sid && x.ad.toLocaleLowerCase('tr-TR')===ad.toLocaleLowerCase('tr-TR')) && !confirm(hedef.ad+' şubesinde "'+ad+'" adında bir öğrenci daha var. Yine de kaydedilsin mi?')) return;
-  o.ad = ad; o.sinif = sid; o.kitapcik = g('kit')==='B' ? 'B' : 'A';
+  o.ad = ad; o.sinif = sid;
   if(no) o.no = no; else delete o.no;
   ['okul','okulSube','anneAd','babaAd'].forEach(k=>{ const v = g(k); if(v) o[k] = v; else delete o[k]; });
   if(tA) o.anneTel = tA; else delete o.anneTel;
@@ -19873,7 +19905,7 @@ window.kb = {
       // test şubesi yoksa (genel test verisi yüklenmemişse) 10 öğrencili bir test şubesi açılır
       const AD = ['Elif Aydın','Yusuf Çelik','Zeynep Şahin','Ömer Yıldız','Defne Arslan','Emir Doğan','Ecrin Kılıç','Mustafa Koç','Asya Kurt','Kerem Öztürk'];
       SINIFLAR.push({id:sid, ad:k+'-T (Test)', kademe:k});
-      AD.forEach((ad,i)=>{ if(!OGRENCILER.some(o=>o.id==='test_o'+k+'_'+(i+1))) OGRENCILER.push({id:'test_o'+k+'_'+(i+1), ad, sinif:sid, kitapcik:'A'}); });
+      AD.forEach((ad,i)=>{ if(!OGRENCILER.some(o=>o.id==='test_o'+k+'_'+(i+1))) OGRENCILER.push({id:'test_o'+k+'_'+(i+1), ad, sinif:sid}); });
       try{ lsSave(); }catch(e){}
     }
     const n = kbTestVerisiYaz(OGRENCILER.filter(o=>o.sinif===sid));
@@ -20959,7 +20991,7 @@ function neAlanYaz(o, d){
 }
 window.neEkle = function(d){
   const s = neSube(d.cls);
-  const o = {id:yeniId('o'), ad:String(d.name||'').trim(), sinif:s.id, kitapcik:'A'};
+  const o = {id:yeniId('o'), ad:String(d.name||'').trim(), sinif:s.id};
   neAlanYaz(o, d); OGRENCILER.push(o); lsSave();
   return o.id;
 };
