@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-54">
+<meta name="otk-surum" content="2026.10.26-61">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<!-- Üç dosya: index.html (ana sistem) · ortak.js (QR kütüphaneleri, logolar, zil sesi) · bolumler.js (Talebe Takip, Öğretmen Puanları, Kelime Ezberi, Nehari, Dijital Pano). Üçü aynı klasörde olmalı. -->
+<!-- Üç dosya: index.html (ana sistem) · ortak.js (QR kütüphaneleri, logolar, zil sesleri) · bolumler.js (Talebe Takip, Öğretmen Puanları, Kelime Ezberi, Nehari, Dijital Pano). Üçü aynı klasörde olmalı. -->
 <script src="ortak.js"></script>
 <!-- qrcode-generator 1.4.4 · MIT · https://github.com/kazuhikoarase/qrcode-generator -->
 
@@ -2037,6 +2037,15 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
 .zl-elle .zl-dur{box-shadow:0 5px 0 #c9d2df,0 8px 16px rgba(0,0,0,.08)}
 .zl-elle .z1:active,.zl-elle .z2:active,.zl-elle .zl-dur:active,
 .zl-elle .z1.basili,.zl-elle .z2.basili,.zl-elle .zl-dur.basili{transform:translateY(5px) scale(.98);box-shadow:0 0 0 rgba(0,0,0,.22),inset 0 3px 8px rgba(0,0,0,.28)}
+/* Zil düğmeleri: Zili çal ile Nehari yan yana; altında tam genişlikte Sesi durdur, onun altında ses düzeyi */
+.zl-elle,.zl-ust .zl-elle{display:grid !important;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
+.zl-elle .z1,.zl-elle .z2,.zl-elle .zl-dur,.zl-ust .zl-elle .z1,.zl-ust .zl-elle .z2,.zl-ust .zl-elle .zl-dur{min-width:0 !important;width:100%;padding-left:10px !important;padding-right:10px !important;white-space:normal;line-height:1.25}
+.zl-elle .zl-dur,.zl-elle .zl-vol,.zl-elle .zl-vol-not,.zl-elle small,.zl-elle .zl-canli,.zl-elle .zl-canli-ayar{grid-column:1/-1}
+.zl-elle .zl-vol{margin-top:2px}
+.zl-elle .zl-vol-not{margin-top:-6px}
+.zl-elle .zl-vol .zl-vol-ik{width:38px !important;height:38px;padding:0 !important;border-radius:8px;color:#1b1b1b !important;background:transparent !important;box-shadow:none !important;min-width:0 !important;font-size:0}
+.zl-elle .zl-vol .zl-vol-ik svg{width:24px;height:24px}
+.zl-elle .zl-vol-not{font-size:11.5px;color:var(--text2)}
 @media (max-width:720px){
   .zl-kart.zl-ust{grid-template-columns:auto 1fr}
   .zl-ust .zl-durum{align-items:center;justify-content:flex-end;text-align:right}
@@ -2459,6 +2468,12 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button type="button" class="z1" id="zl-elle1">🔔 Zili çal</button>
         <button type="button" class="z2" id="zl-elle2">🌤️ Nehari zilini çal</button>
         <button type="button" class="zl-dur" id="zl-durdur">⏹ Sesi durdur</button>
+    <div class="zl-vol" title="Zil ses düzeyi">
+          <button type="button" class="zl-vol-ik" id="zl-vol-ik" aria-label="Sesi kapat / aç"></button>
+          <input type="range" id="zl-vol" min="0" max="100" step="1" value="80" aria-label="Zil ses düzeyi">
+          <span class="zl-vol-y" id="zl-vol-y">80</span>
+        </div>
+        <div class="zl-vol-not">Zil sesinin yüksekliği (iki zil için de). Telefondan değiştirilince hoparlör bilgisayarına da geçer; bilgisayarın kendi ses düzeyi ayrıca etkiler.</div>
         <button type="button" class="zl-canli" id="zl-canli">🎙️ Canlı anons <em>deneme</em></button>
         <label class="zl-canli-ayar" id="zl-canli-ayar"><span>🎙️ Canlı anons ses düzeyi</span><input type="range" id="zl-canli-duzey" min="50" max="400" step="10" aria-describedby="zl-canli-duzey-y"><b id="zl-canli-duzey-y">%150</b><small id="zl-canli-ipucu"></small></label>
         <small>Zil sesi yalnız <b>hoparlör</b> işaretli cihazda (okuldaki bilgisayar) çıkar. Telefondan basılan zil, başlat/durdur ve program değişikliği o cihaza anında gider; bilgisayarda site açık kalmalıdır.</small>
@@ -2512,7 +2527,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
           <button type="button" class="bsec bsm" id="zl-sifir1">Yerleşik sese dön</button>
         </div>
         <div class="zl-ses" data-w="2">
-          <div class="zl-ses-ad"><b><i></i>Nehari zili <small>(yalnız elle)</small></b><span id="zl-ses2">Yerleşik: melodi</span></div>
+          <div class="zl-ses-ad"><b><i></i>Nehari zili <small>(yalnız elle)</small></b><span id="zl-ses2">Yerleşik: elektrikli zil (MP3)</span></div>
           <label class="bsec bsm zl-dosya">MP3 yükle<input type="file" accept="audio/*" id="zl-dosya2"></label>
           <label class="zl-sn">Başlangıç <input type="number" id="zl-bas2" min="0" max="3600" value="0"> sn</label>
           <label class="zl-sn">Bitiş <input type="number" id="zl-son2" min="0" max="3600" value="0"> sn</label>
@@ -2524,12 +2539,6 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <label>Çalma süresi <input type="number" id="zl-sure" min="3" max="300" value="10"> sn</label>
         <label><input type="checkbox" id="zl-tam"> MP3'ü süreye bakmadan sonuna kadar çal</label>
       </div>
-      <div class="zl-vol" title="Zil ses düzeyi">
-        <button type="button" class="zl-vol-ik" id="zl-vol-ik" aria-label="Sesi kapat / aç"></button>
-        <input type="range" id="zl-vol" min="0" max="100" step="1" value="80" aria-label="Zil ses düzeyi">
-        <span class="zl-vol-y" id="zl-vol-y">80</span>
-      </div>
-      <div class="zl-vol-not">Zil sesinin yüksekliği (iki zil için de). Telefondan değiştirilince hoparlör bilgisayarına da geçer; bilgisayarın kendi ses düzeyi ayrıca etkiler.</div>
       <div class="zl-not">Başlangıç ve bitiş saniyesiyle MP3'ün yalnız bir bölümünü çaldırabilirsiniz; örneğin 20–50. saniyeler için Başlangıç 20, Bitiş 50 yazın. İkisi de 0 ise ses baştan başlar ve çalma süresi kadar çalar. Yüklenen ses bu cihazda saklanır.</div>
     </section>
   </div></div>
@@ -3076,7 +3085,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-54</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-61</div>
   </div>
 </aside>
 
@@ -21706,7 +21715,7 @@ window.panoTalebeGonder = function(){
 /* ══ PANO: AYIN NEHARİSİ ══ Nehari verisinden (bu cihazdaki eşitlenmiş kopya, "bayrampasa-yurt:" kayıtları) bu ayın sıralaması */
 /* ══ AYIN NEHARİSİ PUANI ══ Nehari ve Pano aynı hesabı kullanır.
    + gelmesi gereken günde geldi (sabit izinli gününde gelmese de puan alır; yalnız yoklama alınan günler)
-   + etüt puanı ★10 ya da 10 · + verilen hadis-i şerif · + ezberlenen dua · + yapılan görev
+   + verilen hadis-i şerif (etüt puanı 10 artık sayılmaz) · + ezberlenen dua · + yapılan görev
    − kötü kelime işareti · − kavga işareti */
 function neYarisHesap(G, ogr, a, b, bugun, H, D){
   var ESKI = '2026-10-20';   // tarihsiz eski hadis/dua işaretleri (tarih tutulmadan önce konanlar) Ekim ayına sayılır
@@ -21723,7 +21732,7 @@ function neYarisHesap(G, ogr, a, b, bugun, H, D){
       if(!Object.keys(r).some(function(k){ return r[k]; })) return;            // o gün yoklama alınmadı
       ogr.forEach(function(s){ if(r[s.id] || izinli(s, d)) t(s.id).gel++; }); });
     Object.keys(sc).forEach(function(d){ if(d<a || d>b || d<SIFIR) return; var r = sc[d] || {};
-      Object.keys(r).forEach(function(id){ if(String(r[id])==='10' || r[id]==='10*') t(id).etut++; }); });
+      /* etüt 10 artık yarışmaya puan vermez */ });
     Object.keys(nd).forEach(function(d){ if(d<a || d>b) return; var x = nd[d] || {};
       Object.keys(x.gor || {}).forEach(function(id){ if((x.gor[id] || {}).gorev) t(id).gor++; });
       Object.keys(x.dav || {}).forEach(function(id){ var r = x.dav[id] || {}; if(r.kotu && d>=SIFIR) t(id).kotu++; if(r.kavga) t(id).kavga++; }); });
@@ -21744,7 +21753,7 @@ function neYarisHesap(G, ogr, a, b, bugun, H, D){
       if(d>=a && d<=b) t(sid).gor++; }); });
   return ogr.map(function(s){ var x = t(s.id);
       return {s:s, gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, gor:x.gor, kotu:x.kotu, kavga:x.kavga,
-              puan: x.gel + x.etut + x.hadis + x.dua + x.gor - x.kotu - x.kavga}; })
+              puan: x.gel + x.hadis + x.dua + x.gor - x.kotu - x.kavga}; })
     .sort(function(p, q){ return (q.puan-p.puan) || String(p.s.name).localeCompare(String(q.s.name), 'tr'); });
 }
 function panoNeVeri(){
@@ -21763,7 +21772,7 @@ function panoNeVeri(){
   const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   let bulut = ''; try{ bulut = !(typeof ttsBulutHazir==='function' && ttsBulutHazir()) ? 'Bu tarayıcı buluta bağlı değil' : (BK_HATA ? 'Bulut hatası: '+BK_HATA : ''); }catch(e){}
   return {ay: AY[b0.getMonth()]+' '+b0.getFullYear(), yedekListe, bulut,
-          varMi: L.some(x=>x.gel+x.etut+x.hadis+x.dua+x.gor+x.kotu+x.kavga>0),
+          varMi: L.some(x=>x.gel+x.hadis+x.dua+x.gor+x.kotu+x.kavga>0),
           satirlar: L.map((x,i)=>{ if(x.puan!==onc){ sira = i+1; onc = x.puan; }
             return {sira, ad:x.s.name, cls:x.s.cls||'', gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, gor:x.gor, kotu:x.kotu, kavga:x.kavga, puan:x.puan}; })};
 }
@@ -21882,7 +21891,24 @@ function panoOpVeri(){
     if(!o){ o = hesap(d[0], 'arsiv'); kay = 'Geçen hafta'; }
     if(o) dersler.push({k:d[0], ad:d[1], ikon:d[2], kaynak:kay, sinif:o});
   });
-  return {dersler};
+  /* En düşük ortalamalar: her talebenin haftalık bütün ders puanlarının ortalaması (G sayılmaz), en düşük 14 talebe.
+     Bu hafta hiç puan yoksa en son arşivlenen hafta kullanılır. */
+  const dusukHesap = kaynak=>{
+    const L = [];
+    Object.keys(p.CLS).forEach(cid=>{
+      const c = p.CLS[cid] || {}, sinif = parseInt(cid, 10) || parseInt(c.label, 10); if(![5,6,7,8].includes(sinif)) return;
+      (c.students||[]).forEach(st=>{
+        const g = kaynak==='bu' ? (((p.DATA||{})[cid]||{})[st.id] || {})
+                                : (((((arc||{}).data||{})[cid]||{}).students||{})[st.id] || {}).grades || {};
+        const v = Object.keys(g).map(k=>sayi(g[k])).filter(x=>x!==null);
+        if(v.length) L.push({ad:String(st.name||st.ad||''), sinif:String(c.label||cid), ort:v.reduce((a,b)=>a+b,0)/v.length, n:v.length});
+      });
+    });
+    return L.sort((a,b)=>a.ort-b.ort || a.ad.localeCompare(b.ad,'tr')).slice(0,14);
+  };
+  let dl = dusukHesap('bu'), dk = 'Bu hafta';
+  if(!dl.length && arc){ dl = dusukHesap('arsiv'); dk = 'Geçen hafta'; }
+  return {dersler, dusuk:{kaynak:dk, liste:dl}};
 }
 /* Talebe işaretlemeleri: Talebe Takip'te işaretlenen hafta / ay / dönem / yıl talebeleri (en yeni üstte) */
 function panoIsaretVeri(){
@@ -23539,21 +23565,23 @@ function seritGoster(w, sure, ad){
 }
 /* Zil 1'in yerleşik sesi dosyanın içindeki okul zili MP3'üdür (ortak bölüm: window.ZIL1_MP3). Cihaza ayrıca MP3 yüklenirse o çalar;
    MP3 çalınamazsa (ör. tarayıcı engeli) tarayıcıda üretilen klasik zile düşülür. */
-let ZIL1_URL = null;
-function yerlesikZil1(){
-  if(!window.ZIL1_MP3) return null;
-  if(!ZIL1_URL){ try{ const b = atob(window.ZIL1_MP3.split(',')[1]), u = new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i] = b.charCodeAt(i); ZIL1_URL = URL.createObjectURL(new Blob([u], {type:'audio/mpeg'})); }catch(e){ ZIL1_URL = window.ZIL1_MP3; } }
-  return {url:ZIL1_URL, ad:'Okul zili', yerlesik:true};
+/* Zil 2'nin (Nehari) yerleşik sesi elektrikli "ziiirrr" zil MP3'üdür (window.ZIL2_MP3); kısa olduğu için çalma süresi boyunca başa sararak çalar. */
+const ZIL_SES_URL = {};
+function yerlesikZil(w){
+  const d = w===2 ? window.ZIL2_MP3 : window.ZIL1_MP3; if(!d) return null;
+  if(!ZIL_SES_URL[w]){ try{ const b = atob(d.split(',')[1]), u = new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i] = b.charCodeAt(i); ZIL_SES_URL[w] = URL.createObjectURL(new Blob([u], {type:'audio/mpeg'})); }catch(e){ ZIL_SES_URL[w] = d; } }
+  return {url:ZIL_SES_URL[w], ad:w===2 ? 'Elektrikli zil' : 'Okul zili', yerlesik:true, dongu:w===2};
 }
 function zilCal(w, sure, ad){
   sesHazir();
-  const o = ozelSes[w] || (w===1 ? yerlesikZil1() : null), tam = !!($('zl-tam') && $('zl-tam').checked);
+  const o = ozelSes[w] || yerlesikZil(w), tam = !!($('zl-tam') && $('zl-tam').checked);
   const bas = Math.max(0, +kesBas[w]||0), son = Math.max(0, +kesSon[w]||0);
   let goster = sure;
   if(o){
     if(mp3){ try{ mp3.pause(); }catch(e){} }
     const a = new Audio(o.url); mp3 = a; a.volume = sesDuzey;
-    const oynat = ()=>{ try{ if(bas>0) a.currentTime = bas; }catch(e){} a.play().catch(e=>{ console.warn('Zil: MP3 çalınamadı', e); if(o.yerlesik && mp3===a){ mp3 = null; zil1Uret(sure); } }); };
+    if(o.dongu && !tam && !(son>bas)) a.loop = true;   // kısa yerleşik ses: süre dolana kadar başa sarar
+    const oynat = ()=>{ try{ if(bas>0) a.currentTime = bas; }catch(e){} a.play().catch(e=>{ console.warn('Zil: MP3 çalınamadı', e); if(o.yerlesik && mp3===a){ mp3 = null; if(w===2) zil2Uret(sure); else zil1Uret(sure); } }); };
     if(bas>0) a.addEventListener('loadedmetadata', oynat, {once:true}); else oynat();
     const sondur = ()=>{ const f = setInterval(()=>{ if(a.volume>.06) a.volume -= .06; else { a.pause(); clearInterval(f); } }, 80); };
     if(son>bas){
@@ -23585,7 +23613,7 @@ function ozelSesKoy(w, blob, ad){
 function ozelSesKaldir(w){
   if(ozelSes[w]) URL.revokeObjectURL(ozelSes[w].url);
   ozelSes[w] = null;
-  const el = $('zl-ses'+w); el.textContent = w===2 ? 'Yerleşik: melodi' : (window.ZIL1_MP3 ? 'Yerleşik: okul zili (MP3)' : 'Yerleşik: klasik zil'); el.className = '';
+  const el = $('zl-ses'+w); el.textContent = w===2 ? (window.ZIL2_MP3 ? 'Yerleşik: elektrikli zil (MP3)' : 'Yerleşik: melodi') : (window.ZIL1_MP3 ? 'Yerleşik: okul zili (MP3)' : 'Yerleşik: klasik zil'); el.className = '';
   $('zl-dosya'+w).value = '';
 }
 
