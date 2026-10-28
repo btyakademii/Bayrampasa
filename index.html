@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-71">
+<meta name="otk-surum" content="2026.10.26-72">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -3147,7 +3147,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-71</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-72</div>
   </div>
 </aside>
 
@@ -23069,19 +23069,25 @@ setInterval(optvOtoKontrol, 15000); setTimeout(optvOtoKontrol, 3000);
    her basışta sıradaki görünüme geçer → 🌤️ Nehari panosu → 🔢 Öğretmen puanı → 🖥️ normal pano.
    Saat kuralları sürer: "normal pano" otomatik demektir (Nehari vakti 14:30–15:15'te Nehari panosu, Cumartesi 08:00–13:30'da
    Öğretmen puanı yine kendiliğinden gelir). Elle seçilen görünüm, normal panoya dönülene kadar kurallardan önce gelir.
-   Panodan çıkılınca ya da Öğretmen puanı ✕ ile kapatılınca elle seçim kalkar. */
+   Panodan çıkılınca ya da Öğretmen puanı ✕ ile kapatılınca elle seçim kalkar.
+   Pano bu cihazda açık değilse (ör. telefon) düğme bu cihazda pano açmaz; komut zil sisteminin anlık kanalıyla
+   (yoksa buluttaki pano_komut satırıyla) panonun açık olduğu cihaza gider, o cihaz sıradaki görünüme geçip durumunu bildirir. */
 (function(){
   const SIRA = ['normal','nehari','op'];
   const DUGME = {normal:'🌤️ Nehari Panosu', nehari:'🔢 Öğretmen Puanı', op:'🖥️ Normal Pano'};
   const AD = {normal:'Normal pano (saat kuralları)', nehari:'Nehari panosu', op:'Öğretmen puanı'};
   window.PANO_GORUNUM = '';   // '' = normal / otomatik, 'nehari', 'op'
   const simdi = ()=>window.PANO_GORUNUM || 'normal';
+  let UZAK = 'normal';   // pano başka cihazdaysa (TV) onun son bildirdiği görünüm
+  const panoBurada = ()=>{ try{ return aktifSayfa()==='pagePano'; }catch(e){ return false; } };
+  const gosterilen = ()=>panoBurada() ? simdi() : UZAK;
+  function durumYay(id){ try{ if(panoBurada() && window.zilYayinla) window.zilYayinla({tur:'panoDurum', g:simdi(), id:id||''}); }catch(e){} }
   function neUygula(){
     try{ const w = document.getElementById('pano-cerceve').contentWindow; if(!w) return;
       const z = window.PANO_GORUNUM==='nehari'; if(!!w.NE_ZORLA!==z || z){ w.NE_ZORLA = z; if(w.neVaktiUygula) w.neVaktiUygula(); } }catch(e){}
   }
   function etiket(){
-    const s = simdi();
+    const s = gosterilen();
     document.querySelectorAll('.pano-gecis').forEach(b=>{ b.textContent = DUGME[s]; b.title = 'Pano görünümünü değiştir · şu an: '+AD[s]; b.setAttribute('aria-label', 'Pano görünümü: '+AD[s]+'. Basınca '+DUGME[s].replace(/^\S+\s/,'')); });
   }
   function optvDugme(){
@@ -23097,20 +23103,42 @@ setInterval(optvOtoKontrol, 15000); setTimeout(optvOtoKontrol, 3000);
     if(s==='op'){ if(!OPTV.ac) opTvAc(); OPTV.oto = false; optvDugme(); }
     else if(OPTV.ac){ OPTV.oto = false; optvKapat(); }
     if(s==='normal'){ try{ optvOtoKontrol(); }catch(e){} }
-    etiket();
+    etiket(); durumYay();
   }
+  /* Bu cihazda pano açıksa görünüm burada değişir. Açık değilse (telefon) bu cihazda pano açılmaz:
+     komut, panonun açık olduğu cihaza (okuldaki bilgisayarın TV ekranı) gider ve orada sıradaki görünüme geçilir. */
+  const bekleyen = {}, islenenPano = [];
   window.panoGorunumDegistir = function(){
-    if(aktifSayfa()!=='pagePano'){
-      panoAc(); if(aktifSayfa()!=='pagePano') return;
-      uygula('nehari'); [600, 1500, 3500].forEach(ms=>setTimeout(neUygula, ms));   // pano ilk kez yükleniyorsa
-      return;
-    }
-    uygula(SIRA[(SIRA.indexOf(simdi())+1) % SIRA.length]);
+    if(panoBurada()){ uygula(SIRA[(SIRA.indexOf(simdi())+1) % SIRA.length]); return; }
+    const id = 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), v = {tur:'pano', g:'sonraki', id, z:Date.now()};
+    islenenPano.push(id);
+    const anlik = window.zilYayinla ? window.zilYayinla(Object.assign({}, v)) : false;
+    if(window.zilBulutYaz) window.zilBulutYaz('pano_komut', v);
+    const hedef = SIRA[(SIRA.indexOf(UZAK)+1) % SIRA.length];
+    showN('📡', 'Panoya gönderildi: '+DUGME[UZAK].replace(/^\S+\s/,''), anlik ? 'TV\'deki panoya iletiliyor…' : 'Bulut üzerinden iletiliyor (biraz sürebilir)…');
+    UZAK = hedef; etiket();   // yanıt gelince düzeltilir
+    bekleyen[id] = setTimeout(()=>{ delete bekleyen[id];
+      showN('⚠️', 'Pano yanıt vermedi', 'Panonun açık olduğu bilgisayarda sayfanın yeni sürümle yenilenmiş ve internete bağlı olması gerekir'); }, anlik ? 8000 : 30000);
+  };
+  /* Panonun açık olduğu cihaz: gelen komutu uygular ve yeni görünümü bildirir */
+  window.panoUzakKomut = function(v, eski){
+    if(!v || !v.id || islenenPano.includes(v.id)) return;
+    islenenPano.push(v.id); if(islenenPano.length>40) islenenPano.shift();
+    if(eski || !panoBurada() || (v.z && Math.abs(Date.now()-v.z) > 120000)) return;
+    const g = v.g==='sonraki' ? SIRA[(SIRA.indexOf(simdi())+1) % SIRA.length] : (SIRA.includes(v.g) ? v.g : null); if(!g) return;
+    uygula(g); durumYay(v.id);
+  };
+  /* Telefon: panodan gelen durum bilgisi düğmenin yazısını günceller */
+  window.panoUzakDurum = function(v){
+    if(!v || panoBurada() || !SIRA.includes(v.g)) return;
+    UZAK = v.g; etiket();
+    if(v.id && bekleyen[v.id]){ clearTimeout(bekleyen[v.id]); delete bekleyen[v.id]; showN('✓', 'Pano değişti', 'Şu an: '+AD[v.g]); }
   };
   setInterval(()=>{ try{
     const g = window.PANO_GORUNUM;
-    if(g==='op' && !OPTV.ac){ window.PANO_GORUNUM = ''; etiket(); optvOtoKontrol(); }   // ✕ ile kapatıldı
+    if(g==='op' && !OPTV.ac){ window.PANO_GORUNUM = ''; etiket(); optvOtoKontrol(); durumYay(); }   // ✕ ile kapatıldı
     else if(g==='nehari' && aktifSayfa()!=='pagePano'){ window.PANO_GORUNUM = ''; neUygula(); etiket(); }   // panodan çıkıldı
+    if(!panoBurada()) etiket();
     else if(g==='nehari') neUygula();   // pano yeniden yüklendiyse
   }catch(e){} }, 3000);
   etiket();
@@ -23463,6 +23491,9 @@ function yayinla(veri){
   veri.kaynak = CIHAZ;
   return rt.bagli && rtGonderHam({topic:RT_KONU, event:'broadcast', payload:{type:'broadcast', event:'zil', payload:veri}, ref:String(++rt.ref), join_ref:'1'});
 }
+/* Pano görünüm düğmesi de bu anlık kanalı kullanır (telefondan basılınca TV'deki pano değişir); anlık kanal yoksa bulut (pano_komut) */
+window.zilYayinla = v=>yayinla(v);
+window.zilBulutYaz = (a, v)=>{ try{ if(ydHazir()) return ydYaz(a, Object.assign({kaynak:CIHAZ}, v)).catch(()=>{}); }catch(e){} };
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && !rt.ws) rtBaglan(); });
 window.addEventListener('online', ()=>{ if(!rt.ws) rtBaglan(); bulutTur(); });
 
@@ -23491,6 +23522,8 @@ function mesajAl(v){
   else if(v.tur==='durum') durumUygula(v);
   else if(v.tur==='ayar'){ if(String(v.rev)!==sonAyarDamga) bulutTur(true); }
   else if(v.tur==='hoparlor'){ hopGorulme = Date.now(); hopAd = v.ad || ''; hopCiz(); }
+  else if(v.tur==='pano'){ try{ window.panoUzakKomut && window.panoUzakKomut(v); }catch(e){} }
+  else if(v.tur==='panoDurum'){ try{ window.panoUzakDurum && window.panoUzakDurum(v); }catch(e){} }
   else if(v.tur==='calindi' && bekleyenKomut[v.id]){ clearTimeout(bekleyenKomut[v.id]); delete bekleyenKomut[v.id]; hopGorulme = Date.now(); hopCiz(); bildir('✓', v.komut==='dur' ? 'Ses durduruldu' : v.komut==='test' ? 'Kontrol sesi çaldı' : 'Zil çaldı', 'Hoparlör cihazı komutu aldı'); }
 }
 function bildir(i, b, a){ try{ if(typeof showN==='function') showN(i, b, a); }catch(e){} }
@@ -23729,7 +23762,7 @@ async function bulutTur(zorla){
   if(!ydHazir() || turMesgul) return;
   turMesgul = true; sonTur = Date.now();
   try{
-    const o = await ydOku(['zil_ayarlar','zil_durum','zil_komut','zil_hoparlor']);
+    const o = await ydOku(['zil_ayarlar','zil_durum','zil_komut','zil_hoparlor','pano_komut']);
     const a = o.zil_ayarlar;
     if(a && a.rev && String(a.rev)!==sonAyarDamga){
       const yerelRev = +oku('zil-rev') || 0;
@@ -23741,6 +23774,8 @@ async function bulutTur(zorla){
     if(hp && hp.z && hp.kaynak!==CIHAZ && hp.z > hopGorulme && Date.now()-hp.z < 150000){ hopGorulme = hp.z; hopCiz(); }
     const k = o.zil_komut;
     if(k && k.id){ if(ilkTur){ if(!islenen.includes(k.id)) islenen.push(k.id); } else komutUygula(k); }   // açılışta eski komut çalınmaz
+    const pk = o.pano_komut;
+    if(pk && pk.id && pk.kaynak!==CIHAZ){ try{ window.panoUzakKomut && window.panoUzakKomut(pk, ilkTur); }catch(e){} }
     ilkTur = false;
     if(bulutOk!==true) bulutRozet(true);
   }catch(e){ if(bulutOk!==false) bulutRozet(false); }
