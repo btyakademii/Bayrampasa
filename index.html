@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-120">
+<meta name="otk-surum" content="2026.10.26-130">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -1120,6 +1120,13 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dha-hg.on{border-style:solid;border-color:#c9d7f5;background:#eef3ff;color:var(--blue)}
 .dha-hg.on small{display:block;font-size:10.5px;font-weight:600;color:var(--text2)}
 .dh-gizli{display:none !important}
+.gv-bk-liste{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.gv-bk{display:inline-flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;border:1px solid var(--border);border-radius:20px;background:#fff;font-weight:700;font-size:14px}
+.gv-bk small{font-weight:600;color:var(--text2);font-size:12px;background:#eef1f6;border-radius:10px;padding:1px 7px}
+.gv-bk button{width:26px;height:26px;border:0;border-radius:50%;background:#fdecef;color:var(--red);cursor:pointer;font-size:12px}
+.gv-bk-ekle{display:grid;grid-template-columns:64px 1fr auto;gap:8px}
+.gv-bk-ekle input{padding:10px;border:1px solid var(--border);border-radius:10px;font:600 15px 'Outfit',sans-serif;min-width:0}
+#gv-bk-ik{text-align:center}
 .tf-alan{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}.tf-alan[hidden]{display:none}
 .tf-on{display:flex;gap:6px;flex-wrap:wrap}
 .tf-l{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
@@ -2898,6 +2905,15 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <div class="gv-hr-liste" id="gv-hr-liste"></div>
       <div id="gv-hrapor-on"></div>
     </section>
+    <section class="zl-kart" id="gv-bolum-kart" hidden>
+      <div class="zl-bas"><h2>🏷️ Başlıklar</h2><small>Görevlerin gruplandığı başlıklar · ekle / kaldır</small></div>
+      <div class="gv-bk-liste" id="gv-bk-liste"></div>
+      <div class="gv-bk-ekle">
+        <input type="text" id="gv-bk-ik" maxlength="4" placeholder="🏷️" aria-label="Başlık simgesi (isteğe bağlı)">
+        <input type="text" id="gv-bk-ad" maxlength="30" placeholder="Yeni başlık (ör. Spor)" aria-label="Yeni başlık adı">
+        <button type="button" class="bpri" id="gv-bk-btn">+ Ekle</button>
+      </div>
+    </section>
   </div></div>
 </div>
 
@@ -3463,7 +3479,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-120</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-130</div>
   </div>
 </aside>
 
@@ -18594,6 +18610,8 @@ function prfAramaHtml(){
 }
 /* Pazar izin dönüşü yoklaması, ertesi pazartesiden başlayan haftanın puanına yazılır (geçen pazar gelmeyen bu hafta −1 alır) */
 function pzErtesi(d){ const x = new Date(d+'T12:00:00'); x.setDate(x.getDate()+1); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
+/* Pazar günü (akşamı) yapılan T.T.S işaretleri ertesi haftaya yazılır (Talebe Takip ile aynı kural) */
+function puanTarihi(d){ return new Date(d+'T12:00:00').getDay()===0 ? pzErtesi(d) : d; }
 /* ── T.T.S puanı (Talebe Takip'teki hesapla aynı) ── */
 function prfTts(o, from, to){
   const STU = prfJ('psStudents', []), s = (Array.isArray(STU) ? STU : []).find(x=>String(x.ana)===String(o.id));
@@ -18602,17 +18620,17 @@ function prfTts(o, from, to){
     {id:'c11',n:'Kılık Kıyafet',p:-1},{id:'c8',n:'Takke',p:-1},{id:'c3',n:'Mescid',p:-1},{id:'c4',n:'Yatak',p:-1},{id:'c12',n:'Kütüphane',p:-1},{id:'c13',n:'Vestiyer',p:-1},{id:'c14',n:'Geç Yatma',p:-1},{id:'c15',n:'Y. Konuşan',p:-1}];
   const cat = id => CATS.find(c=>c.id===id), sid = s.id, PR = ['sabah','ogle','ikindi','aksam','yatsi'];
   const r = {nm:0, dv:0, dvMarks:0, pz:0, pzy:0, ym:0, ymGun:0, cn:0, cnGun:0, total:0}, ymVar = s.okul==='Muharrem';
-  Object.keys(DATA).forEach(d=>{ if(d<from || d>to) return; const rec = (DATA[d]||{})[sid]; if(!rec) return;
+  Object.keys(DATA).forEach(d=>{ const dP = puanTarihi(d); if(dP<from || dP>to) return; const rec = (DATA[d]||{})[sid]; if(!rec) return;
     Object.keys(rec).forEach(cid=>{ const c = cat(cid); if(!c || c.hidden) return; r.dvMarks += rec[cid]; r.dv += rec[cid]*c.p; }); });
   Object.keys(ATT).forEach(d=>{ const a = ATT[d] || {};
     const pzB = a.yk && a.yk.pazar;
     if(pzB){ const dE = pzErtesi(d); if(dE>=from && dE<=to){ const pz = pzB[sid]; if(pz){ if(pz==='v') r.pz++; } else if(Object.keys(pzB).some(x=>!!pzB[x])) r.pzy++; } }
-    if(d<from || d>to) return;
+    const dP = puanTarihi(d); if(dP<from || dP>to) return;   // pazar akşamı işaretleri ertesi haftaya
     if(a.n) PR.forEach(p=>{ if(a.n[p] && a.n[p][sid]==='y') r.nm++; });
     const ym = a.yk && a.yk.yemek, cuma = new Date(d+'T12:00:00').getDay()===5;
     if(ymVar && ym && Object.keys(ym).some(x=>ym[x]==='v') && ym[sid]!=='i'){ if(cuma){ r.cnGun++; if(ym[sid]!=='v') r.cn++; } else { r.ymGun++; if(ym[sid]!=='v') r.ym++; } }   // İ (izinli) düşülmez
   });
-  r.total = r.dv - r.nm + r.pz - r.pzy - r.ym - r.cn;
+  r.total = r.dv - r.nm - r.pzy - r.ym - r.cn;   // Pazar dönüşü +1 vermez
   return r;
 }
 /* ── ana profil ── */
@@ -20517,7 +20535,101 @@ Test 04: ABACDDACAB
 Test 05 (Yeni Konsept): CBCDA
 Test 06 (Yeni Konsept): CADD
 DENEME 05 (Ünite 5): ADDAADCBAC`;
-const KITAP_METIN = {'8|mat': TOHUM_METIN+'\n'+MAT8_EK, '8|fen': FEN8_METIN, '8|tur': TUR8_METIN, '8|sos': INK8_METIN, '8|ing': ING8_METIN, '8|din': DIN8_METIN};
+/* 8. sınıf Paragraf kitabı (Paragrafın Sesi): 4 konu × Kolay/Orta/Zor/Karma testleri + 7 genel deneme; cevap anahtarı kitabın 200. sayfasından */
+const PAR8_METIN = `ADIM 01: Paragrafta Konu, Başlık, Ana Düşünce · Kolay
+Test 01: CBBCD
+Test 02: BDBDCCB
+Test 03: CBADCBC
+Test 04: CDAAA
+Test 05: CCABC
+ADIM 02: Paragrafta Konu, Başlık, Ana Düşünce · Orta
+Test 01: AADCC
+Test 02: CAAD
+Test 03: CBCCAD
+Test 04: BDCCA
+Test 05: ACCAA
+ADIM 03: Paragrafta Konu, Başlık, Ana Düşünce · Zor
+Test 01: ABCD
+Test 02: BCACBA
+Test 03: CABAB
+Test 04: ACACD
+Test 05: AADDAB
+ADIM 04: Paragrafta Konu, Başlık, Ana Düşünce · Karma
+Test 01: CDDCBA
+Test 02: BDBDC
+ADIM 05: Paragrafta Yardımcı Düşünce · Kolay
+Test 01: BBBDD
+Test 02: BCDCDCA
+Test 03: DBDAD
+Test 04: ACCCAA
+Test 05: DACDD
+ADIM 06: Paragrafta Yardımcı Düşünce · Orta
+Test 01: CBDBAA
+Test 02: CBCBDBC
+Test 03: CDDAD
+Test 04: BCADC
+Test 05: DCADDD
+ADIM 07: Paragrafta Yardımcı Düşünce · Zor
+Test 01: DAACB
+Test 02: BADBA
+Test 03: DCACB
+Test 04: CDADA
+Test 05: ADDCC
+ADIM 08: Paragrafta Yardımcı Düşünce · Karma
+Test 01: BDACAC
+Test 02: DBACB
+ADIM 09: Paragrafta Yapı · Kolay
+Test 01: CDCCBDC
+Test 02: CCBABCA
+Test 03: ABDAB
+Test 04: BDBCDCA
+Test 05: ADCCBBC
+ADIM 10: Paragrafta Yapı · Orta
+Test 01: CBBCADB
+Test 02: BBBCABD
+Test 03: BABDBCC
+Test 04: BBCBDCC
+Test 05: CBAADB
+ADIM 11: Paragrafta Yapı · Zor
+Test 01: BDDCA
+Test 02: CABCBAD
+Test 03: ADCACDD
+Test 04: ABBDB
+Test 05: DAABD
+ADIM 12: Paragrafta Yapı · Karma
+Test 01: BABCAD
+Test 02: AABCDAD
+ADIM 13: Anlatım Biçimleri ve Düşünceyi Geliştirme Yolları · Kolay
+Test 01: ADADCC
+Test 02: ADDBA
+Test 03: AABDBC
+Test 04: BCABAA
+Test 05: CCDBD
+ADIM 14: Anlatım Biçimleri ve Düşünceyi Geliştirme Yolları · Orta
+Test 01: BDDCB
+Test 02: DBADAC
+Test 03: DACBC
+Test 04: ADDBC
+Test 05: CBDBDADA
+ADIM 15: Anlatım Biçimleri ve Düşünceyi Geliştirme Yolları · Zor
+Test 01: DBBBCAAD
+Test 02: BAACD
+Test 03: ABCAAD
+Test 04: DBDADC
+ADIM 16: Anlatım Biçimleri ve Düşünceyi Geliştirme Yolları · Karma
+Test 01: ACDBDAD
+Test 02: ADDBBCADD
+DENEME 01 (Genel Deneme): CBBDACDADDADCABBCCBD
+DENEME 02 (Genel Deneme): ACBBABDCBBDBCDDCCCAC
+DENEME 03 (Genel Deneme): BACDACDBBCDCABDCACCD
+DENEME 04 (Genel Deneme): BBABDACDDDADCACCBBDA
+DENEME 05 (Genel Deneme): DDCBDACCDDADCBCCADAD
+DENEME 06 (Genel Deneme): ABAADBDDACDCCDBDAADC
+DENEME 07 (Genel Deneme): DACDBDBACCCDCDBCBBAC`;
+/* Soru Bankası'na özel ek ders: denemelerde ders değildir, yalnız kitap olarak vardır (Türkçe kitabının yanında ayrı kitap) */
+const KB_EK_DERS = [{id:'par', ad:'Paragraf', renk:'#8e44ad', k:[8]}];
+const kbDersVar = (b, k) => { const e = KB_EK_DERS.find(x=>x.id===b); return e ? e.k.includes(+k) : dersKademede(b, k); };
+const KITAP_METIN = {'8|mat': TOHUM_METIN+'\n'+MAT8_EK, '8|fen': FEN8_METIN, '8|tur': TUR8_METIN, '8|sos': INK8_METIN, '8|ing': ING8_METIN, '8|din': DIN8_METIN, '8|par': PAR8_METIN};
 /* Adımların kazanım konuları (8. sınıf konu listesindeki adlarla). Sıra = adım numarası. Öğretmen değiştirirse onun seçimi geçerlidir. */
 const KONU_VARSAYILAN = (()=>{
   const r = (konu, n) => Array(n).fill(konu);
@@ -20543,8 +20655,8 @@ function konuVarsayilanUygula(){
     const es = {}; mufListe(String(kt.k), kt.b).forEach(z=>{ es[akcKonuNorm(z)] = z; });
     const z = es[akcKonuNorm(a.konuOneri)]; if(z) KONU[a.id] = z; })); }catch(e){}
 }
-const dersAdK = (b, k) => b==='sos' ? (k===8 ? 'T.C. İnkılap Tarihi' : 'Sosyal Bilgiler') : ((dersBul(b)||{}).ad || b);
-const DERS_EK = (b, k) => ({tur:'Türkçe', mat:'Mat', fen:'Fen', sos:k===8?'İnkılap':'Sosyal', ing:'İng', din:'Din'})[b] || dersAdK(b,k);
+const dersAdK = (b, k) => b==='par' ? 'Paragraf' : b==='sos' ? (k===8 ? 'T.C. İnkılap Tarihi' : 'Sosyal Bilgiler') : ((dersBul(b)||{}).ad || b);
+const DERS_EK = (b, k) => ({par:'Paragraf', tur:'Türkçe', mat:'Mat', fen:'Fen', sos:k===8?'İnkılap':'Sosyal', ing:'İng', din:'Din'})[b] || dersAdK(b,k);
 /* Kitap kimliği ve test öneki: 8. sınıf Matematik eski kimliklerini korur (a01t01 …; bağlı testler ve fotoğraflar bozulmasın) */
 const kitapIdOf = (k, b) => k===8 && b==='mat' ? 'kb_ornek_mat8' : 'kb_'+b+k;
 const testOnek = (k, b) => k===8 && b==='mat' ? '' : b+k+'_';
@@ -20599,7 +20711,7 @@ function kitapKur(metin, on){
 }
 function kitapSec(k, b){ KITAP = kitapKaydi(k, b); KITAP.sik = 4; ADIMLAR = KITAP.adimlar; }
 /* Bütün sınıfların bütün ders kitapları (anahtar düzeltmeleri için) */
-function tumKitaplar(){ KADEMELER.forEach(k=>DERS_IDS.forEach(b=>{ if(dersKademede(b,k)) kitapKaydi(k,b); })); return KITAPLAR; }
+function tumKitaplar(){ KADEMELER.forEach(k=>DERS_IDS.concat(KB_EK_DERS.map(x=>x.id)).forEach(b=>{ if(kbDersVar(b,k)) kitapKaydi(k,b); })); return KITAPLAR; }
 let DUZ = {};   // {testId: 'DDB-C…'} öğretmenin anahtar düzeltmeleri
 let KONU = {};  // {adımId: konu} öğretmenin adıma seçtiği konu
 function oku(){ try{ const v = JSON.parse(localStorage.getItem(ANAHTAR)); ekUygula(v && v.ek); const n = normal(v); DUZ = n.duz; KONU = n.konu; konuVarsayilanUygula(); }catch(e){ DUZ = {}; KONU = {}; } uygulaDuz(); }
@@ -20878,10 +20990,10 @@ window.kbSfListe = function(k){
 /* ── Ekran ── */
 const S = {gor:'kitap', test:null, acik:new Set(['a01']), k:8, b:'mat'};
 const SECIM_ANAHTAR = 'otkKbSecim';
-try{ const v = JSON.parse(localStorage.getItem(SECIM_ANAHTAR)); if(v && KADEMELER.includes(+v.k) && DERS_IDS.includes(v.b)){ S.k = +v.k; S.b = v.b; } }catch(e){}
+try{ const v = JSON.parse(localStorage.getItem(SECIM_ANAHTAR)); if(v && KADEMELER.includes(+v.k) && (DERS_IDS.includes(v.b) || KB_EK_DERS.some(x=>x.id===v.b))){ S.k = +v.k; S.b = v.b; } }catch(e){}
 function secimDuzelt(){
   if(!KADEMELER.includes(S.k)) S.k = 8;
-  if(!dersKademede(S.b, S.k)) S.b = DERS_IDS.find(b=>dersKademede(b, S.k)) || 'mat';
+  if(!kbDersVar(S.b, S.k)) S.b = DERS_IDS.find(b=>dersKademede(b, S.k)) || 'mat';
   kitapSec(S.k, S.b);
 }
 function ac(){ secimDuzelt(); if(S.gor==='test' && !testBul(S.test)) S.gor = 'kitap'; if(S.gor==='veli') S.gor = 'kitap'; ciz(); }
@@ -20897,7 +21009,7 @@ function geri(){ if(S.gor==='test' || S.gor==='veli'){ S.gor = 'kitap'; ciz(); r
 
 /* Sınıf ve ders seçimi (seçim bu cihazda hatırlanır) */
 function secimHtml(){
-  const dl = DERSLER.filter(d=>dersKademede(d.id, S.k));
+  const dl = DERSLER.filter(d=>dersKademede(d.id, S.k)).concat(KB_EK_DERS.filter(d=>d.k.includes(+S.k)));
   return '<div class="card kb-secim"><div class="ana-kd">'+izinliKademeler().map(x=>'<button class="'+(x===S.k?'on':'')+'" onclick="kb.sinif('+x+')">'+x+'. sınıf</button>').join('')+'</div>'
     + '<div class="kb-dersler">'+dl.map(d=>{ const kt = kitapKaydi(S.k, d.id), n = kt.adimlar.reduce((s,a)=>s+a.testler.length,0);
         return '<button class="'+(d.id===S.b?'on':'')+'" style="--dr:'+d.renk+'" onclick="kb.ders(\''+d.id+'\')"><span>'+esc(dersAdK(d.id,S.k))+'</span>'+(n?'<b>'+n+'</b>':'')+'</button>'; }).join('')+'</div></div>';
@@ -21305,7 +21417,7 @@ function veliGorselCiz(o, v){
   kutu.forEach(([a, val, renk, zem], i)=>{ const x = 72+i*(kw+18), y = 392; rr(x, y, kw, 140, 18); c.fillStyle = zem; c.fill(); yaz(String(val), x+kw/2, y+86, dnmF(800,58), renk); yaz(a, x+kw/2, y+122, dnmF(700,22), renk); });
   let y = 580;
   dl.forEach(b=>{
-    const x = v.ders[b], p = yz(x), renk = (dersBul(b)||{}).renk || G_NAVY;
+    const x = v.ders[b], p = yz(x), renk = (dersBul(b) || KB_EK_DERS.find(x=>x.id===b) || {}).renk || G_NAVY;
     yaz(dersAdK(b, VL.k), 84, y+30, dnmF(800,26), renk, 'left');
     yaz(x.test+' test · '+(x.D+x.Y+x.B)+' soru · '+x.D+' D · '+x.Y+' Y · '+x.B+' B', 84, y+62, dnmF(600,20), '#56627a', 'left');
     const bx = W-84-330; rr(bx, y+22, 260, 20, 10); c.fillStyle = '#e4eaf4'; c.fill();
@@ -22775,7 +22887,7 @@ document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) bkEsitl
 
 /* ══ PANO: HAFTANIN TALEBESİ ══ Talebe Takip verisinden (bu cihazdaki eşitlenmiş kopya) haftalık sıralama.
    Her talebe haftaya 99 puanla başlar; Pazar dönüşü (+1) ile 100 olur, puan 100'ü geçmez; her hata (−1) puanından düşer. Panoda en sağda kalan puan yazar. */
-const HT_TABAN = 99;
+const HT_TABAN = 100;
 function panoTalebeVeri(){
   const J = k=>{ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } };
   let CATS = J('psCats');
@@ -22806,17 +22918,17 @@ function panoTalebeVeri(){
     const L = AKTIF.map(s=>{
       let dv = 0, nm = 0, pz = 0, ye = 0, pzy = 0, ym = 0, cn = 0; const ks = {};   // ks: davranış maddesi başına işaret sayısı
       const ymVar = s.okul==='Muharrem';   // öğle yemeği / cuma namazı yalnız okulu Muharrem olanlara sayılır (Talebe Takip ile aynı)
-      for(const d in DATA){ if(d<f || d>t) continue; const r = (DATA[d]||{})[s.id]; if(!r) continue; for(const c in r){ if(c in kat){ dv += (r[c]||0)*kat[c]; ks[c] = (ks[c]||0) + (r[c]||0); } } }
+      for(const d in DATA){ const dP = puanTarihi(d); if(dP<f || dP>t) continue; const r = (DATA[d]||{})[s.id]; if(!r) continue; for(const c in r){ if(c in kat){ dv += (r[c]||0)*kat[c]; ks[c] = (ks[c]||0) + (r[c]||0); } } }
       for(const d in ATT){ const a = ATT[d] || {};
         const pzB = a.yk && a.yk.pazar;   // pazar dönüşü ertesi pazartesiden başlayan haftaya yazılır
         if(pzB){ const dE = pzErtesi(d); if(dE>=f && dE<=t){ if(pzB[s.id]){ if(pzB[s.id]==='v') pz++; }
           else if(!pzIz(s) && Object.keys(pzB).some(x=>!!pzB[x])) pzy++; } }   // yoklaması alınan pazara gelmedi: −1 (pazar izinlisi hariç)
-        if(d<f || d>t) continue;
+        const dP = puanTarihi(d); if(dP<f || dP>t) continue;   // pazar akşamı işaretleri ertesi haftaya
         if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][s.id]==='y') nm++; });
         const ymB = a.yk && a.yk.yemek;
         if(ymB && ymB[s.id]==='v') ye++;
         if(ymVar && ymB && Object.keys(ymB).some(x=>ymB[x]==='v') && ymB[s.id]!=='v' && ymB[s.id]!=='i'){ /* işaretsiz = gelmedi (−1), İ = izinli (düşülmez) */ if(new Date(d+'T12:00:00').getDay()===5) cn++; else ym++; } }
-      const toplam = dv - nm + pz - pzy - ym - cn;   // Talebe Takip'teki hesapla aynı
+      const toplam = dv - nm - pzy - ym - cn;   // Talebe Takip'teki hesapla aynı (Pazar dönüşü +1 vermez, gelmeyen −1)
       return {id:s.id, ad:s.name, nm, dv, pz, pzy, ye, ym, cn, ks, toplam, kalan: Math.min(100, HT_TABAN + toplam)};
     }).sort((a,b)=>(b.toplam-a.toplam) || String(a.ad).localeCompare(String(b.ad),'tr'));
     L.forEach((x,i)=>{ x.sira = i+1; });
@@ -22874,13 +22986,13 @@ window.panoTalebeGonder = function(){
    + gelmesi gereken günde geldi (sabit izinli gününde gelmese de puan alır; yalnız yoklama alınan günler)
    + verilen hadis-i şerif (etüt puanı 10 artık sayılmaz) · + ezberlenen dua · + yapılan görev
    − kötü kelime işareti · − kavga işareti */
-function neYarisHesap(G, ogr, a, b, bugun, H, D){
+function neYarisHesap(G, ogr, a, b, bugun, H, D, I){   // I: ilmihal konuları
   var ESKI = '2026-10-20';   // tarihsiz eski hadis/dua işaretleri (tarih tutulmadan önce konanlar) Ekim ayına sayılır
   var SIFIR = '2026-10-20';  // gelme, etüt puanı ve kötü kelime bu günden itibaren sayılır (Ekim ayı bu bölümlerde sıfırlandı; kayıtlar silinmedi)
   var p2 = function(n){ return String(n).padStart(2,'0'); };
   var ekle = function(s, n){ var x = s.split('-').map(Number), d = new Date(x[0], x[1]-1, x[2]+n); return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); };
   var son = b < bugun ? b : bugun, T = {};
-  var t = function(id){ id = String(id); return T[id] = T[id] || {gel:0, etut:0, hadis:0, dua:0, gor:0, kotu:0, kavga:0}; };
+  var t = function(id){ id = String(id); return T[id] = T[id] || {gel:0, etut:0, hadis:0, dua:0, ilm:0, gor:0, kotu:0, kavga:0}; };
   var izinli = function(s, d){ var g = new Date(d+'T12:00:00').getDay(); return Array.isArray(s.izin) && s.izin.indexOf(g)>-1; };
   var c = a.slice(0,7);
   while(c <= b.slice(0,7)){
@@ -22896,12 +23008,21 @@ function neYarisHesap(G, ogr, a, b, bugun, H, D){
     var ym = c.split('-').map(Number); c = ym[1]===12 ? (ym[0]+1)+'-01' : ym[0]+'-'+p2(ym[1]+1);
   }
   var din = G('din') || {};
+  /* Hadis: yalnız EKLENDİĞİ AYDA verilirse puan alır (Kasım'da eklenen hadisi Kasım'da veren +1; Ekim'in hadisini Kasım'da veren almaz).
+     Eklenme tarihi hadis kaydındaki t; t'si olmayan eski hadislerde ilk ✓'nin tarihi kullanılır. Dua: ✓'nin tarihindeki aya sayılır. */
+  var TRH = /^\d{4}-\d\d-\d\d$/;
   var dinSay = function(alan, L, k){ var m = din[alan] || {};
-    (L || []).forEach(function(id, i){ var r = m[id] || {};
+    (L || []).forEach(function(it, i){ var id = (it && typeof it==='object') ? it.id : it, r = m[id] || {}, ht = null;
+      if(alan==='hv'){
+        ht = (it && typeof it==='object' && TRH.test(it.t || '')) ? it.t : null;
+        if(!ht) Object.keys(r).forEach(function(sid){ var v = r[sid]; if(!v) return; var d = (typeof v==='string' && TRH.test(v)) ? v : ESKI; if(!ht || d < ht) ht = d; });
+        if(!ht) return;
+      }
       Object.keys(r).forEach(function(sid){ var v = r[sid]; if(!v) return;
-        var d = (typeof v==='string' && /^\d{4}-\d\d-\d\d$/.test(v)) ? v : ESKI; if(d > bugun) d = bugun;
+        var d = (typeof v==='string' && TRH.test(v)) ? v : ESKI; if(d > bugun) d = bugun;
+        if(ht && d.slice(0,7)!==ht.slice(0,7)) return;   // hadis başka ayda eklenmiş
         if(d>=a && d<=b) t(sid)[k]++; }); }); };
-  dinSay('hv', H, 'hadis'); dinSay('dv', D, 'dua');
+  dinSay('hv', H, 'hadis'); dinSay('dv', D, 'dua'); dinSay('iv', I, 'ilm');   // ilmihal: her konu +1, ✓'nin tarihindeki aya sayılır
   // Görevler bölümü: her ✓ +1 (görevin tarihindeki aya sayılır)
   var gd = G('gorev') || {}, gv = gd.v || {};
   (Array.isArray(gd.liste) ? gd.liste : []).forEach(function(g){ var m = gv[g.id] || {};
@@ -22909,8 +23030,8 @@ function neYarisHesap(G, ogr, a, b, bugun, H, D){
       var d = g.t || ((typeof v==='string' && /^\d{4}-\d\d-\d\d$/.test(v)) ? v : bugun);
       if(d>=a && d<=b) t(sid).gor++; }); });
   return ogr.map(function(s){ var x = t(s.id);
-      return {s:s, gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, gor:x.gor, kotu:x.kotu, kavga:x.kavga,
-              puan: x.gel + x.hadis + x.dua + x.gor - x.kotu - x.kavga}; })
+      return {s:s, gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, ilm:x.ilm, gor:x.gor, kotu:x.kotu, kavga:x.kavga,
+              puan: x.gel + x.hadis + x.dua + x.ilm + x.gor /* kötü kelime ve kavga Ayın Neharisi puanından çıkarıldı (işaretleme sürer) */}; })
     .sort(function(p, q){ return (q.puan-p.puan) || String(p.s.name).localeCompare(String(q.s.name), 'tr'); });
 }
 function panoNeVeri(){
@@ -22922,9 +23043,10 @@ function panoNeVeri(){
   if(!ogr.length){ try{ ogr = neAnaListe().filter(s=>!String(s.ana||'').startsWith('test_')).map(s=>({id:'ana_'+s.ana, ana:s.ana, name:s.name, cls:s.cls})); yedekListe = ogr.length>0; }catch(e){} }
   const p2 = n=>String(n).padStart(2,'0'), b0 = new Date(), bugun = b0.getFullYear()+'-'+p2(b0.getMonth()+1)+'-'+p2(b0.getDate());
   const son = new Date(b0.getFullYear(), b0.getMonth()+1, 0), a = bugun.slice(0,8)+'01', b = bugun.slice(0,8)+p2(son.getDate());
-  const H = Array.isArray(din.hadisler) ? din.hadisler.map(x=>x.id) : ['h1','h2','h3','h4'];
+  const H = Array.isArray(din.hadisler) ? din.hadisler.map(x=>({id:x.id, t:x.t})) : ['h1','h2','h3','h4'];   // t: hadisin eklendiği gün
   const D = Array.isArray(din.dualar) ? din.dualar.map(x=>x.id) : ['d1','d2','d3','d4'];
-  const L = neYarisHesap(G, ogr, a, b, bugun, H, D);
+  const I = Array.isArray(din.ilmihaller) ? din.ilmihaller.map(x=>x.id) : ['i1','i2','i3','i4'];
+  const L = neYarisHesap(G, ogr, a, b, bugun, H, D, I);
   let sira = 0, onc = null;
   const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   let bulut = ''; try{ bulut = !(typeof ttsBulutHazir==='function' && ttsBulutHazir()) ? 'Bu tarayıcı buluta bağlı değil' : (BK_HATA ? 'Bulut hatası: '+BK_HATA : ''); }catch(e){}
@@ -22946,9 +23068,9 @@ function panoNeVeri(){
                 ilmihal:verenler(IL, 'iv', x=>x.ad||'İlmihal', null, (x,i)=>x.ad||((i+1)+'. konu')),
                 dua:verenler(DL, 'dv', x=>x.ad||'Dua', null, (x,i)=>x.ad||((i+1)+'. dua'))};
   return {ay: AY[b0.getMonth()]+' '+b0.getFullYear(), yedekListe, bulut, din:dinV,
-          varMi: L.some(x=>x.gel+x.hadis+x.dua+x.gor+x.kotu+x.kavga>0),
+          varMi: L.some(x=>x.gel+x.hadis+x.dua+x.ilm+x.gor>0),
           satirlar: L.map((x,i)=>{ if(x.puan!==onc){ sira = i+1; onc = x.puan; }
-            return {sira, ad:x.s.name, cls:x.s.cls||'', gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, gor:x.gor, kotu:x.kotu, kavga:x.kavga, puan:x.puan}; })};
+            return {sira, ad:x.s.name, cls:x.s.cls||'', gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, ilm:x.ilm, gor:x.gor, kotu:x.kotu, kavga:x.kavga, puan:x.puan}; })};
 }
 setInterval(()=>{ if(!document.hidden && aktifSayfa()==='pagePano') panoTalebeGonder(); }, 10000);
 /* ══ PANO: YENİ KARTLAR (v30) ══ Çözülen soru sayısı · Öğretmen Puanları · Talebe işaretlemeleri · Kelime yarışması.
@@ -23094,13 +23216,13 @@ function panoIsaretVeri(){
   const kisa = s=>{ const d = T.par(s); return d.getDate()+' '+AY[d.getMonth()].slice(0,3); };
   const puan = (sid, from, to)=>{
     let dv = 0, nm = 0, pz = 0, pzy = 0;
-    for(const d in DATA){ if(d<from || d>to) continue; const r = (DATA[d]||{})[sid]; if(!r) continue; for(const c in r){ if(c in kat) dv += (r[c]||0)*kat[c]; } }
+    for(const d in DATA){ const dP = puanTarihi(d); if(dP<from || dP>to) continue; const r = (DATA[d]||{})[sid]; if(!r) continue; for(const c in r){ if(c in kat) dv += (r[c]||0)*kat[c]; } }
     for(const d in ATT){ const a = ATT[d]||{};
       const pB = a.yk && a.yk.pazar;
       if(pB){ const dE = pzErtesi(d); if(dE>=from && dE<=to){ if(pB[sid]==='v') pz++; else if(!pB[sid] && Object.keys(pB).some(x=>!!pB[x])) pzy++; } }
-      if(d<from || d>to) continue;
+      const dP = puanTarihi(d); if(dP<from || dP>to) continue;
       if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][sid]==='y') nm++; }); }
-    return dv - nm + pz - pzy;
+    return dv - nm - pzy;
   };
   const out = {w:[], m:[], d:[], y:[]};
   Object.keys(CFG.picks||{}).forEach(key=>{
@@ -25649,7 +25771,11 @@ function gununGorevleri(tarih, tur){
 }
 const yapildi = (x, t) => !!(x.bitti && x.bitti[t]);
 /* Görevler sayfasındaki bölümler (alt alta). Bölümü olmayan eski görevler en altta "Diğer"de görünür. */
-const GV_BOLUM = [['talebe','🎓','Talebe'],['takip','🎯','Takip'],['veli','📋','Veli Bilgilendirme'],['nehari','🌤️','Nehari']];
+const GV_BOLUM_VARS = [['talebe','🎓','Talebe'],['takip','🎯','Takip'],['veli','📋','Veli Bilgilendirme'],['nehari','🌤️','Nehari'],
+                  ['kontrol','🔍','Kontrol'],['egitim','📚','Eğitim'],['manevi','🕌','Manevi']];
+/* Başlıklar yönetici tarafından sayfanın altındaki "🏷️ Başlıklar" kartından eklenip çıkarılır; liste görevlerle birlikte
+   buluta gider (V['_bolum'], tur 'ayar' → görev listelerinde görünmez). Hiç düzenlenmediyse yukarıdaki varsayılanlar kullanılır. */
+function gvBolum(){ const a = V['_bolum']; return a && Array.isArray(a.l) && a.l.length ? a.l : GV_BOLUM_VARS; }
 let gvBolumSec = (()=>{ try{ return localStorage.getItem('gorevBolumSec') || 'talebe'; }catch(e){ return 'talebe'; } })();
 const GV_HEDEF = [['v','V','👪','Velilere','VELİLER İÇİN GÖREV RAPORU'],['p','P','👥','Personele','PERSONEL GÖREV RAPORU'],
                   ['em','EM','🎓','Eğitim mesulüne','EĞİTİM MESULÜ GÖREV RAPORU'],['nv','NV','🌤️','Nehari velisine','NEHARİ VELİLERİ İÇİN GÖREV RAPORU']];
@@ -25670,8 +25796,8 @@ function gorevSatir(x, t){
       ${hdVar ? '<div class="gv-hd">'+GV_HEDEF.map(([k,e,ik,ad])=>`<button type="button" class="gv-hk${h[k]?' on':''}" data-hk="${k}" aria-pressed="${!!h[k]}" title="(${e}) ${ad} görseli" aria-label="${esc(x.ad)} · ${ad} görseli">${h[k]?'✓':''}</button>`).join('')+'</div>' : ''}</div>`;
 }
 function gorevGruplu(l, t){
-  const bilinen = GV_BOLUM.map(b=>b[0]);
-  const gruplar = GV_BOLUM.map(([id,ic,ad])=>({id, ic, ad, l:l.filter(x=>x.bolum===id)}));
+  const bilinen = gvBolum().map(b=>b[0]);
+  const gruplar = gvBolum().map(([id,ic,ad])=>({id, ic, ad, l:l.filter(x=>x.bolum===id)}));
   const diger = l.filter(x=>!bilinen.includes(x.bolum));
   if(diger.length) gruplar.push({id:'diger', ic:'📌', ad:'Diğer', l:diger});
   const hdVar = yonetici();
@@ -25682,7 +25808,33 @@ function gorevGruplu(l, t){
       + (g.l.length ? g.l.map(x=>gorevSatir(x,t)).join('') : '<div class="gv-grup-bos">Madde yok</div>') + '</div>';
   }).join('');
 }
+/* 🏷️ Başlıklar kartı (yalnız yönetici, Görevler'de) */
+function bkCiz(){
+  const k = $('gv-bolum-kart'); if(!k) return;
+  k.hidden = VELI_K() || !yonetici(); if(k.hidden) return;
+  const l = gvBolum(), say = id => gorevler().filter(x=>x.bolum===id).length;
+  $('gv-bk-liste').innerHTML = l.map(([id,ic,ad])=>`<span class="gv-bk">${esc(ic)} ${esc(ad)}<small>${say(id)}</small><button type="button" data-bk-sil="${esc(id)}" aria-label="${esc(ad)} başlığını kaldır" title="Kaldır">✕</button></span>`).join('');
+}
+function bkKaydet(l){ const it = Object.assign({}, V['_bolum'] || {id:'_bolum', tur:'ayar'}); it.l = l; kaydet(it); }
+function bkEkle(){
+  const ad = ($('gv-bk-ad').value || '').trim().replace(/\s+/g,' '); if(!ad) return;
+  const l = gvBolum().slice();
+  if(l.some(b=>b[2].toLocaleLowerCase('tr')===ad.toLocaleLowerCase('tr'))){ try{ showN('⚠️','Bu başlık zaten var', ad); }catch(e){} return; }
+  const kok = ad.toLocaleLowerCase('tr').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/[^a-z0-9]+/g,'').slice(0,16) || 'baslik';
+  let id = kok, n = 2; while(l.some(b=>b[0]===id)) id = kok+(n++);
+  l.push([id, ($('gv-bk-ik').value || '').trim() || '🏷️', ad]);
+  bkKaydet(l); $('gv-bk-ad').value = ''; $('gv-bk-ik').value = '';
+  try{ showN('🏷️','Başlık eklendi', ad); }catch(e){}
+}
+function bkSil(id){
+  const l = gvBolum(), b = l.find(x=>x[0]===id); if(!b) return;
+  if(l.length<=1){ try{ showN('⚠️','En az bir başlık kalmalı',''); }catch(e){} return; }
+  const n = gorevler().filter(x=>x.bolum===id).length;
+  if(!confirm('"'+b[2]+'" başlığı kaldırılsın mı?'+(n ? '\n\nBu başlıktaki '+n+' görev silinmez; "Diğer" altında görünür, düzenleyip başka başlığa taşıyabilirsiniz.' : ''))) return;
+  bkKaydet(l.filter(x=>x[0]!==id));
+}
 function gorevCiz(){
+  try{ bkCiz(); }catch(e){}
   const bugun = isoT(new Date()), VK = VELI_K(), GK = VK ? 'madde' : 'görev';
   const pt = document.querySelector('#pageGorev .ph-title'); if(pt) pt.textContent = VK ? '📋 Veli Bilgilendirme' : '📌 Görevler';
   if(DUZ && !V[DUZ]) duzenleBitir(true);
@@ -25713,8 +25865,8 @@ function gorevCiz(){
   s.innerHTML = '<option value="">Sorumlu yok</option><option value="*">Herkes</option>'+kisiler().map(k=>`<option value="${esc(k.id)}">${esc(k.ad)}</option>`).join('');
   s.value = eski;
   const bs = $('gv-bolum');
-  bs.innerHTML = GV_BOLUM.map(([id,ic,ad])=>`<option value="${id}">${ic} ${esc(ad)}</option>`).join('');
-  bs.value = DUZ && eskiBolum ? eskiBolum : gvBolumSec; if(!bs.value){ bs.value = 'talebe'; }
+  bs.innerHTML = gvBolum().map(([id,ic,ad])=>`<option value="${id}">${ic} ${esc(ad)}</option>`).join('');
+  bs.value = DUZ && eskiBolum ? eskiBolum : gvBolumSec; if(!bs.value){ bs.selectedIndex = 0; }
   if(DUZ && eskiTekrar) $('gv-tekrar').value = eskiTekrar;
   bs.hidden = VK;
   document.querySelector('#gv-ekle-kart .gv-ekle').style.gridTemplateColumns = VK ? '' : (matchMedia('(max-width:720px)').matches ? '' : '1fr auto auto auto auto');
@@ -25797,20 +25949,96 @@ function raporCiz(o){
   dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · '+(HD ? GV_HEDEF_AD[HD[0]]+' görev raporu' : VELI_K() ? 'Haftalık veli bilgilendirme raporu' : 'Haftalık görev raporu')+(o.gun!=null ? ' (günlük)' : '')+' · '+aralik);
   return cv;
 }
+/* ---------- "Neler yapacağız" görseli (Görevler): yapıldı / yapılmadı ayrımı yok; o hedefe (V / P / EM / NV) işaretlenen bütün maddeler,
+   bölüm başlıkları (Talebe, Takip, Veli Bilgilendirme, Nehari…) altında, işaretlerken yazılan not alt yazı olarak.
+   Gün: "BUGÜN NELER YAPACAĞIZ" · kursumuzun günlük faaliyet raporu (dikey).
+   Hafta: "BU HAFTA NELER YAPACAĞIZ" · günler yan yana, her günün altında başlıklar ve işaretlenenler (yatay). ---------- */
+function planVeri(o, i){
+  const t = gunTarih(i), bilinen = gvBolum().map(b=>b[0]);
+  // hedef seçiliyse (V / P / EM / NV işaretli) madde yapılmış olsun olmasın görselde çıkar; hedefsiz raporda yalnız ✓ yapılanlar
+  const L = gununGorevleri(t).filter(x=>o.hedef ? !!(x.hedef && x.hedef[o.hedef]) : yapildi(x, t));
+  const gr = gvBolum().map(([id,ic,ad])=>({ic, ad, l:L.filter(x=>x.bolum===id)}));
+  const dg = L.filter(x=>!bilinen.includes(x.bolum)); if(dg.length) gr.push({ic:'📌', ad:'Diğer', l:dg});
+  return {t, i, n:L.length, gr:gr.filter(g=>g.l.length).map(g=>Object.assign(g, {l:g.l.map(x=>({ad:x.ad, not:((x.bitti||{})[t]||{}).s || ''}))}))};
+}
+function planCiz(o){
+  o = o || {};
+  const HD = o.hedef ? GV_HEDEF.find(h=>h[0]===o.hedef) : null, gunMod = o.gun!=null;
+  const NAVY = '#12295e', ORG = '#f7891f', INK = '#0d0f14', GRI = '#6b7486', BRENK = {Talebe:'#1f5fbf', Takip:'#c0283f', 'Veli Bilgilendirme':'#1f8a4c', Nehari:'#b8860b', Kontrol:'#d35400', 'Eğitim':'#0e7c86', Manevi:'#6b3fa0', 'Diğer':'#5b4bb7'};
+  const olc = document.createElement('canvas').getContext('2d');
+  const sar = (s, w, f)=>{ olc.font = f; const out = []; let cur = ''; String(s).split(/\s+/).forEach(k=>{ const d = cur ? cur+' '+k : k; if(olc.measureText(d).width>w && cur){ out.push(cur); cur = k; } else cur = d; }); if(cur) out.push(cur); return out.length ? out : ['']; };
+  const gunler = gunMod ? [planVeri(o, o.gun)] : [0,1,2,3,4,5,6].map(i=>planVeri(o, i)).filter(g=>g.n || g.i<5);   // boş hafta sonu gösterilmez
+  const W = gunMod ? 1200 : Math.max(1500, 260*gunler.length + 100), TX = 50, TW = W-100;
+  const bugunMu = gunMod && gunler[0].t===isoT(new Date());
+  const bas = gunMod ? (bugunMu ? 'BUGÜN NELER YAPACAĞIZ' : GUNLER[o.gun].toLocaleUpperCase('tr-TR')+' GÜNÜ NELER YAPACAĞIZ') : 'BU HAFTA NELER YAPACAĞIZ';
+  const a = tarihD(gunTarih(0)), b = tarihD(gunTarih(6)), ay = d => d.toLocaleDateString('tr-TR', {month:'long'});
+  const aralik = gunMod ? tarihD(gunler[0].t).toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric', weekday:'long'})
+    : (a.getMonth()===b.getMonth() ? a.getDate()+' – '+b.getDate()+' '+ay(b) : a.getDate()+' '+ay(a)+' – '+b.getDate()+' '+ay(b))+' '+b.getFullYear();
+  const alt = (gunMod ? 'Kursumuzun bugünkü faaliyet raporu' : 'Kursumuzun haftalık faaliyet raporu')+(HD ? ' · '+GV_HEDEF_AD[HD[0]]+' için' : '');
+  /* ölçü: sütun içeriği */
+  const CW = gunMod ? TW : Math.floor((TW - (gunler.length-1)*14)/gunler.length);
+  const F_BAS = dnmF(800, gunMod ? 26 : 19), F_AD = dnmF(700, gunMod ? 27 : 18), F_NOT = dnmF(500, gunMod ? 21 : 15);
+  const LH = gunMod ? 36 : 24, NH = gunMod ? 28 : 20, BH = gunMod ? 48 : 34, PAD = gunMod ? 26 : 14;
+  const icW = CW - 2*PAD - (gunMod ? 40 : 24);
+  gunler.forEach(g=>{ let h = gunMod ? 0 : 70;
+    g.gr.forEach(gr=>{ h += BH + 10; gr.l.forEach(x=>{ x.s = sar(x.ad, icW, F_AD); x.n = x.not ? sar(x.not, icW, F_NOT) : []; x.h = x.s.length*LH + x.n.length*NH + (gunMod ? 18 : 12); h += x.h; }); h += 14; });
+    if(!g.gr.length) h += gunMod ? 120 : 60;
+    g.h = h + 2*PAD; });
+  const icH = Math.max(...gunler.map(g=>g.h));
+  const H = 250 + 80 + icH + 40 + 120;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const {rr, yaz, sigdir} = dnmAraclar(c), G = window.kbGorselAraclar || {};
+  if(G.gZeminBoya) G.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
+  if(G.gBaslik) G.gBaslik(c, W, bas, aralik.toLocaleUpperCase('tr-TR')); else yaz(bas, W/2, 120, dnmF(800,48), NAVY);
+  yaz(alt, W/2, 272, dnmF(800, gunMod ? 30 : 28), NAVY);
+  c.fillStyle = ORG; rr(W/2-70, 288, 140, 6, 3); c.fill();
+  const Y0 = 320;
+  gunler.forEach((g, k)=>{
+    const x0 = TX + k*(CW+14);
+    c.save(); c.shadowColor = 'rgba(18,41,94,.12)'; c.shadowBlur = 16; c.shadowOffsetY = 5; rr(x0, Y0, CW, icH, 18); c.fillStyle = '#fff'; c.fill(); c.restore();
+    let y = Y0 + PAD;
+    if(!gunMod){   // gün başlığı
+      const bugun = g.t===isoT(new Date());
+      c.save(); rr(x0, Y0, CW, 58, 18); c.clip(); c.fillStyle = bugun ? ORG : NAVY; c.fillRect(x0, Y0, CW, 58); c.restore();
+      yaz(GUNLER[g.i].toLocaleUpperCase('tr-TR'), x0+CW/2, Y0+28, dnmF(800,20), '#fff');
+      yaz(tarihD(g.t).toLocaleDateString('tr-TR', {day:'numeric', month:'long'}), x0+CW/2, Y0+49, dnmF(600,15), 'rgba(255,255,255,.85)');
+      y = Y0 + 70;
+    }
+    if(!g.gr.length) yaz(gunMod ? 'Bugün için işaretlenmiş faaliyet yok' : '—', x0+CW/2, y+(gunMod ? 60 : 30), dnmF(700, gunMod ? 26 : 20), '#a0a8b8');
+    g.gr.forEach(gr=>{
+      const renk = BRENK[gr.ad] || NAVY;
+      rr(x0+PAD, y, CW-2*PAD, BH, 12); c.fillStyle = renk; c.fill();
+      const bt = gr.ic+'  '+gr.ad.toLocaleUpperCase('tr-TR'), bb = sigdir(bt, CW-2*PAD-28, gunMod ? 26 : 19, 11, 800);   // dar sütunda sığsın
+      yaz(bt, x0+PAD+14, y+BH/2+bb*0.36, dnmF(800, bb), '#fff', 'left');
+      y += BH + 10;
+      gr.l.forEach(x=>{
+        const bx = x0+PAD+(gunMod ? 10 : 4), ix = bx + (gunMod ? 30 : 20);
+        c.beginPath(); c.arc(bx+(gunMod ? 10 : 7), y+LH/2+2, gunMod ? 7 : 5, 0, Math.PI*2); c.fillStyle = renk; c.fill();
+        x.s.forEach((ln, j)=>yaz(ln, ix, y+LH*0.72+j*LH, F_AD, INK, 'left'));
+        let yy = y + x.s.length*LH;
+        x.n.forEach((ln, j)=>yaz(ln, ix, yy+NH*0.75+j*NH, F_NOT, GRI, 'left'));
+        y += x.h;
+      });
+      y += 14;
+    });
+  });
+  dnmAltDalga(c, W, H, H-110, 'Bayrampaşa Öğrenci Yurdu · '+(gunMod ? 'Günlük' : 'Haftalık')+' faaliyet raporu'+(HD ? ' · '+GV_HEDEF_AD[HD[0]] : '')+' · '+aralik);
+  return cv;
+}
 let rpMesgul = false;
 async function raporOlustur(o){
   if(rpMesgul) return; rpMesgul = true;
   o = (o && o.hedef) ? o : {};
   try{
     try{ if(typeof dnmFontBekle==='function') await dnmFontBekle(); }catch(e){}
-    const cv = raporCiz(o), blob = await new Promise(r=>cv.toBlob(r, 'image/png'));
+    const cv = VELI_K() ? raporCiz(o) : planCiz(o), blob = await new Promise(r=>cv.toBlob(r, 'image/png'));   // Görevler: "neler yapacağız" görseli
     if(RP && RP.url) try{ URL.revokeObjectURL(RP.url); }catch(e){}
     const HD = o.hedef ? GV_HEDEF.find(h=>h[0]===o.hedef) : null, gunT = o.gun!=null ? gunTarih(o.gun) : null;
-    const dosya = HD ? ({v:'Veli',p:'Personel',em:'Egitim-mesulu',nv:'Nehari-velisi'}[HD[0]])+'-gorev-raporu-'+(gunT || 'hafta-'+gunTarih(0))
+    const dosya = HD ? ({v:'Veli',p:'Personel',em:'Egitim-mesulu',nv:'Nehari-velisi'}[HD[0]])+'-faaliyet-'+(gunT || 'hafta-'+gunTarih(0))
                      : (VELI_K() ? 'Haftalik-veli-bilgilendirme-' : 'Haftalik-gorev-raporu-')+gunTarih(0);
     RP = {hafta, mod:VELI_K() ? 'vk' : 'g', blob, url:URL.createObjectURL(blob), ad:dosya+'.png',
           bas: HD ? HD[2]+' ('+HD[1]+') '+HD[3]+' · '+(gunT ? (gunT===isoT(new Date()) ? 'Bugün' : GUNLER[o.gun]) : 'Bu hafta') : '',
-          metin: HD ? '📌 '+GV_HEDEF_AD[HD[0]]+' görev raporu' : '📌 Haftalık görev raporu'};
+          metin: VELI_K() ? '📌 Haftalık veli bilgilendirme raporu' : (gunT ? (gunT===isoT(new Date()) ? '📌 Bugün neler yapacağız' : '📌 '+GUNLER[o.gun]+' günü neler yapacağız') : '📌 Bu hafta neler yapacağız')};
     raporGoster();
     setTimeout(()=>{ const e = $(RP.mod==='vk' ? 'gv-rapor-on' : 'gv-hrapor-on'); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
   }catch(e){ console.error(e); try{ showN('❌','Görsel hazırlanamadı','Tekrar deneyin'); }catch(_){} }
@@ -25837,7 +26065,7 @@ function duzenleBasla(x){
   DUZ = x.id;
   $('gv-yeni').value = x.ad || '';
   gorevCiz();
-  if(!VELI_K()) $('gv-bolum').value = x.bolum && GV_BOLUM.some(b=>b[0]===x.bolum) ? x.bolum : 'talebe';
+  if(!VELI_K()) $('gv-bolum').value = x.bolum && gvBolum().some(b=>b[0]===x.bolum) ? x.bolum : 'talebe';
   $('gv-sorumlu').value = x.sorumlu || '';
   $('gv-tekrar').value = x.tarih ? 'tek' : 'hafta';
   $('gv-ekle-btn').textContent = '💾 Kaydet'; $('gv-vazgec').hidden = false;
@@ -25863,7 +26091,7 @@ function gorevBagla(){
     const hb = e.target.closest('[data-hb]');
     if(hb){   // bölüm başlığındaki (V)(P)(EM)(NV): o bölümün bu gündeki bütün görevlerini işaretle / kaldır
       if(!yonetici()) return;
-      const k = hb.dataset.hb, g = hb.dataset.grup, bilinen = GV_BOLUM.map(b=>b[0]);
+      const k = hb.dataset.hb, g = hb.dataset.grup, bilinen = gvBolum().map(b=>b[0]);
       const L = gununGorevleri(t).filter(x=> g==='diger' ? !bilinen.includes(x.bolum) : x.bolum===g); if(!L.length) return;
       const hepsi = L.every(x=>x.hedef && x.hedef[k]);
       L.forEach(x=>{ x.hedef = Object.assign({}, x.hedef); if(hepsi) delete x.hedef[k]; else x.hedef[k] = 1; kaydet(x); });
@@ -25908,6 +26136,9 @@ function gorevBagla(){
     kaydet(it); $('gv-yeni').value = ''; $('gv-yeni').focus();
   };
   $('gv-ekle-btn').onclick = ekle;
+  $('gv-bk-btn').onclick = bkEkle;
+  $('gv-bk-ad').addEventListener('keydown', e=>{ if(e.key==='Enter') bkEkle(); });
+  $('gv-bk-liste').addEventListener('click', e=>{ const b = e.target.closest('[data-bk-sil]'); if(b) bkSil(b.dataset.bkSil); });
   $('gv-yeni').addEventListener('keydown', e=>{ if(e.key==='Escape' && DUZ){ duzenleBitir(); gorevCiz(); } });
   $('gv-yeni').addEventListener('keydown', e=>{ if(e.key==='Enter') ekle(); });
 }
@@ -30025,7 +30256,7 @@ window.ogrFotoBulut = cek;
 /* ══════════════ T.T.S · VELİ BİLGİLENDİRME GÖRSELİ (yeni tasarım) ══════════════
    Talebe Takip çerçevesi (renderVB) modeli hazırlar, görseli burada "Görsel oluştur" temasıyla çizer:
    solda yurt logosu, ortada lacivert başlık bandı + turuncu şerit (talebe adı · tarih), sağ üstte talebe fotoğrafı;
-   puan (haftalıkta 100 üzerinden: 99 ile başlar, Pazar dönüşüyle 100 olur, 100'ü geçmez) ve sıralama; ilk 10'daki talebeye yıldızlı "… Talebesi" alanı;
+   puan (haftalıkta 100 üzerinden: 100 ile başlar, Pazar akşamı gelmeyen ve her hata −1) ve sıralama; ilk 10'daki talebeye yıldızlı "… Talebesi" alanı;
    olumlu / olumsuz maddeler; panodaki gibi sıralama listesi: ilk 3, talebe ilk 3'te değilse "⋮" ve talebenin satırı
    (turuncu çerçeve + soldan ok). Sütunlarda bu dönem kaç kere olduğu yazar; gösterilen satırlarda hepsi 0 olan sütun gizlenir.
    M = {kicker, ad, aralik, pre, word, hafta, puan, rank, toplam, ilk10, olumlu:[{t,p,imp}], olumsuz:[…],
@@ -30037,7 +30268,7 @@ window.vbGorselCiz = async function(M){
   const olc = document.createElement('canvas').getContext('2d');
   const sar = (t, w, f)=>{ olc.font = f; const out = []; let cur = '';
     String(t).split(' ').forEach(x=>{ const d = cur ? cur+' '+x : x; if(olc.measureText(d).width>w && cur){ out.push(cur); cur = x; } else cur = d; }); if(cur) out.push(cur); return out; };
-  const kalan = v => Math.min(100, 99+v);   // haftaya 99 ile başlanır, Pazar dönüşüyle 100; 100'ü geçmez
+  const kalan = v => Math.min(100, 100+v);   // haftaya 100 ile başlanır; Pazar akşamı gelmeyen −1
   const puanYazi = v => M.hafta ? String(kalan(v)) : (v>0 ? '+' : '')+v;
   const puanRenk = v => M.hafta ? (kalan(v)<100 ? KRM : YES) : (v<0 ? KRM : v>0 ? YES : INK);
   const LF = dnmF(600,29), LH = 40, MW = W-2*P-160;
@@ -30174,7 +30405,7 @@ window.vbGorselCiz = async function(M){
     c.moveTo(P-34, ay-9); c.lineTo(TX-20, ay-9); c.lineTo(TX-20, ay-22); c.lineTo(TX-2, ay); c.lineTo(TX-20, ay+22); c.lineTo(TX-20, ay+9); c.lineTo(P-34, ay+9); c.closePath(); c.fill();
   }
   y += tabloH + 24;
-  yaz('Sütunlardaki sayılar: kaç kere olduğu'+(M.hafta ? '  ·  Her hafta 99 puanla başlanır, Pazar dönüşüyle 100 olur' : ''), W/2, y+10, dnmF(500,18), GRI);
+  yaz('Sütunlardaki sayılar: kaç kere olduğu'+(M.hafta ? '  ·  Her hafta 100 puanla başlanır, Pazar akşamı gelmeyen −1' : ''), W/2, y+10, dnmF(500,18), GRI);
   dnmAltDalga(c, W, H, H-110, KURUM_ADI+'  ·  '+M.aralik);
   return cv;
 };
