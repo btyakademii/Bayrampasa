@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-130">
+<meta name="otk-surum" content="2026.10.26-138">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -1120,8 +1120,34 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dha-hg.on{border-style:solid;border-color:#c9d7f5;background:#eef3ff;color:var(--blue)}
 .dha-hg.on small{display:block;font-size:10.5px;font-weight:600;color:var(--text2)}
 .dh-gizli{display:none !important}
-.gv-bk-liste{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.gv-bk{display:inline-flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;border:1px solid var(--border);border-radius:20px;background:#fff;font-weight:700;font-size:14px}
+.hp-ust{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.hp-ipucu{font-size:12.5px;color:var(--text2);flex:1;min-width:180px}
+.hp-on{background:#fff;border:1px solid var(--border);border-radius:14px;padding:10px;margin-bottom:12px}.hp-on img{width:100%;display:block;border-radius:8px}
+.hp-on-btn{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.hp-on-btn button{flex:1;min-width:140px}
+.hp-bas-l{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px}
+.hp-bas-l input,.hp-bad{padding:9px 10px;border:1px solid var(--border);border-radius:10px;font:800 15px 'Outfit',sans-serif;color:var(--text);background:#fff}
+.hp-bolum{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.hp-bolum.not{border-color:#f7c27a;background:#fffaf2}
+.hp-bb{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#12295e;color:#fff}.hp-bolum.not .hp-bb{background:#f7891f}
+.hp-bb b{font-size:15px;letter-spacing:.5px}.hp-bb small{margin-left:auto;opacity:.8;font-size:12px}
+.hp-bb .hp-bad{flex:1;min-width:0;background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+.hp-l{display:flex;flex-direction:column}
+.hp-r{display:flex;align-items:center;gap:6px;padding:5px 8px;border-top:1px solid #eef1f6}
+.hp-r:nth-child(even){background:#f7f9fd}.hp-r.k{background:#fff1dc;box-shadow:inset 5px 0 0 #f7891f}
+.hp-r input{padding:7px 8px;border:1px solid transparent;border-radius:8px;background:transparent;font:600 14px 'Outfit',sans-serif;color:var(--text);min-width:0}
+.hp-r input:focus{border-color:var(--blue);background:#fff;outline:none}
+.hp-r .hp-s{width:104px;flex:none;font-weight:800;color:#12295e;text-align:center}.hp-r .hp-e{flex:1}
+.hp-r.k input{font-weight:800}
+.hp-r.salt{padding:8px 10px}.hp-r.salt .hp-s{font-size:14px}.hp-r.salt .hp-e{font-size:14px;font-weight:600}
+.hp-ar{display:flex;gap:3px;flex:none}
+.hp-ar button{width:28px;height:28px;border:0;border-radius:7px;background:#eef1f6;color:var(--text);font-size:11px;cursor:pointer}
+.hp-ar button:disabled{opacity:.3;cursor:default}.hp-ar .hp-k{font-weight:900;font-size:13px}.hp-ar .hp-k.on{background:#f7891f;color:#fff}.hp-ar .hp-x{background:#fdecef;color:var(--red)}
+.hp-ekle{margin:8px 10px 10px}.hp-sifir{margin:4px 0 20px}
+@media (max-width:520px){.hp-r{gap:3px;padding:4px 4px}.hp-r .hp-s{width:84px;font-size:12.5px;padding:6px 2px}.hp-r .hp-e{font-size:13px;padding:6px 4px}.hp-ar{gap:2px}.hp-ar button{width:24px;height:26px;font-size:10px}}
+.gv-bk-liste{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.gv-bk-no{min-width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.gv-bk .gv-bk-ok{background:#eef1f6;color:var(--text);font-size:11px}.gv-bk .gv-bk-ok:disabled{opacity:.3;cursor:default}
+.gv-bk>small{margin-left:auto}
+.gv-bk{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 8px;border:1px solid var(--border);border-radius:20px;background:#fff;font-weight:700;font-size:14px}
 .gv-bk small{font-weight:600;color:var(--text2);font-size:12px;background:#eef1f6;border-radius:10px;padding:1px 7px}
 .gv-bk button{width:26px;height:26px;border:0;border-radius:50%;background:#fdecef;color:var(--red);cursor:pointer;font-size:12px}
 .gv-bk-ekle{display:grid;grid-template-columns:64px 1fr auto;gap:8px}
@@ -2906,7 +2932,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       <div id="gv-hrapor-on"></div>
     </section>
     <section class="zl-kart" id="gv-bolum-kart" hidden>
-      <div class="zl-bas"><h2>🏷️ Başlıklar</h2><small>Görevlerin gruplandığı başlıklar · ekle / kaldır</small></div>
+      <div class="zl-bas"><h2>🏷️ Başlıklar</h2><small>Görevlerin gruplandığı başlıklar · ekle / kaldır / ▲▼ sırala</small></div>
       <div class="gv-bk-liste" id="gv-bk-liste"></div>
       <div class="gv-bk-ekle">
         <input type="text" id="gv-bk-ik" maxlength="4" placeholder="🏷️" aria-label="Başlık simgesi (isteğe bağlı)">
@@ -3155,6 +3181,15 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   <div class="pb" id="dh-govde"></div>
 </div>
 
+<!-- ══════════ 🗓️ HAFTALIK PROGRAM ══════════ -->
+<div class="page" id="pageHProg">
+  <div class="ph">
+    <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="menuAc()">☰</button>
+    <button class="ph-back" title="Geri" aria-label="Geri" onclick="anaSayfayaGit()">‹</button>
+    <div><div class="ph-title">🗓️ Haftalık Program</div><div class="ph-sub">Hafta içi · Cumartesi · Pazar</div></div>
+  </div>
+  <div class="pb" id="hp-govde"></div>
+</div>
 <!-- ══════════ 📌 PANOYA ASILACAKLAR ══════════ -->
 <div class="page" id="pagePanoAsil">
   <div class="ph">
@@ -3395,6 +3430,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
       </div>
     </details>
     <button class="menu-oge menu-tek" data-m="zil" onclick="zilAc()">🔔 Program · Zil</button>
+    <button class="menu-oge menu-tek" data-m="hprog" onclick="hprogAc()">🗓️ Haftalık Program</button>
     <button class="menu-oge menu-tek" onclick="panoAc()">🖥️ Dijital Pano</button>
 
     <div class="menu-bas">İŞ GÜÇ</div>
@@ -3479,7 +3515,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-130</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-138</div>
   </div>
 </aside>
 
@@ -17942,8 +17978,8 @@ function panoAc(){
   if(typeof menuKapat==='function') menuKapat();
   if(goPage('pagePano')===false) return;
   const f = document.getElementById('pano-cerceve');
-  if(!PANO_YUKLU){ PANO_YUKLU = true; f.addEventListener('load', ()=>{ try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} try{ panoGunlukGonder(); }catch(e){} try{ zilGunlukTazele(); }catch(e){} }); f.srcdoc = PANO_HTML; }
-  else { try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} try{ panoGunlukGonder(); }catch(e){} try{ zilGunlukTazele(); }catch(e){} }
+  if(!PANO_YUKLU){ PANO_YUKLU = true; f.addEventListener('load', ()=>{ try{ panoHedefGonder(); }catch(e){} try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} try{ panoGunlukGonder(); }catch(e){} try{ zilGunlukTazele(); }catch(e){} }); f.srcdoc = PANO_HTML; }
+  else { try{ panoHedefGonder(); }catch(e){} try{ panoTalebeGonder(); }catch(e){} try{ panoVeriGonder(); }catch(e){} try{ panoGunlukGonder(); }catch(e){} try{ zilGunlukTazele(); }catch(e){} }
   panoOlcekle(); requestAnimationFrame(panoOlcekle); try{ panoUyan(); }catch(e){}
   try{ if(typeof bkEsitle==='function') bkEsitle().then(()=>{ try{ panoTalebeGonder(); }catch(e){} }).catch(()=>{}); }catch(e){}
 }
@@ -18619,7 +18655,7 @@ function prfTts(o, from, to){
   const DATA = prfJ('psData', {}), ATT = prfJ('psAtt', {}), CATS = prfJ('psCats', null) || [
     {id:'c11',n:'Kılık Kıyafet',p:-1},{id:'c8',n:'Takke',p:-1},{id:'c3',n:'Mescid',p:-1},{id:'c4',n:'Yatak',p:-1},{id:'c12',n:'Kütüphane',p:-1},{id:'c13',n:'Vestiyer',p:-1},{id:'c14',n:'Geç Yatma',p:-1},{id:'c15',n:'Y. Konuşan',p:-1}];
   const cat = id => CATS.find(c=>c.id===id), sid = s.id, PR = ['sabah','ogle','ikindi','aksam','yatsi'];
-  const r = {nm:0, dv:0, dvMarks:0, pz:0, pzy:0, ym:0, ymGun:0, cn:0, cnGun:0, total:0}, ymVar = s.okul==='Muharrem';
+  const r = {nm:0, dv:0, dvMarks:0, pz:0, pzy:0, ym:0, ymGun:0, cn:0, cnGun:0, opu:0, total:0}, ymVar = s.okul==='Muharrem';
   Object.keys(DATA).forEach(d=>{ const dP = puanTarihi(d); if(dP<from || dP>to) return; const rec = (DATA[d]||{})[sid]; if(!rec) return;
     Object.keys(rec).forEach(cid=>{ const c = cat(cid); if(!c || c.hidden) return; r.dvMarks += rec[cid]; r.dv += rec[cid]*c.p; }); });
   Object.keys(ATT).forEach(d=>{ const a = ATT[d] || {};
@@ -18627,10 +18663,11 @@ function prfTts(o, from, to){
     if(pzB){ const dE = pzErtesi(d); if(dE>=from && dE<=to){ const pz = pzB[sid]; if(pz){ if(pz==='v') r.pz++; } else if(Object.keys(pzB).some(x=>!!pzB[x])) r.pzy++; } }
     const dP = puanTarihi(d); if(dP<from || dP>to) return;   // pazar akşamı işaretleri ertesi haftaya
     if(a.n) PR.forEach(p=>{ if(a.n[p] && a.n[p][sid]==='y') r.nm++; });
+    if(a.yk && a.yk.opu && a.yk.opu[sid]) r.opu += (+a.yk.opu[sid] || 0);   // Ö. Puanı
     const ym = a.yk && a.yk.yemek, cuma = new Date(d+'T12:00:00').getDay()===5;
     if(ymVar && ym && Object.keys(ym).some(x=>ym[x]==='v') && ym[sid]!=='i'){ if(cuma){ r.cnGun++; if(ym[sid]!=='v') r.cn++; } else { r.ymGun++; if(ym[sid]!=='v') r.ym++; } }   // İ (izinli) düşülmez
   });
-  r.total = r.dv - r.nm - r.pzy - r.ym - r.cn;   // Pazar dönüşü +1 vermez
+  r.total = r.dv - r.nm - r.pzy - r.ym - r.cn - r.opu;   // Pazar dönüşü +1 vermez · Ö. Puanı −
   return r;
 }
 /* ── ana profil ── */
@@ -22451,13 +22488,25 @@ function yzdGorCiz(){
     + g('Kâğıda', 'yer', [['sigdir','A4\'e sığdır'],['tam','Kenarsız tam sayfa'],['gercek','Gerçek boyut']]);
 }
 function yzdResimYukle(url){ return new Promise((ok, no)=>{ const im = new Image(); im.onload = ()=>ok(im); im.onerror = ()=>no(new Error('Görsel açılamadı')); im.src = url; }); }
+/* Kâğıt yönü OTOMATİK: çıktı alırken hiçbir şey ayarlamaya gerek yok.
+   · Yatay (eni boyundan büyük) görsel → yatay A4.
+   · Dik ama kısa görsel (etüt puanı, dahili ders, öğretmen puanları gibi; boyu ≤ 2400 px ve boy/en ≤ 1,75) → yine YATAY A4'e sığdırılır.
+   · Uzun isim listeleri (deneme sonuçları gibi) → dikey A4.
+   · A4 dikey sayfa olarak çizilmiş görseller (Haftanın Talebeleri, Ayın Neharisi; boy/en ≈ 1,414) → dikey kalır. */
+function a4Yatay(w, h){
+  if(w >= h) return true;
+  const r = h / w;
+  if(Math.abs(r - Math.SQRT2) < 0.02) return false;
+  return h <= 2400 && r <= 1.75;
+}
+window.a4Yatay = a4Yatay;
 /* Döndürülmüş PNG (data URL) ve yatay mı */
 async function yzdGorselDondur(url, don){
   const im = await yzdResimYukle(url), w = im.naturalWidth, h = im.naturalHeight;
-  if(!don || don==='yok') return {src:url, w, h, yatay:w>h};
+  if(!don || don==='yok') return {src:url, w, h, yatay:a4Yatay(w, h)};
   const c = document.createElement('canvas'); c.width = h; c.height = w;
   const x = c.getContext('2d'); x.translate(h/2, w/2); x.rotate(don==='sag' ? Math.PI/2 : -Math.PI/2); x.drawImage(im, -w/2, -h/2);
-  return {src:c.toDataURL('image/png'), w:h, h:w, yatay:h>w};
+  return {src:c.toDataURL('image/png'), w:h, h:w, yatay:a4Yatay(h, w)};
 }
 function yzdGorselHtml(src, o){
   o = o || {yer:'sigdir', yatay:false};
@@ -22470,6 +22519,7 @@ function yzdGorselHtml(src, o){
 function yzdDataUrl(url){ return /^data:/.test(url) ? Promise.resolve(url) : fetch(url).then(r=>r.blob()).then(b=>new Promise((ok,no)=>{ const f = new FileReader(); f.onload = ()=>ok(f.result); f.onerror = no; f.readAsDataURL(b); })); }
 window.yzdGorselSec = function(url, ad, indirFn){
   if(!url) return;
+  YZD_GOR.don = 'yok'; if(YZD_GOR.yer==='gercek') YZD_GOR.yer = 'sigdir';   // her çıktı hazır gelsin: döndürme yok, A4'e sığdır (yön otomatik)
   const adi = yzdDosyaAdi(String(ad||'gorsel').replace(/\.(png|jpe?g)$/i,''));
   const hazir = async ()=>{ const r = await yzdGorselDondur(await yzdDataUrl(url), YZD_GOR.don); return yzdGorselHtml(r.src, {yer:YZD_GOR.yer, yatay:r.yatay}); };
   yzdSecim({ad:adi, gorsel:true, html:yzdGorselHtml(url),
@@ -22916,7 +22966,7 @@ function panoTalebeVeri(){
   /* Bir tarih aralığının puan tablosu. Eşit puanlılar isme göre dizilir; sıra numarası hiç tekrarlanmaz. */
   function tablo(f, t){
     const L = AKTIF.map(s=>{
-      let dv = 0, nm = 0, pz = 0, ye = 0, pzy = 0, ym = 0, cn = 0; const ks = {};   // ks: davranış maddesi başına işaret sayısı
+      let dv = 0, nm = 0, pz = 0, ye = 0, pzy = 0, ym = 0, cn = 0, opu = 0; const ks = {};   // ks: davranış maddesi başına işaret sayısı
       const ymVar = s.okul==='Muharrem';   // öğle yemeği / cuma namazı yalnız okulu Muharrem olanlara sayılır (Talebe Takip ile aynı)
       for(const d in DATA){ const dP = puanTarihi(d); if(dP<f || dP>t) continue; const r = (DATA[d]||{})[s.id]; if(!r) continue; for(const c in r){ if(c in kat){ dv += (r[c]||0)*kat[c]; ks[c] = (ks[c]||0) + (r[c]||0); } } }
       for(const d in ATT){ const a = ATT[d] || {};
@@ -22925,11 +22975,12 @@ function panoTalebeVeri(){
           else if(!pzIz(s) && Object.keys(pzB).some(x=>!!pzB[x])) pzy++; } }   // yoklaması alınan pazara gelmedi: −1 (pazar izinlisi hariç)
         const dP = puanTarihi(d); if(dP<f || dP>t) continue;   // pazar akşamı işaretleri ertesi haftaya
         if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][s.id]==='y') nm++; });
+        if(a.yk && a.yk.opu && a.yk.opu[s.id]) opu += (+a.yk.opu[s.id] || 0);   // Ö. Puanı
         const ymB = a.yk && a.yk.yemek;
         if(ymB && ymB[s.id]==='v') ye++;
         if(ymVar && ymB && Object.keys(ymB).some(x=>ymB[x]==='v') && ymB[s.id]!=='v' && ymB[s.id]!=='i'){ /* işaretsiz = gelmedi (−1), İ = izinli (düşülmez) */ if(new Date(d+'T12:00:00').getDay()===5) cn++; else ym++; } }
-      const toplam = dv - nm - pzy - ym - cn;   // Talebe Takip'teki hesapla aynı (Pazar dönüşü +1 vermez, gelmeyen −1)
-      return {id:s.id, ad:s.name, nm, dv, pz, pzy, ye, ym, cn, ks, toplam, kalan: Math.min(100, HT_TABAN + toplam)};
+      const toplam = dv - nm - pzy - ym - cn - opu;   // Talebe Takip'teki hesapla aynı (Pazar dönüşü +1 vermez, gelmeyen −1, Ö. Puanı −)
+      return {id:s.id, ad:s.name, nm, dv, pz, pzy, ye, ym, cn, opu, ks, toplam, kalan: Math.min(100, HT_TABAN + toplam)};
     }).sort((a,b)=>(b.toplam-a.toplam) || String(a.ad).localeCompare(String(b.ad),'tr'));
     L.forEach((x,i)=>{ x.sira = i+1; });
     return L;
@@ -22969,7 +23020,7 @@ function panoTalebeVeri(){
   return {aralik, secilen: sec ? {ad:sec.ad, toplam:sec.toplam, kalan:sec.kalan, nm:sec.nm, dv:sec.dv, pz:sec.pz, ye:sec.ye} : null,
           liderler: lider.map(x=>x.ad), liderPuan: lider.length ? lider[0].toplam : 0, liderKalan: lider.length ? lider[0].kalan : HT_TABAN,
           kategoriler: KAT.map(c=>({id:c.id, ad:c.n, p:+c.p||0})),
-          satirlar: satir.map(x=>({sira:x.sira, esitSay:1, ad:x.ad, nm:x.nm, dv:x.dv, pz:x.pz, pzy:x.pzy, ye:x.ye, ym:x.ym, cn:x.cn, ks:x.ks, toplam:x.toplam, kalan:x.kalan, secili:x.secili})),
+          satirlar: satir.map(x=>({sira:x.sira, esitSay:1, ad:x.ad, nm:x.nm, dv:x.dv, pz:x.pz, pzy:x.pzy, ye:x.ye, ym:x.ym, cn:x.cn, opu:x.opu||0, ks:x.ks, toplam:x.toplam, kalan:x.kalan, secili:x.secili})),
           ozet: {gecen:{aralik:gAralik, iyi:kisa(G.slice(0,10), true), kotu:kisa(enKotu, true)},
                  buHafta:{aralik, kotu:kisa(buKotu, true)},
                  gecenAy:{ad:AY[gay.getMonth()], iyi:kisa(GA.slice(0,10))},
@@ -22977,6 +23028,12 @@ function panoTalebeVeri(){
                  ay:{ad:AY[bugun.getMonth()], iyi:kisa(A.slice(0,10))},
                  donem:{ad:(ikinci ? '2' : '1')+'. Dönem', gun, iyi:kisa(D.slice(0,10))}}};
 }
+/* Pano · Hedefler ve Notlar verisi (16 Kasım'a kadar pano bunu her 15 dakikada 5 dakika gösterir) */
+window.panoHedefGonder = function(){
+  try{ if(!PANO_YUKLU || !window.yaziliPanoHedefVeri) return; const w = document.getElementById('pano-cerceve').contentWindow;
+    if(w && w.panoHedefYukle) w.panoHedefYukle(window.yaziliPanoHedefVeri()); }catch(e){ console.error(e); }
+};
+setInterval(()=>{ if(!document.hidden && typeof aktifSayfa==='function' && aktifSayfa()==='pagePano') panoHedefGonder(); }, 30000);
 window.panoTalebeGonder = function(){
   try{ if(!PANO_YUKLU) return; const w = document.getElementById('pano-cerceve').contentWindow; if(w && w.panoTalebeYukle) w.panoTalebeYukle(panoTalebeVeri()); }catch(e){ console.error(e); }
   try{ if(!PANO_YUKLU) return; const w = document.getElementById('pano-cerceve').contentWindow; if(w && w.panoNeYukle) w.panoNeYukle(panoNeVeri()); }catch(e){ console.error(e); }
@@ -23215,14 +23272,15 @@ function panoIsaretVeri(){
   const AY = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   const kisa = s=>{ const d = T.par(s); return d.getDate()+' '+AY[d.getMonth()].slice(0,3); };
   const puan = (sid, from, to)=>{
-    let dv = 0, nm = 0, pz = 0, pzy = 0;
+    let dv = 0, nm = 0, pz = 0, pzy = 0, opu = 0;
     for(const d in DATA){ const dP = puanTarihi(d); if(dP<from || dP>to) continue; const r = (DATA[d]||{})[sid]; if(!r) continue; for(const c in r){ if(c in kat) dv += (r[c]||0)*kat[c]; } }
     for(const d in ATT){ const a = ATT[d]||{};
       const pB = a.yk && a.yk.pazar;
       if(pB){ const dE = pzErtesi(d); if(dE>=from && dE<=to){ if(pB[sid]==='v') pz++; else if(!pB[sid] && Object.keys(pB).some(x=>!!pB[x])) pzy++; } }
       const dP = puanTarihi(d); if(dP<from || dP>to) continue;
-      if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][sid]==='y') nm++; }); }
-    return dv - nm - pzy;
+      if(a.n) VAK.forEach(v=>{ if(a.n[v] && a.n[v][sid]==='y') nm++; });
+      if(a.yk && a.yk.opu && a.yk.opu[sid]) opu += (+a.yk.opu[sid] || 0); }
+    return dv - nm - pzy - opu;
   };
   const out = {w:[], m:[], d:[], y:[]};
   Object.keys(CFG.picks||{}).forEach(key=>{
@@ -25813,7 +25871,10 @@ function bkCiz(){
   const k = $('gv-bolum-kart'); if(!k) return;
   k.hidden = VELI_K() || !yonetici(); if(k.hidden) return;
   const l = gvBolum(), say = id => gorevler().filter(x=>x.bolum===id).length;
-  $('gv-bk-liste').innerHTML = l.map(([id,ic,ad])=>`<span class="gv-bk">${esc(ic)} ${esc(ad)}<small>${say(id)}</small><button type="button" data-bk-sil="${esc(id)}" aria-label="${esc(ad)} başlığını kaldır" title="Kaldır">✕</button></span>`).join('');
+  $('gv-bk-liste').innerHTML = l.map(([id,ic,ad], i)=>`<span class="gv-bk"><span class="gv-bk-no">${i+1}</span>${esc(ic)} ${esc(ad)}<small>${say(id)}</small>`
+    + `<button type="button" class="gv-bk-ok" data-bk-tasi="${esc(id)}" data-yon="-1" aria-label="${esc(ad)} yukarı taşı" title="Yukarı"${i===0?' disabled':''}>▲</button>`
+    + `<button type="button" class="gv-bk-ok" data-bk-tasi="${esc(id)}" data-yon="1" aria-label="${esc(ad)} aşağı taşı" title="Aşağı"${i===l.length-1?' disabled':''}>▼</button>`
+    + `<button type="button" data-bk-sil="${esc(id)}" aria-label="${esc(ad)} başlığını kaldır" title="Kaldır">✕</button></span>`).join('');
 }
 function bkKaydet(l){ const it = Object.assign({}, V['_bolum'] || {id:'_bolum', tur:'ayar'}); it.l = l; kaydet(it); }
 function bkEkle(){
@@ -25825,6 +25886,12 @@ function bkEkle(){
   l.push([id, ($('gv-bk-ik').value || '').trim() || '🏷️', ad]);
   bkKaydet(l); $('gv-bk-ad').value = ''; $('gv-bk-ik').value = '';
   try{ showN('🏷️','Başlık eklendi', ad); }catch(e){}
+}
+/* Sıra: görev listesinde, ekleme formunda ve "Neler yapacağız" görsellerinde başlıklar bu sırayla çıkar */
+function bkTasi(id, d){
+  const l = gvBolum().slice(), i = l.findIndex(x=>x[0]===id), j = i + d;
+  if(i<0 || j<0 || j>=l.length) return;
+  [l[i], l[j]] = [l[j], l[i]]; bkKaydet(l);
 }
 function bkSil(id){
   const l = gvBolum(), b = l.find(x=>x[0]===id); if(!b) return;
@@ -26138,7 +26205,7 @@ function gorevBagla(){
   $('gv-ekle-btn').onclick = ekle;
   $('gv-bk-btn').onclick = bkEkle;
   $('gv-bk-ad').addEventListener('keydown', e=>{ if(e.key==='Enter') bkEkle(); });
-  $('gv-bk-liste').addEventListener('click', e=>{ const b = e.target.closest('[data-bk-sil]'); if(b) bkSil(b.dataset.bkSil); });
+  $('gv-bk-liste').addEventListener('click', e=>{ const tb = e.target.closest('[data-bk-tasi]'); if(tb){ bkTasi(tb.dataset.bkTasi, +tb.dataset.yon); return; } const b = e.target.closest('[data-bk-sil]'); if(b) bkSil(b.dataset.bkSil); });
   $('gv-yeni').addEventListener('keydown', e=>{ if(e.key==='Escape' && DUZ){ duzenleBitir(); gorevCiz(); } });
   $('gv-yeni').addEventListener('keydown', e=>{ if(e.key==='Enter') ekle(); });
 }
@@ -28204,6 +28271,28 @@ window.addEventListener('online', ()=>{ gonder(); });
 setTimeout(()=>{ try{ hedefTohum(); }catch(e){} if(Object.keys(KIRLI).length) gonder(); }, 4000);
 
 /* Panoya Asılacaklar (ana sistem): bir sınıf seviyesinin 1. / 2. yazılı hedef ve sonuç görselleri (Rapor görseliyle aynı), içinde bulunulan dönem. */
+/* Dijital Pano · 🎯 Hedefler ve Notlar ekranı için tüm yurdun verisi: içinde bulunulan dönemin en son not girilen yazılısı */
+window.yaziliPanoHedefVeri = function(){
+  try{ bagla(); }catch(e){}
+  try{ if(!window.__yzPanoCek || Date.now()-window.__yzPanoCek > 10*60*1000){ window.__yzPanoCek = Date.now(); cek(); } }catch(e){}
+  const d = donem==='ys' ? 'd2' : donem;
+  const SL = subeler().filter(s=>!String(s.id).startsWith('test_'));
+  if(!SL.length) return null;
+  const yi = SL.some(s=>ogrenciler(s.id).some(o=>dersleri(s.kademe).some(x=>hucre(d, s.id, o.id, x.id, 'y2')!=null))) ? '2' : '1';
+  const kad = {}; let tot = 0, ok = 0, kaz = 0, n = 0;
+  SL.forEach(s=>{ const DL = dersleri(s.kademe);
+    const ogr = ogrenciler(s.id).filter(o=>!String(o.id).startsWith('test_')).map(o=>{ n++;
+      const dd = RK_SUTUN.map(([k])=>{ const ders = DL.find(x=>x.id===k || (k==='sos' && x.id==='ink')); if(!ders) return null;
+        const h = hedefOku(d, s.id, o.id, ders.id, yi), v = hucre(d, s.id, o.id, ders.id, 'y'+yi);
+        const vv = v==null ? null : (v==='G' ? 'G' : +v);
+        if(h!=null && vv!=null){ tot++; if(vv!=='G' && vv>=h) ok++; }
+        return [h, vv]; });
+      const kz = !!yaziliKazandi(d, s.id, o.id, DL, +yi); if(kz) kaz++;
+      return {ad:o.ad, d:dd, kaz:kz}; });
+    (kad[s.kademe] = kad[s.kademe] || []).push({ad:s.ad, ogr}); });
+  return {yi:+yi, donem:d==='d1' ? 1 : 2, dersler:['TÜR','MAT','FEN','SOS','İNG','DİN'],
+          kademeler:Object.keys(kad).sort((a,b)=>a-b).map(k=>({k:+k, sb:kad[k]})), oran:tot ? Math.round(100*ok/tot) : null, kaz, n};
+};
 window.yaziliPanoGorsel = async function(kademe, yi){
   bagla();
   const tum = kademe==='tum';   // tüm yurt: 5–8. sınıfların hepsi tek liste
@@ -28579,15 +28668,23 @@ function gorselCiz(){
   const TOP = nD > 1;   // TOPLAM sütunu yalnız birden fazla dersten soru çözüldüyse
   const YAN = !nD && !KT;   // yalnız etüt puanı: liste solda, yapılan etütler sağda (alt alta)
   const cP = 150, cS = 88, cT = 96, cK = 280, cSy = 96, kw = KT ? cK+cSy : 0;
-  const W = Math.max(1200, 72+320+cP+nD*cS*2+(TOP?cT*2:0)+kw), TX = 36, TW = W-72, TY = 292, H1 = 52, H2 = (nD || KT) ? 38 : 0, RH = 58;
+  let W = Math.max(1200, 72+320+cP+nD*cS*2+(TOP?cT*2:0)+kw), TW = W-72;
+  const TX = 36, TY = 292, H1 = 52, H2 = (nD || KT) ? 38 : 0, RH = 58;
   let cAd = TW-cP-nD*cS*2-(TOP?cT*2:0)-kw;
   const n = k===8 ? 4 : 3, kutuH = 150;
-  const dar = W < 1500;   // dar görselde "Bugün ne yapıldı" etütlerin üstünde şerit olur, kutulara yer kalır
+  let dar = W < 1500;   // dar görselde "Bugün ne yapıldı" etütlerin üstünde şerit olur, kutulara yer kalır
   const lgsY = k===8 ? lgsKalan(S.tarih) : null;
   const YEH = 104, YBH = 58, YG = 12, YLH = 128;   // yan sütun: başlık, etüt kutusu, LGS kutusu yükseklikleri
   const yanH = YBH + YG + n*(YEH+YG) + (lgsY!=null ? YLH : -YG);
-  const H = YAN ? TY + Math.max(H1 + ogr.length*RH, yanH) + 40 + 120
+  const boyH = () => YAN ? TY + Math.max(H1 + ogr.length*RH, yanH) + 40 + 120
                 : TY + H1 + H2 + ogr.length*RH + 34 + (dar ? 64 : 0) + kutuH + 40 + 120;
+  let H = boyH();
+  /* A4 YATAY orana genişlet: çıktı alınca yatay sayfayı boşluksuz doldursun (isim sütunu ve etüt kutuları genişler).
+     Çok uzun listelerde (boy > 2400 px) dokunulmaz; onlar dikey basılır. */
+  if(H <= 2400){
+    const W2 = Math.min(2800, Math.round(H*Math.SQRT2));
+    if(W2 > W){ cAd += W2 - W; W = W2; TW = W-72; if(dar && W >= 1500){ dar = false; H = boyH(); } }
+  }
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
   const {rr, yaz, sigdir} = dnmAraclar(c);
   if(A.gZeminBoya) A.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
@@ -29603,7 +29700,7 @@ async function kaynakBelge(s){
       try{ const r = await yzdGorselDondur(u, a.don); b = Uint8Array.from(atob(r.src.split(',')[1]), c=>c.charCodeAt(0)); png = true; } finally{ URL.revokeObjectURL(u); }
     }
     const im = png ? await d.embedPng(b) : await d.embedJpg(b);
-    const yatay = im.width > im.height, [W, H] = yatay ? [A4[1], A4[0]] : A4, yer = a.yer || 'sigdir';
+    const yatay = typeof window.a4Yatay==='function' ? window.a4Yatay(im.width, im.height) : im.width > im.height, [W, H] = yatay ? [A4[1], A4[0]] : A4, yer = a.yer || 'sigdir';   // yön otomatik
     const k = yer==='tam' ? 0 : 20;
     const o = yer==='gercek' ? 0.75 : yer==='tam' ? Math.max(W/im.width, H/im.height) : Math.min((W-2*k)/im.width, (H-2*k)/im.height);
     const w = im.width*o, h = im.height*o;
@@ -30612,6 +30709,172 @@ window.paIndir = function(i){ const g = SONUC && SONUC.l && SONUC.l[i]; if(!g) r
 document.addEventListener('keydown', e=>{ if(e.key==='Escape' && SONUC) paKapat(); });
 try{ SAYFA_YETKI.pagePanoAsil = 'admin'; }catch(_){}
 try{ MENU_SAYFA.pagePanoAsil = 'panoasil'; }catch(_){}
+})();
+</script>
+<script>
+/* ══════════════ 🗓️ HAFTALIK PROGRAM (Dahili Program) ══════════════
+   Hafta içi · Cumartesi · Pazar programı ve notlar. Yönetici satırları doğrudan yazarak düzenler: saat, etkinlik,
+   B (kalın / vurgulu satır), ▲▼ sıra, ✕ sil, "+ Satır ekle". Değişiklik kendiliğinden kaydedilir ve buluta gider
+   (yd_veri "hprog"); herkes aynı programı görür. "Görsel oluştur" sistemin temasıyla A4 yatay görsel hazırlar. */
+(function(){
+'use strict';
+const ANAHTAR = 'hprog', YEREL = 'hprogVeri';
+const $ = id => document.getElementById(id);
+const es = x => String(x==null?'':x).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S = (s, e, k) => ({s, e, k:!!k});
+const VARSAYILAN = {baslik:'DAHİLİ PROGRAM', bolumler:[
+  {id:'hi', ad:'HAFTA İÇİ', l:[S('05:50','KALKIŞ'),S('06:20-07:20','SERBEST VAKİT (sabah-hatim-vazife)'),S('07:20-07:50','KAHVALTI'),S('07:50-08:10','ŞAHSİ TEMİZLİK-DAHİLİ DERSE HAZIRLIK'),
+    S('08:10-09:40','DAHİLİ DERS'),S('09:40-10:10','TEMİZLİK-DUHA NAMAZI'),S('10:10-11:00','ETÜT-1'),S('11:00-11:10','TENEFFÜS'),S('11:10-11:50','ETÜT-2'),S('11:50-12:00','TENEFFÜS'),
+    S('12:00-12:40','ETÜT-3'),S('12:40','YEMEK-KANTİN'),S('13:30','SERBEST VAKİT (öğle)'),S('13:50-14:30','DERS-1',1),S('14:30-14:40','TENEFFÜS'),S('14:40-15:20','DERS-2',1),
+    S('15:20-15:30','TENEFFÜS'),S('15:30-16:10','DERS-3',1),S('16:25','SERBEST VAKİT (ikindi)'),S('16:40-17:20','DERS-4',1),S('17:20-17:30','TENEFFÜS'),S('17:30-18:10','DERS-5',1),
+    S('18:25','SERBEST VAKİT (akşam)'),S('18:40-19:20','DERS-6',1),S('19:20','YEMEK-KANTİN'),S('20:15','SERBEST VAKİT (yatsı)'),S('20:40-21:30','ETÜT-4'),S('21:30-21:40','TENEFFÜS'),
+    S('21:40-22:30','ETÜT-5'),S('22:30-22:40','TENEFFÜS'),S('22:40-23:20','ETÜT-6'),S('23:30','İSTİRAHAT'),S('23:45','MECBURİ YAT',1)]},
+  {id:'cmt', ad:'CUMARTESİ', l:[S('05:50','KALKIŞ'),S('06:20-07:45','SERBEST VAKİT (sabah-K.Kerim hatmi-vazife)'),S('07:45-08:20','KAHVALTI'),S('08:30-09:45','UMUMİ TEMİZLİK'),
+    S('09:45-10:05','DENEMEYE HAZIRLIK'),S('10:15-13:00','TYT DENEME SINAVI'),S('13:30','SERBEST VAKİT (öğle-hatırlatmalar)'),S('14:30','İZİN-YEMEK'),S('17:00','SERBEST VAKİT (ikindi)'),
+    S('18:15','YEMEK'),S('18:45','SERBEST VAKİT (akşam)'),S('20:00','YURTTA OLACAK TÜM TALEBELERİMİZ İÇİN İZİN DÖNÜŞÜ'),S('20:30','SERBEST VAKİT (yatsı-yoklama)'),S('00:00','MECBURİ YAT',1)]},
+  {id:'paz', ad:'PAZAR', l:[S('05:50','1. KALKIŞ'),S('06:20','SERBEST VAKİT (sabah-vazife)'),S('07:00','İSTİRAHAT'),S('10:00','KAHVALTI'),S('13:15','SERBEST VAKİT (öğle)'),S('13:30','İKRAM'),
+    S('17:00','SERBEST VAKİT (ikindi)'),S('18:15','YEMEK'),S('18:45','SERBEST VAKİT (akşam)'),S('20:00','İZİN DÖNÜŞÜ'),S('20:30','SERBEST VAKİT (yatsı-hatim-yoklama-t.namazı)'),
+    S('21:45-23:00','ETÜT (Telefonların toplanması-Tekrar-Haftalık program-Soru Takip)'),S('23:30','MECBURİ YAT',1)]},
+  {id:'not', ad:'NOTLAR', not:true, l:[S('NOT-1','E. Namazı Salı akşamı'),S('NOT-2','Sohbet programı Çarşamba akşamı'),
+    S('NOT-3','Çarşamba ve Perşembe hatim ve sohbet programından ötürü etüt saatleri değişir'),S('NOT-4','Cuma Yemek 12.00')]}
+]};
+let P = null;
+try{ P = JSON.parse(localStorage.getItem(YEREL)); }catch(_){}
+if(!P || !Array.isArray(P.bolumler)) P = JSON.parse(JSON.stringify(VARSAYILAN));
+let GORSEL = null, KAYIT_T = null, BEKLE = false;
+const yonetici = () => { try{ const p = aktifPersonel(); return !!(p && p.admin); }catch(_){ return false; } };
+const bulutHazir = () => { try{ return sbAktif() && sbGirisli(); }catch(_){ return false; } };
+
+function yerelYaz(){ try{ localStorage.setItem(YEREL, JSON.stringify(P)); }catch(_){} }
+async function gonder(){
+  if(!bulutHazir()){ BEKLE = true; return; }
+  try{
+    const h = await sbBaslik({Prefer:'resolution=merge-duplicates,return=minimal'});
+    const r = await fetch(sbUrl()+'/rest/v1/yd_veri?on_conflict=sahip,anahtar', {method:'POST', headers:h, body:JSON.stringify([{sahip:SB_OTURUM.uid, anahtar:ANAHTAR, icerik:P, guncelleme:new Date().toISOString()}])});
+    if(!r.ok) throw new Error('HTTP '+r.status); BEKLE = false;
+  }catch(e){ BEKLE = true; console.warn('Haftalık program gönderilemedi:', e && e.message || e); }
+}
+async function cek(){
+  if(!bulutHazir()) return;
+  try{ const r = await sbSatirlar('anahtar,icerik', 'anahtar=eq.'+ANAHTAR); const x = r && r[0] && r[0].icerik;
+    if(x && Array.isArray(x.bolumler) && (x.z||0) > (P.z||0) && !BEKLE){ P = x; yerelYaz(); if(acik()) ciz(); }
+    else if(BEKLE || (P.z||0) > ((x && x.z)||0)) gonder();
+  }catch(_){}
+}
+function kaydet(hemen){
+  P.z = Date.now(); yerelYaz(); GORSEL = null;
+  clearTimeout(KAYIT_T); KAYIT_T = setTimeout(gonder, hemen ? 0 : 1200);
+}
+const acik = () => { const p = $('pageHProg'); return !!(p && p.classList.contains('active')); };
+
+/* ---------- ekran ---------- */
+function ciz(){
+  const g = $('hp-govde'); if(!g) return;
+  const duz = yonetici();
+  let h = '<div class="hp-ust"><button type="button" class="bpri" onclick="hprog.gorsel()">🖼️ Görsel oluştur</button>'
+    + (duz ? '<span class="hp-ipucu">Satırlara dokunup doğrudan yazın; değişiklik kendiliğinden kaydedilir.</span>' : '<span class="hp-ipucu">Programı yönetici düzenler.</span>')+'</div>';
+  if(GORSEL) h += '<section class="hp-on"><img src="'+GORSEL.url+'" alt="Haftalık program görseli"><div class="hp-on-btn">'
+    + '<button type="button" class="bpri" onclick="hprog.paylas()">📲 Paylaş</button><button type="button" class="bsec" onclick="hprog.cikti()">🖨️ Çıktı al · İndir</button></div></section>';
+  if(duz) h += '<label class="hp-bas-l">Görsel başlığı<input type="text" value="'+es(P.baslik)+'" maxlength="40" oninput="hprog.baslik(this.value)"></label>';
+  P.bolumler.forEach((b, bi)=>{
+    h += '<section class="hp-bolum'+(b.not ? ' not' : '')+'"><div class="hp-bb">'+(duz ? '<input type="text" class="hp-bad" value="'+es(b.ad)+'" maxlength="30" aria-label="Bölüm adı" oninput="hprog.bad('+bi+',this.value)">' : '<b>'+es(b.ad)+'</b>')+'<small>'+b.l.length+' satır</small></div>';
+    h += '<div class="hp-l">'+b.l.map((r, ri)=> duz
+      ? '<div class="hp-r'+(r.k ? ' k' : '')+'"><input class="hp-s" value="'+es(r.s)+'" maxlength="16" aria-label="'+(b.not ? 'Not' : 'Saat')+'" oninput="hprog.yaz('+bi+','+ri+',\'s\',this.value)">'
+        + '<input class="hp-e" value="'+es(r.e)+'" maxlength="90" aria-label="Etkinlik" oninput="hprog.yaz('+bi+','+ri+',\'e\',this.value)">'
+        + '<span class="hp-ar"><button type="button" class="hp-k'+(r.k ? ' on' : '')+'" title="Kalın / vurgulu" aria-pressed="'+r.k+'" onclick="hprog.kalin('+bi+','+ri+')">B</button>'
+        + '<button type="button" title="Yukarı" aria-label="Yukarı taşı" onclick="hprog.tasi('+bi+','+ri+',-1)"'+(ri===0?' disabled':'')+'>▲</button>'
+        + '<button type="button" title="Aşağı" aria-label="Aşağı taşı" onclick="hprog.tasi('+bi+','+ri+',1)"'+(ri===b.l.length-1?' disabled':'')+'>▼</button>'
+        + '<button type="button" class="hp-x" title="Satırı sil" aria-label="Satırı sil" onclick="hprog.sil('+bi+','+ri+')">✕</button></span></div>'
+      : '<div class="hp-r salt'+(r.k ? ' k' : '')+'"><span class="hp-s">'+es(r.s)+'</span><span class="hp-e">'+es(r.e)+'</span></div>').join('')+'</div>';
+    if(duz) h += '<button type="button" class="bsec hp-ekle" onclick="hprog.ekle('+bi+')">+ '+(b.not ? 'Not' : 'Satır')+' ekle</button>';
+    h += '</section>';
+  });
+  if(duz) h += '<button type="button" class="bsec hp-sifir" onclick="hprog.sifirla()">↺ Fotoğraftaki ilk programa dön</button>';
+  const sc = g.scrollTop; g.innerHTML = h; g.scrollTop = sc;
+}
+function odakla(bi, ri){ setTimeout(()=>{ const r = document.querySelectorAll('#hp-govde .hp-bolum')[bi]; const i = r && r.querySelectorAll('.hp-r')[ri]; const el = i && i.querySelector('.hp-s'); if(el) el.focus(); }, 30); }
+
+/* ---------- görsel (Görsel oluştur teması · A4 yatay) ---------- */
+async function gorselCiz(){
+  try{ await dnmFontBekle(); }catch(_){}
+  const A = window.kbGorselAraclar || {}, NAVY = '#12295e', ORG = '#f7891f', INK = '#0d0f14', GRI = '#5f6b80';
+  const bol = P.bolumler.filter(b=>!b.not), notlar = P.bolumler.filter(b=>b.not);
+  const sol = bol.slice(0, 1), sag = bol.slice(1);
+  const RH = 36, BH = 50, GAP = 22, TY = 300;
+  const solH = sol.reduce((s,b)=>s+BH+b.l.length*RH, 0);
+  const notL = notlar.reduce((s,b)=>s+b.l.length, 0);
+  const sagH = sag.reduce((s,b)=>s+BH+b.l.length*RH+GAP, 0) + (notlar.length ? BH + notL*RH*1.25 : 0);
+  const icH = Math.max(solH, sagH);
+  const H = Math.round(TY + icH + 40 + 130), W = Math.max(2000, Math.round(H*Math.SQRT2));
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const {rr, yaz, sigdir} = dnmAraclar(c);
+  if(A.gZeminBoya) A.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
+  const ust = KURUM_ADI.toLocaleUpperCase('tr-TR')+'  ·  HAFTALIK PROGRAM';
+  if(A.gBaslik) A.gBaslik(c, W, String(P.baslik||'HAFTALIK PROGRAM').toLocaleUpperCase('tr-TR'), ust); else yaz(P.baslik, W/2, 120, dnmF(800,50), NAVY);
+  const X = 50, TW = W-100, CW1 = Math.round(TW*0.47), CW2 = TW-CW1-GAP;
+  const tablo = (b, x, y, w)=>{
+    const sw = Math.round(Math.min(230, w*0.26)), h = BH + b.l.length*RH;
+    c.save(); c.shadowColor = 'rgba(18,41,94,.12)'; c.shadowBlur = 14; c.shadowOffsetY = 4; rr(x, y, w, h, 16); c.fillStyle = '#fff'; c.fill(); c.restore();
+    c.save(); rr(x, y, w, h, 16); c.clip();
+    c.fillStyle = NAVY; c.fillRect(x, y, w, BH);
+    yaz(String(b.ad).toLocaleUpperCase('tr-TR'), x+w/2, y+BH/2+10, dnmF(800,28), '#fff');
+    b.l.forEach((r, i)=>{
+      const yy = y+BH+i*RH, ty = yy+RH/2+8;
+      c.fillStyle = r.k ? '#fff1dc' : (i%2 ? '#f4f7fc' : '#fff'); c.fillRect(x, yy, w, RH);
+      if(r.k){ c.fillStyle = ORG; c.fillRect(x, yy, 8, RH); }
+      const sf = sigdir(r.s, sw-24, 22, 12, r.k ? 800 : 700); yaz(r.s, x+sw/2, ty, dnmF(r.k ? 800 : 700, sf), r.k ? '#9a4a00' : NAVY);
+      const ef = sigdir(r.e, w-sw-28, 22, 11, r.k ? 800 : 600); yaz(r.e, x+sw+16, ty, dnmF(r.k ? 800 : 600, ef), INK, 'left');
+      c.fillStyle = 'rgba(18,41,94,.08)'; c.fillRect(x, yy+RH-1, w, 1);
+    });
+    c.fillStyle = 'rgba(18,41,94,.12)'; c.fillRect(x+sw, y+BH, 1.5, h-BH);
+    c.restore();
+    return h;
+  };
+  let y = TY; sol.forEach(b=>{ y += tablo(b, X, y, CW1) + GAP; });
+  y = TY; const x2 = X+CW1+GAP;
+  sag.forEach(b=>{ y += tablo(b, x2, y, CW2) + GAP; });
+  notlar.forEach(b=>{
+    const nh = BH + b.l.length*RH*1.25;
+    c.save(); rr(x2, y, CW2, nh, 16); c.fillStyle = '#fff7ea'; c.fill(); c.lineWidth = 2; c.strokeStyle = ORG; c.stroke(); c.restore();
+    c.save(); rr(x2, y, CW2, BH, 16); c.clip(); c.fillStyle = ORG; c.fillRect(x2, y, CW2, BH); c.restore();
+    yaz(String(b.ad).toLocaleUpperCase('tr-TR'), x2+CW2/2, y+BH/2+10, dnmF(800,26), '#fff');
+    b.l.forEach((r, i)=>{ const ty = y+BH+i*RH*1.25+RH*0.8;
+      yaz(r.s, x2+20, ty, dnmF(800,21), '#9a4a00', 'left');
+      const ef = sigdir(r.e, CW2-170, 21, 11, 700); yaz(r.e, x2+150, ty, dnmF(700, ef), INK, 'left'); });
+    y += nh + GAP;
+  });
+  dnmAltDalga(c, W, H, H-110, KURUM_ADI+' · '+String(P.baslik||'Haftalık program'));
+  return cv;
+}
+
+window.hprogAc = function(){
+  if(typeof menuKapat==='function') menuKapat();
+  if(goPage('pageHProg')===false) return;
+  ciz(); cek();
+};
+window.hprog = {
+  yaz(bi, ri, k, v){ const r = P.bolumler[bi] && P.bolumler[bi].l[ri]; if(!r) return; r[k] = v; kaydet(); },
+  baslik(v){ P.baslik = v; kaydet(); },
+  bad(bi, v){ P.bolumler[bi].ad = v; kaydet(); },
+  kalin(bi, ri){ const r = P.bolumler[bi].l[ri]; r.k = !r.k; kaydet(); ciz(); },
+  tasi(bi, ri, d){ const l = P.bolumler[bi].l, j = ri+d; if(j<0 || j>=l.length) return; [l[ri], l[j]] = [l[j], l[ri]]; kaydet(); ciz(); },
+  sil(bi, ri){ const b = P.bolumler[bi], r = b.l[ri]; if((r.s || r.e) && !confirm('"'+(r.s+' '+r.e).trim()+'" satırı silinsin mi?')) return; b.l.splice(ri, 1); kaydet(); ciz(); },
+  ekle(bi){ const b = P.bolumler[bi]; b.l.push(b.not ? S('NOT-'+(b.l.length+1), '') : S('', '')); kaydet(); ciz(); odakla(bi, b.l.length-1); },
+  sifirla(){ if(!confirm('Program fotoğraftaki ilk hâline dönsün mü? Yaptığınız değişiklikler silinir.')) return; const z = Date.now(); P = JSON.parse(JSON.stringify(VARSAYILAN)); P.z = z; kaydet(true); ciz(); },
+  async gorsel(){
+    const cv = await gorselCiz(); const blob = await new Promise(r=>cv.toBlob(r, 'image/png'));
+    if(GORSEL) try{ URL.revokeObjectURL(GORSEL.url); }catch(_){}
+    GORSEL = {blob, url:URL.createObjectURL(blob), ad:'Haftalik-Program.png'}; ciz();
+    setTimeout(()=>{ const e = document.querySelector('#hp-govde .hp-on'); if(e) e.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
+  },
+  async paylas(){ const g = GORSEL; if(!g) return;
+    try{ const f = new File([g.blob], g.ad, {type:'image/png'}); if(navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f]}); return; } }catch(e){ if(e && e.name==='AbortError') return; }
+    this.cikti(); },
+  cikti(){ const g = GORSEL; if(!g) return; yzdGorselSec(g.url, g.ad); }
+};
+try{ MENU_SAYFA.pageHProg = 'hprog'; }catch(_){}
+setInterval(()=>{ if(!document.hidden && acik()) cek(); }, 20000);
+window.addEventListener('online', ()=>{ if(BEKLE) gonder(); });
 })();
 </script>
 </body>
