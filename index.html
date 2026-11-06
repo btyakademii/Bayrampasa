@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-139">
+<meta name="otk-surum" content="2026.10.26-141">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -29,7 +29,7 @@
 <!-- GÖRSEL KURALI: "Görsel oluştur" görsellerinde sol üstte her zaman yurt logosu (gorselLogoCiz) olur; optik/kalem çizimi yok;
      logonun yanına "Bayrampaşa Öğrenci Yurdu" yazılmaz; başlık bandı ortada (gBaslik). Yeni görsellerde de bu uygulanır. -->
 <!-- BÖLÜM: ORTAK.JS BAŞLA -->
-<script src="ortak.js?v=2026.10.26-139"></script>
+<script src="ortak.js?v=2026.10.26-141"></script>
 <!-- BÖLÜM: ORTAK.JS BİTİR -->
 <!-- qrcode-generator 1.4.4 · MIT · https://github.com/kazuhikoarase/qrcode-generator -->
 
@@ -3319,6 +3319,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge" onclick="neAc('puan')">⭐ Etüt Puanları</button>
         <button class="menu-oge" onclick="neAc('oku')">📖 Okuma Hızı</button>
         <button class="menu-oge" onclick="neAc('din')">🕌 Din Eğitimi</button>
+        <button class="menu-oge" onclick="neAc('dnm')">📝 Deneme (3. ve 4. sınıf)</button>
         <button class="menu-oge" onclick="neAc('ogr')">👥 Öğrenciler</button>
         <div class="menu-alt-bas">YARIŞMA</div>
         <div class="menu-cip">
@@ -3515,7 +3516,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-139</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-141</div>
   </div>
 </aside>
 
@@ -4791,9 +4792,10 @@ function yetki(k){
   return !!(p.yetki && p.yetki[k]);
 }
 function yetkiHerhangi(l){ return String(l).split('|').some(k=>yetki(k.trim())); }
-function izinliKademeler(){ const p = aktifPersonel(); if(!p) return []; if(typeof KADEMELER==='undefined') return []; if(p.admin || !Array.isArray(p.siniflar) || !p.siniflar.length) return KADEMELER.slice(); return KADEMELER.filter(k=>p.siniflar.includes(k)); }
+/* 4. sınıf ana bölümde yoktur: denemeleri, testleri ve öğrencileri Nehari'de (Nehari · Deneme) yönetilir */
+function izinliKademeler(){ const p = aktifPersonel(); if(!p) return []; if(typeof KADEMELER==='undefined') return []; const ana = KADEMELER.filter(k=>k!==4); if(p.admin || !Array.isArray(p.siniflar) || !p.siniflar.length) return ana; return ana.filter(k=>p.siniflar.includes(k)); }
 function kademeIzin(k){ return izinliKademeler().includes(+k); }
-function kademeKisitli(){ return izinliKademeler().length < KADEMELER.length; }
+function kademeKisitli(){ return izinliKademeler().length < KADEMELER.filter(k=>k!==4).length; }
 /* Sayfa → gereken yetki (biri yeterli) */
 const SAYFA_YETKI = {
   pageKademe:'deneme_sonuc|cevap_anahtari|deneme_duzenle|test_olustur|sonuc_tablo|sonuc_kisi', pageDnmSecim:'deneme_sonuc|cevap_anahtari|sonuc_tablo|sonuc_kisi',
@@ -5014,7 +5016,7 @@ let AKTIF_KADEME = 8;
 const KONULU_SINIFLAR = [5,6,7,8];   // 5–7 de 8. sınıfla aynı konu sistemini kullanır
 function konuluMu(k){ return KONULU_SINIFLAR.includes(+k); }
 function konuluKademeler(){ return izinliKademeler().filter(konuluMu); }
-try{ const k = +localStorage.getItem('otkKademe'); if(KADEMELER.includes(k)) AKTIF_KADEME = k; }catch(e){}
+try{ const k = +localStorage.getItem('otkKademe'); if(KADEMELER.includes(k) && k!==4) AKTIF_KADEME = k; }catch(e){}
 function kademeTahmin(ad){ const m = String(ad||'').match(/^\s*([4-8])/); return m ? +m[1] : 8; }
 function kademeGoc(){
   DENEMELER.forEach(d=>{ if(!KADEMELER.includes(d.kademe)) d.kademe = 8; });
@@ -8530,7 +8532,7 @@ function ogkCiz(){
   const okulKart = '<div style="font-weight:800;margin:18px 0 8px;opacity:.75">Okullara göre</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
     + OKULLAR.map(x=>{ const n = OGRENCILER.filter(o=>okulEsle(o.okul)===x).length;
       return '<button onclick="ogkOkulAc(\''+x+'\')" style="padding:12px;border-radius:12px;border:1px solid #cfd8cf;background:#fff;text-align:left;cursor:pointer"><div style="font-weight:800">🏫 '+esc(x)+'</div><div style="font-size:12px;opacity:.6">'+n+' öğrenci</div></button>'; }).join('')+'</div>';
-  h.innerHTML = izgara(KADEMELER.map(k=>{
+  h.innerHTML = izgara(KADEMELER.filter(k=>k!==4).map(k=>{   // 4. sınıf öğrencileri Nehari'de
     const sl = ogkSubeler(k), n = sl.reduce((t,x)=>t+say(x.id),0);
     return kare(k+'. Sınıf', sl.length ? n+' öğrenci'+(sl.length>1 ? ' · '+sl.length+' şube' : '') : 'şube yok', renk[k]||'#1a3a5c', 'ogkKademe('+k+')');
   }).join('')) + okulKart;
@@ -14707,8 +14709,38 @@ function geoMini(c){
   if(!g.q.length)g.fits=false;
   return g;
 }
+/* ── Büyük düzen (v2): 4. sınıf gibi az soruluk testlerde baloncuklar büyür, dersler kâğıda yayılır ve ortalanır.
+   Yalnız cfg.duzen==="v2" olan testlerde (QR'da "v2" yazar) kullanılır; eski basılmış formlar eski düzenle okunmaya devam eder.
+   Ölçek: dersler A4 yatay sayfanın genişliğine ve yüksekliğine sığacak en büyük değer (en çok 2,2 kat). */
+function geoV2(c){
+  const {PW,PH}=SAYFA(true),base=geo(Object.assign({},c,{duzen:""}),true);
+  const rows=Math.max(5,Math.min(25,+c.rows||20)),secs=[];
+  c.sections.forEach((s,si)=>{const n=Math.max(0,+s[1]||0);if(n)secs.push({ad:s[0],n,si})});
+  const ust=48,alt=PH-17,genis=PW-24,gx=7,gy=5;
+  const kur=(s,rhx)=>{const p=P*s,rh=rhx||RH*s,nw=NUMW*s,colW=nw+4*p+0.8*s,hh=Math.min(9,6*s),satir=[];let L=[],lw=0;
+    secs.forEach(x=>{const nc=Math.ceil(x.n/rows),w=nc*colW-0.8*s+3*s,h=hh+Math.min(x.n,rows)*rh+1.5*s,it=Object.assign({},x,{w,h,nc});
+      if(L.length&&lw+gx+w>genis){satir.push({l:L,w:lw});L=[];lw=0}L.push(it);lw+=(L.length>1?gx:0)+w});
+    if(L.length)satir.push({l:L,w:lw});
+    const H=satir.reduce((t,S)=>t+Math.max(...S.l.map(x=>x.h)),0)+gy*Math.max(0,satir.length-1);
+    return{s,p,rh,nw,colW,hh,satir,H,sigar:H<=alt-ust&&satir.every(S=>S.w<=genis)}};
+  let K=null;for(let k=44;k>=20;k--){const x=kur(k/20);if(x.sigar){K=x;break}}if(!K)K=kur(1);
+  /* dersler tek sırada ise satır aralığı açılır: sorular kâğıdın altına kadar iner (baloncuk boyu aynı kalır) */
+  if(K.sigar&&K.satir.length===1){const mx=Math.max(...secs.map(x=>Math.min(x.n,rows))),bos=alt-ust-K.hh-1.5*K.s-4;
+    const rh2=Math.min(K.rh*1.45,bos/Math.max(1,mx));if(rh2>K.rh){const K2=kur(K.s,rh2);if(K2.sigar)K=K2}}
+  const g=Object.assign({},base,{q:[],sections:[],fits:K.sigar,v2:true,olcek:K.s});
+  let y=ust+Math.max(0,(alt-ust-K.H)/2),qi=0;
+  K.satir.forEach(S=>{let x=(PW-S.w)/2;const sh=Math.max(...S.l.map(z=>z.h));
+    S.l.forEach(z=>{const sec={name:z.ad,x,y,w:z.w,h:z.h,start:qi,n:z.n,hh:K.hh,fs:Math.min(4.6,3*K.s)};
+      for(let r=0;r<z.n;r++){const col=Math.floor(r/rows),row=r%rows,cx0=x+1.5*K.s+col*K.colW,cy=y+K.hh+(row+0.5)*K.rh,opts=[];
+        for(let k=0;k<4;k++)opts.push({x:cx0+K.nw+K.p/2+k*K.p,y:cy,l:LET[k],r:BR*K.s,fs:2.2*K.s});
+        g.q.push({num:r+1,nx:cx0+K.nw-0.9*K.s,y:cy,opts,sec:z.si,fs:2.8*K.s});qi++}
+      g.sections.push(sec);x+=z.w+gx});
+    y+=sh+gy});
+  return g;
+}
 function geo(c,yatay=true){
   if(yatay==="mini")return geoMini(c);
+  if(yatay===true&&c&&c.duzen==="v2")return geoV2(c);
   const {PW,PH}=SAYFA(yatay);
   const o=4, rows=Math.max(5,Math.min(25,+c.rows||20)), d=yatay?0:Math.max(0,Math.min(10,+c.digits||0)), bk=yatay?0:+c.booklet;   // öğrenci no ve kitapçık zaten kapalı
   const g={q:[],digits:[],booklet:[],sections:[],fits:true,numBox:null,bkBox:null};
@@ -14755,11 +14787,11 @@ function geo(c,yatay=true){
    Metin: SB1|sınıf|testId|öğrenciId|sütundaSoru|ders soru sayıları (nokta ile)
    Boş formda öğrenciId boştur; yine de sınıf ve test tanınır. */
 function sboSatir(c=cfg){return Math.max(5,Math.min(25,+c.rows||20))}
-function qrMetin(ogrId){return ["SB1",SBK,cfg.id||"",ogrId||"",sboSatir(),cfg.sections.map(s=>+s[1]||0).join(".")].join("|")}
+function qrMetin(ogrId){const a=["SB1",SBK,cfg.id||"",ogrId||"",sboSatir(),cfg.sections.map(s=>+s[1]||0).join(".")];if(cfg.duzen==="v2")a.push("v2");return a.join("|")}
 function qrCozumle(t){
   const p=String(t||"").split("|");if(p[0]!=="SB1")return null;
   const k=+p[1];if(!(typeof KADEMELER!=="undefined"?KADEMELER.includes(k):k>=4&&k<=8))return null;
-  return{k,sinav:p[2]||"",ogr:p[3]||"",rows:+p[4]||0,counts:(p[5]||"").split(".").filter(x=>x!=="").map(n=>Math.max(0,+n||0))};
+  return{k,sinav:p[2]||"",ogr:p[3]||"",rows:+p[4]||0,counts:(p[5]||"").split(".").filter(x=>x!=="").map(n=>Math.max(0,+n||0)),duzen:p[6]==="v2"?"v2":""};
 }
 function qrSVG(t,x,y,size){
   if(typeof qrcode==="undefined"||!t)return "";
@@ -14780,15 +14812,16 @@ async function qrBul(a){
   return await qrCoz(a.disp.cv);
 }
 /* QR'daki düzen şu anki testten farklıysa baloncuklar QR'daki düzene göre okunur */
-function qrAyniDuzen(q){const c=cfg.sections.map(s=>+s[1]||0);return(!q.rows||q.rows===sboSatir())&&(!q.counts.length||(q.counts.length===c.length&&q.counts.every((n,i)=>n===c[i])))}
+function qrAyniDuzen(q){const c=cfg.sections.map(s=>+s[1]||0);if((q.duzen||"")!==(cfg.duzen||""))return false;return(!q.rows||q.rows===sboSatir())&&(!q.counts.length||(q.counts.length===c.length&&q.counts.every((n,i)=>n===c[i])))}
 function qrOkumaCfg(q){
   const c=JSON.parse(JSON.stringify(cfg));if(q.rows)c.rows=q.rows;
   if(q.counts.length)c.sections=q.counts.map((n,i)=>[(cfg.sections[i]||["Ders "+(i+1)])[0],n]);
+  if(q.duzen)c.duzen=q.duzen;else delete c.duzen;   // formun basıldığı düzen
   return c;
 }
 
 /* ================= FORM SVG ================= */
-function bubbleSVG(b){return `<circle cx="${b.x}" cy="${b.y}" r="${BR}" fill="#fff" stroke="${INK}" stroke-width="0.25"/><text x="${b.x}" y="${b.y+0.78}" font-size="2.2" text-anchor="middle" fill="${INK}" font-family="Barlow,Arial,sans-serif" font-weight="600">${b.l}</text>`}
+function bubbleSVG(b){const f=b.fs||2.2;return `<circle cx="${b.x}" cy="${b.y}" r="${b.r||BR}" fill="#fff" stroke="${INK}" stroke-width="${b.r?0.35:0.25}"/><text x="${b.x}" y="${b.y+f*0.355}" font-size="${f}" text-anchor="middle" fill="${INK}" font-family="Barlow,Arial,sans-serif" font-weight="600">${b.l}</text>`}
 function formSVGmini(c,ek){
   ek=ek||{};const {PW,PH}=SAYFA("mini"),QR=qrYer("mini"),g=geoMini(c);let s="";
   s+=`<rect width="${PW}" height="${PH}" fill="#fff"/>`;
@@ -14846,11 +14879,12 @@ function formSVG(c,ek){
   if(g.bkBox){const b=g.bkBox;s+=box(b.x,b.y,b.w,b.h)+`<text x="${b.x+2}" y="${b.y+6.5}" font-size="3" font-weight="700" ${tf}>Kitapçık</text>`;g.booklet.forEach(x=>s+=bubbleSVG(x))}
   g.sections.forEach(sec=>{
     s+=`<rect x="${sec.x}" y="${sec.y}" width="${sec.w}" height="${sec.h}" rx="1" fill="none" stroke="${INK}" stroke-width="0.3"/>`;
-    s+=`<path d="M${sec.x} ${sec.y+1}a1 1 0 0 1 1 -1h${sec.w-2}a1 1 0 0 1 1 1v4h-${sec.w}z" fill="${INK}"/>`;
-    s+=`<text x="${sec.x+sec.w/2}" y="${sec.y+3.7}" font-size="3" font-weight="700" text-anchor="middle" font-family="'Barlow Condensed','Arial Narrow',Arial,sans-serif" fill="#fff">${esc(sec.name)} (${sec.n})</text>`;
+    const hh=sec.hh||5,hf=sec.fs||3;
+    s+=`<path d="M${sec.x} ${sec.y+1}a1 1 0 0 1 1 -1h${sec.w-2}a1 1 0 0 1 1 1v${hh-1}h-${sec.w}z" fill="${INK}"/>`;
+    s+=`<text x="${sec.x+sec.w/2}" y="${hh===5?sec.y+3.7:sec.y+hh/2+hf*0.36}" font-size="${hf}" font-weight="700" text-anchor="middle" font-family="'Barlow Condensed','Arial Narrow',Arial,sans-serif" fill="#fff">${esc(sec.name)} (${sec.n})</text>`;
   });
   g.q.forEach(q=>{
-    s+=`<text x="${q.nx}" y="${q.y+1}" font-size="2.8" font-weight="600" text-anchor="end" ${tf}>${q.num}</text>`;
+    s+=`<text x="${q.nx}" y="${q.fs?q.y+q.fs*0.36:q.y+1}" font-size="${q.fs||2.8}" font-weight="600" text-anchor="end" ${tf}>${q.num}</text>`;
     q.opts.forEach(b=>s+=bubbleSVG(b));
   });
   s+=`<text x="${PW/2}" y="${PH-11.5}" font-size="4" font-weight="700" text-anchor="middle" ${tf}>${esc(KURUM_ADI)}</text>`;
@@ -14866,7 +14900,8 @@ function varsayilanCfg(){return{title:"Deneme Sınavı",org:"",opts:4,rows:20,di
 /* Şık sayısı sabittir: bütün sınıflarda A–D */
 function cfgDuzelt(){if(!cfg)cfg=varsayilanCfg();if(SBT&&cfg.id!==SBT){cfg.id=SBT;saveExam()}cfg.org="";cfg.penalty=0;cfg.booklet=0;cfg.digits=0;students="";
   if(cfg.sbank){if(!cfg.sbank.sik&&!results.length)cfg.sbank.sik=4;if(!cfg.boyut)cfg.boyut="mini"}   // Soru Bankası: kitabın şık sayısı, küçük form
-  if(cfg.sbank)cfg.sbank.sik=4;cfg.opts=4;delete cfg.preset}   // öğrenci no ve isim listesi kullanılmaz
+  if(cfg.sbank)cfg.sbank.sik=4;cfg.opts=4;delete cfg.preset
+  if(SBK===4&&!cfg.sbank&&!cfg.duzen&&!results.length){cfg.duzen="v2";saveExam()}}   // 4. sınıf: büyük baloncuklu, ortalanmış form (henüz okutulmamış testlerde)   // öğrenci no ve isim listesi kullanılmaz
 function cfgChanged(){saveExam(); $("changeWarn").classList.toggle("hidden",!results.length)}
 /* Test adı: öğretmenin yazdığı ad + dersler ("Test 53 · Türkçe - Mat - Fen") */
 function sbDersKisa(ad){const i=typeof sbDersKonuId==="function"?sbDersKonuId(ad):"";
@@ -15416,7 +15451,7 @@ function drawOverlay(){
   ov.width=Math.round(W*dsc);ov.height=Math.round(H*dsc);const x=ov.getContext("2d");
   x.drawImage(cv,0,0,ov.width,ov.height);
   const isKey=c.mode==="key",key=getKey($("rBk").value);
-  const ring=(mx,my,col,w)=>{const[px,py]=mapH(c.h,mx,my);const[qx,qy]=mapH(c.h,mx+BR+0.4,my);const r=Math.hypot(qx-px,qy-py)*dsc;
+  const ring=(mx,my,col,w,br)=>{const[px,py]=mapH(c.h,mx,my);const[qx,qy]=mapH(c.h,mx+(br||BR)+0.4,my);const r=Math.hypot(qx-px,qy-py)*dsc;
     x.beginPath();x.arc(px*dsc,py*dsc,r,0,Math.PI*2);x.strokeStyle=col;x.lineWidth=w;x.stroke()};
   const lw=Math.max(2,ov.width/450);
   c.g.q.forEach((q,i)=>{
@@ -22755,6 +22790,13 @@ async function neAc(eylem){
   await new Promise(r=>setTimeout(r, 60));
   neListeGonder(true);
   if(eylem){ try{ f.contentWindow.neAnaMenu(eylem); }catch(e){ console.error(e); } }
+  setTimeout(neDnmAktar, 4000);   // Test oluştur'daki 4. sınıf testleri Nehari Deneme'ye (bir kez)
+}
+/* Ana sistemin Test oluştur'unda 4. sınıf için yapılmış testler → Nehari · Deneme (cevap anahtarı + öğrenci cevapları; aynı test bir kez aktarılır) */
+function neDnmAktar(){
+  try{ const w = document.getElementById('ne-cerceve').contentWindow; if(!w || !w.neDnmAktar || typeof sbtListe!=='function') return;
+    const L = sbtListe(4).map(id=>Object.assign({id}, sbtTest(4, id))).filter(x=>x.exam);
+    const n = w.neDnmAktar(L); if(n) try{ showN('📝', n+' deneme Nehari\'ye aktarıldı', 'Test oluştur · 4. sınıf'); }catch(e){} }catch(e){ console.error(e); }
 }
 window.neMenuAc = function(){ menuAc(); const d = document.getElementById('menu-ne'); if(d) d.open = true; };
 /* 4. sınıf öğrencileri → Nehari */
@@ -23121,9 +23163,17 @@ function panoNeVeri(){
   const HL = Array.isArray(din.hadisler) ? din.hadisler : H.map(id=>({id}));
   const DL = Array.isArray(din.dualar) ? din.dualar : [['d1','Rabbiyessir duası'],['d2','Sübhaneke duası'],['d3','İhlas Suresi'],['d4','Kevser Suresi']].map(([id,ad])=>({id,ad}));
   const IL = Array.isArray(din.ilmihaller) ? din.ilmihaller : [['i1','İmanın şartları'],['i2',"İslam'ın şartları"],['i3','Abdestin farzları'],['i4','Namazın farzları']].map(([id,ad])=>({id,ad}));
+  /* Dünkü görevi yapanlar: bugünden önceki en son görev günü (en çok 7 gün geri) ve o günün görevlerini yapan talebeler */
+  const gorevV = (()=>{ const gd = G('gorev') || {}, L0 = Array.isArray(gd.liste) ? gd.liste : [], v = gd.v || {};
+    const bug = bugun, sinir = (()=>{ const x = new Date(bug+'T12:00:00'); x.setDate(x.getDate()-7); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); })();
+    const gunler = [...new Set(L0.map(g=>g.t).filter(d=>d && d<bug && d>=sinir))].sort();
+    const gun = gunler[gunler.length-1]; if(!gun) return null;
+    const gl = L0.filter(g=>g.t===gun).map(g=>({ad:g.ad||'Görev', yapan:Object.keys(v[g.id]||{}).filter(k=>(v[g.id]||{})[k] && adBul[k]).map(k=>adBul[k]).sort((p,q)=>p.localeCompare(q,'tr'))}));
+    const tumu = [...new Set([].concat(...gl.map(g=>g.yapan)))];
+    return {tarih:gun, gorevler:gl, n:tumu.length, top:ogr.length}; })();
   const dinV = {hadis:verenler(HL, 'hv', (x,n)=>n+'. haftanın hadisi', x=>x.tr||'', (x,i)=>(i+1)+'. hafta'),
                 ilmihal:verenler(IL, 'iv', x=>x.ad||'İlmihal', null, (x,i)=>x.ad||((i+1)+'. konu')),
-                dua:verenler(DL, 'dv', x=>x.ad||'Dua', null, (x,i)=>x.ad||((i+1)+'. dua'))};
+                dua:verenler(DL, 'dv', x=>x.ad||'Dua', null, (x,i)=>x.ad||((i+1)+'. dua')), gorev:gorevV};
   return {ay: AY[b0.getMonth()]+' '+b0.getFullYear(), yedekListe, bulut, din:dinV,
           varMi: L.some(x=>x.gel+x.hadis+x.dua+x.ilm+x.gor>0),
           satirlar: L.map((x,i)=>{ if(x.puan!==onc){ sira = i+1; onc = x.puan; }
@@ -24733,7 +24783,7 @@ async function modulTestVerisi(yukle){
 }
 </script>
 <!-- BÖLÜM: BOLUMLER.JS BAŞLA -->
-<script src="bolumler.js?v=2026.10.26-139"></script>
+<script src="bolumler.js?v=2026.10.26-141"></script>
 <!-- BÖLÜM: BOLUMLER.JS BİTİR -->
 <script>
 /* ══════════════ ZİL SİSTEMİ ══════════════
@@ -28764,18 +28814,21 @@ function gorselCiz(){
   c.strokeStyle = '#aebbd6'; c.lineWidth = 2.5; rr(QX, TY, QW, tH, 18); c.stroke();
   if(YAN){
     const yx = QX+QW+28, yw = TX+TW-yx; let yy = TY;
+    /* etüt kutuları listenin boyunu doldurur: 3 etütte alt boşluk kalmaz (kutular büyür, yazı da büyüyebilir) */
+    const listeH = H1 + ogr.length*RH, lgsH = lgsY!=null ? YLH + YG : 0;
+    const YE = Math.max(YEH, Math.floor((listeH - YBH - YG - lgsH - (n-1)*YG) / n));
     rr(yx, yy, yw, YBH, 14); c.fillStyle = NAVY; c.fill(); yaz('BUGÜN NE YAPILDI', yx+yw/2, yy+38, dnmF(800, sigdir('BUGÜN NE YAPILDI', yw-30, 26, 14, 800)), '#fff'); yy += YBH+YG;
     for(let i=0; i<n; i++){
       const m = trUst(r.etut[i]||''), bw2 = 112;
-      c.save(); c.shadowColor = 'rgba(18,41,94,.10)'; c.shadowBlur = 12; c.shadowOffsetY = 4; rr(yx, yy, yw, YEH, 16); c.fillStyle = '#fff'; c.fill(); c.restore();
-      c.save(); rr(yx, yy, yw, YEH, 16); c.clip(); c.fillStyle = ORG; c.fillRect(yx, yy, bw2, YEH); c.restore();
-      yaz('ETÜT', yx+bw2/2, yy+YEH/2-4, dnmF(800,20), '#fff'); yaz(String(i+1), yx+bw2/2, yy+YEH/2+28, dnmF(800,30), '#fff');
-      const tw = yw-bw2-30, tx = yx+bw2+(yw-bw2)/2;
-      if(m){ let b = 26, sat; do{ c.font = dnmF(800,b); sat = satirSar(c, m, tw); b--; }while((sat.length>2 || sat.some(z=>c.measureText(z).width>tw)) && b>13);
-        const lh = b*1.3, y0 = yy+YEH/2 - (sat.length-1)*lh/2 + b*0.35;
+      c.save(); c.shadowColor = 'rgba(18,41,94,.10)'; c.shadowBlur = 12; c.shadowOffsetY = 4; rr(yx, yy, yw, YE, 16); c.fillStyle = '#fff'; c.fill(); c.restore();
+      c.save(); rr(yx, yy, yw, YE, 16); c.clip(); c.fillStyle = ORG; c.fillRect(yx, yy, bw2, YE); c.restore();
+      yaz('ETÜT', yx+bw2/2, yy+YE/2-4, dnmF(800,20), '#fff'); yaz(String(i+1), yx+bw2/2, yy+YE/2+28, dnmF(800,30), '#fff');
+      const tw = yw-bw2-30, tx = yx+bw2+(yw-bw2)/2, maxSat = Math.max(2, Math.floor((YE-24)/44)), b0 = Math.min(36, 26 + Math.floor((YE-YEH)/20));
+      if(m){ let b = b0, sat; do{ c.font = dnmF(800,b); sat = satirSar(c, m, tw); b--; }while((sat.length>maxSat || sat.some(z=>c.measureText(z).width>tw)) && b>13);
+        const lh = b*1.3, y0 = yy+YE/2 - (sat.length-1)*lh/2 + b*0.35;
         sat.forEach((z, j)=>yaz(z, tx, y0+j*lh, dnmF(800,b+1), NAVY)); }
-      else yaz('—', tx, yy+YEH/2+9, dnmF(700,24), '#a9b3c6');
-      yy += YEH+YG;
+      else yaz('—', tx, yy+YE/2+9, dnmF(700,24), '#a9b3c6');
+      yy += YE+YG;
     }
     if(lgsY!=null){ rr(yx, yy, yw, YLH, 16); const gr = c.createLinearGradient(yx, yy, yx+yw, yy+YLH); gr.addColorStop(0,'#1f8a4c'); gr.addColorStop(1,'#5cb85c'); c.fillStyle = gr; c.fill();
       yaz('LGS\'YE SON', yx+yw/2, yy+46, dnmF(800,24), '#fff'); yaz(lgsY+' GÜN', yx+yw/2, yy+104, dnmF(800, sigdir(lgsY+' GÜN', yw-30, 46, 24, 800)), '#fff'); }
@@ -30876,6 +30929,59 @@ try{ MENU_SAYFA.pageHProg = 'hprog'; }catch(_){}
 setInterval(()=>{ if(!document.hidden && acik()) cek(); }, 20000);
 window.addEventListener('online', ()=>{ if(BEKLE) gonder(); });
 })();
+</script>
+<script>
+/* ══ T.T.S · YOKLAMA RAPORU GÖRSELİ ══ Etüt / deneme görsellerinin temasıyla (zemin, logo, lacivert bant + turuncu şerit, alt dalga).
+   M = {bant, serit, ust (büyük başlık, isteğe bağlı), gelen, toplam, iki (iki sütun), gruplar:[{t, c, names, bos, sol}]} */
+window.ttsYoklamaGorselCiz = async function(M){
+  try{ await dnmFontBekle(); }catch(_){}
+  const A = window.kbGorselAraclar || {}, NAVY = '#12295e', ORG = '#f7891f', INK = '#0d0f14', GRI = '#6b7486';
+  const W = 1240, X = 50, TW = W-100, GAP = 30, LH = 46, BAS = 56;
+  const olc = document.createElement('canvas').getContext('2d');
+  const sar = (s, w, f)=>{ olc.font = f; const o = []; let cur = ''; String(s).split(/\s+/).forEach(k=>{ const d = cur ? cur+' '+k : k; if(olc.measureText(d).width>w && cur){ o.push(cur); cur = k; } else cur = d; }); if(cur) o.push(cur); return o; };
+  const ustSat = M.ust ? sar(M.ust, TW-40, dnmF(900,46)) : [];
+  const y0 = 270 + (ustSat.length ? ustSat.length*58 + 36 : 0) + 106;   // başlık + gelen şeridi altı
+  const gruplar = M.gruplar.length ? M.gruplar : [{t:'Herkes geldi ✓', c:'#1f8a4c', names:[], bos:'Gelmeyen yok'}];
+  const solL = gruplar.filter(g=>g.sol), sagL = gruplar.filter(g=>!g.sol);
+  if(M.iki && !solL.length) solL.push({t:'Gelmeyenler', c:'#5a6a62', names:[], bos:'Yok ✓'});
+  if(M.iki && !sagL.length) sagL.push({t:'Diğer durumlar', c:NAVY, names:[], bos:'Yok'});
+  const sutunlar = M.iki ? [solL, sagL] : [gruplar];
+  const CW = M.iki ? (TW-GAP)/2 : TW;
+  const kol = g => !M.iki && g.names.length > 10 ? 2 : 1;
+  const kutuH = g => 22 + Math.max(1, Math.ceil(g.names.length/kol(g)))*LH + 18;
+  const sutH = l => l.reduce((t,g)=>t + BAS + kutuH(g) + 26, 0);
+  const H = y0 + Math.max(...sutunlar.map(sutH), 120) + 150;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
+  const {rr, yaz, sigdir} = dnmAraclar(c);
+  if(A.gZeminBoya) A.gZeminBoya(c, W, H); else { c.fillStyle = '#f2f6fd'; c.fillRect(0,0,W,H); }
+  if(A.gBaslik) A.gBaslik(c, W, M.bant, M.serit); else yaz(M.bant, W/2, 120, dnmF(800,50), NAVY);
+  let y = 270;
+  ustSat.forEach((s, i)=>{ yaz(s, W/2, y+40+i*58, dnmF(900,46), '#c0283f'); });
+  if(ustSat.length){ y += ustSat.length*58 + 10; c.fillStyle = ORG; rr(W/2-90, y+10, 180, 7, 3.5); c.fill(); y += 26; }
+  /* gelen / toplam şeridi */
+  rr(X, y+12, TW, 64, 18); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 2; c.strokeStyle = '#d7deea'; c.stroke();
+  yaz('GELEN', X+30, y+54, dnmF(800,24), GRI, 'left');
+  yaz(M.gelen+' / '+M.toplam, X+140, y+56, dnmF(900,34), NAVY, 'left');
+  const gelmeyen = M.toplam - M.gelen; yaz(gelmeyen>0 ? 'GELMEYEN: '+gelmeyen : 'HERKES GELDİ ✓', X+TW-30, y+55, dnmF(800,26), gelmeyen>0 ? '#c0283f' : '#1f8a4c', 'right');
+  y = y0;
+  sutunlar.forEach((l, si)=>{
+    const x = X + si*(CW+GAP); let yy = y;
+    l.forEach(g=>{
+      rr(x, yy, CW, BAS-10, 14); c.fillStyle = g.c || NAVY; c.fill();
+      const bt = g.t+' ('+g.names.length+')'; yaz(bt, x+20, yy+(BAS-10)/2+10, dnmF(800, sigdir(bt, CW-40, 28, 16, 800)), '#fff', 'left');
+      yy += BAS;
+      const kh = kutuH(g), k = kol(g), cw = (CW-20)/k, sat = Math.ceil(g.names.length/k);
+      c.save(); c.shadowColor = 'rgba(18,41,94,.10)'; c.shadowBlur = 12; c.shadowOffsetY = 4; rr(x, yy-6, CW, kh, 16); c.fillStyle = '#fff'; c.fill(); c.restore();
+      if(!g.names.length) yaz(g.bos || 'Yok', x+24, yy+38, dnmF(700,28), GRI, 'left');
+      g.names.forEach((nm, i)=>{ const cc = Math.floor(i/sat), r = i%sat, tx = x+20+cc*cw, ty = yy+34+r*LH;
+        if(r>0){ c.fillStyle = 'rgba(18,41,94,.06)'; c.fillRect(tx, ty-LH+12, cw-24, 1); }
+        const s = (i+1)+'. '+nm; yaz(s, tx, ty, dnmF(700, sigdir(s, cw-30, 29, 18, 700)), INK, 'left'); });
+      yy += kh + 26;
+    });
+  });
+  dnmAltDalga(c, W, H, H-110, KURUM_ADI+' · '+M.serit);
+  return cv;
+};
 </script>
 </body>
 </html>
