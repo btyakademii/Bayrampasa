@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-150">
+<meta name="otk-surum" content="2026.10.26-151">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -29,7 +29,7 @@
 <!-- GÖRSEL KURALI: "Görsel oluştur" görsellerinde sol üstte her zaman yurt logosu (gorselLogoCiz) olur; optik/kalem çizimi yok;
      logonun yanına "Bayrampaşa Öğrenci Yurdu" yazılmaz; başlık bandı ortada (gBaslik). Yeni görsellerde de bu uygulanır. -->
 <!-- BÖLÜM: ORTAK.JS BAŞLA -->
-<script src="ortak.js?v=2026.10.26-150"></script>
+<script src="ortak.js?v=2026.10.26-151"></script>
 <!-- BÖLÜM: ORTAK.JS BİTİR -->
 <!-- qrcode-generator 1.4.4 · MIT · https://github.com/kazuhikoarase/qrcode-generator -->
 
@@ -1120,6 +1120,37 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .dha-hg.on{border-style:solid;border-color:#c9d7f5;background:#eef3ff;color:var(--blue)}
 .dha-hg.on small{display:block;font-size:10.5px;font-weight:600;color:var(--text2)}
 .dh-gizli{display:none !important}
+#ogrt-fab{display:none;position:fixed;left:12px;bottom:14px;z-index:1500;height:48px;padding:0 18px;border-radius:24px;border:0;background:#12295e;color:#fff;font:800 15px 'Outfit',sans-serif;box-shadow:0 8px 20px rgba(18,41,94,.35);cursor:pointer;align-items:center;gap:6px}
+body.ogrt-hesap #ogrt-fab{display:flex}
+#ogrt-menu{position:fixed;inset:0;z-index:2000;background:rgba(10,14,25,.45)}
+#ogrt-menu[hidden]{display:none}
+.ogrt-m-kutu{position:absolute;left:0;top:0;bottom:0;width:min(300px,86vw);background:var(--bg,#fffef9);padding:16px;display:flex;flex-direction:column;gap:6px;box-shadow:6px 0 24px rgba(0,0,0,.18)}
+.ogrt-m-bas{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ogrt-m-bas b{font-size:18px}
+.ogrt-m-bas button{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:16px;cursor:pointer}
+.ogrt-m-kim{background:#eef3ff;border:1px solid #c9d6f5;border-radius:14px;padding:12px;margin-bottom:8px}.ogrt-m-kim b{display:block;font-size:15px}.ogrt-m-kim small{color:var(--text2)}
+.ogrt-m-oge{text-align:left;padding:14px 12px;border-radius:12px;border:0;background:transparent;font:800 15px 'Outfit',sans-serif;color:var(--text);cursor:pointer}
+.ogrt-m-oge.on{background:var(--blue);color:#fff}.ogrt-m-oge.cik{color:var(--red)}
+.ogrt-m-ara{border-top:1px solid var(--border);margin:8px 0}
+.os-gun{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.os-gun button{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:20px;font-weight:800;cursor:pointer}.os-gun button:disabled{opacity:.3}
+.os-gun b{font-size:16px;text-align:center}
+.os-satir{display:flex;align-items:center;gap:10px;padding:10px 2px;border-top:1px solid var(--border)}.os-satir b{font-size:17px}
+.os-step{margin-left:auto;display:flex;align-items:center;gap:8px}
+.os-step button{width:40px;height:40px;border-radius:10px;border:0;background:#eef1f6;font-size:22px;font-weight:900;cursor:pointer}.os-step button:disabled{opacity:.35}
+.os-step span{min-width:48px;height:40px;border-radius:10px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900}
+.os-satir.var .os-step span{border-color:var(--blue);color:var(--blue)}
+.os-top{display:flex;justify-content:space-between;align-items:center;background:#eef3ff;border-radius:12px;padding:12px 14px;margin:10px 0}.os-top b{font-size:22px;color:var(--blue)}
+.os-kaydet{width:100%;padding:14px;font-size:16px}
+.os-son{font-size:12.5px;color:var(--text2);text-align:center;margin-top:8px}
+.os-ay{display:flex;justify-content:space-between;padding:8px 2px;border-top:1px dashed var(--border);font-size:14px}.os-ay.top{border-top:2px solid var(--text);font-weight:800}.os-ay.top b{color:var(--blue)}
+.os-not{background:#fff7e6;border:1px solid #f7c27a;border-radius:12px;padding:12px 14px;font-size:14px;color:#8a4b00;font-weight:600;margin:4px 0 30px}
+.od-gelen{border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px;background:#fff}
+.od-gelen-ust{display:flex;align-items:flex-start;gap:8px}.od-gelen-ust b{font-size:15px}.od-gelen-ust small{display:block;color:var(--text2);font-size:12.5px}
+.od-gelen-say{margin-left:auto;font-size:24px;font-weight:900;color:var(--blue);line-height:1}
+.od-gelen-dag{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.od-gelen-dag span{background:#f1f4f9;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:700}
+.od-gelen-bt{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:6px}
+.od-gelen-bt button{padding:10px 4px;border-radius:10px;border:0;font:800 13px 'Outfit',sans-serif;cursor:pointer}
+.od-gelen-bt .on{background:#16a34a;color:#fff}.od-gelen-bt .du{background:#eef1f6;color:var(--text)}.od-gelen-bt .si{background:#fdecef;color:var(--red)}
 .hp-ust{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.hp-ipucu{font-size:12.5px;color:var(--text2);flex:1;min-width:180px}
 .hp-on{background:#fff;border:1px solid var(--border);border-radius:14px;padding:10px;margin-bottom:12px}.hp-on img{width:100%;display:block;border-radius:8px}
 .hp-on-btn{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.hp-on-btn button{flex:1;min-width:140px}
@@ -3103,6 +3134,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   </div>
   <div class="pb"><div class="zl">
     <div class="gv-sekme od-sekme" role="tablist">
+      <button type="button" data-od="gelen" role="tab">📥 Gelen <b id="od-gelen-say"></b></button>
       <button type="button" data-od="giris" role="tab">✍️ Günlük</button>
       <button type="button" data-od="toplam" role="tab">📊 Toplam</button>
       <button type="button" data-od="takvim" role="tab">🗓️ Takvim</button>
@@ -3181,6 +3213,15 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
   <div class="pb" id="dh-govde"></div>
 </div>
 
+<button type="button" id="ogrt-fab" onclick="ogrtMenuAc()" aria-label="Öğretmen menüsü">☰ Menü</button>
+<!-- ══════════ 🕐 ÖĞRETMEN · GİRİLEN DERS SAYISI ══════════ -->
+<div class="page" id="pageOgrSaat">
+  <div class="ph">
+    <button class="ph-back ph-menu" title="Menü" aria-label="Menü" onclick="ogrtMenuAc()" style="display:flex">☰</button>
+    <div><div class="ph-title">🕐 Girilen ders sayısı</div><div class="ph-sub" id="os-sub">—</div></div>
+  </div>
+  <div class="pb"><div class="zl" id="os-govde"></div></div>
+</div>
 <!-- ══════════ 🗓️ HAFTALIK PROGRAM ══════════ -->
 <div class="page" id="pageHProg">
   <div class="ph">
@@ -3516,7 +3557,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-150</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-151</div>
   </div>
 </aside>
 
@@ -4670,7 +4711,7 @@ function personelFormKaydet(){
   const ad = document.getElementById('prs-ad').value.trim(), sifre = document.getElementById('prs-sifre').value.trim();
   if(!ad){ showN('⚠️','Ad soyad yazın',''); return; }
   if(sifre && sifre.length<4){ showN('⚠️','Şifre en az 4 karakter olmalı',''); return; }
-  if(sifre===OGRETMEN_SIFRE){ showN('⚠️','Bu şifre öğretmen girişi şifresi','Başka bir şifre seçin'); return; }
+  if(sifre===OGRETMEN_SIFRE || Object.values(OGRT_HESAP).some(h=>h.sifre.includes(sifre.toLocaleLowerCase('tr-TR')))){ showN('⚠️','Bu şifre öğretmen girişi şifresi','Başka bir şifre seçin'); return; }
   if(sifre && yonSifreDogru(sifre)){ showN('⚠️','Bu şifre yönetici şifresi','Başka bir şifre seçin'); return; }
   if(sifre && PERSONEL.some(x=>x.id!==PRS_DUZ && String(x.sifre)===sifre)){ showN('⚠️','Bu şifreyi başka bir personel kullanıyor','Her personelin şifresi farklı olmalı'); return; }
   const siniflar = [...document.querySelectorAll('.prs-k:checked')].map(x=>+x.value);
@@ -4775,16 +4816,27 @@ personelTohum();
 let OTURUM_P = (()=>{ try{ return localStorage.getItem('otkPersonelOturum') || ''; }catch(e){ return ''; } })();
 /* Öğretmen girişi (ortak şifre): yalnız Öğretmen Puanları'nın puan verme ekranı açılır, başka hiçbir yer görünmez */
 const OGRETMEN_SIFRE = 'bty1453';
+/* Ders öğretmenleri (ders şifresiyle girer): sol menüde yalnız "Sınıflara puan ver" (kendi dersi) ve "Girilen ders sayısı" */
+const OGRT_HESAP = {
+  mat:{sifre:['mat1453'], ad:'Enes', ders:'Matematik'},
+  tur:{sifre:['türk1453','turk1453'], ad:'Akif', ders:'Türkçe'},
+  fen:{sifre:['fen1453'], ad:'Ali Altınok', ders:'Fen Bilimleri'},
+  sos:{sifre:['sos1453'], ad:'Selman İleri', ders:'Sosyal Bilgiler'},
+  ing:{sifre:['ing1453'], ad:'Özgür Arsu', ders:'İngilizce'},
+  reh:{sifre:['rehber1453'], ad:'Alperen Yaren', ders:'Rehberlik', puanYok:true}   // rehberlik puan vermez, yalnız ders sayısı
+};
+function ogrtHesap(){ const m = /^ogretmen:(\w+)$/.exec(String(OTURUM_P||'')); return m && OGRT_HESAP[m[1]] ? Object.assign({key:m[1]}, OGRT_HESAP[m[1]]) : null; }
 function aktifPersonel(){
   if(OTURUM_P==='admin') return {id:'admin', ad:'Yönetici (admin)', admin:true};
   if(OTURUM_P==='ogretmen') return {id:'ogretmen', ad:'Öğretmen', ogretmen:true, yetki:{op_puan:true}};
+  const oh = ogrtHesap(); if(oh) return {id:OTURUM_P, ad:oh.ad, ogretmen:true, ders:oh.key, yetki:{op_puan:!oh.puanYok}};
   return PERSONEL.find(p=>p.id===OTURUM_P) || null;
 }
-function ogretmenModu(){ return OTURUM_P==='ogretmen'; }
+function ogretmenModu(){ return OTURUM_P==='ogretmen' || !!ogrtHesap(); }
 function ogretmenGirisAc(){
   yonGirisAc(null);
   document.getElementById('yon-bas').textContent = '🧑‍🏫 Öğretmen girişi';
-  document.getElementById('yon-neden').textContent = 'Öğretmen şifresini girin; puan verme ekranı açılır.';
+  document.getElementById('yon-neden').textContent = 'Ders şifrenizi girin (ör. mat1453); kendi dersinizin puan ekranı ve ders sayısı girişi açılır.';
 }
 window.ogretmenCikis = function(){ if(confirm('Öğretmen girişinden çıkılsın mı?')) yonCikis(); };
 let YON_GIRIS = !!aktifPersonel();
@@ -4843,6 +4895,7 @@ function yonUygula(){
   YON_GIRIS = !!aktifPersonel();
   document.body.classList.toggle('yon-kilit', !YON_GIRIS);
   document.body.classList.toggle('ogretmen-modu', ogretmenModu());
+  document.body.classList.toggle('ogrt-hesap', !!ogrtHesap());   // ders öğretmeni: ☰ Menü düğmesi
   document.body.classList.toggle('yon-admin', !!(aktifPersonel() && aktifPersonel().admin));
   const b = document.getElementById('menu-yon-btn'), p = aktifPersonel();
   if(b) b.innerHTML = p ? 'Çıkış yap' : '👤 Personel girişi';
@@ -4869,6 +4922,14 @@ function yonGirisDene(){
   const i = document.getElementById('yon-sifre'), m = document.getElementById('yon-mesaj');
   if(YON_HATA>=5 && Date.now() < (yonGirisDene.bekle||0)){ m.innerHTML = '⏳ Çok fazla yanlış deneme. Biraz bekleyip tekrar deneyin.'; return; }
   const sf = String(i.value||'').trim();
+  const ohk = Object.keys(OGRT_HESAP).find(k=>OGRT_HESAP[k].sifre.includes(sf.toLocaleLowerCase('tr-TR')));
+  if(ohk){
+    YON_HATA = 0; OTURUM_P = 'ogretmen:'+ohk; oturumHareket(); try{ localStorage.setItem('otkOturumSon', String(Date.now())); }catch(e){}
+    try{ localStorage.setItem('otkPersonelOturum', OTURUM_P); sessionStorage.removeItem('otkYonOturum'); }catch(e){}
+    yonGirisKapat(); yonUygula();
+    showN('👋', 'Hoş geldiniz '+OGRT_HESAP[ohk].ad+' Hocam', OGRT_HESAP[ohk].ders);
+    ogrtAnaAc(); return;
+  }
   if(sf===OGRETMEN_SIFRE){
     YON_HATA = 0; OTURUM_P = 'ogretmen'; oturumHareket(); try{ localStorage.setItem('otkOturumSon', String(Date.now())); }catch(e){}
     try{ localStorage.setItem('otkPersonelOturum', OTURUM_P); sessionStorage.removeItem('otkYonOturum'); }catch(e){}
@@ -5004,7 +5065,7 @@ function yonSifreKaydet(){
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ const a = document.getElementById('yon-arka'); if(a && !a.hidden) yonGirisKapat(); } });
 document.addEventListener('DOMContentLoaded', yonUygula);
 if(document.body){ try{ yonUygula(); }catch(e){} }   // erken çağrı: sınıf listesi henüz tanımlı değilse DOMContentLoaded'da yeniden çalışır
-window.addEventListener('load', ()=>{ try{ yonUygula(); }catch(e){} if(ogretmenModu()) setTimeout(()=>{ try{ opAc('ana'); }catch(e){} }, 0); });
+window.addEventListener('load', ()=>{ try{ yonUygula(); }catch(e){} if(ogretmenModu()) setTimeout(()=>{ try{ ogrtAnaAc(); }catch(e){} }, 0); });
 /* Denemenin görünen adı: "Deneme 4 Nartest" (deneme adı + yayın). Her yerde bu kullanılır. */
 function dnmAd(d){ d = d || (typeof DENEME!=='undefined' ? DENEME : null); return d ? (d.ad || 'Deneme')+(d.yayin ? ' '+d.yayin : '') : 'Deneme'; }
 
@@ -5238,7 +5299,10 @@ function showN(icon, title, sub){
    uygulamadan çıkmak yerine bir önceki ekrana döner. Yarım kalmış optik okuma varsa önce sorulur. */
 function aktifSayfa(){ const el = document.querySelector('.page.active'); return el ? el.id : null; }
 function goPage(id, gecmiseYazma){
-  if(typeof ogretmenModu==='function' && ogretmenModu() && id!=='pageOP'){ setTimeout(()=>{ try{ opAc('ana'); }catch(e){} }, 0); return false; }
+  if(typeof ogretmenModu==='function' && ogretmenModu()){   // öğretmen yalnız kendi iki ekranına girer
+    const oh = ogrtHesap(), izin = oh ? (oh.puanYok ? ['pageOgrSaat'] : ['pageOP','pageOgrSaat']) : ['pageOP'];
+    if(!izin.includes(id)){ setTimeout(()=>{ try{ ogrtAnaAc(); }catch(e){} }, 0); return false; }
+  }
   if(!sayfaIzin(id)){ if(!YON_GIRIS) yonGirisAc(id); else yetkiYok(); return false; }   // personel girişi ve yetki
   const simdi = aktifSayfa();
   // Kaydedilmemiş değişiklik varsa önce "Değişiklikler kaydedilsin mi?" diye sorulur (en alttaki DEĞİŞİKLİK UYARISI bölümü)
@@ -11312,7 +11376,7 @@ function menuVurgula(){
 }
 if(MENU_GENIS.addEventListener) MENU_GENIS.addEventListener('change', ()=>{ try{ menuSabitUygula(); }catch(e){} });
 function menuAc(){
-  if(typeof ogretmenModu==='function' && ogretmenModu()) return;   // öğretmen girişinde sol menü yok
+  if(typeof ogretmenModu==='function' && ogretmenModu()){ if(ogrtHesap()) ogrtMenuAc(); return; }   // ders öğretmeni: yalnız iki başlıklı menü
   menuCiz(); try{ testVeriDurum(); }catch(e){}
   try{ yetkiUygula(); }catch(e){}
   try{ const kv = konuluKademeler().length>0; document.querySelectorAll('#menu [data-konulu]').forEach(b=>{ if(!kv) b.style.display='none'; }); }catch(e){}
@@ -22154,7 +22218,7 @@ async function opAc(eylem){
   opRozet(); opEsitle().catch(()=>{});
   // sınıf hocası (Ayarlar → Etüt şube sorumluları) Sınıf Grubu Görseli'nde yalnız kendi şubesini görür ve paylaşır
   const opP = aktifPersonel(), opSb = opP && !opP.admin && Array.isArray(opP.etutSubeler) && opP.etutSubeler.length ? opP.etutSubeler.map(String) : null;
-  const kisit = ogretmenModu() ? {puan:true, sayfalar:[], siniflar:null, ogretmen:true} : yetki('op_yonetim') ? null : {puan:yetki('op_puan'), sayfalar:['grup'],
+  const kisit = ogretmenModu() ? {puan:true, sayfalar:[], siniflar:null, ogretmen:true, ders:(ogrtHesap()||{}).key||null} : yetki('op_yonetim') ? null : {puan:yetki('op_puan'), sayfalar:['grup'],
     siniflar: kademeKisitli() ? opAnaListe().filter(c=>kademeIzin(c.kademe)).map(c=>c.id) : null, subeler:opSb};
   try{ f.contentWindow.opKisitUygula(kisit); }catch(e){}
   if(eylem){ try{ (kisit && eylem.startsWith('admin:') ? f.contentWindow.opDogrudan : f.contentWindow.opAnaMenu)(eylem); }catch(e){ console.error(e); } }
@@ -24800,7 +24864,7 @@ async function modulTestVerisi(yukle){
 }
 </script>
 <!-- BÖLÜM: BOLUMLER.JS BAŞLA -->
-<script src="bolumler.js?v=2026.10.26-150"></script>
+<script src="bolumler.js?v=2026.10.26-151"></script>
 <!-- BÖLÜM: BOLUMLER.JS BİTİR -->
 <script>
 /* ══════════════ ZİL SİSTEMİ ══════════════
@@ -27391,7 +27455,7 @@ const sayfaAcik = () => { const p = $('pageOgrDers'); return !!(p && p.classList
 function ciz(){
   if(!sayfaAcik()) return;
   document.querySelectorAll('[data-od]').forEach(b=>{ const on = b.dataset.od===sekme; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
-  $('od-govde').innerHTML = sekme==='giris' ? girisHtml() : sekme==='toplam' ? (detay ? detayHtml() : toplamHtml()) : sekme==='takvim' ? takvimHtml() : ogretmenHtml();
+  $('od-govde').innerHTML = sekme==='gelen' ? gelenHtml() : sekme==='giris' ? girisHtml() : sekme==='toplam' ? (detay ? detayHtml() : toplamHtml()) : sekme==='takvim' ? takvimHtml() : ogretmenHtml();
   const bt = Object.values(D.k[bugun()]||{}).reduce((a,b)=>a+(+b||0),0);
   $('od-sub').textContent = 'Bugün '+bt+' ders · '+ayAd(bugun().slice(0,7))+' '+ayToplam(bugun().slice(0,7))+' ders';
 }
@@ -27405,7 +27469,7 @@ function girisHtml(){
     const v = ders(gGun, o.id), b = bekleyen(o.id);
     h += `<div class="od-satir${v?' var':''}" data-id="${esc(o.id)}"><div class="od-ad"><b>${esc(o.ad)}</b><small>Ödenmemiş: ${b.n} ders</small></div><div class="od-sayilar">`
       + [1,2,3,4,5,6].map(n=>`<button type="button" data-a="ders" data-n="${n}" class="${v===n?'on':''}" aria-pressed="${v===n}">${n} ders</button>`).join('')
-      + (v>6 ? `<button type="button" class="on" data-a="ders" data-n="${v}">${v} ders</button>` : '')
+      + (v>6 || (v && !Number.isInteger(v)) ? `<button type="button" class="on" data-a="ders" data-n="${v}">${String(v).replace('.',',')} ders</button>` : '')
       + `<button type="button" data-a="ders-diger" title="Başka sayı">…</button>${v ? '<button type="button" class="od-sil" data-a="ders" data-n="0" title="Sil">✕</button>' : ''}</div></div>`;
   });
   return h + '</div></section>';
@@ -27477,6 +27541,7 @@ function ogretmenHtml(){
 
 /* ---------- olaylar ---------- */
 function tikla(e){
+  if(gelenTikla(e)) return;   // 📥 Gelen düğmeleri
   const b = e.target.closest('[data-a]'); if(!b) return;
   const a = b.dataset.a, row = b.closest('[data-id]'), id = b.dataset.id || (row && row.dataset.id);
   if(a==='sekme'){ sekme = b.dataset.s; detay = null; ciz(); return; }
@@ -27528,8 +27593,65 @@ function bagla(){
   if(bagla.oldu) return; bagla.oldu = true;
   $('od-govde').addEventListener('click', tikla);
   $('od-govde').addEventListener('keydown', e=>{ if(e.key==='Enter' && e.target.id==='od-yeni'){ const b = document.querySelector('#od-govde [data-a="ekle"]'); if(b) b.click(); } });
-  document.querySelectorAll('[data-od]').forEach(b=>b.onclick = ()=>{ sekme = b.dataset.od; detay = null; ciz(); const pb = document.querySelector('#pageOgrDers .pb'); if(pb) pb.scrollTop = 0; });
+  document.querySelectorAll('[data-od]').forEach(b=>b.onclick = ()=>{ sekme = b.dataset.od; detay = null; ciz(); if(sekme==='gelen') gelenCek(); const pb = document.querySelector('#pageOgrDers .pb'); if(pb) pb.scrollTop = 0; });
 }
+
+/* ---------- 📥 Gelen: öğretmenlerin kendi girdiği ders sayıları (bulutta odb_<ders>_<tarih>) ---------- */
+let GELEN = [];
+async function gelenCek(){
+  if(!bulutHazir()) return;
+  try{ const rows = await sbSatirlar('anahtar,icerik', 'anahtar=like.odb_*');
+    GELEN = (rows||[]).map(r=>Object.assign({_k:r.anahtar}, r.icerik||{})).filter(x=>x.tarih && !x.onay && !x.sil).sort((a,b)=>a.tarih<b.tarih?-1:a.tarih>b.tarih?1:String(a.ad).localeCompare(String(b.ad),'tr'));
+    gelenRozet(); if(sekme==='gelen') ciz();
+  }catch(e){}
+}
+function gelenRozet(){ const b = $('od-gelen-say'); if(b) b.textContent = GELEN.length ? '('+GELEN.length+')' : ''; }
+const adN = s => String(s||'').toLocaleLowerCase('tr').replace(/\s+/g,' ').trim();
+function ogretmenBul(x){
+  let o = D.ogr.find(o=>adN(o.ad)===adN(x.ad)) || D.ogr.find(o=>adN(o.ad).startsWith(adN(x.ad)+' '));
+  if(!o){ o = {id:yeniId(), ad:x.ad, aktif:true}; D.ogr.push(o); }
+  if(o.aktif===false) o.aktif = true;
+  return o;
+}
+async function gelenYaz(x, ek){
+  const ic = Object.assign({}, x, ek); delete ic._k;
+  try{ await fetch(sbUrl()+'/rest/v1/yd_veri?on_conflict=sahip,anahtar', {method:'POST', headers:await sbBaslik({Prefer:'resolution=merge-duplicates,return=minimal'}),
+    body:JSON.stringify([{sahip:SB_OTURUM.uid, anahtar:x._k, icerik:ic, guncelleme:new Date().toISOString()}])}); }catch(e){}
+}
+const sayY = v => String(v).replace('.', ',');
+function gelenOnayla(x, toplam){
+  const o = ogretmenBul(x); D.k[x.tarih] = D.k[x.tarih] || {};
+  if(toplam) D.k[x.tarih][o.id] = toplam; else { delete D.k[x.tarih][o.id]; if(!Object.keys(D.k[x.tarih]).length) delete D.k[x.tarih]; }
+  kaydet(); gelenYaz(x, {onay:true, onayToplam:toplam, onayZ:Date.now()});
+  GELEN = GELEN.filter(y=>y._k!==x._k); gelenRozet();
+}
+function gelenHtml(){
+  if(!bulutHazir()) return '<section class="zl-kart"><div class="gv-bos"><b>Bulut bağlantısı yok</b>Öğretmenlerin gönderdiği ders sayıları bulut üzerinden gelir.</div></section>';
+  if(!GELEN.length) return '<section class="zl-kart"><div class="gv-bos"><b>Yeni gelen yok</b>Öğretmenlerin kendi girdiği ders sayıları burada onayınızı bekler.</div></section>';
+  const sad = id => { try{ const s = SINIFLAR.find(c=>c.id===id); return s ? s.ad : id; }catch(e){ return id; } };
+  let h = `<div style="margin-bottom:10px"><button type="button" class="bpri" data-a="g-hepsi" style="width:100%">✓ Hepsini onayla (${GELEN.length})</button></div>`;
+  GELEN.forEach((x,i)=>{
+    h += `<div class="od-gelen"><div class="od-gelen-ust"><div><b>${esc(x.ad)} · ${esc(x.dersAd||'')}</b><small>${esc(trTarih(x.tarih))} · ${sayY(x.toplam)} ders</small></div><span class="od-gelen-say">${sayY(x.toplam)}</span></div>
+      <div class="od-gelen-dag">${Object.keys(x.sinif||{}).map(k=>`<span>${esc(sad(k))} · ${sayY(x.sinif[k])}</span>`).join('')}</div>
+      <div class="od-gelen-bt"><button type="button" class="on" data-a="g-onay" data-i="${i}">✓ Onayla</button><button type="button" class="du" data-a="g-duz" data-i="${i}">✏️ Düzelt</button><button type="button" class="si" data-a="g-sil" data-i="${i}">✕ Sil</button></div></div>`;
+  });
+  return h + '<p style="font-size:12.5px;color:var(--text2);margin:6px 2px 20px">Onaylanan dersler Günlük girişe, toplamlara ve ödeme hesabına işlenir. Öğretmen onay durumunu görmez.</p>';
+}
+function gelenTikla(e){
+  const b = e.target.closest('[data-a^="g-"]'); if(!b) return false;
+  const a = b.dataset.a, x = GELEN[+b.dataset.i];
+  if(a==='g-hepsi'){ if(!confirm(GELEN.length+' kayıt onaylansın mı?')) return true; GELEN.slice().forEach(y=>gelenOnayla(y, +y.toplam||0)); bildir('✓', 'Hepsi onaylandı', ''); ciz(); return true; }
+  if(!x) return true;
+  if(a==='g-onay'){ gelenOnayla(x, +x.toplam||0); bildir('✓', x.ad+' onaylandı', sayY(x.toplam)+' ders'); ciz(); }
+  else if(a==='g-duz'){
+    const v = prompt(x.ad+' · '+trTarih(x.tarih)+'\nDoğru ders sayısını yazın (ör. 3 veya 1,5):', sayY(x.toplam)); if(v==null) return true;
+    const n = parseFloat(String(v).replace(',', '.')); if(isNaN(n) || n<0){ bildir('⚠️', 'Geçersiz sayı', ''); return true; }
+    gelenOnayla(x, n); bildir('✓', 'Düzeltilip onaylandı', sayY(n)+' ders'); ciz();
+  }
+  else if(a==='g-sil'){ if(!confirm(x.ad+' · '+trTarih(x.tarih)+' kaydı silinsin mi?')) return true; gelenYaz(x, {sil:true, silZ:Date.now()}); GELEN = GELEN.filter(y=>y._k!==x._k); gelenRozet(); ciz(); }
+  return true;
+}
+setInterval(()=>{ if(!document.hidden && sayfaAcik()) gelenCek(); }, 20000);
 
 /* ---------- bulut ---------- */
 function bulutHazir(){ try{ return sbAktif() && sbGirisli(); }catch(e){ return false; } }
@@ -27566,7 +27688,7 @@ setTimeout(()=>{ if(kirli) gonder(); }, 3000);
 window.ogrDersAc = function(){
   if(typeof menuKapat==='function') menuKapat();
   if(goPage('pageOgrDers')===false) return;
-  bagla(); detay = null; gGun = bugun(); ciz(); sonCek = Date.now(); cek();
+  bagla(); detay = null; gGun = bugun(); ciz(); sonCek = Date.now(); cek(); gelenCek();
   const pb = document.querySelector('#pageOgrDers .pb'); if(pb) pb.scrollTop = 0;
 };
 try{ MENU_SAYFA.pageOgrDers = 'ogrders'; }catch(e){}
@@ -31031,6 +31153,123 @@ window.keTvAc = function(){
   ov.hidden = false;
 };
 window.keTvKapat = function(){ const ov = document.getElementById('ketv'); if(!ov) return; clearInterval(ov._t); ov.remove(); };
+</script>
+<script>
+/* ══════════════ 👨‍🏫 ÖĞRETMEN GİRİŞİ (ders şifresi) ══════════════
+   Ana sayfadaki "Öğretmen girişi" ile ders şifresi yazılır; öğretmen sol menüde yalnız iki başlık görür:
+   🔢 Sınıflara puan ver (Öğretmen Puanları, yalnız kendi dersi) · 🕐 Girilen ders sayısı. Rehberlik yalnız ders sayısı girer.
+   Ders sayısı buluta "odb_<ders>_<tarih>" satırı olarak gider; Eğitim Mesulü Öğretmen Takip → 📥 Gelen'den onaylar.
+   Öğretmen onay durumunu görmez. */
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+const isoT = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const tarihD = s => { const [y,m,d] = String(s).split('-').map(Number); return new Date(y, m-1, d, 12); };
+const gunEkle = (s, n) => { const d = tarihD(s); d.setDate(d.getDate()+n); return isoT(d); };
+const bugun = () => isoT(new Date());
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ADIM = [0, 1, 1.5, 2, 3, 4, 5, 6, 7, 8];
+const say = v => String(v).replace('.', ',');
+let GUN = bugun();
+const hesap = () => (typeof ogrtHesap==='function' ? ogrtHesap() : null);
+const yerelAnahtar = h => 'otkOgrSaat_'+h.key;
+function cache(h){ try{ return JSON.parse(localStorage.getItem(yerelAnahtar(h))) || {}; }catch(e){ return {}; } }
+function cacheYaz(h, c){ try{ localStorage.setItem(yerelAnahtar(h), JSON.stringify(c)); }catch(e){} }
+function siniflar(){ try{ return SINIFLAR.filter(s=>+s.kademe>=5 && +s.kademe<=8 && !String(s.id).startsWith('test_')).sort((a,b)=>(+a.kademe-+b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr')); }catch(e){ return []; } }
+const bulutHazir = () => { try{ return sbAktif() && sbGirisli(); }catch(e){ return false; } };
+
+/* ---------- menü ---------- */
+window.ogrtMenuAc = function(){
+  const h = hesap(); if(!h) return;
+  let m = $('ogrt-menu');
+  if(!m){ m = document.createElement('div'); m.id = 'ogrt-menu'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-label','Öğretmen menüsü'); document.body.appendChild(m);
+    m.addEventListener('click', e=>{ if(e.target===m) ogrtMenuKapat(); }); }
+  const akt = typeof aktifSayfa==='function' ? aktifSayfa() : '';
+  m.innerHTML = `<div class="ogrt-m-kutu"><div class="ogrt-m-bas"><b>☰ Menü</b><button type="button" onclick="ogrtMenuKapat()" aria-label="Kapat">✕</button></div>
+    <div class="ogrt-m-kim"><b>👤 ${esc(h.ad)}</b><small>${esc(h.ders)} öğretmeni</small></div>
+    ${h.puanYok ? '' : `<button type="button" class="ogrt-m-oge${akt==='pageOP'?' on':''}" onclick="ogrtMenuKapat();opAc('ana')">🔢 Sınıflara puan ver</button>`}
+    <button type="button" class="ogrt-m-oge${akt==='pageOgrSaat'?' on':''}" onclick="ogrtMenuKapat();ogrSaatAc()">🕐 Girilen ders sayısı</button>
+    <div class="ogrt-m-ara"></div>
+    <button type="button" class="ogrt-m-oge cik" onclick="ogrtMenuKapat();ogretmenCikis()">⏻ Çıkış yap</button></div>`;
+  m.hidden = false;
+};
+window.ogrtMenuKapat = function(){ const m = $('ogrt-menu'); if(m) m.hidden = true; };
+window.ogrtAnaAc = function(){ const h = hesap(); if(h && h.puanYok) ogrSaatAc(); else opAc('ana'); };
+
+/* ---------- girilen ders sayısı ---------- */
+function gunVeri(h, g){ const c = cache(h)[g]; return c && c.sinif ? c : {sinif:{}}; }
+function ciz(){
+  const h = hesap(), g = $('os-govde'); if(!h || !g) return;
+  $('os-sub').textContent = h.ad+' · '+h.ders;
+  const v = gunVeri(h, GUN), L = siniflar(), top = Object.values(v.sinif).reduce((a,b)=>a+(+b||0), 0);
+  const ileriYok = GUN >= bugun();
+  let s = `<section class="zl-kart"><div class="os-gun"><button type="button" onclick="ogrSaat.gun(-1)" aria-label="Önceki gün">‹</button>
+      <b>${esc(tarihD(GUN).toLocaleDateString('tr-TR',{day:'numeric',month:'long',weekday:'long'}))}</b>
+      <button type="button" onclick="ogrSaat.gun(1)" aria-label="Sonraki gün" ${ileriYok?'disabled':''}>›</button></div>`;
+  if(!L.length) s += '<div class="gv-bos">Sınıf bulunamadı.</div>';
+  L.forEach(c=>{ const d = +(v.sinif[c.id]||0);
+    s += `<div class="os-satir${d?' var':''}"><b>${esc(c.ad)}</b><div class="os-step">
+      <button type="button" onclick="ogrSaat.ad('${esc(c.id)}',-1)" aria-label="${esc(c.ad)} azalt" ${d?'':'disabled'}>−</button>
+      <span>${say(d)}</span>
+      <button type="button" onclick="ogrSaat.ad('${esc(c.id)}',1)" aria-label="${esc(c.ad)} artır">+</button></div></div>`; });
+  s += `<div class="os-top"><span>Bugün toplam</span><b>${say(top)} ders</b></div>
+    <button type="button" class="bpri os-kaydet" onclick="ogrSaat.kaydet()">💾 Kaydet</button>
+    ${v.z ? `<div class="os-son">Son kayıt: ${new Date(v.z).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}${v.bekle?' · internet gelince gönderilecek':''}</div>` : ''}</section>`;
+  /* bu ay */
+  const ay = GUN.slice(0,7), c = cache(h), gunler = Object.keys(c).filter(k=>k.slice(0,7)===ay && (+c[k].toplam||0)>0).sort();
+  const ayTop = gunler.reduce((a,k)=>a+(+c[k].toplam||0), 0);
+  s += `<section class="zl-kart"><div class="zl-bas"><h2>Bu ay girdiğim dersler</h2><small>${esc(tarihD(GUN).toLocaleDateString('tr-TR',{month:'long',year:'numeric'}))}</small></div>`
+    + (gunler.length ? gunler.map(k=>`<div class="os-ay"><span>${esc(tarihD(k).toLocaleDateString('tr-TR',{day:'numeric',month:'short',weekday:'short'}))}</span><b>${say(c[k].toplam)} ders</b></div>`).join('')
+      + `<div class="os-ay top"><span>Toplam</span><b>${say(ayTop)} ders</b></div>` : '<div class="gv-bos">Bu ay henüz kayıt yok.</div>')
+    + '</section><div class="os-not">📒 Girdiğiniz saatleri kendi not defterinize de kaydetmeniz rica olunur.</div>';
+  g.innerHTML = s;
+}
+async function gonder(h, g, v){
+  if(!bulutHazir()) return false;
+  try{
+    const r = await fetch(sbUrl()+'/rest/v1/yd_veri?on_conflict=sahip,anahtar', {method:'POST', headers:await sbBaslik({Prefer:'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify([{sahip:SB_OTURUM.uid, anahtar:'odb_'+h.key+'_'+g, icerik:{ders:h.key, dersAd:h.ders, ad:h.ad, tarih:g, sinif:v.sinif, toplam:v.toplam, z:v.z}, guncelleme:new Date().toISOString()}])});
+    return r.ok;
+  }catch(e){ return false; }
+}
+async function bekleyenleriGonder(){
+  const h = hesap(); if(!h) return; const c = cache(h); let d = false;
+  for(const g of Object.keys(c)){ if(c[g].bekle && await gonder(h, g, c[g])){ c[g].bekle = false; d = true; } }
+  if(d){ cacheYaz(h, c); ciz(); }
+}
+async function cek(){
+  const h = hesap(); if(!h || !bulutHazir()) return;
+  try{
+    const rows = await sbSatirlar('anahtar,icerik', 'anahtar=like.odb_'+h.key+'_*');
+    const c = cache(h); let d = false;
+    (rows||[]).forEach(r=>{ const x = r.icerik; if(!x || !x.tarih || x.sil) return; const y = c[x.tarih];
+      if(!y || (!y.bekle && (+x.z||0) > (+y.z||0))){ c[x.tarih] = {sinif:x.sinif||{}, toplam:+x.toplam||0, z:+x.z||0}; d = true; } });
+    if(d){ cacheYaz(h, c); ciz(); }
+  }catch(e){}
+}
+window.ogrSaat = {
+  gun(n){ const y = gunEkle(GUN, n); if(y > bugun()) return; GUN = y; ciz(); },
+  ad(sid, yon){ const h = hesap(); if(!h) return; const c = cache(h), v = c[GUN] ? c[GUN] : (c[GUN] = {sinif:{}});
+    const i = ADIM.indexOf(+(v.sinif[sid]||0)), j = Math.max(0, Math.min(ADIM.length-1, (i<0?0:i)+yon));
+    if(ADIM[j]) v.sinif[sid] = ADIM[j]; else delete v.sinif[sid];
+    v.taslak = true; cacheYaz(h, c); ciz(); },
+  async kaydet(){
+    const h = hesap(); if(!h) return; const c = cache(h), v = c[GUN] || (c[GUN] = {sinif:{}});
+    v.toplam = Object.values(v.sinif).reduce((a,b)=>a+(+b||0), 0); v.z = Date.now(); v.taslak = false;
+    const ok = await gonder(h, GUN, v); v.bekle = !ok; cacheYaz(h, c); ciz();
+    try{ showN(ok ? '💾' : '📴', ok ? 'Kaydedildi' : 'Kaydedildi (çevrimdışı)', ok ? say(v.toplam)+' ders · '+tarihD(GUN).toLocaleDateString('tr-TR',{day:'numeric',month:'long'}) : 'İnternet gelince gönderilecek'); }catch(e){}
+  }
+};
+window.ogrSaatAc = function(){
+  const h = hesap(); if(!h){ try{ anaSayfayaGit(); }catch(e){} return; }
+  ogrtMenuKapat();
+  if(goPage('pageOgrSaat')===false) return;
+  GUN = bugun(); ciz(); cek(); bekleyenleriGonder();
+};
+window.addEventListener('online', ()=>bekleyenleriGonder());
+setInterval(()=>{ if(!document.hidden) bekleyenleriGonder(); }, 60000);
+})();
 </script>
 </body>
 </html>
