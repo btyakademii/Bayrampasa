@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-155">
+<meta name="otk-surum" content="2026.10.26-158">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -29,7 +29,7 @@
 <!-- GÖRSEL KURALI: "Görsel oluştur" görsellerinde sol üstte her zaman yurt logosu (gorselLogoCiz) olur; optik/kalem çizimi yok;
      logonun yanına "Bayrampaşa Öğrenci Yurdu" yazılmaz; başlık bandı ortada (gBaslik). Yeni görsellerde de bu uygulanır. -->
 <!-- BÖLÜM: ORTAK.JS BAŞLA -->
-<script src="ortak.js?v=2026.10.26-155"></script>
+<script src="ortak.js?v=2026.10.26-158"></script>
 <!-- BÖLÜM: ORTAK.JS BİTİR -->
 <!-- qrcode-generator 1.4.4 · MIT · https://github.com/kazuhikoarase/qrcode-generator -->
 
@@ -3558,7 +3558,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-155</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-158</div>
   </div>
 </aside>
 
@@ -23230,7 +23230,12 @@ function panoNeVeri(){
   let yedekListe = false;
   if(!ogr.length){ try{ ogr = neAnaListe().filter(s=>!String(s.ana||'').startsWith('test_')).map(s=>({id:'ana_'+s.ana, ana:s.ana, name:s.name, cls:s.cls})); yedekListe = ogr.length>0; }catch(e){} }
   const p2 = n=>String(n).padStart(2,'0'), b0 = new Date(), bugun = b0.getFullYear()+'-'+p2(b0.getMonth()+1)+'-'+p2(b0.getDate());
-  const son = new Date(b0.getFullYear(), b0.getMonth()+1, 0), a = bugun.slice(0,8)+'01', b = bugun.slice(0,8)+p2(son.getDate());
+  /* Nehari ayı = 4 hafta (pazartesi–pazar), 2 Kasım 2026 pazartesisinden başlayarak 28 günde bir; takvim ayına bakılmaz (Nehari ile aynı) */
+  const gIso = d=>d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+  const capa = new Date(2026,10,2), pzt = new Date(b0.getFullYear(), b0.getMonth(), b0.getDate() - (b0.getDay()+6)%7);
+  const kk = Math.floor(Math.round((pzt - capa)/864e5)/28), aD = new Date(2026,10,2+kk*28);
+  const a = gIso(aD), b = gIso(new Date(aD.getFullYear(), aD.getMonth(), aD.getDate()+27)), ortaD = new Date(aD.getFullYear(), aD.getMonth(), aD.getDate()+14);
+  const bD = new Date(aD.getFullYear(), aD.getMonth(), aD.getDate()+27);
   const H = Array.isArray(din.hadisler) ? din.hadisler.map(x=>({id:x.id, t:x.t})) : ['h1','h2','h3','h4'];   // t: hadisin eklendiği gün
   const D = Array.isArray(din.dualar) ? din.dualar.map(x=>x.id) : ['d1','d2','d3','d4'];
   const I = Array.isArray(din.ilmihaller) ? din.ilmihaller.map(x=>x.id) : ['i1','i2','i3','i4'];
@@ -23263,7 +23268,7 @@ function panoNeVeri(){
   const dinV = {hadis:verenler(HL, 'hv', (x,n)=>n+'. haftanın hadisi', x=>x.tr||'', (x,i)=>(i+1)+'. hafta'),
                 ilmihal:verenler(IL, 'iv', x=>x.ad||'İlmihal', null, (x,i)=>x.ad||((i+1)+'. konu')),
                 dua:verenler(DL, 'dv', x=>x.ad||'Dua', null, (x,i)=>x.ad||((i+1)+'. dua')), gorev:gorevV};
-  return {ay: AY[b0.getMonth()]+' '+b0.getFullYear(), yedekListe, bulut, din:dinV,
+  return {ay: AY[ortaD.getMonth()]+' '+ortaD.getFullYear(), ayAralik: '4 hafta · '+aD.getDate()+' '+AY[aD.getMonth()]+' – '+bD.getDate()+' '+AY[bD.getMonth()], yedekListe, bulut, din:dinV,
           varMi: L.some(x=>x.gel+x.hadis+x.dua+x.ilm+x.gor>0),
           satirlar: L.map((x,i)=>{ if(x.puan!==onc){ sira = i+1; onc = x.puan; }
             return {sira, ad:x.s.name, cls:x.s.cls||'', gel:x.gel, etut:x.etut, hadis:x.hadis, dua:x.dua, ilm:x.ilm, gor:x.gor, kotu:x.kotu, kavga:x.kavga, puan:x.puan}; })};
@@ -24873,7 +24878,7 @@ async function modulTestVerisi(yukle){
 }
 </script>
 <!-- BÖLÜM: BOLUMLER.JS BAŞLA -->
-<script src="bolumler.js?v=2026.10.26-155"></script>
+<script src="bolumler.js?v=2026.10.26-158"></script>
 <!-- BÖLÜM: BOLUMLER.JS BİTİR -->
 <script>
 /* ══════════════ ZİL SİSTEMİ ══════════════
