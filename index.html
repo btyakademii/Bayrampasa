@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-151">
+<meta name="otk-surum" content="2026.10.26-155">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -29,7 +29,7 @@
 <!-- GÖRSEL KURALI: "Görsel oluştur" görsellerinde sol üstte her zaman yurt logosu (gorselLogoCiz) olur; optik/kalem çizimi yok;
      logonun yanına "Bayrampaşa Öğrenci Yurdu" yazılmaz; başlık bandı ortada (gBaslik). Yeni görsellerde de bu uygulanır. -->
 <!-- BÖLÜM: ORTAK.JS BAŞLA -->
-<script src="ortak.js?v=2026.10.26-151"></script>
+<script src="ortak.js?v=2026.10.26-155"></script>
 <!-- BÖLÜM: ORTAK.JS BİTİR -->
 <!-- qrcode-generator 1.4.4 · MIT · https://github.com/kazuhikoarase/qrcode-generator -->
 
@@ -430,7 +430,7 @@ body:not(.yon-kilit) .menu-oge.yon-btn{color:var(--text2)}
 .sf-kp .u{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;font-size:13px}.sf-kp .u small{color:var(--text2);font-size:11px}
 .sf-kp img{width:100%;display:block;border:1px solid #eef0f4;border-radius:6px}
 .sf-kp .a{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
-#surum-serit{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:9997;background:#12295e;color:#fff;border-radius:14px;padding:10px 10px 10px 14px;display:flex;align-items:center;gap:10px;font:600 13px 'Outfit',sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:calc(100% - 24px)}
+#surum-serit{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));z-index:2147483000;background:#12295e;color:#fff;border-radius:14px;padding:10px 10px 10px 14px;display:flex;align-items:center;gap:10px;font:600 13px 'Outfit',sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:calc(100% - 24px)}
 #surum-serit{white-space:nowrap}#surum-serit small{opacity:.7}@media(max-width:480px){#surum-serit small{display:none}}#surum-serit button{background:#f7891f;color:#fff;border:none;border-radius:10px;padding:8px 14px;font:800 13px 'Outfit',sans-serif;cursor:pointer}
 .menu-surum{margin:18px 4px 6px;font-size:11px;color:var(--text2);text-align:center;opacity:.8}
 #ek-ov{position:fixed;inset:0;z-index:9998;background:#2a3140;display:none;flex-direction:column;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
@@ -3364,6 +3364,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge" onclick="neAc('ogr')">👥 Öğrenciler</button>
         <div class="menu-alt-bas">YARIŞMA</div>
         <div class="menu-cip">
+          <button class="menu-oge" onclick="neAc('yaris:hafta')">⭐ Haftanın</button>
           <button class="menu-oge" onclick="neAc('yaris:ay')">🥉 Ayın</button>
           <button class="menu-oge" onclick="neAc('yaris:donem')">🥈 Dönemin</button>
           <button class="menu-oge" onclick="neAc('yaris:yil')">🏆 Yılın</button>
@@ -3557,7 +3558,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-151</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-155</div>
   </div>
 </aside>
 
@@ -5971,29 +5972,41 @@ setInterval(()=>{
    Sayfa adresi önbelleksiz okunur, içindeki <meta name="otk-surum"> bu sürümle karşılaştırılır; farklıysa üstte
    "Yeni sürüm var · Yenile" şeridi çıkar. Yeni sürüm yüklerken bu meta etiketindeki numarayı değiştirmek yeterli. */
 const APP_SURUM = (document.querySelector('meta[name="otk-surum"]')||{}).content || '';
-let SURUM_SON = 0;
-async function surumDenetle(){
-  if(!/^https?:/.test(location.protocol) || Date.now()-SURUM_SON < 5*60000) return;
+let SURUM_SON = 0, SURUM_YENI = '';
+/* Denetim: açılışta, sekmeye/uygulamaya dönünce, internet gelince, ekrana dokunulunca (2 dakikada bir) ve açıkken 2 dakikada bir (en sık 1 dakikada bir).
+   cache:'reload' sayfanın yeni halini tarayıcı önbelleğine de yazar; böylece "Yenile" eski kopyayı açmaz. */
+async function surumDenetle(zorla){
+  if(SURUM_YENI){ surumSeridi(SURUM_YENI); return; }
+  if(!/^https?:/.test(location.protocol) || (!zorla && Date.now()-SURUM_SON < 60000)) return;
   SURUM_SON = Date.now();
   try{
-    const r = await fetch(location.href.split('#')[0], {cache:'no-store'}); if(!r.ok) return;
+    const r = await fetch(location.href.split('#')[0], {cache:'reload'}); if(!r.ok) return;
     const m = /<meta name="otk-surum" content="([^"]+)"/.exec(await r.text());
-    if(m && m[1] && m[1]!==APP_SURUM) surumSeridi(m[1]);
+    if(m && m[1] && m[1]!==APP_SURUM){ SURUM_YENI = m[1]; surumSeridi(m[1]); }
   }catch(e){}
 }
+/* Şerit bütün sayfaların, çerçevelerin (Talebe Takip, Nehari, Kelime…), menünün ve pencerelerin üstünde, ekranın üstünde durur */
 function surumSeridi(yeni){
-  if(document.getElementById('surum-serit')) return;
-  const d = document.createElement('div'); d.id = 'surum-serit';
-  d.innerHTML = '🔄 <b>Yeni sürüm var</b> <small>('+esc(yeni)+')</small><button onclick="surumYenile()">Yenile</button>';
-  document.body.appendChild(d);
+  let d = document.getElementById('surum-serit');
+  if(!d){ d = document.createElement('div'); d.id = 'surum-serit'; d.setAttribute('role','alert'); }
+  const ana = document.fullscreenElement || document.webkitFullscreenElement || document.body;   // tam ekranda (Pano, TV) da görünsün
+  if(d.parentNode!==ana || ana.lastElementChild!==d) ana.appendChild(d);   // her zaman en sonda: üstte kalsın
+  if(!d.dataset.s || d.dataset.s!==yeni){ d.dataset.s = yeni;
+    d.innerHTML = '🔄 <b>Yeni sürüm var</b> <small>('+esc(yeni)+')</small><button type="button" onclick="surumYenile()">Yenile</button>'; }
 }
 async function surumYenile(){
   const b = document.querySelector('#surum-serit button'); if(b){ b.disabled = true; b.textContent = '⏳'; }
   try{ if(typeof sbDurumAl==='function' && sbHazir() && sbDurumAl().kirli){ await sbTazele(8000); } }catch(e){}   // bekleyen kayıtlar önce gönderilir
+  try{ await fetch(location.href.split('#')[0], {cache:'reload'}); }catch(e){}
   location.reload();
 }
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') surumDenetle(); });
-setTimeout(surumDenetle, 4000); setInterval(()=>{ if(document.visibilityState==='visible') surumDenetle(); }, 10*60000);
+window.addEventListener('focus', ()=>surumDenetle());
+['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev, ()=>{ if(SURUM_YENI) setTimeout(()=>surumSeridi(SURUM_YENI), 50); }));
+window.addEventListener('online', ()=>surumDenetle(true));
+window.addEventListener('pageshow', e=>{ if(e.persisted) surumDenetle(true); });   // geri tuşuyla önbellekten açılınca
+document.addEventListener('click', ()=>{ if(Date.now()-SURUM_SON > 120000) surumDenetle(); }, true);
+setTimeout(()=>surumDenetle(true), 2500); setInterval(()=>{ if(document.visibilityState==='visible') surumDenetle(); }, 2*60000);
 function bulutKartCiz(){
   const kart = document.getElementById('bl-kart'); if(!kart) return;
   const mg = document.getElementById('menu-bulut'); if(mg) mg.style.display = sbAktif() ? '' : 'none';
@@ -23165,7 +23178,8 @@ window.panoTalebeGonder = function(){
    + gelmesi gereken günde geldi (sabit izinli gününde gelmese de puan alır; yalnız yoklama alınan günler)
    + verilen hadis-i şerif (etüt puanı 10 artık sayılmaz) · + ezberlenen dua · + yapılan görev
    − kötü kelime işareti · − kavga işareti */
-function neYarisHesap(G, ogr, a, b, bugun, H, D, I){   // I: ilmihal konuları
+function neYarisHesap(G, ogr, a, b, bugun, H, D, I, opt){   // I: ilmihal konuları · opt.gelYok: Haftanın Neharisi (gelme sayılmaz)
+  opt = opt || {};
   var ESKI = '2026-10-20';   // tarihsiz eski hadis/dua işaretleri (tarih tutulmadan önce konanlar) Ekim ayına sayılır
   var SIFIR = '2026-10-20';  // gelme, etüt puanı ve kötü kelime bu günden itibaren sayılır (Ekim ayı bu bölümlerde sıfırlandı; kayıtlar silinmedi)
   var p2 = function(n){ return String(n).padStart(2,'0'); };
@@ -23176,7 +23190,7 @@ function neYarisHesap(G, ogr, a, b, bugun, H, D, I){   // I: ilmihal konuları
   var c = a.slice(0,7);
   while(c <= b.slice(0,7)){
     var att = G('att_'+c) || {}, sc = G('score_'+c) || {}, nd = G('nd_'+c) || {};
-    Object.keys(att).forEach(function(d){ if(d<a || d>son || d<SIFIR) return; var r = att[d] || {};
+    Object.keys(att).forEach(function(d){ if(opt.gelYok || d<a || d>son || d<SIFIR) return; var r = att[d] || {};
       if(!Object.keys(r).some(function(k){ return r[k]; })) return;            // o gün yoklama alınmadı
       ogr.forEach(function(s){ if(r[s.id] || izinli(s, d)) t(s.id).gel++; }); });
     Object.keys(sc).forEach(function(d){ if(d<a || d>b || d<SIFIR) return; var r = sc[d] || {};
@@ -23187,21 +23201,16 @@ function neYarisHesap(G, ogr, a, b, bugun, H, D, I){   // I: ilmihal konuları
     var ym = c.split('-').map(Number); c = ym[1]===12 ? (ym[0]+1)+'-01' : ym[0]+'-'+p2(ym[1]+1);
   }
   var din = G('din') || {};
-  /* Hadis: yalnız EKLENDİĞİ AYDA verilirse puan alır (Kasım'da eklenen hadisi Kasım'da veren +1; Ekim'in hadisini Kasım'da veren almaz).
-     Eklenme tarihi hadis kaydındaki t; t'si olmayan eski hadislerde ilk ✓'nin tarihi kullanılır. Dua: ✓'nin tarihindeki aya sayılır. */
+  /* Din eğitimi ORTAK puandır: hadis, dua ve ilmihal haftaya / aya bölünmez. Dönemin sonuna kadar (b) ezberden verilen her
+     hadis, dua ve ilmihal konusu bir kez +1 sayılır (8 dua varsa hepsini veren 8 puan alır; her hafta yeniden eklenmez).
+     Tarihsiz eski işaretler ESKI gününe sayılır. Görev ise her hafta / gün ayrıdır: yalnız a–b arasındakiler toplanır. */
   var TRH = /^\d{4}-\d\d-\d\d$/;
   var dinSay = function(alan, L, k){ var m = din[alan] || {};
-    (L || []).forEach(function(it, i){ var id = (it && typeof it==='object') ? it.id : it, r = m[id] || {}, ht = null;
-      if(alan==='hv'){
-        ht = (it && typeof it==='object' && TRH.test(it.t || '')) ? it.t : null;
-        if(!ht) Object.keys(r).forEach(function(sid){ var v = r[sid]; if(!v) return; var d = (typeof v==='string' && TRH.test(v)) ? v : ESKI; if(!ht || d < ht) ht = d; });
-        if(!ht) return;
-      }
+    (L || []).forEach(function(it){ var id = (it && typeof it==='object') ? it.id : it, r = m[id] || {};
       Object.keys(r).forEach(function(sid){ var v = r[sid]; if(!v) return;
         var d = (typeof v==='string' && TRH.test(v)) ? v : ESKI; if(d > bugun) d = bugun;
-        if(ht && d.slice(0,7)!==ht.slice(0,7)) return;   // hadis başka ayda eklenmiş
-        if(d>=a && d<=b) t(sid)[k]++; }); }); };
-  dinSay('hv', H, 'hadis'); dinSay('dv', D, 'dua'); dinSay('iv', I, 'ilm');   // ilmihal: her konu +1, ✓'nin tarihindeki aya sayılır
+        if(d<=b) t(sid)[k]++; }); }); };
+  dinSay('hv', H, 'hadis'); dinSay('dv', D, 'dua'); dinSay('iv', I, 'ilm');   // hadis, dua, ilmihal: b gününe kadar verilen her biri bir kez +1
   // Görevler bölümü: her ✓ +1 (görevin tarihindeki aya sayılır)
   var gd = G('gorev') || {}, gv = gd.v || {};
   (Array.isArray(gd.liste) ? gd.liste : []).forEach(function(g){ var m = gv[g.id] || {};
@@ -24864,7 +24873,7 @@ async function modulTestVerisi(yukle){
 }
 </script>
 <!-- BÖLÜM: BOLUMLER.JS BAŞLA -->
-<script src="bolumler.js?v=2026.10.26-151"></script>
+<script src="bolumler.js?v=2026.10.26-155"></script>
 <!-- BÖLÜM: BOLUMLER.JS BİTİR -->
 <script>
 /* ══════════════ ZİL SİSTEMİ ══════════════
