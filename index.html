@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta name="otk-surum" content="2026.10.26-158">
+<meta name="otk-surum" content="2026.10.26-159">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Bayrampaşa Öğrenci Yurdu — Optik · Analiz · Veli Bilgilendirme · A–D</title>
@@ -29,7 +29,7 @@
 <!-- GÖRSEL KURALI: "Görsel oluştur" görsellerinde sol üstte her zaman yurt logosu (gorselLogoCiz) olur; optik/kalem çizimi yok;
      logonun yanına "Bayrampaşa Öğrenci Yurdu" yazılmaz; başlık bandı ortada (gBaslik). Yeni görsellerde de bu uygulanır. -->
 <!-- BÖLÜM: ORTAK.JS BAŞLA -->
-<script src="ortak.js?v=2026.10.26-158"></script>
+<script src="ortak.js?v=2026.10.26-159"></script>
 <!-- BÖLÜM: ORTAK.JS BİTİR -->
 <!-- qrcode-generator 1.4.4 · MIT · https://github.com/kazuhikoarase/qrcode-generator -->
 
@@ -3558,7 +3558,7 @@ html.optv-acik,html.optv-acik body{overflow:hidden}
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('konular')">📝 İşlenen Konular<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
         <button class="menu-oge menu-yakinda" onclick="yakindaAc('takvim')">🗓️ Akademik Takvim<span class="menu-yakinda-etiket">yapım aşamasında</span></button>
     </div>
-    <div class="menu-surum yon-acik">Sürüm 2026.10.26-158</div>
+    <div class="menu-surum yon-acik">Sürüm 2026.10.26-159</div>
   </div>
 </aside>
 
@@ -4779,7 +4779,7 @@ function personelKaydet(){ try{ localStorage.setItem('otkPersonel', JSON.stringi
    Personel ve Yetkiler'den silinen kişi bu cihazda bir daha eklenmez (otkPersonelSilinen). Sınıf ve yetkiler oradan düzenlenir. */
 const PERSONEL_TOHUM = (()=>{
   const ogretmen = {deneme_sonuc:true, cevap_anahtari:true, optik:true, soru_bankasi:true, tts:true, op_rapor:true, ke:true};
-  const tum = [4,5,6,7,8];
+  const tum = [3,4,5,6,7,8];
   return [
     {id:'p_mevlut', ad:'Mevlüt Ece', sifre:'m145333m', siniflar:tum.slice(), admin:true, yetki:{}},
     {id:'p_ekrem', ad:'Ekrem Tekiroğlu', sifre:'e145333', siniflar:[8], yetki:Object.assign({}, ogretmen)},
@@ -4850,10 +4850,16 @@ function yetki(k){
   return !!(p.yetki && p.yetki[k]);
 }
 function yetkiHerhangi(l){ return String(l).split('|').some(k=>yetki(k.trim())); }
-/* 4. sınıf ana bölümde yoktur: denemeleri, testleri ve öğrencileri Nehari'de (Nehari · Deneme) yönetilir */
-function izinliKademeler(){ const p = aktifPersonel(); if(!p) return []; if(typeof KADEMELER==='undefined') return []; const ana = KADEMELER.filter(k=>k!==4); if(p.admin || !Array.isArray(p.siniflar) || !p.siniflar.length) return ana; return ana.filter(k=>p.siniflar.includes(k)); }
+/* Ana bölümün konulu sınıfları 5–8'dir (Analiz, Soru Bankası, Kelime, Rehberlik…).
+   3. ve 4. sınıf ana bölümde YALNIZ Deneme'de (oluştur, anahtar, optik okuma, sonuç, karne) ve Öğrenci Kayıt'ta vardır: denemeKademeleri().
+   Nehari'nin 4. sınıfları bunlardan ayrıdır: o şubelerin kademesi NE_KADEME ('ne') olarak tutulur; ana bölümde hiçbir listede görünmez. */
+function izinliKademeler(){ const p = aktifPersonel(); if(!p) return []; if(typeof KADEMELER==='undefined') return []; const ana = KADEMELER.filter(k=>k>=5); if(p.admin || !Array.isArray(p.siniflar) || !p.siniflar.length) return ana; return ana.filter(k=>p.siniflar.includes(k)); }
 function kademeIzin(k){ return izinliKademeler().includes(+k); }
-function kademeKisitli(){ return izinliKademeler().length < KADEMELER.filter(k=>k!==4).length; }
+function kademeKisitli(){ return izinliKademeler().length < KADEMELER.filter(k=>k>=5).length; }
+/* 3. ve 4. sınıf (ana bölüm denemeleri): yönetici, sınıf kısıtı olmayan ya da 3./4. sınıfı işaretli personel */
+function ilkokulIzin(){ const p = aktifPersonel(); if(!p) return false; if(p.admin || !Array.isArray(p.siniflar) || !p.siniflar.length) return true; return p.siniflar.includes(4) || p.siniflar.includes(3); }
+function denemeKademeleri(){ return (ilkokulIzin() ? [3,4] : []).concat(izinliKademeler()); }
+function denemeKademeIzin(k){ return denemeKademeleri().includes(+k); }
 /* Sayfa → gereken yetki (biri yeterli) */
 const SAYFA_YETKI = {
   pageKademe:'deneme_sonuc|cevap_anahtari|deneme_duzenle|test_olustur|sonuc_tablo|sonuc_kisi', pageDnmSecim:'deneme_sonuc|cevap_anahtari|sonuc_tablo|sonuc_kisi',
@@ -4902,7 +4908,7 @@ function yonUygula(){
   if(b) b.innerHTML = p ? 'Çıkış yap' : '👤 Personel girişi';
   yetkiUygula();
   try{ if(typeof menuSabitUygula==='function') menuSabitUygula(); }catch(e){}
-  if(p && kademeKisitli() && !kademeIzin(AKTIF_KADEME)){ const k = izinliKademeler()[0]; if(k) kademeDegistir(k); }
+  if(p && !denemeKademeIzin(AKTIF_KADEME)){ const k = izinliKademeler()[0] || denemeKademeleri()[0]; if(k) kademeDegistir(k); }
   // Denetim kartı: yalnız Mevlüt Ece profilinin ana sayfasında, Optik Okut'un altında
   const dk = document.getElementById('gr-dt-kart'); if(dk) dk.style.display = (p && p.id==='p_mevlut') ? '' : 'none';
   try{ if(window.ymAnaCiz) ymAnaCiz(); }catch(e){}   // yönetici hariç personelin ana sayfasında günün görevlileri
@@ -5075,19 +5081,28 @@ let CEVAPLAR = {};   // {ogrId: {ders:[...]}}
    Yedeğe ve buluta artık yazılmaz. Cihazdaki eski 'otkBanka' kaydına dokunulmaz (silinmez, okunmaz).
    Asıl Test oluştur optik okuyucusunun verisi "optik:k{sınıf}:…" kayıtlarındadır (sbOptik). */
 
-/* ═══════════════ KADEME (4–8. sınıf) ═══════════════
-   Her deneme ve sınıf bir kademeye aittir; ekranlar yalnızca seçili kademeyi gösterir. */
-const KADEMELER = [4,5,6,7,8];   // şıklar: bütün sınıflarda A–D (denemeSik)
+/* ═══════════════ KADEME (3–8. sınıf) ═══════════════
+   Her deneme ve sınıf bir kademeye aittir; ekranlar yalnızca seçili kademeyi gösterir.
+   3. ve 4. sınıf: yalnız Deneme ve Öğrenci Kayıt (bkz. denemeKademeleri). Nehari'nin 4. sınıf şubeleri NE_KADEME'dir, buraya girmez. */
+const KADEMELER = [3,4,5,6,7,8];
+const NE_KADEME = 'ne';   // Nehari şubelerinin kademesi (ana bölümdeki 3./4. sınıflarla karışmaz)
+const neSinifMi = c => !!c && c.kademe===NE_KADEME;   // şıklar: bütün sınıflarda A–D (denemeSik)
 let AKTIF_KADEME = 8;
 /* Konulu sınıflar: konu bazlı bölümler (soru tanıtma, soru raporu, yanlış kitapçığı, kazanımlar) yalnız bunlarda çalışır. 5, 6, 7 ve 8. sınıflar konuludur. */
 const KONULU_SINIFLAR = [5,6,7,8];   // 5–7 de 8. sınıfla aynı konu sistemini kullanır
 function konuluMu(k){ return KONULU_SINIFLAR.includes(+k); }
 function konuluKademeler(){ return izinliKademeler().filter(konuluMu); }
-try{ const k = +localStorage.getItem('otkKademe'); if(KADEMELER.includes(k) && k!==4) AKTIF_KADEME = k; }catch(e){}
-function kademeTahmin(ad){ const m = String(ad||'').match(/^\s*([4-8])/); return m ? +m[1] : 8; }
+try{ const k = +localStorage.getItem('otkKademe'); if(KADEMELER.includes(k)) AKTIF_KADEME = k; }catch(e){}
+function kademeTahmin(ad){ const m = String(ad||'').match(/^\s*([3-8])/); return m ? +m[1] : 8; }
 function kademeGoc(){
   DENEMELER.forEach(d=>{ if(!KADEMELER.includes(d.kademe)) d.kademe = 8; });
-  SINIFLAR.forEach(s=>{ if(!KADEMELER.includes(s.kademe)) s.kademe = kademeTahmin(s.ad); });
+  SINIFLAR.forEach(s=>{
+    if(s.kademe===NE_KADEME) return;
+    /* Eski 4. sınıf şubeleri Nehari'nindir → NE_KADEME. Ana bölümde açılan 3./4. sınıf şubelerinde ana:true vardır, onlar değişmez. */
+    if(+s.kademe===4 && !s.ana){ s.kademe = NE_KADEME; return; }
+    if(!KADEMELER.includes(s.kademe)) s.kademe = kademeTahmin(s.ad);
+    if(+s.kademe<5) s.ana = true;
+  });
 }
 const KD = () => DENEMELER.filter(d=>d.kademe===AKTIF_KADEME);
 /* ── Sınav tarihi: denemeler her yerde (listeler, karne geçmişi, gelişim, analiz) tarihe göre sıralanır.
@@ -5123,7 +5138,7 @@ function kademeBasliklari(){
 }
 function kademeDegistir(k){
   if(!KADEMELER.includes(k)) return;
-  if(YON_GIRIS && !kademeIzin(k)){ yetkiYok(k+'. sınıf'); return false; }
+  if(YON_GIRIS && !denemeKademeIzin(k)){ yetkiYok(k+'. sınıf'); return false; }
   let hafiza = {};
   try{ hafiza = JSON.parse(localStorage.getItem('otkAktifK')||'{}'); }catch(e){}
   hafiza[AKTIF_KADEME] = AKTIF_ID;
@@ -5543,7 +5558,7 @@ function kitapcikGoc(){
 /* Net kuralı denemeye aittir: 3 (3 yanlış 1 doğruyu götürür, LGS), 4, ya da 0 (yanlış götürmez).
    Alan yoksa 4. sınıfta 0, diğerlerinde 3 kabul edilir. */
 const NET_KURALLARI = {'3':'3 yanlış 1 doğruyu götürür', '4':'4 yanlış 1 doğruyu götürür', '0':'Yanlış doğruyu götürmez'};
-function varsayilanNetKurali(kademe){ return kademe===4 ? '0' : '3'; }
+function varsayilanNetKurali(kademe){ return +kademe<=4 ? '0' : '3'; }
 function netKurali(d){ const k = d && d.netKurali; return NET_KURALLARI[k] ? k : varsayilanNetKurali(d && d.kademe); }
 /* İptal edilen soru anahtarda 'I' olarak durur. Kural denemeye aittir:
    'dogru' → her öğrenciye doğru sayılır; 'disari' → o soru hiç sayılmaz (D, Y, B'ye girmez). */
@@ -6738,7 +6753,7 @@ async function otkQrTara(canvas){
       + (OTK_YATAY===false ? '' : '<br>📄 Kâğıt <b>eski basılı formsa</b> (küçük baloncuklar): <button type="button" class="bsec bsm" onclick="otkEskiFormSec()">Eski form olarak oku</button>');
     return;
   }
-  if(!kademeIzin(d.kademe)){
+  if(YON_GIRIS && !denemeKademeIzin(d.kademe)){
     OTK_ENGEL = true; b.style.borderColor = 'var(--red)';
     b.innerHTML = '⛔ <b>Bu kâğıt kaydedilmedi.</b> Form '+d.kademe+'. sınıf denemesine ait; bu sınıf için yetkiniz yok.';
     return;
@@ -8112,7 +8127,7 @@ function sinifEkle(){
   const ad = sinifAdBicim(inp.value.trim());
   if(!ad) return;
   if(KS().some(s=>s.ad.toLowerCase()===ad.toLowerCase())){ showN('⚠️','Bu şube zaten var',''); return; }
-  SINIFLAR.push({id:yeniId('s'), ad, kademe:AKTIF_KADEME});
+  SINIFLAR.push(Object.assign({id:yeniId('s'), ad, kademe:AKTIF_KADEME}, AKTIF_KADEME<5 ? {ana:true} : {}));
   inp.value = ''; lsSave(); renderSinif();
 }
 function sinifSil(id){
@@ -8520,7 +8535,7 @@ function ogkSubeEkle(adIlk){
   if(ad===undefined){ const i = document.getElementById('ogk-yeni-sube'); ad = i ? i.value : ''; }
   ad = String(ad||'').trim(); if(!ad) return;
   if(ogkSubeler(OGK_K).some(x=>x.ad.toLocaleLowerCase('tr-TR')===ad.toLocaleLowerCase('tr-TR'))){ showN('⚠️','Bu şube zaten var',''); return; }
-  SINIFLAR.push({id:yeniId('s'), ad, kademe:OGK_K});
+  SINIFLAR.push(Object.assign({id:yeniId('s'), ad, kademe:OGK_K}, OGK_K<5 ? {ana:true} : {}));   // 3./4. sınıf: ana bölüm (Nehari'ye gitmez)
   lsSave(); OGK_S = null; ogkCiz(); showN('➕', ad+' eklendi', '');
 }
 function ogkSubeEkleSor(){ const v = prompt('Yeni şube adı (örn. '+OGK_K+'-C):', ''); if(v!==null) ogkSubeEkle(v); }
@@ -8579,7 +8594,7 @@ function ogkCop(){
 function ogkCiz(){
   const h = document.getElementById('ogk-icerik'), geri = document.getElementById('ogk-geri'), bas = document.getElementById('ogk-baslik');
   const kaydir = document.getElementById('ogk-kaydir'); if(kaydir) kaydir.scrollTop = 0;
-  const renk = {4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
+  const renk = {3:'#00796b', 4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
   const kare = (t, alt, c, fn)=>'<button onclick="'+fn+'" style="aspect-ratio:1/1;border:0;border-radius:18px;background:'+c+';color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:inherit;padding:8px"><span style="font-size:30px;font-weight:800">'+esc(t)+'</span><span style="font-size:13px;opacity:.85">'+alt+'</span></button>';
   const izgara = x=>'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+x+'</div>';
   const btn = (t, fn, kirmizi)=>'<button onclick="'+fn+'" style="padding:8px 12px;border-radius:8px;border:1px solid '+(kirmizi?'#aa1030':'#bbb')+';background:#fff;color:'+(kirmizi?'#aa1030':'#222')+';font-size:13px;cursor:pointer">'+t+'</button>';
@@ -8618,7 +8633,7 @@ function ogkCiz(){
   const okulKart = '<div style="font-weight:800;margin:18px 0 8px;opacity:.75">Okullara göre</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
     + OKULLAR.map(x=>{ const n = OGRENCILER.filter(o=>okulEsle(o.okul)===x).length;
       return '<button onclick="ogkOkulAc(\''+x+'\')" style="padding:12px;border-radius:12px;border:1px solid #cfd8cf;background:#fff;text-align:left;cursor:pointer"><div style="font-weight:800">🏫 '+esc(x)+'</div><div style="font-size:12px;opacity:.6">'+n+' öğrenci</div></button>'; }).join('')+'</div>';
-  h.innerHTML = izgara(KADEMELER.filter(k=>k!==4).map(k=>{   // 4. sınıf öğrencileri Nehari'de
+  h.innerHTML = izgara(KADEMELER.map(k=>{   // 3. ve 4. sınıf: ana bölüm denemeleri için (Nehari'nin 4. sınıfları ayrı, Nehari'den eklenir)
     const sl = ogkSubeler(k), n = sl.reduce((t,x)=>t+say(x.id),0);
     return kare(k+'. Sınıf', sl.length ? n+' öğrenci'+(sl.length>1 ? ' · '+sl.length+' şube' : '') : 'şube yok', renk[k]||'#1a3a5c', 'ogkKademe('+k+')');
   }).join('')) + okulKart;
@@ -10044,7 +10059,7 @@ function ornekVeriYukle(){
 
   /* Sınıf ve öğrenciler: her öğrencinin genel seviyesi, ders farkları ve gidişatı var */
   const K = AKTIF_KADEME;
-  SINIFLAR.push({id:'test_s1', ad:K+'-T (Örnek)', kademe:K});
+  SINIFLAR.push(Object.assign({id:'test_s1', ad:K+'-T (Örnek)', kademe:K}, K<5 ? {ana:true} : {}));
   const ADLAR = ['Elif Aydın','Yusuf Çelik','Zeynep Şahin','Ömer Yıldız','Defne Arslan','Emir Doğan',
                  'Ecrin Kılıç','Mustafa Koç','Asya Kurt','Kerem Öztürk','Nehir Polat','Alperen Güneş'];
   const PROFIL = {};
@@ -10154,7 +10169,7 @@ function analizTestVerisiYukle(){
     AKTIF_KADEME = K; dersEtiketUygula();
     const HARF = ['A','B','C','D'];
     const sid = 'test_s'+K;
-    SINIFLAR.push({id:sid, ad:K+'-T (Test)', kademe:K});
+    SINIFLAR.push(Object.assign({id:sid, ad:K+'-T (Test)', kademe:K}, K<5 ? {ana:true} : {}));
 
     /* Öğrenciler: her birinin seviyesi, ders farkları ve gidişatı var (zayıftan güçlüye) */
     const PROFIL = {}, OGR = [];
@@ -11119,7 +11134,7 @@ function yedekBirlestir(v, opt){
   const sMap = {};
   v.siniflar.forEach(s0=>{
     const s = kopya(s0);
-    if(!KADEMELER.includes(s.kademe)) s.kademe = kademeTahmin(s.ad);
+    if(s.kademe!==NE_KADEME && !KADEMELER.includes(s.kademe)) s.kademe = kademeTahmin(s.ad);
     let m = (opt.kimlik && SINIFLAR.find(x=>x.id===s.id))
          || SINIFLAR.find(x=>x.id===s.id && norm(x.ad)===norm(s.ad))
          || SINIFLAR.find(x=>x.kademe===s.kademe && norm(x.ad)===norm(s.ad));
@@ -11401,7 +11416,7 @@ function menuKapat(){
   document.getElementById('menu').classList.remove('acik'); document.getElementById('menu-arka').classList.remove('acik');
   document.getElementById('menu').setAttribute('aria-hidden','true');
 }
-const MENU_RENK = {4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
+const MENU_RENK = {3:'#00796b', 4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
 let MENU_AK = null;   // menüdeki Analiz kısayollarının sınıfı
 /* Açık sayfa → menüdeki öğe */
 const MENU_SAYFA = {pageSohbet:'sohbet', pageProfil:'profil', pageGiris:'giris', pageOku:'oku', pageBanka:'banka', pageDnmSecim:'deneme', pageDnmOlustur:'deneme', pageDeneme:'deneme',
@@ -11495,14 +11510,14 @@ function kademeSayfasi(bolum){
   const banka = bolum==='banka';
   const dBas = bolum==='duzenle' ? '✏️ Deneme Düzenle' : bolum==='olustur' ? '➕ Deneme Oluştur' : '📝 Deneme';
   const dMod = (bolum==='duzenle' || bolum==='olustur') ? bolum : '';
-  const tekSinif = izinliKademeler();
+  const tekSinif = denemeKademeleri();   // 3. ve 4. sınıf da (Deneme ve Test oluştur'un optik okuması)
   if(tekSinif.length===1){ kademeGir(tekSinif[0], banka ? 'banka' : (dMod || undefined)); return; }
   document.getElementById('kd-ust').textContent = banka ? '📚 Test oluştur' : dBas;
   document.getElementById('kd-baslik').textContent = (banka ? 'Test oluştur' : dBas.replace(/^\S+\s/,''))+' · Sınıf seçin';
-  const renk = {4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
+  const renk = {3:'#00796b', 4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
   if(banka){
     let son = 0; try{ son = +localStorage.getItem('otkSbKademe') || 0; }catch(e){}
-    document.getElementById('kd-grid').innerHTML = izinliKademeler().map(k=>
+    document.getElementById('kd-grid').innerHTML = denemeKademeleri().map(k=>
       '<button class="kd-kart'+(k===son?' son':'')+'" onclick="kademeGir('+k+',\'banka\')">'
       + (k===son ? '<span class="kd-rozet">Son kullanılan</span>' : '<span class="kd-rozet" style="visibility:hidden">·</span>')
       + '<span class="kd-no" style="color:'+renk[k]+'">'+k+'<small>. sınıf</small></span>'
@@ -11510,7 +11525,7 @@ function kademeSayfasi(bolum){
     goPage('pageKademe');
     return;
   }
-  document.getElementById('kd-grid').innerHTML = izinliKademeler().map(k=>{
+  document.getElementById('kd-grid').innerHTML = denemeKademeleri().map(k=>{
     const dn = DENEMELER.filter(d=>d.kademe===k);
     const sb = SINIFLAR.filter(s=>s.kademe===k);
     const ids = new Set(sb.map(s=>s.id));
@@ -11524,7 +11539,7 @@ function kademeSayfasi(bolum){
   goPage('pageKademe');
 }
 /* Geri: tek sınıfa yetkili personel sınıf seçme ekranını görmez, ana sayfaya döner */
-function kademeGeri(bolum){ if(izinliKademeler().length===1) anaSayfayaGit(); else kademeSayfasi(bolum); }
+function kademeGeri(bolum){ if(denemeKademeleri().length===1) anaSayfayaGit(); else kademeSayfasi(bolum); }
 /* Deneme bölümlerinden geri: "Deneme Düzenle" / "Deneme Oluştur" menüsünden sınıf seçilerek girildiyse
    geri tuşu o menünün sınıf seçme ekranına döner; Deneme menüsünden girildiyse Deneme menüsüne. */
 let DNM_GIRIS = '';
@@ -13160,7 +13175,7 @@ function anaRenk(p){ return p>=70 ? '#1f8a4c' : p>=50 ? '#c07a00' : '#c0283f'; }
 const anzPR = p => p==null ? 'var(--text2)' : anaRenk(p);
 const anzYz = p => p==null ? '–' : '%'+Math.round(p);
 const anzOrt = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
-const ANZ_KD_RENK = {4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
+const ANZ_KD_RENK = {3:'#00796b', 4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
 const ANZ_PALET = ['#1040d0','#aa1030','#145a30','#b85000','#6a20a0','#005a5a','#c07a00','#2a0a70','#0a6040','#8a4a00','#d02070','#406080','#5a2000','#1890a0','#707000'];
 function anzKaynakAd(kay){ return kay==='sb' || kay==='kb' ? {tek:'test', Tek:'Test', cog:'testler', Cog:'Testler', bolum:kay==='kb' ? '📖 Soru Bankası' : '📚 Test oluştur', de:'testte', e:'teste', si:'testi', den:'testten', in:'testin', i:'testi', cogde:'testlerde'}
     : {tek:'deneme', Tek:'Deneme', cog:'denemeler', Cog:'Denemeler', bolum:'📝 Deneme', de:'denemede', e:'denemeye', si:'denemesi', den:'denemeden', in:'denemenin', i:'denemeyi', cogde:'denemelerde'}; }
@@ -14267,7 +14282,7 @@ window.okuBaskaBolum = function(f, tur, metin){
    Sınıflar ve öğrenciler tek yerden yönetilir; Deneme ve Test oluştur aynı listeyi kullanır. */
 let SINIF_DONUS = 'deneme';   // Sınıflar ekranından geri: 'ayarlar' ya da 'deneme'
 function ayarlarAc(){
-  const renk = {4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
+  const renk = {3:'#00796b', 4:'#aa1030', 5:'#145a30', 6:'#7a4800', 7:'#5a2000', 8:'#1040d0'};
   document.getElementById('ay-kademeler').innerHTML = KADEMELER.map(k=>{
     const sb = SINIFLAR.filter(s=>s.kademe===k), ids = new Set(sb.map(s=>s.id));
     const og = OGRENCILER.filter(o=>ids.has(o.sinif)).length;
@@ -14987,7 +15002,7 @@ function varsayilanCfg(){return{title:"Deneme Sınavı",org:"",opts:4,rows:20,di
 function cfgDuzelt(){if(!cfg)cfg=varsayilanCfg();if(SBT&&cfg.id!==SBT){cfg.id=SBT;saveExam()}cfg.org="";cfg.penalty=0;cfg.booklet=0;cfg.digits=0;students="";
   if(cfg.sbank){if(!cfg.sbank.sik&&!results.length)cfg.sbank.sik=4;if(!cfg.boyut)cfg.boyut="mini"}   // Soru Bankası: kitabın şık sayısı, küçük form
   if(cfg.sbank)cfg.sbank.sik=4;cfg.opts=4;delete cfg.preset
-  if(SBK===4&&!cfg.sbank&&!cfg.duzen&&!results.length){cfg.duzen="v2";saveExam()}}   // 4. sınıf: büyük baloncuklu, ortalanmış form (henüz okutulmamış testlerde)   // öğrenci no ve isim listesi kullanılmaz
+  if(SBK<=4&&!cfg.sbank&&!cfg.duzen&&!results.length){cfg.duzen="v2";saveExam()}}   // 4. sınıf: büyük baloncuklu, ortalanmış form (henüz okutulmamış testlerde)   // öğrenci no ve isim listesi kullanılmaz
 function cfgChanged(){saveExam(); $("changeWarn").classList.toggle("hidden",!results.length)}
 /* Test adı: öğretmenin yazdığı ad + dersler ("Test 53 · Türkçe - Mat - Fen") */
 function sbDersKisa(ad){const i=typeof sbDersKonuId==="function"?sbDersKonuId(ad):"";
@@ -18185,7 +18200,7 @@ function rhKim(){ try{ const p = aktifPersonel(); return p ? p.ad : ''; }catch(e
 function rhOgrenciler(){
   try{
     const sn = {}; (SINIFLAR || []).forEach(s=>{ sn[s.id] = s.ad || ''; });
-    const k4 = new Set((SINIFLAR || []).filter(s=>+s.kademe===4).map(s=>s.id));   // 4. sınıflar rehberlikte yok
+    const k4 = new Set((SINIFLAR || []).filter(s=>!(+s.kademe>=5)).map(s=>s.id));   // 3./4. sınıflar ve Nehari şubeleri rehberlikte yok
     return (OGRENCILER || []).filter(o=>!k4.has(o.sinif)).map(o=>({id:o.id, ad:o.ad, sinif:sn[o.sinif] || '', sbId:o.sinif, anne:o.anneAd || '', baba:o.babaAd || ''})).sort((a,b)=>a.ad.localeCompare(b.ad,'tr'));
   }catch(e){ return []; }
 }
@@ -18415,7 +18430,7 @@ function rhForm(k, id, ek){
 /* Sınıf seç → öğrenci seç (4. sınıflar yok). Değerler: sinif = şube adı, ogrenci = öğrenci adı (kayıtlar böyle tutulur). */
 function rhSinifOgrAlan(r, zorunlu){
   const O = rhOgrenciler(), bul = (r.ogrId && O.find(o=>o.id===r.ogrId)) || rhOgrBul(r.ogrenci);
-  const S = (typeof SINIFLAR!=='undefined' ? SINIFLAR : []).filter(s=>+s.kademe!==4)
+  const S = (typeof SINIFLAR!=='undefined' ? SINIFLAR : []).filter(s=>+s.kademe>=5)
     .sort((a,b)=>(+a.kademe-+b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
   const sbId = bul ? bul.sbId : '';
   let so = '<option value="">'+(zorunlu ? 'Sınıf seçin…' : '— Öğrenci yok —')+'</option>'
@@ -18518,7 +18533,7 @@ function rhTakipEkle(k, id){
    Yönetici her şeyi görür (💬 Yazışmalar). Kayıt: otkRehberlik → hoca {id, ogrId, ogrenci, sbId, sinif, metin, acil, durum, ekleyen…}. */
 const rhHnListe = v => Object.values((v||rhOku()).hoca || {}).filter(x=>x && x.id);
 function rhHocaSubeler(){
-  const sn = (typeof SINIFLAR!=='undefined' ? SINIFLAR : []).filter(s=>+s.kademe!==4).sort((a,b)=>(+a.kademe-+b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
+  const sn = (typeof SINIFLAR!=='undefined' ? SINIFLAR : []).filter(s=>+s.kademe>=5).sort((a,b)=>(+a.kademe-+b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
   if(rhAdmin()) return sn;
   let p = null; try{ p = aktifPersonel(); }catch(e){}
   const l = new Set(p && Array.isArray(p.etutSubeler) ? p.etutSubeler : []);
@@ -18640,7 +18655,7 @@ function rhHnBlok(ogrId, gorusmeId){
 let RH_PSB = '', RH_PARA = '';
 function rhBasHarf(ad){ return String(ad||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('tr'); }
 function rhProfilSayfa(v){
-  const S = (typeof SINIFLAR!=='undefined' ? SINIFLAR : []).filter(s=>+s.kademe!==4).sort((a,b)=>(+a.kademe-+b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
+  const S = (typeof SINIFLAR!=='undefined' ? SINIFLAR : []).filter(s=>+s.kademe>=5).sort((a,b)=>(+a.kademe-+b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
   if(RH_PSB && !S.some(s=>s.id===RH_PSB)) RH_PSB = '';
   const F = typeof ogkFotoOku==='function' ? ogkFotoOku() : {}, a = RH_PARA.trim().toLocaleLowerCase('tr');
   const og = rhOgrenciler().filter(o=>(!RH_PSB || o.sbId===RH_PSB) && (!a || o.ad.toLocaleLowerCase('tr').includes(a)));
@@ -18745,7 +18760,7 @@ const prfNorm = x => String(x||'').trim().toLocaleUpperCase('tr-TR').replace(/\s
 function profilCiz(){
   const g = document.getElementById('prf-govde'); if(!g) return;
   let o = PRF_ID ? OGRENCILER.find(x=>x.id===PRF_ID) : null;
-  if(o && +((SINIFLAR.find(c=>c.id===o.sinif)||{}).kademe)===4){ o = null; PRF_ID = null; }   // 4. sınıflarda profil yok
+  if(o && !(+((SINIFLAR.find(c=>c.id===o.sinif)||{}).kademe)>=5)){ o = null; PRF_ID = null; }   // 3./4. sınıflarda ve Nehari'de profil yok
   try{ g.innerHTML = o ? prfHtml(o) : prfAramaHtml(); }
   catch(e){ console.error('Talebe profili:', e); g.innerHTML = '<div class="card">Profil hazırlanamadı: '+prfEsc(e && e.message || e)+'</div>'; }
   const alt = document.getElementById('prf-alt'); if(alt) alt.textContent = o ? o.ad : 'Talebe seçin';
@@ -18755,7 +18770,7 @@ function profilCiz(){
 function prfAramaHtml(){
   const sb = {}; SINIFLAR.forEach(c=>{ sb[c.id] = c; });
   const q = prfNorm(PRF_ARA);
-  const l = OGRENCILER.filter(o=>!String(o.id).startsWith('test_') && sb[o.sinif] && +sb[o.sinif].kademe!==4 && !String(o.sinif).startsWith('test_') && (!q || prfNorm(o.ad).includes(q)))
+  const l = OGRENCILER.filter(o=>!String(o.id).startsWith('test_') && sb[o.sinif] && +sb[o.sinif].kademe>=5 && !String(o.sinif).startsWith('test_') && (!q || prfNorm(o.ad).includes(q)))
     .sort((a,b)=>(sb[a.sinif].kademe-sb[b.sinif].kademe) || String(sb[a.sinif].ad).localeCompare(String(sb[b.sinif].ad),'tr',{numeric:true}) || String(a.ad).localeCompare(String(b.ad),'tr'));
   let h = '<input id="prf-ara" class="prf-ara" type="search" placeholder="🔍 Talebe adı yazın" value="'+prfEsc(PRF_ARA)+'" oninput="PRF_ARA=this.value;profilCiz()">';
   if(!l.length) return h + '<div class="card ana-bos">'+(OGRENCILER.length ? 'Aramaya uyan talebe yok.' : 'Talebe yok. Talebeler Öğrenci Kayıt\'tan eklenir.')+'</div>';
@@ -21771,7 +21786,7 @@ window.kb = {
     if(!testSube()){
       // test şubesi yoksa (genel test verisi yüklenmemişse) 10 öğrencili bir test şubesi açılır
       const AD = ['Elif Aydın','Yusuf Çelik','Zeynep Şahin','Ömer Yıldız','Defne Arslan','Emir Doğan','Ecrin Kılıç','Mustafa Koç','Asya Kurt','Kerem Öztürk'];
-      SINIFLAR.push({id:sid, ad:k+'-T (Test)', kademe:k});
+      SINIFLAR.push(Object.assign({id:sid, ad:k+'-T (Test)', kademe:k}, k<5 ? {ana:true} : {}));
       AD.forEach((ad,i)=>{ if(!OGRENCILER.some(o=>o.id==='test_o'+k+'_'+(i+1))) OGRENCILER.push({id:'test_o'+k+'_'+(i+1), ad, sinif:sid}); });
       try{ lsSave(); }catch(e){}
     }
@@ -22815,7 +22830,7 @@ window.addEventListener('online', ()=>{ keEsitle().catch(()=>{}); });
    Kelime Ezberi'nde hazırlanan 20 soruluk quiz, Test oluştur'un küçük formlu (A4'e 8'li, QR'lı) testi olarak açılır.
    Formlar ve okuma Test oluştur ekranında; sonuçlar Kelime Ezberi'ne geri alınır. Kitapçık türü yok (tek kitapçık). */
 function keOgrIdleri(k, adlar){
-  const sb = {}; SINIFLAR.forEach(c=>{ sb[c.id] = +c.kademe; });
+  const sb = {}; SINIFLAR.forEach(c=>{ sb[c.id] = neSinifMi(c) ? 4 : (+c.kademe>=5 ? +c.kademe : null); });   // Kelime'nin 4. sınıfı = Nehari'nin 4'leri (ana bölümün 3./4. sınıfları yok)
   const up = x=>String(x||'').toLocaleUpperCase('tr-TR').trim();
   const L = OGRENCILER.filter(o=>sb[o.sinif]===+k);
   return (adlar||[]).map(a=>{ const o = L.find(x=>up(x.ad)===up(a)); return o ? o.id : null; }).filter(Boolean);
@@ -22843,7 +22858,7 @@ window.keOptikSonuclar = function(k, id){
 };
 window.keOptikVar = function(k, id){ try{ return sbtListe(+k).includes(id); }catch(e){ return false; } };
 function keAnaListeHazirla(){
-  const sb = {}; SINIFLAR.forEach(c=>{ sb[c.id] = +c.kademe; });
+  const sb = {}; SINIFLAR.forEach(c=>{ sb[c.id] = neSinifMi(c) ? 4 : (+c.kademe>=5 ? +c.kademe : null); });   // Kelime'nin 4. sınıfı = Nehari'nin 4'leri (ana bölümün 3./4. sınıfları yok)
   const m = {}; [4,5,6,7,8].forEach(k=>{ m[k] = []; });
   OGRENCILER.forEach(o=>{ const k = sb[o.sinif]; if(m[k] && !yalnizOP(o)) m[k].push(String(o.ad).toLocaleUpperCase('tr-TR')); });
   Object.keys(m).forEach(k=>{ m[k] = [...new Set(m[k])].sort((a,b)=>a.localeCompare(b,'tr')); });
@@ -22883,7 +22898,7 @@ async function neAc(eylem){
   await new Promise(r=>setTimeout(r, 60));
   neListeGonder(true);
   if(eylem){ try{ f.contentWindow.neAnaMenu(eylem); }catch(e){ console.error(e); } }
-  setTimeout(neDnmAktar, 4000);   // Test oluştur'daki 4. sınıf testleri Nehari Deneme'ye (bir kez)
+  /* Test oluştur'daki 4. sınıf testleri artık ana bölümün 4. sınıflarınındır: Nehari'ye aktarılmaz (neDnmAktar kapalı) */
 }
 /* Ana sistemin Test oluştur'unda 4. sınıf için yapılmış testler → Nehari · Deneme (cevap anahtarı + öğrenci cevapları; aynı test bir kez aktarılır) */
 function neDnmAktar(){
@@ -22896,7 +22911,7 @@ window.neMenuAc = function(){ menuAc(); const d = document.getElementById('menu-
 function neTel(t){ return t ? '0'+String(t).slice(2) : ''; }
 function neAnaListe(){
   const sb = {}; SINIFLAR.forEach(c=>{ sb[c.id] = c; });
-  return OGRENCILER.filter(o=>{ const c = sb[o.sinif]; return c && +c.kademe===4; })
+  return OGRENCILER.filter(o=>neSinifMi(sb[o.sinif]))   // yalnız Nehari şubeleri (ana bölümün 3./4. sınıfları değil)
     .map(o=>({ana:String(o.id), name:o.ad, cls:(sb[o.sinif]||{}).ad || '', mom:o.anneAd||'', momTel:neTel(o.anneTel), dad:o.babaAd||'', dadTel:neTel(o.babaTel)}));
 }
 let NE_LISTE_IMZA = '';
@@ -22911,11 +22926,11 @@ function neListeGonder(zorla){
 }
 /* Nehari'den gelen değişiklikler → Öğrenci Kayıt (4. sınıf) */
 function neSube(ad){
-  const l = SINIFLAR.filter(c=>+c.kademe===4);
+  const l = SINIFLAR.filter(neSinifMi);
   let s = ad ? l.find(c=>String(c.ad).trim().toLocaleLowerCase('tr-TR')===String(ad).trim().toLocaleLowerCase('tr-TR')) : null;
-  if(!s && ad){ s = {id:yeniId('s'), ad:String(ad).trim(), kademe:4}; SINIFLAR.push(s); }
+  if(!s && ad){ s = {id:yeniId('s'), ad:String(ad).trim(), kademe:NE_KADEME}; SINIFLAR.push(s); }
   if(!s) s = l[0];
-  if(!s){ s = {id:yeniId('s'), ad:'4-A', kademe:4}; SINIFLAR.push(s); }
+  if(!s){ s = {id:yeniId('s'), ad:'4-A', kademe:NE_KADEME}; SINIFLAR.push(s); }
   return s;
 }
 function neAlanYaz(o, d){
@@ -24030,8 +24045,8 @@ function dtEtHtml(gun){
     window.etutDenetimCek([...new Set(hafta.map(g=>g.slice(0,7)))]).then(d=>{ if(d && aktifSayfa()==='pageDenetim') denetimCiz(); });
   }
   const V = typeof window.etutDenetimVeri==='function' ? window.etutDenetimVeri() : dtJ('etutVeri', {});
-  const sb = (SINIFLAR||[]).filter(x=>!String(x.id).startsWith('test_')).slice()
-    .sort((a,b)=>(a.kademe-b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
+  const sb = (SINIFLAR||[]).filter(x=>!String(x.id).startsWith('test_') && (+x.kademe>=5 || neSinifMi(x))).slice()   // ana bölümün 3./4. sınıfları etütte yok
+    .sort((a,b)=>((neSinifMi(a)?4:+a.kademe)-(neSinifMi(b)?4:+b.kademe)) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
   let h = '<section class="card dt-bol" id="dt-et"><div class="dt-bb"><span class="dt-bi">📊</span><div><h2>Etüt Performansı</h2><small>';
   if(!sb.length) return {html:h+'Günlük veli görseli</small></div></div><div class="dt-bos">Şube yok.</div></section>', ozet:null};
   const dur1 = (g, id)=>{ const r = V[g+'_'+id], iz = r && r.iz || {};
@@ -24039,7 +24054,7 @@ function dtEtHtml(gun){
   // 4. sınıflar tek satır: etüdü bütün olarak yapılır; o gün herhangi bir 4. sınıf şubesinin en iyi durumu sayılır
   const SIRA = {tam:5, ind:4, kismi:3, yok:1, bekl:0};
   const satirlar = []; let dort = null;
-  sb.forEach(x=>{ if(+x.kademe===4){ if(!dort){ dort = {id:'k4', ad:'4. sınıf', ids:[], tum:true}; satirlar.push(dort); } dort.ids.push(x.id); } else satirlar.push({id:x.id, ad:x.ad, ids:[x.id]}); });
+  sb.forEach(x=>{ if(neSinifMi(x)){ if(!dort){ dort = {id:'k4', ad:'4. sınıf', ids:[], tum:true}; satirlar.push(dort); } dort.ids.push(x.id); } else satirlar.push({id:x.id, ad:x.ad, ids:[x.id]}); });
   const dur = (g, id)=>{ const st = satirlar.find(s=>s.id===id); if(!st || st.ids.length===1) return dur1(g, st ? st.ids[0] : id);
     let en = null, enId = null; st.ids.forEach(i=>{ const z = dur1(g, i); const v = (SIRA[z.d]||0) + (z.var ? 0.5 : 0); if(!en || v > (SIRA[en.d]||0) + (en.var ? 0.5 : 0)){ en = z; enId = i; } });
     return Object.assign({}, en, {sube:(SINIFLAR.find(c=>c.id===enId)||{}).ad || ''}); };
@@ -24152,7 +24167,7 @@ function dtDhHtml(gun){
     window.dhPerfDenetimCek([...aylar]).then(d=>{ if(d && aktifSayfa()==='pageDenetim') denetimCiz(); });
   }
   const V = typeof window.dhPerfDenetimVeri==='function' ? window.dhPerfDenetimVeri() : dtJ('dhPerfHVeri', {});
-  const sb = (SINIFLAR||[]).filter(x=>!dtTest(x.id) && +x.kademe!==4).slice()
+  const sb = (SINIFLAR||[]).filter(x=>!dtTest(x.id) && +x.kademe>=5).slice()
     .sort((a,b)=>(a.kademe-b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true}));
   let h = '<section class="card dt-bol" id="dt-dh"><div class="dt-bb"><span class="dt-bi">⭐</span><div><h2>Dahili Ders · Veli Bilgilendirme</h2><small>';
   if(!sb.length) return {html:h+'Haftalık görsel</small></div></div><div class="dt-bos">Şube yok.</div></section>', ozet:null};
@@ -24878,7 +24893,7 @@ async function modulTestVerisi(yukle){
 }
 </script>
 <!-- BÖLÜM: BOLUMLER.JS BAŞLA -->
-<script src="bolumler.js?v=2026.10.26-158"></script>
+<script src="bolumler.js?v=2026.10.26-159"></script>
 <!-- BÖLÜM: BOLUMLER.JS BİTİR -->
 <script>
 /* ══════════════ ZİL SİSTEMİ ══════════════
@@ -28627,7 +28642,7 @@ try{ const v = localStorage.getItem('etutSonSube'); if(v) S.sube = v; }catch(e){
 function ben(){ try{ return aktifPersonel(); }catch(e){ return null; } }
 function yonetici(){ try{ return yetki('admin') || yetki('ayarlar'); }catch(e){ return false; } }
 function tumSubeler(){
-  try{ return (SINIFLAR||[]).filter(x=>!String(x.id).startsWith('test_') && +x.kademe!==4).slice()   // 4. sınıflar yalnız Nehari'de; Etüt Performansı'nda görünmez
+  try{ return (SINIFLAR||[]).filter(x=>!String(x.id).startsWith('test_') && +x.kademe>=5).slice()   // Nehari ve ana bölümün 3./4. sınıfları Etüt Performansı'nda görünmez
     .sort((a,b)=>(a.kademe-b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true})); }catch(e){ return []; }
 }
 function benimSubeler(){
@@ -29210,7 +29225,7 @@ try{ const v = localStorage.getItem('dhPerfSonSube'); if(v) S.sube = v; }catch(e
 const sev = () => (typeof DH_SEV!=='undefined' ? DH_SEV : 1);
 function ben(){ try{ return aktifPersonel(); }catch(e){ return null; } }
 function tumSubeler(){
-  try{ return (SINIFLAR||[]).filter(x=>!String(x.id).startsWith('test_') && +x.kademe!==4).slice()   // 4. sınıflarda dahili ders yok
+  try{ return (SINIFLAR||[]).filter(x=>!String(x.id).startsWith('test_') && +x.kademe>=5).slice()   // 3./4. sınıflarda ve Nehari'de dahili ders yok
     .sort((a,b)=>(a.kademe-b.kademe) || String(a.ad).localeCompare(String(b.ad),'tr',{numeric:true})); }catch(e){ return []; }
 }
 /* Ayarlar'da seviyeye talebe eklendiyse performans o grupla açılır (şube = 'grup') */
